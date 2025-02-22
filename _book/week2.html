@@ -215,21 +215,14 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#课程目标" id="toc-课程目标" class="nav-link active" data-scroll-target="#课程目标">课程目标</a></li>
-  <li><a href="#第一次课强化学习框架与迷宫环境-grid-world-搭建" id="toc-第一次课强化学习框架与迷宫环境-grid-world-搭建" class="nav-link" data-scroll-target="#第一次课强化学习框架与迷宫环境-grid-world-搭建">第一次课：强化学习框架与迷宫环境 (Grid World) 搭建</a>
-  <ul class="collapse">
-  <li><a href="#马尔可夫决策过程-mdp-基础" id="toc-马尔可夫决策过程-mdp-基础" class="nav-link" data-scroll-target="#马尔可夫决策过程-mdp-基础">1. 马尔可夫决策过程 (MDP) 基础</a></li>
-  <li><a href="#价值函数-value-function" id="toc-价值函数-value-function" class="nav-link" data-scroll-target="#价值函数-value-function">2. 价值函数 (Value Function)</a></li>
-  <li><a href="#探索-exploration-vs.-利用-exploitation" id="toc-探索-exploration-vs.-利用-exploitation" class="nav-link" data-scroll-target="#探索-exploration-vs.-利用-exploitation">3. 探索 (Exploration) vs.&nbsp;利用 (Exploitation)</a></li>
-  <li><a href="#迷宫环境-grid-world-搭建-gymnasium" id="toc-迷宫环境-grid-world-搭建-gymnasium" class="nav-link" data-scroll-target="#迷宫环境-grid-world-搭建-gymnasium">4. 迷宫环境 (Grid World) 搭建 (Gymnasium)</a></li>
-  </ul></li>
+  <li><a href="#第一次课强化学习框架与迷宫环境-grid-world-搭建" id="toc-第一次课强化学习框架与迷宫环境-grid-world-搭建" class="nav-link active" data-scroll-target="#第一次课强化学习框架与迷宫环境-grid-world-搭建">第一次课：强化学习框架与迷宫环境 (Grid World) 搭建</a></li>
   <li><a href="#第二次课小组项目一迷宫寻宝-grid-world-环境搭建" id="toc-第二次课小组项目一迷宫寻宝-grid-world-环境搭建" class="nav-link" data-scroll-target="#第二次课小组项目一迷宫寻宝-grid-world-环境搭建">第二次课：小组项目一：迷宫寻宝 (Grid World) 环境搭建</a>
   <ul class="collapse">
   <li><a href="#小组项目一迷宫寻宝-grid-world-环境搭建" id="toc-小组项目一迷宫寻宝-grid-world-环境搭建" class="nav-link" data-scroll-target="#小组项目一迷宫寻宝-grid-world-环境搭建">1. 小组项目一：迷宫寻宝 (Grid World) 环境搭建</a></li>
   <li><a href="#答疑与指导" id="toc-答疑与指导" class="nav-link" data-scroll-target="#答疑与指导">2. 答疑与指导</a></li>
   <li><a href="#布置小组项目一迷宫寻宝-grid-world-环境搭建" id="toc-布置小组项目一迷宫寻宝-grid-world-环境搭建" class="nav-link" data-scroll-target="#布置小组项目一迷宫寻宝-grid-world-环境搭建">3. 布置小组项目一：迷宫寻宝 (Grid World) 环境搭建</a></li>
-  <li><a href="#课后作业" id="toc-课后作业" class="nav-link" data-scroll-target="#课后作业">课后作业</a></li>
-  <li><a href="#预习资料" id="toc-预习资料" class="nav-link" data-scroll-target="#预习资料">预习资料</a></li>
+  <li><a href="#课后作业-1" id="toc-课后作业-1" class="nav-link" data-scroll-target="#课后作业-1">课后作业</a></li>
+  <li><a href="#预习资料-1" id="toc-预习资料-1" class="nav-link" data-scroll-target="#预习资料-1">预习资料</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -256,8 +249,16 @@ window.Quarto = {
 </header>
 
 
-<section id="课程目标" class="level2">
-<h2 class="anchored" data-anchor-id="课程目标">课程目标</h2>
+<div class="callout callout-style-simple callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+本周学习目标
+</div>
+</div>
+<div class="callout-body-container callout-body">
 <ul>
 <li>理解马尔可夫决策过程 (MDP) 的基本思想</li>
 <li>掌握策略 (Policy)、价值函数 (Value Function) 的概念</li>
@@ -265,60 +266,84 @@ window.Quarto = {
 <li>学习使用 Gymnasium 库搭建迷宫环境 (Grid World)</li>
 <li>掌握使用 AI 辅助工具进行代码补全和修改</li>
 </ul>
-</section>
+</div>
+</div>
 <section id="第一次课强化学习框架与迷宫环境-grid-world-搭建" class="level2">
 <h2 class="anchored" data-anchor-id="第一次课强化学习框架与迷宫环境-grid-world-搭建">第一次课：强化学习框架与迷宫环境 (Grid World) 搭建</h2>
-<section id="马尔可夫决策过程-mdp-基础" class="level3">
-<h3 class="anchored" data-anchor-id="马尔可夫决策过程-mdp-基础">1. 马尔可夫决策过程 (MDP) 基础</h3>
-<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout callout-style-default callout-important callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Note
+马尔可夫决策过程 (MDP)
 </div>
 </div>
 <div class="callout-body-container callout-body">
 <p>马尔可夫决策过程 (Markov Decision Process, MDP) 是强化学习的核心框架，用于形式化描述智能体与环境的交互过程。</p>
 </div>
 </div>
-<section id="mdp-的核心要素-无需数学细节侧重直观理解" class="level4">
-<h4 class="anchored" data-anchor-id="mdp-的核心要素-无需数学细节侧重直观理解">1.1 MDP 的核心要素 (无需数学细节，侧重直观理解)</h4>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+MDP 的核心要素
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<section id="状态-state-s" class="level3">
+<h3 class="anchored" data-anchor-id="状态-state-s">状态 (State, S)</h3>
 <ul>
-<li><strong>状态 (State, S)</strong>
-<ul>
-<li>环境的描述，包含了智能体做出决策所需的信息。</li>
-<li><strong>马尔可夫性质</strong>: 当前状态包含了所有历史信息，未来的状态只依赖于当前状态和动作，而与过去的历史无关。</li>
-<li>在迷宫环境中，状态可以是智能体在迷宫中的位置坐标。</li>
-</ul></li>
-<li><strong>动作 (Action, A)</strong>
-<ul>
-<li>智能体在每个状态下可以采取的行为。</li>
-<li>在迷宫环境中，动作可以是向上、下、左、右移动。</li>
-</ul></li>
-<li><strong>转移概率 (Transition Probability, P)</strong>
-<ul>
-<li>智能体在状态 <span class="math inline">\(s\)</span> 采取动作 <span class="math inline">\(a\)</span> 后，转移到下一个状态 <span class="math inline">\(s'\)</span> 的概率。</li>
-<li><span class="math inline">\(P(s'|s, a)\)</span> 表示在状态 <span class="math inline">\(s\)</span> 采取动作 <span class="math inline">\(a\)</span> 转移到状态 <span class="math inline">\(s'\)</span> 的概率。</li>
-<li>在确定性迷宫环境中，转移概率是确定的 (例如：向上走，一定到达上方的格子)。在非确定性环境中，转移概率可能存在随机性 (例如：在某些环境中，向上走，可能以 0.8 的概率到达上方格子，0.2 的概率滑到其他格子)。</li>
-</ul></li>
-<li><strong>奖励 (Reward, R)</strong>
-<ul>
-<li>智能体在与环境交互后获得的反馈信号，用于评价动作的好坏。</li>
-<li><span class="math inline">\(R(s, a, s')\)</span> 表示在状态 <span class="math inline">\(s\)</span> 采取动作 <span class="math inline">\(a\)</span> 转移到状态 <span class="math inline">\(s'\)</span> 后获得的奖励。</li>
-<li>在迷宫寻宝游戏中，到达宝藏位置可以获得正奖励，撞墙或者到达陷阱位置可能获得负奖励，正常移动可能获得小的负奖励 (鼓励尽快寻宝)。</li>
-</ul></li>
-<li><strong>策略 (Policy, <span class="math inline">\(\pi\)</span>)</strong>
-<ul>
-<li>智能体根据当前状态选择动作的规则，可以是确定性的或随机性的。</li>
-<li><span class="math inline">\(\pi(a|s)\)</span> 表示在状态 <span class="math inline">\(s\)</span> 下选择动作 <span class="math inline">\(a\)</span> 的概率。</li>
-<li>强化学习的目标是学习最优策略，使得智能体在环境中获得最大的累积奖励。</li>
-</ul></li>
+<li>环境的描述，包含了智能体做出决策所需的信息</li>
+<li><strong>马尔可夫性质</strong>: 当前状态包含了所有历史信息，未来的状态只依赖于当前状态和动作，而与过去的历史无关</li>
+<li>在迷宫环境中，状态可以是智能体在迷宫中的位置坐标</li>
 </ul>
 </section>
-<section id="mdp-过程示意" class="level4">
-<h4 class="anchored" data-anchor-id="mdp-过程示意">1.2 MDP 过程示意</h4>
+<section id="动作-action-a" class="level3">
+<h3 class="anchored" data-anchor-id="动作-action-a">动作 (Action, A)</h3>
+<ul>
+<li>智能体在每个状态下可以采取的行为</li>
+<li>在迷宫环境中，动作可以是向上、下、左、右移动</li>
+</ul>
+</section>
+<section id="转移概率-transition-probability-p" class="level3">
+<h3 class="anchored" data-anchor-id="转移概率-transition-probability-p">转移概率 (Transition Probability, P)</h3>
+<ul>
+<li>智能体在状态 <span class="math inline">\(s\)</span> 采取动作 <span class="math inline">\(a\)</span> 后，转移到下一个状态 <span class="math inline">\(s'\)</span> 的概率</li>
+<li><span class="math inline">\(P(s'|s, a)\)</span> 表示在状态 <span class="math inline">\(s\)</span> 采取动作 <span class="math inline">\(a\)</span> 转移到状态 <span class="math inline">\(s'\)</span> 的概率</li>
+<li>在确定性迷宫环境中，转移概率是确定的；在非确定性环境中可能存在随机性</li>
+</ul>
+</section>
+<section id="奖励-reward-r" class="level3">
+<h3 class="anchored" data-anchor-id="奖励-reward-r">奖励 (Reward, R)</h3>
+<ul>
+<li>智能体在与环境交互后获得的反馈信号，用于评价动作的好坏</li>
+<li><span class="math inline">\(R(s, a, s')\)</span> 表示在状态 <span class="math inline">\(s\)</span> 采取动作 <span class="math inline">\(a\)</span> 转移到状态 <span class="math inline">\(s'\)</span> 后获得的奖励</li>
+<li>在迷宫寻宝游戏中，到达宝藏获得正奖励，撞墙或陷阱获得负奖励</li>
+</ul>
+</section>
+<section id="策略-policy-pi" class="level3">
+<h3 class="anchored" data-anchor-id="策略-policy-pi">策略 (Policy, <span class="math inline">\(\pi\)</span>)</h3>
+<ul>
+<li>智能体根据当前状态选择动作的规则，可以是确定性的或随机性的</li>
+<li><span class="math inline">\(\pi(a|s)\)</span> 表示在状态 <span class="math inline">\(s\)</span> 下选择动作 <span class="math inline">\(a\)</span> 的概率</li>
+<li>强化学习的目标是学习最优策略，使得智能体获得最大的累积奖励</li>
+</ul>
+</section>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+MDP 过程示意图
+</div>
+</div>
+<div class="callout-body-container callout-body">
 <div class="cell" data-layout-align="default">
 <div class="cell-output-display">
 <div>
@@ -335,155 +360,145 @@ Note
 </div>
 </div>
 </div>
-<p>智能体 (Agent) 处在状态 (State) S，根据策略 (Policy) 选择动作 (Action) A，环境 (Environment) 接收动作后，转移到新的状态 (State) S’，并给智能体返回奖励 (Reward) R。智能体不断与环境交互，目标是学习到最优策略，最大化累积奖励。</p>
-</section>
-</section>
-<section id="价值函数-value-function" class="level3">
-<h3 class="anchored" data-anchor-id="价值函数-value-function">2. 价值函数 (Value Function)</h3>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Note
 </div>
 </div>
-<div class="callout-body-container callout-body">
-<p>价值函数用于评估在给定状态或状态-动作对下，未来预期累积奖励的期望值。价值函数是强化学习算法的核心概念之一。</p>
-</div>
-</div>
-<section id="v-函数-state-value-function" class="level4">
-<h4 class="anchored" data-anchor-id="v-函数-state-value-function">2.1 V 函数 (State Value Function)</h4>
-<ul>
-<li><span class="math inline">\(V_{\pi}(s)\)</span> 表示在策略 <span class="math inline">\(\pi\)</span> 下，从状态 <span class="math inline">\(s\)</span> 出发，未来可以获得的期望累积奖励。</li>
-<li>V 函数评估的是<strong>状态的价值</strong>，即处于某个状态的好坏程度。</li>
-<li>V 函数越大，表示当前状态越好，未来可以获得的期望奖励越高。</li>
-</ul>
-</section>
-<section id="q-函数-action-value-function" class="level4">
-<h4 class="anchored" data-anchor-id="q-函数-action-value-function">2.2 Q 函数 (Action Value Function)</h4>
-<ul>
-<li><span class="math inline">\(Q_{\pi}(s, a)\)</span> 表示在策略 <span class="math inline">\(\pi\)</span> 下，从状态 <span class="math inline">\(s\)</span> 出发，<strong>选择动作 <span class="math inline">\(a\)</span> 后</strong>，未来可以获得的期望累积奖励。</li>
-<li>Q 函数评估的是<strong>状态-动作对的价值</strong>，即在某个状态下，采取某个动作的好坏程度。</li>
-<li>Q 函数越大，表示在当前状态下，采取该动作越好，未来可以获得的期望奖励越高。</li>
-</ul>
-</section>
-<section id="v-函数和-q-函数的关系" class="level4">
-<h4 class="anchored" data-anchor-id="v-函数和-q-函数的关系">2.3 V 函数和 Q 函数的关系</h4>
-<ul>
-<li><p>V 函数可以通过 Q 函数计算得到：</p>
-<p><span class="math inline">\(V_{\pi}(s) = \sum_{a \in A} \pi(a|s) Q_{\pi}(s, a)\)</span></p>
-<p>即状态 <span class="math inline">\(s\)</span> 的价值等于在状态 <span class="math inline">\(s\)</span> 下，所有可能动作的 Q 函数值的<strong>期望</strong> (按照策略 <span class="math inline">\(\pi\)</span> 的动作选择概率进行加权平均)。</p></li>
-<li><p>Q 函数可以通过 V 函数和奖励函数以及转移概率计算得到 (Bellman 方程，下周会详细讲解)。</p></li>
-</ul>
-</section>
-</section>
-<section id="探索-exploration-vs.-利用-exploitation" class="level3">
-<h3 class="anchored" data-anchor-id="探索-exploration-vs.-利用-exploitation">3. 探索 (Exploration) vs.&nbsp;利用 (Exploitation)</h3>
 <div class="callout callout-style-default callout-important callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Important
+价值函数 (Value Function)
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>探索与利用是强化学习中一个核心的权衡问题。智能体需要在探索新策略和利用已知最优策略之间找到平衡。</p>
+<p>价值函数用于评估在给定状态或状态-动作对下，未来预期累积奖励的期望值。价值函数是强化学习算法的核心概念之一。</p>
+<section id="v-函数-state-value-function" class="level3">
+<h3 class="anchored" data-anchor-id="v-函数-state-value-function">V 函数 (State Value Function)</h3>
+<ul>
+<li><span class="math inline">\(V_{\pi}(s)\)</span> 表示在策略 <span class="math inline">\(\pi\)</span> 下，从状态 <span class="math inline">\(s\)</span> 出发，未来可以获得的期望累积奖励</li>
+<li>V 函数评估的是<strong>状态的价值</strong>，即处于某个状态的好坏程度</li>
+<li>V 函数越大，表示当前状态越好，未来可以获得的期望奖励越高</li>
+</ul>
+</section>
+<section id="q-函数-action-value-function" class="level3">
+<h3 class="anchored" data-anchor-id="q-函数-action-value-function">Q 函数 (Action Value Function)</h3>
+<ul>
+<li><span class="math inline">\(Q_{\pi}(s, a)\)</span> 表示在策略 <span class="math inline">\(\pi\)</span> 下，从状态 <span class="math inline">\(s\)</span> 出发，选择动作 <span class="math inline">\(a\)</span> 后的期望累积奖励</li>
+<li>Q 函数评估的是<strong>状态-动作对的价值</strong></li>
+<li>Q 函数越大，表示在当前状态下，该动作越好</li>
+</ul>
+</section>
+<section id="v-函数和-q-函数的关系" class="level3">
+<h3 class="anchored" data-anchor-id="v-函数和-q-函数的关系">V 函数和 Q 函数的关系</h3>
+<p><span class="math inline">\(V_{\pi}(s) = \sum_{a \in A} \pi(a|s) Q_{\pi}(s, a)\)</span></p>
+</section>
 </div>
 </div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+探索与利用的平衡
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>探索 (Exploration) 与利用 (Exploitation) 是强化学习中一个核心的权衡问题：</p>
+<section id="探索-exploration" class="level3">
+<h3 class="anchored" data-anchor-id="探索-exploration">探索 (Exploration)</h3>
 <ul>
-<li><strong>探索 (Exploration)</strong>
-<ul>
-<li>尝试新的动作，探索未知的状态和动作空间，以发现潜在的更优策略。</li>
-<li>例如：在迷宫寻宝游戏中，智能体可能会尝试一些之前没有走过的路径，以期找到更短的路径或者隐藏的宝藏。</li>
-</ul></li>
-<li><strong>利用 (Exploitation)</strong>
-<ul>
-<li>根据已知的经验，选择当前认为最优的动作，以最大化当前的累积奖励。</li>
-<li>例如：在迷宫寻宝游戏中，如果智能体已经知道某条路径可以到达宝藏，它可能会重复选择这条路径，以快速获得奖励。</li>
-</ul></li>
-</ul>
-<section id="探索与利用的平衡" class="level4">
-<h4 class="anchored" data-anchor-id="探索与利用的平衡">3.1 探索与利用的平衡</h4>
-<ul>
-<li><p><strong>过度探索</strong>：可能导致智能体花费大量时间在探索无用的区域，而错失已知的最优策略。</p></li>
-<li><p><strong>过度利用</strong>：可能导致智能体陷入局部最优解，而无法发现全局最优策略。</p></li>
-<li><p><strong><span class="math inline">\(\epsilon\)</span>-greedy 策略</strong> 是一种常用的平衡探索与利用的策略：</p>
-<ul>
-<li>以概率 <span class="math inline">\(\epsilon\)</span> (探索率) 随机选择动作 (探索)。</li>
-<li>以概率 <span class="math inline">\(1-\epsilon\)</span> 选择当前 Q 函数值最大的动作 (利用)。</li>
-<li><span class="math inline">\(\epsilon\)</span> 的值通常会随着训练的进行而逐渐减小，从而在训练初期鼓励探索，在训练后期侧重利用。</li>
-</ul></li>
+<li>尝试新的动作，探索未知的状态和动作空间</li>
+<li>可能发现更优策略，但也可能浪费时间在无用区域</li>
 </ul>
 </section>
-<section id="商业案例类比" class="level4">
-<h4 class="anchored" data-anchor-id="商业案例类比">3.2 商业案例类比</h4>
+<section id="利用-exploitation" class="level3">
+<h3 class="anchored" data-anchor-id="利用-exploitation">利用 (Exploitation)</h3>
 <ul>
-<li><p><strong>新市场尝试 vs.&nbsp;现有市场深耕</strong></p>
-<ul>
-<li><strong>新市场尝试 (探索)</strong>：企业尝试进入新的市场领域，例如：开发新的产品线、拓展新的客户群体、进入新的地理区域。
-<ul>
-<li><strong>优点</strong>：可能发现新的增长机会，拓展业务范围，提高长期竞争力。</li>
-<li><strong>缺点</strong>：风险较高，投入成本较大，短期收益不确定。</li>
-</ul></li>
-<li><strong>现有市场深耕 (利用)</strong>：企业在现有市场领域深耕细作，例如：优化现有产品、提高客户满意度、提升市场份额。
-<ul>
-<li><strong>优点</strong>：风险较低，收益相对稳定，短期回报可观。</li>
-<li><strong>缺点</strong>：增长空间有限，可能错失新的市场机会，长期竞争力可能不足。</li>
-</ul></li>
-<li><strong>平衡策略</strong>：企业需要在新市场尝试和现有市场深耕之间找到平衡点，例如：
-<ul>
-<li><strong>双元策略 (Dual Strategy)</strong>：同时进行探索性创新和利用性优化。</li>
-<li><strong>阶段性策略</strong>：在不同发展阶段侧重不同的策略，例如：初创期侧重探索，成长期侧重利用，成熟期再次侧重探索。</li>
-</ul></li>
-</ul></li>
+<li>根据已知经验选择当前最优动作</li>
+<li>保证稳定收益，但可能错过更好的策略</li>
 </ul>
 </section>
+<section id="epsilon-greedy-策略" class="level3">
+<h3 class="anchored" data-anchor-id="epsilon-greedy-策略"><span class="math inline">\(\epsilon\)</span>-greedy 策略</h3>
+<ul>
+<li>以概率 <span class="math inline">\(\epsilon\)</span> 随机选择动作 (探索)</li>
+<li>以概率 <span class="math inline">\(1-\epsilon\)</span> 选择当前最优动作 (利用)</li>
+<li><span class="math inline">\(\epsilon\)</span> 随训练进行逐渐减小</li>
+</ul>
 </section>
-<section id="迷宫环境-grid-world-搭建-gymnasium" class="level3">
-<h3 class="anchored" data-anchor-id="迷宫环境-grid-world-搭建-gymnasium">4. 迷宫环境 (Grid World) 搭建 (Gymnasium)</h3>
+</div>
+</div>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Note
+商业案例：新市场尝试 vs.&nbsp;现有市场深耕
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Grid World 是强化学习中常用的简单环境，非常适合初学者入门。我们将使用 Gymnasium 库来搭建 Grid World 环境。</p>
+<section id="新市场尝试-探索" class="level3">
+<h3 class="anchored" data-anchor-id="新市场尝试-探索">新市场尝试 (探索)</h3>
+<ul>
+<li>进入新的市场领域</li>
+<li>开发新的产品线</li>
+<li>拓展新的客户群体</li>
+</ul>
+</section>
+<section id="现有市场深耕-利用" class="level3">
+<h3 class="anchored" data-anchor-id="现有市场深耕-利用">现有市场深耕 (利用)</h3>
+<ul>
+<li>优化现有产品</li>
+<li>提高客户满意度</li>
+<li>提升市场份额</li>
+</ul>
+</section>
+<section id="平衡策略" class="level3">
+<h3 class="anchored" data-anchor-id="平衡策略">平衡策略</h3>
+<ul>
+<li>双元策略：同时进行探索和利用</li>
+<li>阶段性策略：不同发展阶段侧重不同策略</li>
+</ul>
+</section>
 </div>
 </div>
-<section id="gymnasium-库安装与基本使用-回顾" class="level4">
-<h4 class="anchored" data-anchor-id="gymnasium-库安装与基本使用-回顾">4.1 Gymnasium 库安装与基本使用 (回顾)</h4>
-<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 安装 Gymnasium (如果已安装，可以跳过)</span></span>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Grid World 环境搭建
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<section id="gymnasium-基础使用" class="level3">
+<h3 class="anchored" data-anchor-id="gymnasium-基础使用">Gymnasium 基础使用</h3>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 安装 Gymnasium</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># pip install gymnasium</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> gymnasium <span class="im">as</span> gym</span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 创建 CartPole 环境 (回顾)</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 创建 CartPole 环境</span></span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>env <span class="op">=</span> gym.make(<span class="st">"CartPole-v1"</span>, render_mode<span class="op">=</span><span class="st">"human"</span>)</span>
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 重置环境</span></span>
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>observation, info <span class="op">=</span> env.reset()</span>
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co"># 随机选择一个动作</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co"># 随机选择动作</span></span>
 <span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>action <span class="op">=</span> env.action_space.sample()</span>
 <span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="co"># 执行动作，获取环境反馈</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="co"># 执行动作</span></span>
 <span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>observation, reward, terminated, truncated, info <span class="op">=</span> env.step(action)</span>
 <span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="co"># 关闭环境</span></span>
 <span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>env.close()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-<section id="自定义-grid-world-环境" class="level4">
-<h4 class="anchored" data-anchor-id="自定义-grid-world-环境">4.2 自定义 Grid World 环境</h4>
-<ol type="1">
-<li><p><strong>创建自定义环境类</strong></p>
+<section id="自定义-grid-world-环境" class="level3">
+<h3 class="anchored" data-anchor-id="自定义-grid-world-环境">自定义 Grid World 环境</h3>
 <div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> gymnasium <span class="im">as</span> gym</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> gymnasium <span class="im">import</span> spaces</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
@@ -494,253 +509,104 @@ Note
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, render_mode<span class="op">=</span><span class="va">None</span>, size<span class="op">=</span><span class="dv">5</span>):</span>
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>()</span>
 <span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.size <span class="op">=</span> size  <span class="co"># Grid world size</span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.window_size <span class="op">=</span> <span class="dv">512</span>  <span class="co"># The size of the PyGame window</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.window_size <span class="op">=</span> <span class="dv">512</span>  <span class="co"># PyGame window size</span></span>
 <span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 动作空间：上下左右 (4个离散动作)</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 动作空间：上下左右</span></span>
 <span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.action_space <span class="op">=</span> spaces.Discrete(<span class="dv">4</span>)</span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 观测空间：智能体在 Grid world 中的位置 (行、列坐标)</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 观测空间：智能体位置</span></span>
 <span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.observation_space <span class="op">=</span> spaces.Discrete(size <span class="op">*</span> size)</span>
 <span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""</span></span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="co">        Map of the grid world:</span></span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="co">        - 0: 空格 (可以自由移动)</span></span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="co">        - 1: 障碍物 (无法通过)</span></span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="co">        - 2: 宝藏 (目标位置，获得奖励)</span></span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a><span class="co">        - 3: 陷阱 (负奖励)</span></span>
-<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="co">        - 4: 智能体起始位置</span></span>
-<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a><span class="co">        """</span></span>
-<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>._grid_map <span class="op">=</span> np.array([</span>
-<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>            [<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>],</span>
-<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>            [<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>],</span>
-<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>            [<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">0</span>],</span>
-<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>            [<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>],</span>
-<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>            [<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>]</span>
-<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>        ])</span>
-<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 宝藏位置</span></span>
-<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>._target_location <span class="op">=</span> np.array([<span class="dv">2</span>, <span class="dv">2</span>])</span>
-<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 陷阱位置 (可以添加多个陷阱位置)</span></span>
-<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>._trap_location <span class="op">=</span> np.array([<span class="dv">4</span>, <span class="dv">4</span>])</span>
-<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 智能体起始位置</span></span>
-<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>._agent_start_location <span class="op">=</span> np.array([<span class="dv">0</span>, <span class="dv">0</span>])</span>
-<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>._agent_location <span class="op">=</span> np.array([<span class="dv">0</span>, <span class="dv">0</span>])</span>
-<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.render_mode <span class="op">=</span> render_mode</span>
-<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""</span></span>
-<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a><span class="co">        对于 render_mode="human" 或 "rgb_array"，需要初始化 PyGame</span></span>
-<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a><span class="co">        """</span></span>
-<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> render_mode <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span>:</span>
-<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a>            <span class="im">import</span> pygame</span>
-<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a>            pygame.init()</span>
-<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a>            pygame.font.init()</span>
-<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>.window <span class="op">=</span> pygame.display.set_mode(</span>
-<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a>                (<span class="va">self</span>.window_size, <span class="va">self</span>.window_size)</span>
-<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a>            )</span>
-<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>.clock <span class="op">=</span> pygame.time.Clock()</span>
-<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> _get_obs(<span class="va">self</span>):</span>
-<span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 将 2D 坐标转换为 1D 状态表示</span></span>
-<span id="cb2-60"><a href="#cb2-60" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> np.ravel_multi_index(<span class="va">self</span>._agent_location, (<span class="va">self</span>.size, <span class="va">self</span>.size))</span>
-<span id="cb2-61"><a href="#cb2-61" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-62"><a href="#cb2-62" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> _get_info(<span class="va">self</span>):</span>
-<span id="cb2-63"><a href="#cb2-63" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> {</span>
-<span id="cb2-64"><a href="#cb2-64" aria-hidden="true" tabindex="-1"></a>            <span class="st">"agent_location"</span>: <span class="va">self</span>._agent_location,</span>
-<span id="cb2-65"><a href="#cb2-65" aria-hidden="true" tabindex="-1"></a>            <span class="st">"target_location"</span>: <span class="va">self</span>._target_location,</span>
-<span id="cb2-66"><a href="#cb2-66" aria-hidden="true" tabindex="-1"></a>            <span class="st">"distance_to_target"</span>: np.linalg.norm(<span class="va">self</span>._agent_location <span class="op">-</span> <span class="va">self</span>._target_location, <span class="bu">ord</span><span class="op">=</span><span class="dv">1</span>)</span>
-<span id="cb2-67"><a href="#cb2-67" aria-hidden="true" tabindex="-1"></a>        }</span>
-<span id="cb2-68"><a href="#cb2-68" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-69"><a href="#cb2-69" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> reset(<span class="va">self</span>, seed<span class="op">=</span><span class="va">None</span>, options<span class="op">=</span><span class="va">None</span>):</span>
-<span id="cb2-70"><a href="#cb2-70" aria-hidden="true" tabindex="-1"></a>        <span class="bu">super</span>().reset(seed<span class="op">=</span>seed)</span>
-<span id="cb2-71"><a href="#cb2-71" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 将智能体放置在起始位置</span></span>
-<span id="cb2-72"><a href="#cb2-72" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>._agent_location <span class="op">=</span> <span class="va">self</span>._agent_start_location</span>
-<span id="cb2-73"><a href="#cb2-73" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-74"><a href="#cb2-74" aria-hidden="true" tabindex="-1"></a>        observation <span class="op">=</span> <span class="va">self</span>._get_obs()</span>
-<span id="cb2-75"><a href="#cb2-75" aria-hidden="true" tabindex="-1"></a>        info <span class="op">=</span> <span class="va">self</span>._get_info()</span>
-<span id="cb2-76"><a href="#cb2-76" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-77"><a href="#cb2-77" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="va">self</span>.render_mode <span class="op">==</span> <span class="st">"human"</span>:</span>
-<span id="cb2-78"><a href="#cb2-78" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>._render_frame()</span>
-<span id="cb2-79"><a href="#cb2-79" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-80"><a href="#cb2-80" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> observation, info</span>
-<span id="cb2-81"><a href="#cb2-81" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-82"><a href="#cb2-82" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> step(<span class="va">self</span>, action):</span>
-<span id="cb2-83"><a href="#cb2-83" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 动作编码：0=上, 1=右, 2=下, 3=左</span></span>
-<span id="cb2-84"><a href="#cb2-84" aria-hidden="true" tabindex="-1"></a>        direction <span class="op">=</span> np.array([</span>
-<span id="cb2-85"><a href="#cb2-85" aria-hidden="true" tabindex="-1"></a>            [<span class="op">-</span><span class="dv">1</span>, <span class="dv">0</span>], <span class="co"># 上</span></span>
-<span id="cb2-86"><a href="#cb2-86" aria-hidden="true" tabindex="-1"></a>            [<span class="dv">0</span>, <span class="dv">1</span>],  <span class="co"># 右</span></span>
-<span id="cb2-87"><a href="#cb2-87" aria-hidden="true" tabindex="-1"></a>            [<span class="dv">1</span>, <span class="dv">0</span>],  <span class="co"># 下</span></span>
-<span id="cb2-88"><a href="#cb2-88" aria-hidden="true" tabindex="-1"></a>            [<span class="dv">0</span>, <span class="op">-</span><span class="dv">1</span>]  <span class="co"># 左</span></span>
-<span id="cb2-89"><a href="#cb2-89" aria-hidden="true" tabindex="-1"></a>        ])</span>
-<span id="cb2-90"><a href="#cb2-90" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 智能体移动到下一个位置 (如果超出边界，则保持原位置)</span></span>
-<span id="cb2-91"><a href="#cb2-91" aria-hidden="true" tabindex="-1"></a>        proposed_location <span class="op">=</span> <span class="va">self</span>._agent_location <span class="op">+</span> direction[action]</span>
-<span id="cb2-92"><a href="#cb2-92" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-93"><a href="#cb2-93" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 判断是否超出边界</span></span>
-<span id="cb2-94"><a href="#cb2-94" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="kw">not</span> (<span class="dv">0</span> <span class="op">&lt;=</span> proposed_location[<span class="dv">0</span>] <span class="op">&lt;</span> <span class="va">self</span>.size <span class="kw">and</span> <span class="dv">0</span> <span class="op">&lt;=</span> proposed_location[<span class="dv">1</span>] <span class="op">&lt;</span> <span class="va">self</span>.size):</span>
-<span id="cb2-95"><a href="#cb2-95" aria-hidden="true" tabindex="-1"></a>            <span class="co"># 超出边界，保持原位置</span></span>
-<span id="cb2-96"><a href="#cb2-96" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>._agent_location <span class="op">=</span> <span class="va">self</span>._agent_location</span>
-<span id="cb2-97"><a href="#cb2-97" aria-hidden="true" tabindex="-1"></a>        <span class="cf">elif</span> <span class="va">self</span>._grid_map[proposed_location[<span class="dv">0</span>], proposed_location[<span class="dv">1</span>]] <span class="op">==</span> <span class="dv">1</span>:</span>
-<span id="cb2-98"><a href="#cb2-98" aria-hidden="true" tabindex="-1"></a>            <span class="co"># 撞到障碍物，保持原位置</span></span>
-<span id="cb2-99"><a href="#cb2-99" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>._agent_location <span class="op">=</span> <span class="va">self</span>._agent_location</span>
-<span id="cb2-100"><a href="#cb2-100" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span>:</span>
-<span id="cb2-101"><a href="#cb2-101" aria-hidden="true" tabindex="-1"></a>            <span class="co"># 移动到新位置</span></span>
-<span id="cb2-102"><a href="#cb2-102" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>._agent_location <span class="op">=</span> proposed_location</span>
-<span id="cb2-103"><a href="#cb2-103" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-104"><a href="#cb2-104" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 获取新的观测</span></span>
-<span id="cb2-105"><a href="#cb2-105" aria-hidden="true" tabindex="-1"></a>        observation <span class="op">=</span> <span class="va">self</span>._get_obs()</span>
-<span id="cb2-106"><a href="#cb2-106" aria-hidden="true" tabindex="-1"></a>        info <span class="op">=</span> <span class="va">self</span>._get_info()</span>
-<span id="cb2-107"><a href="#cb2-107" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-108"><a href="#cb2-108" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 根据智能体位置计算奖励 (稀疏奖励)</span></span>
-<span id="cb2-109"><a href="#cb2-109" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> np.array_equal(<span class="va">self</span>._agent_location, <span class="va">self</span>._target_location):</span>
-<span id="cb2-110"><a href="#cb2-110" aria-hidden="true" tabindex="-1"></a>            reward <span class="op">=</span> <span class="dv">10</span>  <span class="co"># 到达宝藏，正奖励</span></span>
-<span id="cb2-111"><a href="#cb2-111" aria-hidden="true" tabindex="-1"></a>            terminated <span class="op">=</span> <span class="va">True</span> <span class="co"># 游戏结束</span></span>
-<span id="cb2-112"><a href="#cb2-112" aria-hidden="true" tabindex="-1"></a>        <span class="cf">elif</span> np.array_equal(<span class="va">self</span>._agent_location, <span class="va">self</span>._trap_location):</span>
-<span id="cb2-113"><a href="#cb2-113" aria-hidden="true" tabindex="-1"></a>            reward <span class="op">=</span> <span class="op">-</span><span class="dv">10</span> <span class="co"># 到达陷阱，负奖励</span></span>
-<span id="cb2-114"><a href="#cb2-114" aria-hidden="true" tabindex="-1"></a>            terminated <span class="op">=</span> <span class="va">True</span> <span class="co"># 游戏结束</span></span>
-<span id="cb2-115"><a href="#cb2-115" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span>:</span>
-<span id="cb2-116"><a href="#cb2-116" aria-hidden="true" tabindex="-1"></a>            reward <span class="op">=</span> <span class="op">-</span><span class="dv">1</span> <span class="co"># 正常移动，小负奖励 (鼓励尽快寻宝)</span></span>
-<span id="cb2-117"><a href="#cb2-117" aria-hidden="true" tabindex="-1"></a>            terminated <span class="op">=</span> <span class="va">False</span></span>
-<span id="cb2-118"><a href="#cb2-118" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-119"><a href="#cb2-119" aria-hidden="true" tabindex="-1"></a>        truncated <span class="op">=</span> <span class="va">False</span> <span class="co">#  Grid world 环境没有时间限制，所以 truncated 始终为 False</span></span>
-<span id="cb2-120"><a href="#cb2-120" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-121"><a href="#cb2-121" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="va">self</span>.render_mode <span class="op">==</span> <span class="st">"human"</span>:</span>
-<span id="cb2-122"><a href="#cb2-122" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>._render_frame()</span>
-<span id="cb2-123"><a href="#cb2-123" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-124"><a href="#cb2-124" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> observation, reward, terminated, truncated, info</span>
-<span id="cb2-125"><a href="#cb2-125" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-126"><a href="#cb2-126" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> render(<span class="va">self</span>):</span>
-<span id="cb2-127"><a href="#cb2-127" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="va">self</span>.render_mode <span class="op">==</span> <span class="st">"rgb_array"</span>:</span>
-<span id="cb2-128"><a href="#cb2-128" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="va">self</span>._render_frame()</span>
-<span id="cb2-129"><a href="#cb2-129" aria-hidden="true" tabindex="-1"></a>        <span class="cf">elif</span> <span class="va">self</span>.render_mode <span class="op">==</span> <span class="st">"human"</span>:</span>
-<span id="cb2-130"><a href="#cb2-130" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>._render_frame()</span>
-<span id="cb2-131"><a href="#cb2-131" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="va">None</span></span>
-<span id="cb2-132"><a href="#cb2-132" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-133"><a href="#cb2-133" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> _render_frame(<span class="va">self</span>):</span>
-<span id="cb2-134"><a href="#cb2-134" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="va">self</span>.window <span class="kw">is</span> <span class="va">None</span> <span class="kw">and</span> <span class="va">self</span>.render_mode <span class="op">==</span> <span class="st">"human"</span>:</span>
-<span id="cb2-135"><a href="#cb2-135" aria-hidden="true" tabindex="-1"></a>            <span class="im">import</span> pygame</span>
-<span id="cb2-136"><a href="#cb2-136" aria-hidden="true" tabindex="-1"></a>            pygame.init()</span>
-<span id="cb2-137"><a href="#cb2-137" aria-hidden="true" tabindex="-1"></a>            pygame.font.init()</span>
-<span id="cb2-138"><a href="#cb2-138" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>.window <span class="op">=</span> pygame.display.set_mode(</span>
-<span id="cb2-139"><a href="#cb2-139" aria-hidden="true" tabindex="-1"></a>                (<span class="va">self</span>.window_size, <span class="va">self</span>.window_size)</span>
-<span id="cb2-140"><a href="#cb2-140" aria-hidden="true" tabindex="-1"></a>            )</span>
-<span id="cb2-141"><a href="#cb2-141" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="va">self</span>.clock <span class="kw">is</span> <span class="va">None</span> <span class="kw">and</span> <span class="va">self</span>.render_mode <span class="op">==</span> <span class="st">"human"</span>:</span>
-<span id="cb2-142"><a href="#cb2-142" aria-hidden="true" tabindex="-1"></a>            <span class="im">import</span> pygame</span>
-<span id="cb2-143"><a href="#cb2-143" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>.clock <span class="op">=</span> pygame.time.Clock()</span>
-<span id="cb2-144"><a href="#cb2-144" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-145"><a href="#cb2-145" aria-hidden="true" tabindex="-1"></a>        canvas <span class="op">=</span> pygame.Surface((<span class="va">self</span>.window_size, <span class="va">self</span>.window_size))</span>
-<span id="cb2-146"><a href="#cb2-146" aria-hidden="true" tabindex="-1"></a>        canvas.fill((<span class="dv">255</span>, <span class="dv">255</span>, <span class="dv">255</span>)) <span class="co"># 白色背景</span></span>
-<span id="cb2-147"><a href="#cb2-147" aria-hidden="true" tabindex="-1"></a>        pix_square_size <span class="op">=</span> (</span>
-<span id="cb2-148"><a href="#cb2-148" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>.window_size <span class="op">/</span> <span class="va">self</span>.size</span>
-<span id="cb2-149"><a href="#cb2-149" aria-hidden="true" tabindex="-1"></a>        )  <span class="co"># 一格像素大小</span></span>
-<span id="cb2-150"><a href="#cb2-150" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-151"><a href="#cb2-151" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 绘制 Grid world 地图</span></span>
-<span id="cb2-152"><a href="#cb2-152" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> row <span class="kw">in</span> <span class="bu">range</span>(<span class="va">self</span>.size):</span>
-<span id="cb2-153"><a href="#cb2-153" aria-hidden="true" tabindex="-1"></a>            <span class="cf">for</span> col <span class="kw">in</span> <span class="bu">range</span>(<span class="va">self</span>.size):</span>
-<span id="cb2-154"><a href="#cb2-154" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> <span class="va">self</span>._grid_map[row, col] <span class="op">==</span> <span class="dv">1</span>: <span class="co"># 障碍物</span></span>
-<span id="cb2-155"><a href="#cb2-155" aria-hidden="true" tabindex="-1"></a>                    pygame.draw.rect(</span>
-<span id="cb2-156"><a href="#cb2-156" aria-hidden="true" tabindex="-1"></a>                        canvas,</span>
-<span id="cb2-157"><a href="#cb2-157" aria-hidden="true" tabindex="-1"></a>                        (<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>), <span class="co"># 黑色</span></span>
-<span id="cb2-158"><a href="#cb2-158" aria-hidden="true" tabindex="-1"></a>                        pygame.Rect(</span>
-<span id="cb2-159"><a href="#cb2-159" aria-hidden="true" tabindex="-1"></a>                            pix_square_size <span class="op">*</span> col,</span>
-<span id="cb2-160"><a href="#cb2-160" aria-hidden="true" tabindex="-1"></a>                            pix_square_size <span class="op">*</span> row,</span>
-<span id="cb2-161"><a href="#cb2-161" aria-hidden="true" tabindex="-1"></a>                            pix_square_size,</span>
-<span id="cb2-162"><a href="#cb2-162" aria-hidden="true" tabindex="-1"></a>                            pix_square_size,</span>
-<span id="cb2-163"><a href="#cb2-163" aria-hidden="true" tabindex="-1"></a>                        ),</span>
-<span id="cb2-164"><a href="#cb2-164" aria-hidden="true" tabindex="-1"></a>                    )</span>
-<span id="cb2-165"><a href="#cb2-165" aria-hidden="true" tabindex="-1"></a>                <span class="cf">elif</span> <span class="va">self</span>._grid_map[row, col] <span class="op">==</span> <span class="dv">2</span>: <span class="co"># 宝藏</span></span>
-<span id="cb2-166"><a href="#cb2-166" aria-hidden="true" tabindex="-1"></a>                    pygame.draw.rect(</span>
-<span id="cb2-167"><a href="#cb2-167" aria-hidden="true" tabindex="-1"></a>                        canvas,</span>
-<span id="cb2-168"><a href="#cb2-168" aria-hidden="true" tabindex="-1"></a>                        (<span class="dv">255</span>, <span class="dv">255</span>, <span class="dv">0</span>), <span class="co"># 黄色</span></span>
-<span id="cb2-169"><a href="#cb2-169" aria-hidden="true" tabindex="-1"></a>                        pygame.Rect(</span>
-<span id="cb2-170"><a href="#cb2-170" aria-hidden="true" tabindex="-1"></a>                            pix_square_size <span class="op">*</span> col,</span>
-<span id="cb2-171"><a href="#cb2-171" aria-hidden="true" tabindex="-1"></a>                            pix_square_size <span class="op">*</span> row,</span>
-<span id="cb2-172"><a href="#cb2-172" aria-hidden="true" tabindex="-1"></a>                            pix_square_size,</span>
-<span id="cb2-173"><a href="#cb2-173" aria-hidden="true" tabindex="-1"></a>                            pix_square_size,</span>
-<span id="cb2-174"><a href="#cb2-174" aria-hidden="true" tabindex="-1"></a>                        ),</span>
-<span id="cb2-175"><a href="#cb2-175" aria-hidden="true" tabindex="-1"></a>                    )</span>
-<span id="cb2-176"><a href="#cb2-176" aria-hidden="true" tabindex="-1"></a>                <span class="cf">elif</span> <span class="va">self</span>._grid_map[row, col] <span class="op">==</span> <span class="dv">3</span>: <span class="co"># 陷阱</span></span>
-<span id="cb2-177"><a href="#cb2-177" aria-hidden="true" tabindex="-1"></a>                    pygame.draw.rect(</span>
-<span id="cb2-178"><a href="#cb2-178" aria-hidden="true" tabindex="-1"></a>                        canvas,</span>
-<span id="cb2-179"><a href="#cb2-179" aria-hidden="true" tabindex="-1"></a>                        (<span class="dv">255</span>, <span class="dv">0</span>, <span class="dv">0</span>), <span class="co"># 红色</span></span>
-<span id="cb2-180"><a href="#cb2-180" aria-hidden="true" tabindex="-1"></a>                        pygame.Rect(</span>
-<span id="cb2-181"><a href="#cb2-181" aria-hidden="true" tabindex="-1"></a>                            pix_square_size <span class="op">*</span> col,</span>
-<span id="cb2-182"><a href="#cb2-182" aria-hidden="true" tabindex="-1"></a>                            pix_square_size <span class="op">*</span> row,</span>
-<span id="cb2-183"><a href="#cb2-183" aria-hidden="true" tabindex="-1"></a>                            pix_square_size,</span>
-<span id="cb2-184"><a href="#cb2-184" aria-hidden="true" tabindex="-1"></a>                            pix_square_size,</span>
-<span id="cb2-185"><a href="#cb2-185" aria-hidden="true" tabindex="-1"></a>                        ),</span>
-<span id="cb2-186"><a href="#cb2-186" aria-hidden="true" tabindex="-1"></a>                    )</span>
-<span id="cb2-187"><a href="#cb2-187" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-188"><a href="#cb2-188" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 绘制智能体</span></span>
-<span id="cb2-189"><a href="#cb2-189" aria-hidden="true" tabindex="-1"></a>        <span class="im">import</span> pygame</span>
-<span id="cb2-190"><a href="#cb2-190" aria-hidden="true" tabindex="-1"></a>        pygame.draw.circle(</span>
-<span id="cb2-191"><a href="#cb2-191" aria-hidden="true" tabindex="-1"></a>            canvas,</span>
-<span id="cb2-192"><a href="#cb2-192" aria-hidden="true" tabindex="-1"></a>            (<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">255</span>), <span class="co"># 蓝色</span></span>
-<span id="cb2-193"><a href="#cb2-193" aria-hidden="true" tabindex="-1"></a>            (<span class="va">self</span>._agent_location <span class="op">+</span> <span class="fl">0.5</span>) <span class="op">*</span> pix_square_size,</span>
-<span id="cb2-194"><a href="#cb2-194" aria-hidden="true" tabindex="-1"></a>            <span class="bu">min</span>(pix_square_size, pix_square_size) <span class="op">/</span> <span class="dv">3</span>,</span>
-<span id="cb2-195"><a href="#cb2-195" aria-hidden="true" tabindex="-1"></a>        )</span>
-<span id="cb2-196"><a href="#cb2-196" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-197"><a href="#cb2-197" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="va">self</span>.render_mode <span class="op">==</span> <span class="st">"human"</span>:</span>
-<span id="cb2-198"><a href="#cb2-198" aria-hidden="true" tabindex="-1"></a>            <span class="co"># The following line copies our drawings from `canvas` to the visible window</span></span>
-<span id="cb2-199"><a href="#cb2-199" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>.window.blit(canvas, canvas.get_rect())</span>
-<span id="cb2-200"><a href="#cb2-200" aria-hidden="true" tabindex="-1"></a>            pygame.event.pump()</span>
-<span id="cb2-201"><a href="#cb2-201" aria-hidden="true" tabindex="-1"></a>            pygame.display.flip()</span>
-<span id="cb2-202"><a href="#cb2-202" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-203"><a href="#cb2-203" aria-hidden="true" tabindex="-1"></a>            <span class="co"># We need to ensure that human-rendering occurs at the predefined FPS.</span></span>
-<span id="cb2-204"><a href="#cb2-204" aria-hidden="true" tabindex="-1"></a>            <span class="co"># The following line will automatically add a delay to keep the FPS stable.</span></span>
-<span id="cb2-205"><a href="#cb2-205" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>.clock.tick(<span class="va">self</span>.metadata[<span class="st">"render_fps"</span>])</span>
-<span id="cb2-206"><a href="#cb2-206" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span>:  <span class="co"># rgb_array</span></span>
-<span id="cb2-207"><a href="#cb2-207" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> np.transpose(</span>
-<span id="cb2-208"><a href="#cb2-208" aria-hidden="true" tabindex="-1"></a>                np.array(pygame.surfarray.pixels3d(canvas)), axes<span class="op">=</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">2</span>)</span>
-<span id="cb2-209"><a href="#cb2-209" aria-hidden="true" tabindex="-1"></a>            )</span>
-<span id="cb2-210"><a href="#cb2-210" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-211"><a href="#cb2-211" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> close(<span class="va">self</span>):</span>
-<span id="cb2-212"><a href="#cb2-212" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="va">self</span>.window <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span>:</span>
-<span id="cb2-213"><a href="#cb2-213" aria-hidden="true" tabindex="-1"></a>            <span class="im">import</span> pygame</span>
-<span id="cb2-214"><a href="#cb2-214" aria-hidden="true" tabindex="-1"></a>            pygame.display.quit()</span>
-<span id="cb2-215"><a href="#cb2-215" aria-hidden="true" tabindex="-1"></a>            pygame.quit()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
-<li><p><strong>注册自定义环境</strong></p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> gymnasium.envs.registration <span class="im">import</span> register</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>register(</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="bu">id</span><span class="op">=</span><span class="st">"GridWorld-v0"</span>, <span class="co"># 环境 ID</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    entry_point<span class="op">=</span><span class="st">"__main__:GridWorldEnv"</span>, <span class="co">#  指向自定义环境类</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    kwargs<span class="op">=</span>{<span class="st">"render_mode"</span>: <span class="st">"human"</span>, <span class="st">"size"</span>: <span class="dv">5</span>}, <span class="co">#  环境初始化参数</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    max_episode_steps<span class="op">=</span><span class="dv">300</span>, <span class="co">#  最大 episode 步数</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p><strong>注意</strong>: <code>entry_point="__main__:GridWorldEnv"</code> 假设你的 <code>GridWorldEnv</code> 类定义在当前脚本文件中。如果你的环境类定义在单独的文件中，需要修改 <code>entry_point</code> 指向你的环境类。 例如，如果你的环境类定义在 <code>envs/grid_world.py</code> 文件中，并且类名为 <code>CustomGridWorldEnv</code>, 则 <code>entry_point</code> 应该修改为 <code>entry_point="envs.grid_world:CustomGridWorldEnv"</code>。</p></li>
-<li><p><strong>测试自定义环境</strong></p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> gymnasium <span class="im">as</span> gym</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co"># 导入注册自定义环境 (确保注册代码在运行前被执行)</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> week2</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co"># 创建自定义 Grid World 环境</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>env <span class="op">=</span> gym.make(<span class="st">"GridWorld-v0"</span>)</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>observation, info <span class="op">=</span> env.reset()</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">10</span>):</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    action <span class="op">=</span> env.action_space.sample() <span class="co"># 随机动作</span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    observation, reward, terminated, truncated, info <span class="op">=</span> env.step(action)</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> terminated <span class="kw">or</span> truncated:</span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>        observation, info <span class="op">=</span> env.reset()</span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    env.render() <span class="co"># 渲染环境 (human 模式下会显示窗口)</span></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>env.close()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
-</ol>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Grid world 地图</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>._grid_map <span class="op">=</span> np.array([</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>            [<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>],</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>            [<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>],</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>            [<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">0</span>],</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>            [<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>],</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>            [<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>]</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>        ])</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 初始化位置信息</span></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>._target_location <span class="op">=</span> np.array([<span class="dv">2</span>, <span class="dv">2</span>])</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>._trap_location <span class="op">=</span> np.array([<span class="dv">4</span>, <span class="dv">4</span>])</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>._agent_start_location <span class="op">=</span> np.array([<span class="dv">0</span>, <span class="dv">0</span>])</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>._agent_location <span class="op">=</span> np.array([<span class="dv">0</span>, <span class="dv">0</span>])</span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.render_mode <span class="op">=</span> render_mode</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 初始化渲染</span></span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> render_mode <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span>:</span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>            <span class="im">import</span> pygame</span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>            pygame.init()</span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>            pygame.font.init()</span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>.window <span class="op">=</span> pygame.display.set_mode(</span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>                (<span class="va">self</span>.window_size, <span class="va">self</span>.window_size)</span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>            )</span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>.clock <span class="op">=</span> pygame.time.Clock()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-<section id="ai-辅助编程实践" class="level4">
-<h4 class="anchored" data-anchor-id="ai-辅助编程实践">4.3 AI 辅助编程实践</h4>
+</div>
+</div>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+课后作业
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li>完成 Grid World 环境的其他方法实现：
 <ul>
-<li><strong>使用 GitHub Copilot 或 Tabnine 等 AI 工具</strong>，辅助完成 Grid World 环境代码的编写。</li>
-<li><strong>例如</strong>：
-<ul>
-<li>可以尝试输入注释 <code># 创建 GridWorldEnv 类</code>，让 AI 工具自动补全类定义代码。</li>
-<li>可以尝试输入函数签名 <code>def step(self, action):</code>，让 AI 工具自动生成 <code>step</code> 函数的代码框架。</li>
-<li>可以利用 AI 工具的代码补全、代码片段生成、代码解释等功能，提高代码编写效率，并理解代码逻辑。</li>
+<li><code>step()</code> 方法：处理动作执行和奖励计算</li>
+<li><code>render()</code> 方法：可视化当前环境状态</li>
+<li><code>close()</code> 方法：清理资源</li>
 </ul></li>
-</ul>
-</section>
-</section>
+<li>实现一个简单的策略：
+<ul>
+<li>使用 <span class="math inline">\(\epsilon\)</span>-greedy 策略</li>
+<li>记录并分析智能体表现</li>
+</ul></li>
+<li>思考题：
+<ul>
+<li>MDP 的马尔可夫性质在实际应用中是否总是成立？</li>
+<li>如何在你的专业领域应用探索与利用的概念？</li>
+<li>Grid World 环境中，不同的奖励设计会如何影响智能体的行为？</li>
+</ul></li>
+</ol>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+预习资料
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li>阅读材料：
+<ul>
+<li>Sutton &amp; Barto 强化学习教材第3章</li>
+<li>Gymnasium 自定义环境教程</li>
+<li>PyGame 基础教程</li>
+</ul></li>
+<li>视频资源：
+<ul>
+<li>David Silver 强化学习课程第2讲</li>
+<li>Grid World 环境实现教学视频</li>
+</ul></li>
+<li>下周预习重点：
+<ul>
+<li>动态规划算法</li>
+<li>值迭代与策略迭代</li>
+<li>Q-learning 算法基础</li>
+</ul></li>
+</ol>
+</div>
+</div>
 </section>
 <section id="第二次课小组项目一迷宫寻宝-grid-world-环境搭建" class="level2">
 <h2 class="anchored" data-anchor-id="第二次课小组项目一迷宫寻宝-grid-world-环境搭建">第二次课：小组项目一：迷宫寻宝 (Grid World) 环境搭建</h2>
@@ -798,8 +664,8 @@ Note
 </ul></li>
 </ul>
 </section>
-<section id="课后作业" class="level3">
-<h3 class="anchored" data-anchor-id="课后作业">课后作业</h3>
+<section id="课后作业-1" class="level3">
+<h3 class="anchored" data-anchor-id="课后作业-1">课后作业</h3>
 <ol type="1">
 <li><strong>完成小组项目一：迷宫寻宝 (Grid World) 环境搭建</strong>。</li>
 <li><strong>思考题</strong>：
@@ -810,8 +676,8 @@ Note
 </ul></li>
 </ol>
 </section>
-<section id="预习资料" class="level3">
-<h3 class="anchored" data-anchor-id="预习资料">预习资料</h3>
+<section id="预习资料-1" class="level3">
+<h3 class="anchored" data-anchor-id="预习资料-1">预习资料</h3>
 <ol type="1">
 <li><strong>阅读材料</strong>：
 <ul>

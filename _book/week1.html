@@ -183,8 +183,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#课程目标" id="toc-课程目标" class="nav-link active" data-scroll-target="#课程目标">课程目标</a></li>
-  <li><a href="#第一次课什么是强化学习" id="toc-第一次课什么是强化学习" class="nav-link" data-scroll-target="#第一次课什么是强化学习">第一次课：什么是强化学习？</a>
+  <li><a href="#第一次课什么是强化学习" id="toc-第一次课什么是强化学习" class="nav-link active" data-scroll-target="#第一次课什么是强化学习">第一次课：什么是强化学习？</a>
   <ul class="collapse">
   <li><a href="#强化学习的核心概念" id="toc-强化学习的核心概念" class="nav-link" data-scroll-target="#强化学习的核心概念">1. 强化学习的核心概念</a></li>
   <li><a href="#机器学习方法对比" id="toc-机器学习方法对比" class="nav-link" data-scroll-target="#机器学习方法对比">2. 机器学习方法对比</a></li>
@@ -195,8 +194,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#ai辅助编程工具入门" id="toc-ai辅助编程工具入门" class="nav-link" data-scroll-target="#ai辅助编程工具入门">1. AI辅助编程工具入门</a></li>
   <li><a href="#强化学习环境搭建" id="toc-强化学习环境搭建" class="nav-link" data-scroll-target="#强化学习环境搭建">2. 强化学习环境搭建</a></li>
   <li><a href="#cartpole-环境实践" id="toc-cartpole-环境实践" class="nav-link" data-scroll-target="#cartpole-环境实践">3. CartPole 环境实践</a></li>
-  <li><a href="#课后作业" id="toc-课后作业" class="nav-link" data-scroll-target="#课后作业">课后作业</a></li>
-  <li><a href="#预习资料" id="toc-预习资料" class="nav-link" data-scroll-target="#预习资料">预习资料</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -223,8 +220,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<section id="课程目标" class="level2">
-<h2 class="anchored" data-anchor-id="课程目标">课程目标</h2>
+<div class="callout callout-style-simple callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+本周学习目标
+</div>
+</div>
+<div class="callout-body-container callout-body">
 <ul>
 <li>了解什么是强化学习，以及强化学习的核心概念</li>
 <li>区分强化学习与监督学习、无监督学习</li>
@@ -232,9 +237,23 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>初步体验 AI 辅助编程，并使用 AI 工具进行简单的 Python 编程练习</li>
 <li>熟悉强化学习常用的 Python 库</li>
 </ul>
-</section>
+</div>
+</div>
 <section id="第一次课什么是强化学习" class="level2">
 <h2 class="anchored" data-anchor-id="第一次课什么是强化学习">第一次课：什么是强化学习？</h2>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+核心定义
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>强化学习是一种通过与环境交互来学习的机器学习方法。智能体通过不断尝试和犯错来学习最优策略。</p>
+</div>
+</div>
 <section id="强化学习的核心概念" class="level3">
 <h3 class="anchored" data-anchor-id="强化学习的核心概念">1. 强化学习的核心概念</h3>
 <div class="callout callout-style-default callout-note callout-titled">
@@ -243,44 +262,50 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Note
+以电商推荐系统为例理解核心概念
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>强化学习是一种通过与环境交互来学习的机器学习方法。智能体通过不断尝试和犯错来学习最优策略。</p>
-</div>
-</div>
-<p>让我们通过一个电商推荐系统的例子来理解核心概念：</p>
-<ul>
-<li>智能体 (Agent)
+<section id="智能体-agent" class="level4">
+<h4 class="anchored" data-anchor-id="智能体-agent">智能体 (Agent)</h4>
 <ul>
 <li>负责学习和做出决策的实体</li>
 <li>例如：推荐算法就是一个智能体，它决定向用户推荐什么商品</li>
-</ul></li>
-<li>环境 (Environment)
+</ul>
+</section>
+<section id="环境-environment" class="level4">
+<h4 class="anchored" data-anchor-id="环境-environment">环境 (Environment)</h4>
 <ul>
 <li>智能体所处的外部世界</li>
 <li>例如：用户群体、商品库、市场状况等</li>
 <li>环境会对智能体的动作做出响应</li>
-</ul></li>
-<li>状态 (State)
+</ul>
+</section>
+<section id="状态-state" class="level4">
+<h4 class="anchored" data-anchor-id="状态-state">状态 (State)</h4>
 <ul>
 <li>环境在某一时刻的描述</li>
 <li>例如：用户的历史浏览记录、搜索关键词、当前页面停留时间等</li>
 <li>智能体根据状态来决定下一步动作</li>
-</ul></li>
-<li>动作 (Action)
+</ul>
+</section>
+<section id="动作-action" class="level4">
+<h4 class="anchored" data-anchor-id="动作-action">动作 (Action)</h4>
 <ul>
 <li>智能体可以采取的操作</li>
 <li>例如：推荐特定商品、调整商品展示顺序、发送个性化优惠券等</li>
-</ul></li>
-<li>奖励 (Reward)
+</ul>
+</section>
+<section id="奖励-reward" class="level4">
+<h4 class="anchored" data-anchor-id="奖励-reward">奖励 (Reward)</h4>
 <ul>
 <li>环境对智能体动作的反馈</li>
 <li>例如：用户点击推荐商品(正奖励)、直接关闭页面(负奖励)</li>
 <li>奖励信号指导智能体改进决策</li>
-</ul></li>
 </ul>
+</section>
+</div>
+</div>
 </section>
 <section id="机器学习方法对比" class="level3">
 <h3 class="anchored" data-anchor-id="机器学习方法对比">2. 机器学习方法对比</h3>
@@ -290,13 +315,10 @@ Note
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Important
+学习方法对比
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>强化学习与监督学习和无监督学习的最大区别在于学习方式和反馈机制</p>
-</div>
-</div>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -333,11 +355,21 @@ Important
 </tr>
 </tbody>
 </table>
+</div>
+</div>
 </section>
 <section id="商业应用案例详解" class="level3">
 <h3 class="anchored" data-anchor-id="商业应用案例详解">3. 商业应用案例详解</h3>
-<section id="智能推荐系统" class="level4">
-<h4 class="anchored" data-anchor-id="智能推荐系统">3.1 智能推荐系统</h4>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+智能推荐系统
+</div>
+</div>
+<div class="callout-body-container callout-body">
 <ul>
 <li>应用场景：电商平台、内容平台</li>
 <li>实现方式：
@@ -353,9 +385,18 @@ Important
 <li>改善用户体验</li>
 </ul></li>
 </ul>
-</section>
-<section id="动态定价系统" class="level4">
-<h4 class="anchored" data-anchor-id="动态定价系统">3.2 动态定价系统</h4>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+动态定价系统
+</div>
+</div>
+<div class="callout-body-container callout-body">
 <ul>
 <li>应用场景：酒店预订、网约车平台</li>
 <li>实现方式：
@@ -371,147 +412,201 @@ Important
 <li>提高资源利用率</li>
 </ul></li>
 </ul>
-</section>
+</div>
+</div>
 </section>
 </section>
 <section id="第二次课ai辅助编程入门与平衡杆实践" class="level2">
 <h2 class="anchored" data-anchor-id="第二次课ai辅助编程入门与平衡杆实践">第二次课：AI辅助编程入门与平衡杆实践</h2>
 <section id="ai辅助编程工具入门" class="level3">
 <h3 class="anchored" data-anchor-id="ai辅助编程工具入门">1. AI辅助编程工具入门</h3>
-<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Tip
+注意事项
 </div>
 </div>
 <div class="callout-body-container callout-body">
 <p>AI辅助编程工具可以显著提高编程效率，但要注意理解生成的代码逻辑</p>
 </div>
 </div>
-<section id="github-copilot-安装与配置" class="level4">
-<h4 class="anchored" data-anchor-id="github-copilot-安装与配置">1.1 GitHub Copilot 安装与配置</h4>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+GitHub Copilot 安装步骤
+</div>
+</div>
+<div class="callout-body-container callout-body">
 <ol type="1">
-<li><p>VS Code 插件安装</p>
-<pre><code>1. 打开 VS Code
-2. 转到扩展市场
-3. 搜索 "GitHub Copilot"
-4. 点击安装</code></pre></li>
-<li><p>基本功能演示</p>
-<ul>
-<li>代码自动补全</li>
-<li>注释生成代码</li>
-<li>函数签名提示</li>
-<li>代码解释生成</li>
-</ul></li>
+<li>打开 VS Code</li>
+<li>转到扩展市场</li>
+<li>搜索 “GitHub Copilot”</li>
+<li>点击安装</li>
 </ol>
-</section>
-<section id="实用技巧" class="level4">
-<h4 class="anchored" data-anchor-id="实用技巧">1.2 实用技巧</h4>
-<ul>
-<li>使用清晰的注释引导生成</li>
-<li>分步骤编写复杂逻辑</li>
-<li>及时检查生成的代码</li>
-<li>理解并修改不合适的建议</li>
-</ul>
-</section>
-</section>
-<section id="强化学习环境搭建" class="level3">
-<h3 class="anchored" data-anchor-id="强化学习环境搭建">2. 强化学习环境搭建</h3>
-<section id="gymnasium-库" class="level4">
-<h4 class="anchored" data-anchor-id="gymnasium-库">2.1 Gymnasium 库</h4>
-<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 安装 Gymnasium</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>pip install gymnasium</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 基本使用示例</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> gymnasium <span class="im">as</span> gym</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 创建环境</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>env <span class="op">=</span> gym.make(<span class="st">"CartPole-v1"</span>, render_mode<span class="op">=</span><span class="st">"human"</span>)</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co"># 获取环境信息</span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"动作空间: </span><span class="sc">{</span>env<span class="sc">.</span>action_space<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"状态空间: </span><span class="sc">{</span>env<span class="sc">.</span>observation_space<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</section>
-<section id="stable-baselines3-库" class="level4">
-<h4 class="anchored" data-anchor-id="stable-baselines3-库">2.2 Stable Baselines3 库</h4>
-<div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 安装 Stable Baselines3</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>pip install stable<span class="op">-</span>baselines3</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 基本使用示例</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> stable_baselines3 <span class="im">import</span> DQN</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 创建模型</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> DQN(<span class="st">"MlpPolicy"</span>, env, verbose<span class="op">=</span><span class="dv">1</span>)</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co"># 训练模型</span></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>model.learn(total_timesteps<span class="op">=</span><span class="dv">10000</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</section>
-</section>
-<section id="cartpole-环境实践" class="level3">
-<h3 class="anchored" data-anchor-id="cartpole-环境实践">3. CartPole 环境实践</h3>
+</div>
+</div>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Note
+实用技巧
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>使用清晰的注释引导生成</li>
+<li>分步骤编写复杂逻辑</li>
+<li>及时检查生成的代码</li>
+<li>理解并修改不合适的建议</li>
+</ul>
+</div>
+</div>
+</section>
+<section id="强化学习环境搭建" class="level3">
+<h3 class="anchored" data-anchor-id="强化学习环境搭建">2. 强化学习环境搭建</h3>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Gymnasium 库基础使用
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 安装 Gymnasium</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>pip install gymnasium</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 基本使用示例</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> gymnasium <span class="im">as</span> gym</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 创建环境</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>env <span class="op">=</span> gym.make(<span class="st">"CartPole-v1"</span>, render_mode<span class="op">=</span><span class="st">"human"</span>)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co"># 获取环境信息</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"动作空间: </span><span class="sc">{</span>env<span class="sc">.</span>action_space<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"状态空间: </span><span class="sc">{</span>env<span class="sc">.</span>observation_space<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Stable Baselines3 库基础使用
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 安装 Stable Baselines3</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>pip install stable<span class="op">-</span>baselines3</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 基本使用示例</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> stable_baselines3 <span class="im">import</span> DQN</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 创建模型</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> DQN(<span class="st">"MlpPolicy"</span>, env, verbose<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co"># 训练模型</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>model.learn(total_timesteps<span class="op">=</span><span class="dv">10000</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</section>
+<section id="cartpole-环境实践" class="level3">
+<h3 class="anchored" data-anchor-id="cartpole-环境实践">3. CartPole 环境实践</h3>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+CartPole 环境说明
 </div>
 </div>
 <div class="callout-body-container callout-body">
 <p>CartPole 是强化学习入门的经典环境，目标是通过左右移动小车来保持杆子平衡</p>
 </div>
 </div>
-<section id="环境介绍" class="level4">
-<h4 class="anchored" data-anchor-id="环境介绍">3.1 环境介绍</h4>
-<div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> gymnasium <span class="im">as</span> gym</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 创建环境</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>env <span class="op">=</span> gym.make(<span class="st">"CartPole-v1"</span>, render_mode<span class="op">=</span><span class="st">"human"</span>)</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 环境参数说明</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"状态空间包含4个连续值:"</span>)</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"- 小车位置: [-4.8, 4.8]"</span>)</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"- 小车速度: [-∞, ∞]"</span>)</span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"- 杆子角度: [-0.418, 0.418]"</span>)</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"- 杆子角速度: [-∞, ∞]"</span>)</span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">动作空间包含2个离散动作:"</span>)</span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"- 0: 向左推"</span>)</span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"- 1: 向右推"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</section>
-<section id="随机动作示例" class="level4">
-<h4 class="anchored" data-anchor-id="随机动作示例">3.2 随机动作示例</h4>
-<div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 运行随机策略</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>observation, info <span class="op">=</span> env.reset()</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>total_reward <span class="op">=</span> <span class="dv">0</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> step <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">100</span>):</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 随机选择动作</span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    action <span class="op">=</span> env.action_space.sample()</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 执行动作</span></span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    observation, reward, terminated, truncated, info <span class="op">=</span> env.step(action)</span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    total_reward <span class="op">+=</span> reward</span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 打印当前状态</span></span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Step </span><span class="sc">{</span>step<span class="sc">}</span><span class="ss">: State = </span><span class="sc">{</span>observation<span class="sc">}</span><span class="ss">, Reward = </span><span class="sc">{</span>reward<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 判断是否需要重置</span></span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> terminated <span class="kw">or</span> truncated:</span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"Episode finished after </span><span class="sc">{</span>step <span class="op">+</span> <span class="dv">1</span><span class="sc">}</span><span class="ss"> steps"</span>)</span>
-<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"Total reward: </span><span class="sc">{</span>total_reward<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>        <span class="cf">break</span></span>
-<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>env.close()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</section>
-</section>
-<section id="课后作业" class="level3">
-<h3 class="anchored" data-anchor-id="课后作业">课后作业</h3>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+环境参数
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> gymnasium <span class="im">as</span> gym</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 创建环境</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>env <span class="op">=</span> gym.make(<span class="st">"CartPole-v1"</span>, render_mode<span class="op">=</span><span class="st">"human"</span>)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 环境参数说明</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"状态空间包含4个连续值:"</span>)</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"- 小车位置: [-4.8, 4.8]"</span>)</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"- 小车速度: [-∞, ∞]"</span>)</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"- 杆子角度: [-0.418, 0.418]"</span>)</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"- 杆子角速度: [-∞, ∞]"</span>)</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">动作空间包含2个离散动作:"</span>)</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"- 0: 向左推"</span>)</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"- 1: 向右推"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+随机动作示例代码
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 运行随机策略</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>observation, info <span class="op">=</span> env.reset()</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>total_reward <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> step <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">100</span>):</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 随机选择动作</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    action <span class="op">=</span> env.action_space.sample()</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 执行动作</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    observation, reward, terminated, truncated, info <span class="op">=</span> env.step(action)</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    total_reward <span class="op">+=</span> reward</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 打印当前状态</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Step </span><span class="sc">{</span>step<span class="sc">}</span><span class="ss">: State = </span><span class="sc">{</span>observation<span class="sc">}</span><span class="ss">, Reward = </span><span class="sc">{</span>reward<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 判断是否需要重置</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> terminated <span class="kw">or</span> truncated:</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"Episode finished after </span><span class="sc">{</span>step <span class="op">+</span> <span class="dv">1</span><span class="sc">}</span><span class="ss"> steps"</span>)</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"Total reward: </span><span class="sc">{</span>total_reward<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>        <span class="cf">break</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>env.close()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+课后作业
+</div>
+</div>
+<div class="callout-body-container callout-body">
 <ol type="1">
 <li>环境配置
 <ul>
@@ -532,9 +627,18 @@ Note
 <li>为什么需要重置环境？</li>
 </ul></li>
 </ol>
-</section>
-<section id="预习资料" class="level3">
-<h3 class="anchored" data-anchor-id="预习资料">预习资料</h3>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+预习资料
+</div>
+</div>
+<div class="callout-body-container callout-body">
 <ol type="1">
 <li>阅读材料
 <ul>
@@ -554,6 +658,8 @@ Note
 <li>Grid World 环境介绍</li>
 </ul></li>
 </ol>
+</div>
+</div>
 
 
 </section>
