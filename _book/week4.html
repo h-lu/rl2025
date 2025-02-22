@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>第四周：Q-Learning 算法优化与改进 – 智能计算</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./week3.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xkm/sYwpb+ilR5gUw==" crossorigin="anonymous" referrerpolicy="no-referrer">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="styles/custom.css">
+<link rel="stylesheet" href="styles/mermaid.css">
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./week4.html"><span class="chapter-title">第四周：Q-Learning 算法优化与改进</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">智能计算</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">课程介绍</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./syllbus.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">课程大纲</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week1.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">第一周：强化学习入门</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week2.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">第二周：强化学习框架与迷宫环境</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week3.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">第三周：Q-Learning 算法详解与实践</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week4.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">第四周：Q-Learning 算法优化与改进</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#课程目标" id="toc-课程目标" class="nav-link active" data-scroll-target="#课程目标">课程目标</a></li>
+  <li><a href="#第一次课q-learning-算法优化与改进-小组项目一提交-优秀小组项目一讲解-3组" id="toc-第一次课q-learning-算法优化与改进-小组项目一提交-优秀小组项目一讲解-3组" class="nav-link" data-scroll-target="#第一次课q-learning-算法优化与改进-小组项目一提交-优秀小组项目一讲解-3组">第一次课：Q-Learning 算法优化与改进 / 小组项目一提交 / 优秀小组项目一讲解 (3组)</a>
+  <ul class="collapse">
+  <li><a href="#q-learning-算法的局限性" id="toc-q-learning-算法的局限性" class="nav-link" data-scroll-target="#q-learning-算法的局限性">1. Q-Learning 算法的局限性</a></li>
+  <li><a href="#探索策略epsilon-greedy-策略及改进" id="toc-探索策略epsilon-greedy-策略及改进" class="nav-link" data-scroll-target="#探索策略epsilon-greedy-策略及改进">2. 探索策略：<span class="math inline">\(\epsilon\)</span>-greedy 策略及改进</a></li>
+  <li><a href="#q-table-初始化技巧" id="toc-q-table-初始化技巧" class="nav-link" data-scroll-target="#q-table-初始化技巧">3. Q-Table 初始化技巧</a></li>
+  <li><a href="#奖励函数设计技巧" id="toc-奖励函数设计技巧" class="nav-link" data-scroll-target="#奖励函数设计技巧">4. 奖励函数设计技巧</a></li>
+  <li><a href="#小组项目一迷宫寻宝-grid-world-提交-优秀小组项目一讲解-3-组" id="toc-小组项目一迷宫寻宝-grid-world-提交-优秀小组项目一讲解-3-组" class="nav-link" data-scroll-target="#小组项目一迷宫寻宝-grid-world-提交-优秀小组项目一讲解-3-组">5. 小组项目一：迷宫寻宝 (Grid World) 提交 / 优秀小组项目一讲解 (3 组)</a></li>
+  </ul></li>
+  <li><a href="#第二次课小组项目一q-learning-算法优化与问题解决" id="toc-第二次课小组项目一q-learning-算法优化与问题解决" class="nav-link" data-scroll-target="#第二次课小组项目一q-learning-算法优化与问题解决">第二次课：小组项目一：Q-Learning 算法优化与问题解决</a>
+  <ul class="collapse">
+  <li><a href="#小组项目一q-learning-算法优化与问题解决-迷宫寻宝-grid-world" id="toc-小组项目一q-learning-算法优化与问题解决-迷宫寻宝-grid-world" class="nav-link" data-scroll-target="#小组项目一q-learning-算法优化与问题解决-迷宫寻宝-grid-world">1. 小组项目一：Q-Learning 算法优化与问题解决 (迷宫寻宝 Grid World)</a></li>
+  <li><a href="#小组项目进展分享与问题讨论" id="toc-小组项目进展分享与问题讨论" class="nav-link" data-scroll-target="#小组项目进展分享与问题讨论">2. 小组项目进展分享与问题讨论</a></li>
+  <li><a href="#课后作业" id="toc-课后作业" class="nav-link" data-scroll-target="#课后作业">课后作业</a></li>
+  <li><a href="#下周预习重点" id="toc-下周预习重点" class="nav-link" data-scroll-target="#下周预习重点">下周预习重点</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-title">第四周：Q-Learning 算法优化与改进</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="课程目标" class="level2">
+<h2 class="anchored" data-anchor-id="课程目标">课程目标</h2>
+<ul>
+<li>了解 Q-Learning 算法的局限性，例如状态空间爆炸问题。</li>
+<li>掌握 ε-greedy 策略等探索策略，提升智能体的探索能力。</li>
+<li>学习 Q-Table 初始化、奖励函数设计等实用技巧，提升 Q-Learning 算法的性能。</li>
+<li>学习使用调试工具和 AI 工具，解决 Q-Learning 算法编程中遇到的问题。</li>
+<li>通过小组项目一的实践，巩固 Q-Learning 算法的理解和应用。</li>
+</ul>
+</section>
+<section id="第一次课q-learning-算法优化与改进-小组项目一提交-优秀小组项目一讲解-3组" class="level2">
+<h2 class="anchored" data-anchor-id="第一次课q-learning-算法优化与改进-小组项目一提交-优秀小组项目一讲解-3组">第一次课：Q-Learning 算法优化与改进 / 小组项目一提交 / 优秀小组项目一讲解 (3组)</h2>
+<section id="q-learning-算法的局限性" class="level3">
+<h3 class="anchored" data-anchor-id="q-learning-算法的局限性">1. Q-Learning 算法的局限性</h3>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Q-Learning 算法虽然简单有效，但也存在一些局限性，在实际应用中需要注意和改进。</p>
+</div>
+</div>
+<ul>
+<li><strong>状态空间爆炸问题 (Curse of Dimensionality)</strong>:
+<ul>
+<li>当<strong>状态空间非常大</strong>或者<strong>连续</strong>时，Q-Table 的<strong>规模会变得非常庞大</strong>，<strong>难以存储和计算</strong>。</li>
+<li>例如，如果状态由多个<strong>离散特征</strong>组成，Q-Table 的大小会<strong>随着特征数量呈指数级增长</strong>。</li>
+<li>对于<strong>连续状态空间</strong>，Q-Table 无法直接应用，需要进行<strong>离散化</strong>或者使用<strong>函数逼近</strong>等方法。</li>
+</ul></li>
+<li><strong>探索-利用困境 (Exploration-Exploitation Dilemma)</strong>:
+<ul>
+<li>Q-Learning 算法需要在<strong>探索 (Exploration)</strong> 和 <strong>利用 (Exploitation)</strong> 之间进行权衡。</li>
+<li><strong>探索</strong>: 智能体<strong>尝试新的动作</strong>，<strong>发现新的状态和奖励</strong>，<strong>提高对环境的理解</strong>。</li>
+<li><strong>利用</strong>: 智能体<strong>选择当前已知最优的动作</strong>，<strong>最大化累积奖励</strong>。</li>
+<li><strong><span class="math inline">\(\epsilon\)</span>-greedy 策略</strong> 是一种简单的平衡探索和利用的方法，但<strong>探索效率较低</strong>，可能<strong>浪费大量时间在探索不必要的区域</strong>。</li>
+</ul></li>
+<li><strong>收敛性问题</strong>:
+<ul>
+<li>Q-Learning 算法在<strong>满足一定条件</strong>下可以<strong>收敛到最优 Q 函数</strong>，例如：
+<ul>
+<li><strong>状态空间和动作空间是有限的</strong>。</li>
+<li><strong>环境是马尔可夫决策过程 (MDP)</strong>。</li>
+<li><strong>学习率 (<span class="math inline">\(\alpha\)</span>) 逐渐衰减到 0</strong>，但衰减速度不能太快。</li>
+<li><strong>充分的探索</strong>，保证所有状态-动作对都被访问到足够多次。</li>
+</ul></li>
+<li>在实际应用中，<strong>环境可能不完全满足 MDP 假设</strong>，<strong>超参数调整不当</strong>，<strong>探索不足</strong>等因素都可能导致 <strong>Q-Learning 算法不收敛</strong> 或者 <strong>收敛到局部最优解</strong>。</li>
+</ul></li>
+<li><strong>对超参数敏感</strong>:
+<ul>
+<li>Q-Learning 算法的性能受到<strong>超参数 (学习率 <span class="math inline">\(\alpha\)</span>, 折扣因子 <span class="math inline">\(\gamma\)</span>, 探索率 <span class="math inline">\(\epsilon\)</span> 等)</strong> 的影响较大。</li>
+<li><strong>超参数选择不当</strong>可能导致 <strong>学习速度慢</strong>、<strong>收敛性差</strong>、甚至 <strong>算法不稳定</strong>。</li>
+<li><strong>手动调整超参数</strong> 需要<strong>经验和技巧</strong>，<strong>耗时耗力</strong>。</li>
+</ul></li>
+</ul>
+</section>
+<section id="探索策略epsilon-greedy-策略及改进" class="level3">
+<h3 class="anchored" data-anchor-id="探索策略epsilon-greedy-策略及改进">2. 探索策略：<span class="math inline">\(\epsilon\)</span>-greedy 策略及改进</h3>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>探索策略 (Exploration Strategy)</strong> 决定了智能体在与环境交互时，如何<strong>选择动作</strong>，以平衡<strong>探索</strong>和<strong>利用</strong>。</p>
+</div>
+</div>
+<ul>
+<li><strong><span class="math inline">\(\epsilon\)</span>-greedy 策略回顾</strong>:
+<ul>
+<li>以 <strong><span class="math inline">\(\epsilon\)</span> 的概率</strong> 随机选择一个动作 (探索)。</li>
+<li>以 <strong><span class="math inline">\(1-\epsilon\)</span> 的概率</strong> 选择当前 Q 值最大的动作 (利用)。</li>
+<li><strong>优点</strong>: 简单易实现，应用广泛。</li>
+<li><strong>缺点</strong>: <strong>探索效率较低</strong>，<strong>随机探索</strong>可能<strong>探索到很多无用的状态和动作</strong>，<strong>浪费时间</strong>。<strong><span class="math inline">\(\epsilon\)</span> 值通常固定不变</strong>，<strong>无法根据探索情况动态调整</strong>。</li>
+</ul></li>
+<li><strong><span class="math inline">\(\epsilon\)</span>-greedy 退火策略 (Epsilon-Greedy Annealing)</strong>:
+<ul>
+<li><strong>思想</strong>: 在训练初期，<strong>增加探索</strong>，<strong><span class="math inline">\(\epsilon\)</span> 值较大</strong>，鼓励智能体<strong>探索更多状态空间</strong>。随着训练的进行，<strong>逐渐减少探索</strong>，<strong><span class="math inline">\(\epsilon\)</span> 值逐渐减小</strong>，<strong>更多地利用已学到的知识</strong>，<strong>选择最优动作</strong>。</li>
+<li><strong>实现</strong>: <strong>线性衰减</strong>、<strong>指数衰减</strong> 等方式。
+<ul>
+<li><strong>线性衰减</strong>: <span class="math inline">\(\epsilon = \epsilon_{start} - \frac{(\epsilon_{start} - \epsilon_{end})}{episodes} \times episode\)</span></li>
+<li><strong>指数衰减</strong>: <span class="math inline">\(\epsilon = \epsilon_{start} \times decay\_rate^{episode}\)</span></li>
+</ul></li>
+<li><strong>优点</strong>: <strong>提高探索效率</strong>，<strong>在训练初期充分探索</strong>，<strong>后期逐渐收敛到最优策略</strong>。</li>
+</ul></li>
+<li><strong>其他探索策略 (了解)</strong>:
+<ul>
+<li><strong>UCB (Upper Confidence Bound) 算法</strong>: 在选择动作时，<strong>不仅考虑 Q 值的大小</strong>，<strong>还考虑 Q 值的不确定性</strong> (例如：被访问次数较少的动作，Q 值不确定性较高，应该增加探索)。</li>
+<li><strong>Thompson Sampling 算法</strong>: 将 Q 值看作是<strong>随机变量</strong>，<strong>服从一定的概率分布</strong>。在选择动作时，<strong>从每个动作的 Q 值分布中采样</strong>，<strong>选择采样值最大的动作</strong>。</li>
+<li><strong>Softmax 策略 (Boltzmann 策略)</strong>: 根据 <strong>Q 值的概率分布</strong> 来选择动作，<strong>Q 值越大，被选择的概率越高</strong>，但<strong>Q 值小的动作也有一定的概率被选择</strong>，保持一定的探索性。</li>
+</ul></li>
+</ul>
+</section>
+<section id="q-table-初始化技巧" class="level3">
+<h3 class="anchored" data-anchor-id="q-table-初始化技巧">3. Q-Table 初始化技巧</h3>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Q-Table 的<strong>初始化方式</strong> 会影响 Q-Learning 算法的<strong>学习效率和收敛性</strong>。</p>
+</div>
+</div>
+<ul>
+<li><strong>初始化为 0</strong>:
+<ul>
+<li><strong>优点</strong>: 简单易实现，常用默认初始化方式。</li>
+<li><strong>缺点</strong>: 可能导致<strong>初始探索不足</strong>，<strong>算法收敛速度慢</strong>。因为初始 Q 值都为 0，智能体可能<strong>倾向于停留在初始状态</strong>，<strong>难以开始探索</strong>。</li>
+</ul></li>
+<li><strong>初始化为小的随机值</strong>:
+<ul>
+<li><strong>优点</strong>: <strong>鼓励初始探索</strong>，<strong>打破对称性</strong>，<strong>加速学习</strong>。</li>
+<li><strong>缺点</strong>: <strong>随机值范围</strong> 需要<strong>谨慎选择</strong>，<strong>过大</strong>可能导致<strong>算法不稳定</strong>，<strong>过小</strong>则效果不明显。</li>
+</ul></li>
+<li><strong>乐观初始化 (Optimistic Initialization)</strong>:
+<ul>
+<li><strong>思想</strong>: 将 Q-Table <strong>初始化为较大的值</strong> (例如：奖励函数的最大可能值，或者一个较大的常数)。</li>
+<li><strong>原理</strong>: <strong>鼓励智能体探索</strong>。因为初始 Q 值较大，智能体会<strong>倾向于选择未探索过的动作</strong>，以<strong>期望获得更高的奖励</strong>。随着训练的进行，Q 值会逐渐更新为真实值。</li>
+<li><strong>适用场景</strong>: <strong>稀疏奖励环境</strong> (奖励信号很少的环境)。</li>
+</ul></li>
+<li><strong>基于领域知识的初始化</strong>:
+<ul>
+<li><strong>思想</strong>: 如果<strong>对问题领域有一定的先验知识</strong>，可以<strong>根据先验知识初始化 Q-Table</strong>。</li>
+<li><strong>例如</strong>: 在迷宫寻宝问题中，如果<strong>已知宝藏的大概位置</strong>，可以<strong>将靠近宝藏的状态-动作对的 Q 值初始化为较大值</strong>，<strong>引导智能体更快地找到宝藏</strong>。</li>
+<li><strong>优点</strong>: <strong>加速学习</strong>，<strong>提高算法性能</strong>。</li>
+<li><strong>缺点</strong>: <strong>依赖于领域知识</strong>，<strong>通用性较差</strong>。</li>
+</ul></li>
+</ul>
+</section>
+<section id="奖励函数设计技巧" class="level3">
+<h3 class="anchored" data-anchor-id="奖励函数设计技巧">4. 奖励函数设计技巧</h3>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>奖励函数 (Reward Function)</strong> 是强化学习算法的<strong>核心</strong>，<strong>直接决定了智能体的学习目标和行为策略</strong>。<strong>设计合理的奖励函数</strong> 至关重要。</p>
+</div>
+</div>
+<ul>
+<li><strong>奖励函数的原则</strong>:
+<ul>
+<li><strong>与目标一致</strong>: 奖励函数应该<strong>准确反映任务的目标</strong>。智能体最大化累积奖励的过程，应该等价于完成任务的过程。</li>
+<li><strong>稀疏奖励 vs.&nbsp;密集奖励</strong>:
+<ul>
+<li><strong>稀疏奖励 (Sparse Reward)</strong>: 只有<strong>达到目标状态</strong>或者<strong>完成任务</strong>时才有奖励，<strong>中间过程没有奖励</strong>。例如，迷宫寻宝问题，只有到达宝藏位置才有奖励，其他状态奖励为 0。</li>
+<li><strong>密集奖励 (Dense Reward)</strong>: 在<strong>中间过程</strong>也<strong>提供奖励</strong>，<strong>引导智能体逐步学习</strong>。例如，迷宫寻宝问题，可以<strong>根据智能体离宝藏的距离</strong>，<strong>设计一个与距离相关的奖励函数</strong>，距离越近奖励越大。</li>
+<li><strong>选择</strong>: <strong>稀疏奖励</strong> 更<strong>符合真实场景</strong>，但<strong>学习难度大</strong>，<strong>收敛速度慢</strong>。<strong>密集奖励</strong> 可以<strong>加速学习</strong>，但<strong>需要仔细设计</strong>，<strong>不当的密集奖励</strong> 可能<strong>引导智能体学习到非期望的策略</strong>。</li>
+</ul></li>
+<li><strong>奖励的尺度 (Reward Shaping)</strong>:
+<ul>
+<li><strong>奖励值的尺度</strong> 会影响算法的<strong>学习速度和稳定性</strong>。</li>
+<li><strong>奖励值过大</strong> 可能导致 <strong>Q 值过大</strong>，<strong>算法不稳定</strong>。</li>
+<li><strong>奖励值过小</strong> 可能导致 <strong>Q 值更新缓慢</strong>，<strong>学习速度慢</strong>。</li>
+<li><strong>需要根据具体问题调整奖励值的尺度</strong>，<strong>通常需要进行实验和调参</strong>。</li>
+</ul></li>
+</ul></li>
+<li><strong>奖励函数设计示例 (迷宫寻宝 Grid World)</strong>:
+<ul>
+<li><strong>稀疏奖励</strong>:
+<ul>
+<li>到达宝藏位置: +10</li>
+<li>撞墙或到达陷阱: -10</li>
+<li>其他状态: 0</li>
+</ul></li>
+<li><strong>密集奖励 (示例 1，基于距离)</strong>:
+<ul>
+<li>到达宝藏位置: +10</li>
+<li>撞墙或到达陷阱: -10</li>
+<li>每走一步: -0.1 (鼓励尽快到达宝藏)</li>
+<li><strong>根据当前位置与宝藏位置的距离</strong>，<strong>设计奖励值</strong>，距离越近奖励越大 (例如：负距离的倒数，或者高斯函数等)。</li>
+</ul></li>
+<li><strong>密集奖励 (示例 2，分阶段奖励)</strong>:
+<ul>
+<li>到达宝藏位置: +10</li>
+<li>撞墙或到达陷阱: -10</li>
+<li><strong>到达迷宫的某个关键位置 (checkpoint)</strong>: +1 (引导智能体按特定路线探索)</li>
+<li>其他状态: -0.1 (每走一步的惩罚)</li>
+</ul></li>
+</ul></li>
+<li><strong>奖励函数调试</strong>:
+<ul>
+<li><strong>可视化智能体的行为</strong>: 观察智能体在环境中的行为是否符合预期。</li>
+<li><strong>分析 Q-Table</strong>: 检查 Q-Table 中的 Q 值是否合理，是否能反映状态-动作的价值。</li>
+<li><strong>调整奖励函数</strong>: 根据观察和分析结果，<strong>迭代调整奖励函数</strong>，直到智能体学习到期望的策略。</li>
+</ul></li>
+</ul>
+</section>
+<section id="小组项目一迷宫寻宝-grid-world-提交-优秀小组项目一讲解-3-组" class="level3">
+<h3 class="anchored" data-anchor-id="小组项目一迷宫寻宝-grid-world-提交-优秀小组项目一讲解-3-组">5. 小组项目一：迷宫寻宝 (Grid World) 提交 / 优秀小组项目一讲解 (3 组)</h3>
+<ul>
+<li><strong>小组项目一提交</strong>:
+<ul>
+<li>请各小组在<strong>第一次课前</strong>，<strong>提交</strong>小组项目一：迷宫寻宝 (Grid World) 的 <strong>Q-Learning 算法代码</strong> (Python 文件) 和 <strong>修改后的 Grid World 环境代码</strong> (如有修改)。</li>
+<li><strong>提交方式</strong>: [待定，例如：通过网络教学平台提交，或者发送到指定邮箱]。</li>
+<li><strong>提交内容</strong>:
+<ul>
+<li><strong>Q-Learning 算法代码</strong> (Python 文件，例如 <code>q_learning_agent.py</code>)</li>
+<li><strong>Grid World 环境代码</strong> (Python 文件，例如 <code>grid_world.py</code>，如有修改则提交，如无修改可不提交)</li>
+<li><strong>简要说明</strong>: <strong>小组分工</strong>，<strong>使用的 AI 辅助工具</strong>，<strong>遇到的问题及解决方案</strong>，<strong>超参数调整结果</strong> (例如：最佳超参数组合，性能指标)。</li>
+</ul></li>
+</ul></li>
+<li><strong>优秀小组项目一讲解 (3 组)</strong>:
+<ul>
+<li><strong>从提交的项目中</strong>，<strong>挑选 3 组优秀小组</strong>，在课堂上进行<strong>项目讲解和演示</strong>。</li>
+<li><strong>讲解内容</strong>:
+<ul>
+<li><strong>项目目标和实现思路</strong></li>
+<li><strong>Q-Learning 算法代码讲解 (重点)</strong></li>
+<li><strong>Grid World 环境演示</strong></li>
+<li><strong>超参数调整和实验结果</strong></li>
+<li><strong>项目亮点和创新之处</strong></li>
+<li><strong>遇到的问题和解决方案</strong></li>
+<li><strong>项目总结和反思</strong></li>
+</ul></li>
+<li><strong>讲解时间</strong>: 每组 <strong>15-20 分钟</strong> (包括提问环节)。</li>
+<li><strong>评分标准</strong>: <strong>算法实现</strong> (40%)，<strong>代码质量</strong> (20%)，<strong>环境演示</strong> (10%)，<strong>讲解清晰度</strong> (20%)，<strong>创新性</strong> (10%)。</li>
+</ul></li>
+</ul>
+</section>
+</section>
+<section id="第二次课小组项目一q-learning-算法优化与问题解决" class="level2">
+<h2 class="anchored" data-anchor-id="第二次课小组项目一q-learning-算法优化与问题解决">第二次课：小组项目一：Q-Learning 算法优化与问题解决</h2>
+<section id="小组项目一q-learning-算法优化与问题解决-迷宫寻宝-grid-world" class="level3">
+<h3 class="anchored" data-anchor-id="小组项目一q-learning-算法优化与问题解决-迷宫寻宝-grid-world">1. 小组项目一：Q-Learning 算法优化与问题解决 (迷宫寻宝 Grid World)</h3>
+<ul>
+<li><strong>实践</strong>:
+<ul>
+<li>各小组<strong>继续完善</strong>小组项目一：迷宫寻宝 (Grid World) 的 <strong>Q-Learning 算法代码</strong>，<strong>优化智能体在迷宫环境中的表现</strong>。</li>
+<li><strong>优化方向</strong>:
+<ul>
+<li><strong>探索策略优化</strong>: 尝试使用 <strong><span class="math inline">\(\epsilon\)</span>-greedy 退火策略</strong> 或其他更高级的探索策略 (UCB, Thompson Sampling 等，可选)。</li>
+<li><strong>Q-Table 初始化优化</strong>: 尝试 <strong>乐观初始化</strong> 或 <strong>基于领域知识的初始化</strong> (如果适用)。</li>
+<li><strong>奖励函数优化</strong>: <strong>调整奖励函数</strong>，尝试 <strong>密集奖励</strong>，<strong>引导智能体更快更有效地找到宝藏</strong>。</li>
+<li><strong>超参数调整</strong>: <strong>系统地调整超参数</strong> (学习率 <span class="math inline">\(\alpha\)</span>, 折扣因子 <span class="math inline">\(\gamma\)</span>, 探索率 <span class="math inline">\(\epsilon\)</span> 等)，<strong>找到最佳超参数组合</strong>。</li>
+<li><strong>代码效率优化</strong>: <strong>提高代码运行效率</strong>，例如使用 <strong>NumPy 向量化计算</strong>，<strong>减少循环</strong> 等。</li>
+<li><strong>可视化</strong>: <strong>可视化智能体在迷宫中的探索过程</strong> (例如：绘制智能体路径、Q-Table 热力图等，<strong>可选，作为加分项</strong>)。</li>
+</ul></li>
+</ul></li>
+<li><strong>指导</strong>:
+<ul>
+<li>教师<strong>巡回指导</strong>，<strong>解答学生在项目优化过程中遇到的问题</strong>。</li>
+<li><strong>重点指导</strong>:
+<ul>
+<li><strong>调试技巧</strong>: <strong>使用 print 语句</strong>、<strong>debug 工具</strong> (例如 Python 的 <code>pdb</code>)，<strong>检查代码运行过程</strong>，<strong>定位 bug</strong>。</li>
+<li><strong>AI 工具应用</strong>: <strong>利用 GitHub Copilot, Tabnine 等 AI 辅助编程工具</strong>，<strong>提高调试效率</strong>。例如，使用 AI 工具<strong>快速生成测试代码</strong>、<strong>查找 bug</strong>、<strong>优化代码</strong> 等。</li>
+<li><strong>问题解决思路</strong>: <strong>引导学生分析问题</strong>，<strong>分解问题</strong>，<strong>逐步解决</strong>。例如，如果智能体无法找到宝藏，可以<strong>先检查环境代码是否正确</strong>，<strong>再检查 Q-Learning 算法代码是否逻辑正确</strong>，<strong>然后检查超参数是否合适</strong>，<strong>奖励函数是否合理</strong> 等。</li>
+</ul></li>
+</ul></li>
+</ul>
+</section>
+<section id="小组项目进展分享与问题讨论" class="level3">
+<h3 class="anchored" data-anchor-id="小组项目进展分享与问题讨论">2. 小组项目进展分享与问题讨论</h3>
+<ul>
+<li><strong>小组分享</strong>:
+<ul>
+<li>各小组<strong>轮流分享</strong>小组项目一的<strong>优化进展</strong>和<strong>遇到的问题</strong>。</li>
+<li><strong>分享内容</strong>:
+<ul>
+<li><strong>优化目标</strong>: 例如，尝试了哪些优化策略，目标是提高哪些性能指标 (例如：平均 episode 奖励，成功率，收敛速度等)。</li>
+<li><strong>优化方法</strong>: 例如，如何实现 <span class="math inline">\(\epsilon\)</span>-greedy 退火策略，如何调整奖励函数，如何使用 AI 工具进行调试等。</li>
+<li><strong>优化结果</strong>: <strong>展示优化后的实验结果</strong>，例如，绘制学习曲线 (episode 奖励 vs.&nbsp;episode)，对比优化前后的性能指标。</li>
+<li><strong>遇到的问题</strong>: <strong>详细描述遇到的问题</strong>，例如，代码 bug，算法不收敛，超参数调整困难等。</li>
+<li><strong>解决方案</strong>: <strong>分享已尝试的解决方案</strong>，<strong>以及是否有效</strong>。</li>
+</ul></li>
+</ul></li>
+<li><strong>集体讨论与解答</strong>:
+<ul>
+<li>教师<strong>组织学生进行集体讨论</strong>，<strong>共同解答各小组提出的问题</strong>。</li>
+<li><strong>鼓励学生互相帮助</strong>，<strong>分享经验和技巧</strong>。</li>
+<li><strong>教师进行总结和点评</strong>，<strong>指出常见问题和解决方法</strong>，<strong>提供进一步优化的建议</strong>。</li>
+</ul></li>
+</ul>
+</section>
+<section id="课后作业" class="level3">
+<h3 class="anchored" data-anchor-id="课后作业">课后作业</h3>
+<ol type="1">
+<li><strong>继续优化小组项目一：Q-Learning 算法编程实践</strong>，争取在迷宫环境中获得更好的寻宝效果。</li>
+<li><strong>准备小组项目一的项目报告</strong> (下周第一次课前提交)。项目报告模板和具体要求见下周通知。</li>
+<li><strong>预习资料</strong>:
+<ul>
+<li><strong>阅读材料</strong>: Q-Learning 算法的改进版本：Double Q-Learning, Prioritized Experience Replay 等 (深入理解原理)。</li>
+<li><strong>视频资源</strong>: Q-Learning 算法优化技巧详解，强化学习算法的调试方法。</li>
+<li><strong>思考题</strong>: 如何将 Q-Learning 算法应用于更复杂的游戏或实际问题？Q-Learning 算法在哪些场景下会失效？如何解决？</li>
+</ul></li>
+</ol>
+</section>
+<section id="下周预习重点" class="level3">
+<h3 class="anchored" data-anchor-id="下周预习重点">下周预习重点</h3>
+<ul>
+<li>小组项目一项目报告提交。</li>
+<li>小组项目一项目答辩准备 (PPT 制作，内容组织，演示准备)。</li>
+<li>开始学习新的强化学习算法 (例如：Sarsa 算法)。</li>
+<li>了解深度强化学习 (Deep Reinforcement Learning) 的基本概念。</li>
+</ul>
+<hr>
+<p><strong>请注意</strong>:</p>
+<ul>
+<li><strong>小组项目一提交</strong>: 请各小组务必在<strong>本周第一次课前</strong>提交项目代码和简要说明。</li>
+<li><strong>优秀项目讲解</strong>: 入选优秀项目讲解的小组，请认真准备讲解内容和演示，争取在课堂上展示最佳水平。</li>
+<li><strong>项目优化</strong>: 鼓励各小组充分利用第二次课时间，积极进行项目优化和问题解决，争取在项目报告和答辩中取得优异成绩。</li>
+<li><strong>互相学习</strong>: 鼓励各小组在项目分享和讨论环节，积极参与，互相学习，共同进步。</li>
+</ul>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./week3.html" class="pagination-link" aria-label="第三周：Q-Learning 算法详解与实践">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">第三周：Q-Learning 算法详解与实践</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

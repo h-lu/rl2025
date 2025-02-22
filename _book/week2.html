@@ -1,0 +1,1286 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>第二周：强化学习框架与迷宫环境 – 智能计算</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./week3.html" rel="next">
+<link href="./week1.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="site_libs/quarto-diagram/mermaid.min.js"></script>
+<script src="site_libs/quarto-diagram/mermaid-init.js"></script>
+<link href="site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xkm/sYwpb+ilR5gUw==" crossorigin="anonymous" referrerpolicy="no-referrer">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="styles/custom.css">
+<link rel="stylesheet" href="styles/mermaid.css">
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./week2.html"><span class="chapter-title">第二周：强化学习框架与迷宫环境</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">智能计算</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">课程介绍</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./syllbus.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">课程大纲</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week1.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">第一周：强化学习入门</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week2.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">第二周：强化学习框架与迷宫环境</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week3.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">第三周：Q-Learning 算法详解与实践</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week4.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">第四周：Q-Learning 算法优化与改进</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#课程目标" id="toc-课程目标" class="nav-link active" data-scroll-target="#课程目标">课程目标</a></li>
+  <li><a href="#第一次课强化学习框架与迷宫环境-grid-world-搭建" id="toc-第一次课强化学习框架与迷宫环境-grid-world-搭建" class="nav-link" data-scroll-target="#第一次课强化学习框架与迷宫环境-grid-world-搭建">第一次课：强化学习框架与迷宫环境 (Grid World) 搭建</a>
+  <ul class="collapse">
+  <li><a href="#马尔可夫决策过程-mdp-基础" id="toc-马尔可夫决策过程-mdp-基础" class="nav-link" data-scroll-target="#马尔可夫决策过程-mdp-基础">1. 马尔可夫决策过程 (MDP) 基础</a></li>
+  <li><a href="#价值函数-value-function" id="toc-价值函数-value-function" class="nav-link" data-scroll-target="#价值函数-value-function">2. 价值函数 (Value Function)</a></li>
+  <li><a href="#探索-exploration-vs.-利用-exploitation" id="toc-探索-exploration-vs.-利用-exploitation" class="nav-link" data-scroll-target="#探索-exploration-vs.-利用-exploitation">3. 探索 (Exploration) vs.&nbsp;利用 (Exploitation)</a></li>
+  <li><a href="#迷宫环境-grid-world-搭建-gymnasium" id="toc-迷宫环境-grid-world-搭建-gymnasium" class="nav-link" data-scroll-target="#迷宫环境-grid-world-搭建-gymnasium">4. 迷宫环境 (Grid World) 搭建 (Gymnasium)</a></li>
+  </ul></li>
+  <li><a href="#第二次课小组项目一迷宫寻宝-grid-world-环境搭建" id="toc-第二次课小组项目一迷宫寻宝-grid-world-环境搭建" class="nav-link" data-scroll-target="#第二次课小组项目一迷宫寻宝-grid-world-环境搭建">第二次课：小组项目一：迷宫寻宝 (Grid World) 环境搭建</a>
+  <ul class="collapse">
+  <li><a href="#小组项目一迷宫寻宝-grid-world-环境搭建" id="toc-小组项目一迷宫寻宝-grid-world-环境搭建" class="nav-link" data-scroll-target="#小组项目一迷宫寻宝-grid-world-环境搭建">1. 小组项目一：迷宫寻宝 (Grid World) 环境搭建</a></li>
+  <li><a href="#答疑与指导" id="toc-答疑与指导" class="nav-link" data-scroll-target="#答疑与指导">2. 答疑与指导</a></li>
+  <li><a href="#布置小组项目一迷宫寻宝-grid-world-环境搭建" id="toc-布置小组项目一迷宫寻宝-grid-world-环境搭建" class="nav-link" data-scroll-target="#布置小组项目一迷宫寻宝-grid-world-环境搭建">3. 布置小组项目一：迷宫寻宝 (Grid World) 环境搭建</a></li>
+  <li><a href="#课后作业" id="toc-课后作业" class="nav-link" data-scroll-target="#课后作业">课后作业</a></li>
+  <li><a href="#预习资料" id="toc-预习资料" class="nav-link" data-scroll-target="#预习资料">预习资料</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-title">第二周：强化学习框架与迷宫环境</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="课程目标" class="level2">
+<h2 class="anchored" data-anchor-id="课程目标">课程目标</h2>
+<ul>
+<li>理解马尔可夫决策过程 (MDP) 的基本思想</li>
+<li>掌握策略 (Policy)、价值函数 (Value Function) 的概念</li>
+<li>理解探索 (Exploration) 与利用 (Exploitation) 的平衡</li>
+<li>学习使用 Gymnasium 库搭建迷宫环境 (Grid World)</li>
+<li>掌握使用 AI 辅助工具进行代码补全和修改</li>
+</ul>
+</section>
+<section id="第一次课强化学习框架与迷宫环境-grid-world-搭建" class="level2">
+<h2 class="anchored" data-anchor-id="第一次课强化学习框架与迷宫环境-grid-world-搭建">第一次课：强化学习框架与迷宫环境 (Grid World) 搭建</h2>
+<section id="马尔可夫决策过程-mdp-基础" class="level3">
+<h3 class="anchored" data-anchor-id="马尔可夫决策过程-mdp-基础">1. 马尔可夫决策过程 (MDP) 基础</h3>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>马尔可夫决策过程 (Markov Decision Process, MDP) 是强化学习的核心框架，用于形式化描述智能体与环境的交互过程。</p>
+</div>
+</div>
+<section id="mdp-的核心要素-无需数学细节侧重直观理解" class="level4">
+<h4 class="anchored" data-anchor-id="mdp-的核心要素-无需数学细节侧重直观理解">1.1 MDP 的核心要素 (无需数学细节，侧重直观理解)</h4>
+<ul>
+<li><strong>状态 (State, S)</strong>
+<ul>
+<li>环境的描述，包含了智能体做出决策所需的信息。</li>
+<li><strong>马尔可夫性质</strong>: 当前状态包含了所有历史信息，未来的状态只依赖于当前状态和动作，而与过去的历史无关。</li>
+<li>在迷宫环境中，状态可以是智能体在迷宫中的位置坐标。</li>
+</ul></li>
+<li><strong>动作 (Action, A)</strong>
+<ul>
+<li>智能体在每个状态下可以采取的行为。</li>
+<li>在迷宫环境中，动作可以是向上、下、左、右移动。</li>
+</ul></li>
+<li><strong>转移概率 (Transition Probability, P)</strong>
+<ul>
+<li>智能体在状态 <span class="math inline">\(s\)</span> 采取动作 <span class="math inline">\(a\)</span> 后，转移到下一个状态 <span class="math inline">\(s'\)</span> 的概率。</li>
+<li><span class="math inline">\(P(s'|s, a)\)</span> 表示在状态 <span class="math inline">\(s\)</span> 采取动作 <span class="math inline">\(a\)</span> 转移到状态 <span class="math inline">\(s'\)</span> 的概率。</li>
+<li>在确定性迷宫环境中，转移概率是确定的 (例如：向上走，一定到达上方的格子)。在非确定性环境中，转移概率可能存在随机性 (例如：在某些环境中，向上走，可能以 0.8 的概率到达上方格子，0.2 的概率滑到其他格子)。</li>
+</ul></li>
+<li><strong>奖励 (Reward, R)</strong>
+<ul>
+<li>智能体在与环境交互后获得的反馈信号，用于评价动作的好坏。</li>
+<li><span class="math inline">\(R(s, a, s')\)</span> 表示在状态 <span class="math inline">\(s\)</span> 采取动作 <span class="math inline">\(a\)</span> 转移到状态 <span class="math inline">\(s'\)</span> 后获得的奖励。</li>
+<li>在迷宫寻宝游戏中，到达宝藏位置可以获得正奖励，撞墙或者到达陷阱位置可能获得负奖励，正常移动可能获得小的负奖励 (鼓励尽快寻宝)。</li>
+</ul></li>
+<li><strong>策略 (Policy, <span class="math inline">\(\pi\)</span>)</strong>
+<ul>
+<li>智能体根据当前状态选择动作的规则，可以是确定性的或随机性的。</li>
+<li><span class="math inline">\(\pi(a|s)\)</span> 表示在状态 <span class="math inline">\(s\)</span> 下选择动作 <span class="math inline">\(a\)</span> 的概率。</li>
+<li>强化学习的目标是学习最优策略，使得智能体在环境中获得最大的累积奖励。</li>
+</ul></li>
+</ul>
+</section>
+<section id="mdp-过程示意" class="level4">
+<h4 class="anchored" data-anchor-id="mdp-过程示意">1.2 MDP 过程示意</h4>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">graph LR
+    S --&gt; A(动作 Action)
+    A --&gt; S'(下一个状态 State)
+    S' --&gt; R(奖励 Reward)
+    R --&gt; S
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+<p>智能体 (Agent) 处在状态 (State) S，根据策略 (Policy) 选择动作 (Action) A，环境 (Environment) 接收动作后，转移到新的状态 (State) S’，并给智能体返回奖励 (Reward) R。智能体不断与环境交互，目标是学习到最优策略，最大化累积奖励。</p>
+</section>
+</section>
+<section id="价值函数-value-function" class="level3">
+<h3 class="anchored" data-anchor-id="价值函数-value-function">2. 价值函数 (Value Function)</h3>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>价值函数用于评估在给定状态或状态-动作对下，未来预期累积奖励的期望值。价值函数是强化学习算法的核心概念之一。</p>
+</div>
+</div>
+<section id="v-函数-state-value-function" class="level4">
+<h4 class="anchored" data-anchor-id="v-函数-state-value-function">2.1 V 函数 (State Value Function)</h4>
+<ul>
+<li><span class="math inline">\(V_{\pi}(s)\)</span> 表示在策略 <span class="math inline">\(\pi\)</span> 下，从状态 <span class="math inline">\(s\)</span> 出发，未来可以获得的期望累积奖励。</li>
+<li>V 函数评估的是<strong>状态的价值</strong>，即处于某个状态的好坏程度。</li>
+<li>V 函数越大，表示当前状态越好，未来可以获得的期望奖励越高。</li>
+</ul>
+</section>
+<section id="q-函数-action-value-function" class="level4">
+<h4 class="anchored" data-anchor-id="q-函数-action-value-function">2.2 Q 函数 (Action Value Function)</h4>
+<ul>
+<li><span class="math inline">\(Q_{\pi}(s, a)\)</span> 表示在策略 <span class="math inline">\(\pi\)</span> 下，从状态 <span class="math inline">\(s\)</span> 出发，<strong>选择动作 <span class="math inline">\(a\)</span> 后</strong>，未来可以获得的期望累积奖励。</li>
+<li>Q 函数评估的是<strong>状态-动作对的价值</strong>，即在某个状态下，采取某个动作的好坏程度。</li>
+<li>Q 函数越大，表示在当前状态下，采取该动作越好，未来可以获得的期望奖励越高。</li>
+</ul>
+</section>
+<section id="v-函数和-q-函数的关系" class="level4">
+<h4 class="anchored" data-anchor-id="v-函数和-q-函数的关系">2.3 V 函数和 Q 函数的关系</h4>
+<ul>
+<li><p>V 函数可以通过 Q 函数计算得到：</p>
+<p><span class="math inline">\(V_{\pi}(s) = \sum_{a \in A} \pi(a|s) Q_{\pi}(s, a)\)</span></p>
+<p>即状态 <span class="math inline">\(s\)</span> 的价值等于在状态 <span class="math inline">\(s\)</span> 下，所有可能动作的 Q 函数值的<strong>期望</strong> (按照策略 <span class="math inline">\(\pi\)</span> 的动作选择概率进行加权平均)。</p></li>
+<li><p>Q 函数可以通过 V 函数和奖励函数以及转移概率计算得到 (Bellman 方程，下周会详细讲解)。</p></li>
+</ul>
+</section>
+</section>
+<section id="探索-exploration-vs.-利用-exploitation" class="level3">
+<h3 class="anchored" data-anchor-id="探索-exploration-vs.-利用-exploitation">3. 探索 (Exploration) vs.&nbsp;利用 (Exploitation)</h3>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Important
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>探索与利用是强化学习中一个核心的权衡问题。智能体需要在探索新策略和利用已知最优策略之间找到平衡。</p>
+</div>
+</div>
+<ul>
+<li><strong>探索 (Exploration)</strong>
+<ul>
+<li>尝试新的动作，探索未知的状态和动作空间，以发现潜在的更优策略。</li>
+<li>例如：在迷宫寻宝游戏中，智能体可能会尝试一些之前没有走过的路径，以期找到更短的路径或者隐藏的宝藏。</li>
+</ul></li>
+<li><strong>利用 (Exploitation)</strong>
+<ul>
+<li>根据已知的经验，选择当前认为最优的动作，以最大化当前的累积奖励。</li>
+<li>例如：在迷宫寻宝游戏中，如果智能体已经知道某条路径可以到达宝藏，它可能会重复选择这条路径，以快速获得奖励。</li>
+</ul></li>
+</ul>
+<section id="探索与利用的平衡" class="level4">
+<h4 class="anchored" data-anchor-id="探索与利用的平衡">3.1 探索与利用的平衡</h4>
+<ul>
+<li><p><strong>过度探索</strong>：可能导致智能体花费大量时间在探索无用的区域，而错失已知的最优策略。</p></li>
+<li><p><strong>过度利用</strong>：可能导致智能体陷入局部最优解，而无法发现全局最优策略。</p></li>
+<li><p><strong><span class="math inline">\(\epsilon\)</span>-greedy 策略</strong> 是一种常用的平衡探索与利用的策略：</p>
+<ul>
+<li>以概率 <span class="math inline">\(\epsilon\)</span> (探索率) 随机选择动作 (探索)。</li>
+<li>以概率 <span class="math inline">\(1-\epsilon\)</span> 选择当前 Q 函数值最大的动作 (利用)。</li>
+<li><span class="math inline">\(\epsilon\)</span> 的值通常会随着训练的进行而逐渐减小，从而在训练初期鼓励探索，在训练后期侧重利用。</li>
+</ul></li>
+</ul>
+</section>
+<section id="商业案例类比" class="level4">
+<h4 class="anchored" data-anchor-id="商业案例类比">3.2 商业案例类比</h4>
+<ul>
+<li><p><strong>新市场尝试 vs.&nbsp;现有市场深耕</strong></p>
+<ul>
+<li><strong>新市场尝试 (探索)</strong>：企业尝试进入新的市场领域，例如：开发新的产品线、拓展新的客户群体、进入新的地理区域。
+<ul>
+<li><strong>优点</strong>：可能发现新的增长机会，拓展业务范围，提高长期竞争力。</li>
+<li><strong>缺点</strong>：风险较高，投入成本较大，短期收益不确定。</li>
+</ul></li>
+<li><strong>现有市场深耕 (利用)</strong>：企业在现有市场领域深耕细作，例如：优化现有产品、提高客户满意度、提升市场份额。
+<ul>
+<li><strong>优点</strong>：风险较低，收益相对稳定，短期回报可观。</li>
+<li><strong>缺点</strong>：增长空间有限，可能错失新的市场机会，长期竞争力可能不足。</li>
+</ul></li>
+<li><strong>平衡策略</strong>：企业需要在新市场尝试和现有市场深耕之间找到平衡点，例如：
+<ul>
+<li><strong>双元策略 (Dual Strategy)</strong>：同时进行探索性创新和利用性优化。</li>
+<li><strong>阶段性策略</strong>：在不同发展阶段侧重不同的策略，例如：初创期侧重探索，成长期侧重利用，成熟期再次侧重探索。</li>
+</ul></li>
+</ul></li>
+</ul>
+</section>
+</section>
+<section id="迷宫环境-grid-world-搭建-gymnasium" class="level3">
+<h3 class="anchored" data-anchor-id="迷宫环境-grid-world-搭建-gymnasium">4. 迷宫环境 (Grid World) 搭建 (Gymnasium)</h3>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Grid World 是强化学习中常用的简单环境，非常适合初学者入门。我们将使用 Gymnasium 库来搭建 Grid World 环境。</p>
+</div>
+</div>
+<section id="gymnasium-库安装与基本使用-回顾" class="level4">
+<h4 class="anchored" data-anchor-id="gymnasium-库安装与基本使用-回顾">4.1 Gymnasium 库安装与基本使用 (回顾)</h4>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 安装 Gymnasium (如果已安装，可以跳过)</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># pip install gymnasium</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> gymnasium <span class="im">as</span> gym</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 创建 CartPole 环境 (回顾)</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>env <span class="op">=</span> gym.make(<span class="st">"CartPole-v1"</span>, render_mode<span class="op">=</span><span class="st">"human"</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 重置环境</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>observation, info <span class="op">=</span> env.reset()</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co"># 随机选择一个动作</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>action <span class="op">=</span> env.action_space.sample()</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="co"># 执行动作，获取环境反馈</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>observation, reward, terminated, truncated, info <span class="op">=</span> env.step(action)</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="co"># 关闭环境</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>env.close()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="自定义-grid-world-环境" class="level4">
+<h4 class="anchored" data-anchor-id="自定义-grid-world-环境">4.2 自定义 Grid World 环境</h4>
+<ol type="1">
+<li><p><strong>创建自定义环境类</strong></p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> gymnasium <span class="im">as</span> gym</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> gymnasium <span class="im">import</span> spaces</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> GridWorldEnv(gym.Env):</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    metadata <span class="op">=</span> {<span class="st">"render_modes"</span>: [<span class="st">"human"</span>, <span class="st">"rgb_array"</span>], <span class="st">"render_fps"</span>: <span class="dv">4</span>}</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, render_mode<span class="op">=</span><span class="va">None</span>, size<span class="op">=</span><span class="dv">5</span>):</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>()</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.size <span class="op">=</span> size  <span class="co"># Grid world size</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.window_size <span class="op">=</span> <span class="dv">512</span>  <span class="co"># The size of the PyGame window</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 动作空间：上下左右 (4个离散动作)</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.action_space <span class="op">=</span> spaces.Discrete(<span class="dv">4</span>)</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 观测空间：智能体在 Grid world 中的位置 (行、列坐标)</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.observation_space <span class="op">=</span> spaces.Discrete(size <span class="op">*</span> size)</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="co">        Map of the grid world:</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="co">        - 0: 空格 (可以自由移动)</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="co">        - 1: 障碍物 (无法通过)</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="co">        - 2: 宝藏 (目标位置，获得奖励)</span></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a><span class="co">        - 3: 陷阱 (负奖励)</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="co">        - 4: 智能体起始位置</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a><span class="co">        """</span></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>._grid_map <span class="op">=</span> np.array([</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>            [<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>],</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>            [<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>],</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>            [<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">0</span>],</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>            [<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>],</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>            [<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>]</span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>        ])</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 宝藏位置</span></span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>._target_location <span class="op">=</span> np.array([<span class="dv">2</span>, <span class="dv">2</span>])</span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 陷阱位置 (可以添加多个陷阱位置)</span></span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>._trap_location <span class="op">=</span> np.array([<span class="dv">4</span>, <span class="dv">4</span>])</span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 智能体起始位置</span></span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>._agent_start_location <span class="op">=</span> np.array([<span class="dv">0</span>, <span class="dv">0</span>])</span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>._agent_location <span class="op">=</span> np.array([<span class="dv">0</span>, <span class="dv">0</span>])</span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.render_mode <span class="op">=</span> render_mode</span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""</span></span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a><span class="co">        对于 render_mode="human" 或 "rgb_array"，需要初始化 PyGame</span></span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a><span class="co">        """</span></span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> render_mode <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span>:</span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a>            <span class="im">import</span> pygame</span>
+<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a>            pygame.init()</span>
+<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a>            pygame.font.init()</span>
+<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>.window <span class="op">=</span> pygame.display.set_mode(</span>
+<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a>                (<span class="va">self</span>.window_size, <span class="va">self</span>.window_size)</span>
+<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a>            )</span>
+<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>.clock <span class="op">=</span> pygame.time.Clock()</span>
+<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> _get_obs(<span class="va">self</span>):</span>
+<span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 将 2D 坐标转换为 1D 状态表示</span></span>
+<span id="cb2-60"><a href="#cb2-60" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> np.ravel_multi_index(<span class="va">self</span>._agent_location, (<span class="va">self</span>.size, <span class="va">self</span>.size))</span>
+<span id="cb2-61"><a href="#cb2-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-62"><a href="#cb2-62" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> _get_info(<span class="va">self</span>):</span>
+<span id="cb2-63"><a href="#cb2-63" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> {</span>
+<span id="cb2-64"><a href="#cb2-64" aria-hidden="true" tabindex="-1"></a>            <span class="st">"agent_location"</span>: <span class="va">self</span>._agent_location,</span>
+<span id="cb2-65"><a href="#cb2-65" aria-hidden="true" tabindex="-1"></a>            <span class="st">"target_location"</span>: <span class="va">self</span>._target_location,</span>
+<span id="cb2-66"><a href="#cb2-66" aria-hidden="true" tabindex="-1"></a>            <span class="st">"distance_to_target"</span>: np.linalg.norm(<span class="va">self</span>._agent_location <span class="op">-</span> <span class="va">self</span>._target_location, <span class="bu">ord</span><span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb2-67"><a href="#cb2-67" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb2-68"><a href="#cb2-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-69"><a href="#cb2-69" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> reset(<span class="va">self</span>, seed<span class="op">=</span><span class="va">None</span>, options<span class="op">=</span><span class="va">None</span>):</span>
+<span id="cb2-70"><a href="#cb2-70" aria-hidden="true" tabindex="-1"></a>        <span class="bu">super</span>().reset(seed<span class="op">=</span>seed)</span>
+<span id="cb2-71"><a href="#cb2-71" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 将智能体放置在起始位置</span></span>
+<span id="cb2-72"><a href="#cb2-72" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>._agent_location <span class="op">=</span> <span class="va">self</span>._agent_start_location</span>
+<span id="cb2-73"><a href="#cb2-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-74"><a href="#cb2-74" aria-hidden="true" tabindex="-1"></a>        observation <span class="op">=</span> <span class="va">self</span>._get_obs()</span>
+<span id="cb2-75"><a href="#cb2-75" aria-hidden="true" tabindex="-1"></a>        info <span class="op">=</span> <span class="va">self</span>._get_info()</span>
+<span id="cb2-76"><a href="#cb2-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-77"><a href="#cb2-77" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="va">self</span>.render_mode <span class="op">==</span> <span class="st">"human"</span>:</span>
+<span id="cb2-78"><a href="#cb2-78" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>._render_frame()</span>
+<span id="cb2-79"><a href="#cb2-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-80"><a href="#cb2-80" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> observation, info</span>
+<span id="cb2-81"><a href="#cb2-81" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-82"><a href="#cb2-82" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> step(<span class="va">self</span>, action):</span>
+<span id="cb2-83"><a href="#cb2-83" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 动作编码：0=上, 1=右, 2=下, 3=左</span></span>
+<span id="cb2-84"><a href="#cb2-84" aria-hidden="true" tabindex="-1"></a>        direction <span class="op">=</span> np.array([</span>
+<span id="cb2-85"><a href="#cb2-85" aria-hidden="true" tabindex="-1"></a>            [<span class="op">-</span><span class="dv">1</span>, <span class="dv">0</span>], <span class="co"># 上</span></span>
+<span id="cb2-86"><a href="#cb2-86" aria-hidden="true" tabindex="-1"></a>            [<span class="dv">0</span>, <span class="dv">1</span>],  <span class="co"># 右</span></span>
+<span id="cb2-87"><a href="#cb2-87" aria-hidden="true" tabindex="-1"></a>            [<span class="dv">1</span>, <span class="dv">0</span>],  <span class="co"># 下</span></span>
+<span id="cb2-88"><a href="#cb2-88" aria-hidden="true" tabindex="-1"></a>            [<span class="dv">0</span>, <span class="op">-</span><span class="dv">1</span>]  <span class="co"># 左</span></span>
+<span id="cb2-89"><a href="#cb2-89" aria-hidden="true" tabindex="-1"></a>        ])</span>
+<span id="cb2-90"><a href="#cb2-90" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 智能体移动到下一个位置 (如果超出边界，则保持原位置)</span></span>
+<span id="cb2-91"><a href="#cb2-91" aria-hidden="true" tabindex="-1"></a>        proposed_location <span class="op">=</span> <span class="va">self</span>._agent_location <span class="op">+</span> direction[action]</span>
+<span id="cb2-92"><a href="#cb2-92" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-93"><a href="#cb2-93" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 判断是否超出边界</span></span>
+<span id="cb2-94"><a href="#cb2-94" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="kw">not</span> (<span class="dv">0</span> <span class="op">&lt;=</span> proposed_location[<span class="dv">0</span>] <span class="op">&lt;</span> <span class="va">self</span>.size <span class="kw">and</span> <span class="dv">0</span> <span class="op">&lt;=</span> proposed_location[<span class="dv">1</span>] <span class="op">&lt;</span> <span class="va">self</span>.size):</span>
+<span id="cb2-95"><a href="#cb2-95" aria-hidden="true" tabindex="-1"></a>            <span class="co"># 超出边界，保持原位置</span></span>
+<span id="cb2-96"><a href="#cb2-96" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>._agent_location <span class="op">=</span> <span class="va">self</span>._agent_location</span>
+<span id="cb2-97"><a href="#cb2-97" aria-hidden="true" tabindex="-1"></a>        <span class="cf">elif</span> <span class="va">self</span>._grid_map[proposed_location[<span class="dv">0</span>], proposed_location[<span class="dv">1</span>]] <span class="op">==</span> <span class="dv">1</span>:</span>
+<span id="cb2-98"><a href="#cb2-98" aria-hidden="true" tabindex="-1"></a>            <span class="co"># 撞到障碍物，保持原位置</span></span>
+<span id="cb2-99"><a href="#cb2-99" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>._agent_location <span class="op">=</span> <span class="va">self</span>._agent_location</span>
+<span id="cb2-100"><a href="#cb2-100" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span>:</span>
+<span id="cb2-101"><a href="#cb2-101" aria-hidden="true" tabindex="-1"></a>            <span class="co"># 移动到新位置</span></span>
+<span id="cb2-102"><a href="#cb2-102" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>._agent_location <span class="op">=</span> proposed_location</span>
+<span id="cb2-103"><a href="#cb2-103" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-104"><a href="#cb2-104" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 获取新的观测</span></span>
+<span id="cb2-105"><a href="#cb2-105" aria-hidden="true" tabindex="-1"></a>        observation <span class="op">=</span> <span class="va">self</span>._get_obs()</span>
+<span id="cb2-106"><a href="#cb2-106" aria-hidden="true" tabindex="-1"></a>        info <span class="op">=</span> <span class="va">self</span>._get_info()</span>
+<span id="cb2-107"><a href="#cb2-107" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-108"><a href="#cb2-108" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 根据智能体位置计算奖励 (稀疏奖励)</span></span>
+<span id="cb2-109"><a href="#cb2-109" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> np.array_equal(<span class="va">self</span>._agent_location, <span class="va">self</span>._target_location):</span>
+<span id="cb2-110"><a href="#cb2-110" aria-hidden="true" tabindex="-1"></a>            reward <span class="op">=</span> <span class="dv">10</span>  <span class="co"># 到达宝藏，正奖励</span></span>
+<span id="cb2-111"><a href="#cb2-111" aria-hidden="true" tabindex="-1"></a>            terminated <span class="op">=</span> <span class="va">True</span> <span class="co"># 游戏结束</span></span>
+<span id="cb2-112"><a href="#cb2-112" aria-hidden="true" tabindex="-1"></a>        <span class="cf">elif</span> np.array_equal(<span class="va">self</span>._agent_location, <span class="va">self</span>._trap_location):</span>
+<span id="cb2-113"><a href="#cb2-113" aria-hidden="true" tabindex="-1"></a>            reward <span class="op">=</span> <span class="op">-</span><span class="dv">10</span> <span class="co"># 到达陷阱，负奖励</span></span>
+<span id="cb2-114"><a href="#cb2-114" aria-hidden="true" tabindex="-1"></a>            terminated <span class="op">=</span> <span class="va">True</span> <span class="co"># 游戏结束</span></span>
+<span id="cb2-115"><a href="#cb2-115" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span>:</span>
+<span id="cb2-116"><a href="#cb2-116" aria-hidden="true" tabindex="-1"></a>            reward <span class="op">=</span> <span class="op">-</span><span class="dv">1</span> <span class="co"># 正常移动，小负奖励 (鼓励尽快寻宝)</span></span>
+<span id="cb2-117"><a href="#cb2-117" aria-hidden="true" tabindex="-1"></a>            terminated <span class="op">=</span> <span class="va">False</span></span>
+<span id="cb2-118"><a href="#cb2-118" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-119"><a href="#cb2-119" aria-hidden="true" tabindex="-1"></a>        truncated <span class="op">=</span> <span class="va">False</span> <span class="co">#  Grid world 环境没有时间限制，所以 truncated 始终为 False</span></span>
+<span id="cb2-120"><a href="#cb2-120" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-121"><a href="#cb2-121" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="va">self</span>.render_mode <span class="op">==</span> <span class="st">"human"</span>:</span>
+<span id="cb2-122"><a href="#cb2-122" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>._render_frame()</span>
+<span id="cb2-123"><a href="#cb2-123" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-124"><a href="#cb2-124" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> observation, reward, terminated, truncated, info</span>
+<span id="cb2-125"><a href="#cb2-125" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-126"><a href="#cb2-126" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> render(<span class="va">self</span>):</span>
+<span id="cb2-127"><a href="#cb2-127" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="va">self</span>.render_mode <span class="op">==</span> <span class="st">"rgb_array"</span>:</span>
+<span id="cb2-128"><a href="#cb2-128" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="va">self</span>._render_frame()</span>
+<span id="cb2-129"><a href="#cb2-129" aria-hidden="true" tabindex="-1"></a>        <span class="cf">elif</span> <span class="va">self</span>.render_mode <span class="op">==</span> <span class="st">"human"</span>:</span>
+<span id="cb2-130"><a href="#cb2-130" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>._render_frame()</span>
+<span id="cb2-131"><a href="#cb2-131" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="va">None</span></span>
+<span id="cb2-132"><a href="#cb2-132" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-133"><a href="#cb2-133" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> _render_frame(<span class="va">self</span>):</span>
+<span id="cb2-134"><a href="#cb2-134" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="va">self</span>.window <span class="kw">is</span> <span class="va">None</span> <span class="kw">and</span> <span class="va">self</span>.render_mode <span class="op">==</span> <span class="st">"human"</span>:</span>
+<span id="cb2-135"><a href="#cb2-135" aria-hidden="true" tabindex="-1"></a>            <span class="im">import</span> pygame</span>
+<span id="cb2-136"><a href="#cb2-136" aria-hidden="true" tabindex="-1"></a>            pygame.init()</span>
+<span id="cb2-137"><a href="#cb2-137" aria-hidden="true" tabindex="-1"></a>            pygame.font.init()</span>
+<span id="cb2-138"><a href="#cb2-138" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>.window <span class="op">=</span> pygame.display.set_mode(</span>
+<span id="cb2-139"><a href="#cb2-139" aria-hidden="true" tabindex="-1"></a>                (<span class="va">self</span>.window_size, <span class="va">self</span>.window_size)</span>
+<span id="cb2-140"><a href="#cb2-140" aria-hidden="true" tabindex="-1"></a>            )</span>
+<span id="cb2-141"><a href="#cb2-141" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="va">self</span>.clock <span class="kw">is</span> <span class="va">None</span> <span class="kw">and</span> <span class="va">self</span>.render_mode <span class="op">==</span> <span class="st">"human"</span>:</span>
+<span id="cb2-142"><a href="#cb2-142" aria-hidden="true" tabindex="-1"></a>            <span class="im">import</span> pygame</span>
+<span id="cb2-143"><a href="#cb2-143" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>.clock <span class="op">=</span> pygame.time.Clock()</span>
+<span id="cb2-144"><a href="#cb2-144" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-145"><a href="#cb2-145" aria-hidden="true" tabindex="-1"></a>        canvas <span class="op">=</span> pygame.Surface((<span class="va">self</span>.window_size, <span class="va">self</span>.window_size))</span>
+<span id="cb2-146"><a href="#cb2-146" aria-hidden="true" tabindex="-1"></a>        canvas.fill((<span class="dv">255</span>, <span class="dv">255</span>, <span class="dv">255</span>)) <span class="co"># 白色背景</span></span>
+<span id="cb2-147"><a href="#cb2-147" aria-hidden="true" tabindex="-1"></a>        pix_square_size <span class="op">=</span> (</span>
+<span id="cb2-148"><a href="#cb2-148" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>.window_size <span class="op">/</span> <span class="va">self</span>.size</span>
+<span id="cb2-149"><a href="#cb2-149" aria-hidden="true" tabindex="-1"></a>        )  <span class="co"># 一格像素大小</span></span>
+<span id="cb2-150"><a href="#cb2-150" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-151"><a href="#cb2-151" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 绘制 Grid world 地图</span></span>
+<span id="cb2-152"><a href="#cb2-152" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> row <span class="kw">in</span> <span class="bu">range</span>(<span class="va">self</span>.size):</span>
+<span id="cb2-153"><a href="#cb2-153" aria-hidden="true" tabindex="-1"></a>            <span class="cf">for</span> col <span class="kw">in</span> <span class="bu">range</span>(<span class="va">self</span>.size):</span>
+<span id="cb2-154"><a href="#cb2-154" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> <span class="va">self</span>._grid_map[row, col] <span class="op">==</span> <span class="dv">1</span>: <span class="co"># 障碍物</span></span>
+<span id="cb2-155"><a href="#cb2-155" aria-hidden="true" tabindex="-1"></a>                    pygame.draw.rect(</span>
+<span id="cb2-156"><a href="#cb2-156" aria-hidden="true" tabindex="-1"></a>                        canvas,</span>
+<span id="cb2-157"><a href="#cb2-157" aria-hidden="true" tabindex="-1"></a>                        (<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>), <span class="co"># 黑色</span></span>
+<span id="cb2-158"><a href="#cb2-158" aria-hidden="true" tabindex="-1"></a>                        pygame.Rect(</span>
+<span id="cb2-159"><a href="#cb2-159" aria-hidden="true" tabindex="-1"></a>                            pix_square_size <span class="op">*</span> col,</span>
+<span id="cb2-160"><a href="#cb2-160" aria-hidden="true" tabindex="-1"></a>                            pix_square_size <span class="op">*</span> row,</span>
+<span id="cb2-161"><a href="#cb2-161" aria-hidden="true" tabindex="-1"></a>                            pix_square_size,</span>
+<span id="cb2-162"><a href="#cb2-162" aria-hidden="true" tabindex="-1"></a>                            pix_square_size,</span>
+<span id="cb2-163"><a href="#cb2-163" aria-hidden="true" tabindex="-1"></a>                        ),</span>
+<span id="cb2-164"><a href="#cb2-164" aria-hidden="true" tabindex="-1"></a>                    )</span>
+<span id="cb2-165"><a href="#cb2-165" aria-hidden="true" tabindex="-1"></a>                <span class="cf">elif</span> <span class="va">self</span>._grid_map[row, col] <span class="op">==</span> <span class="dv">2</span>: <span class="co"># 宝藏</span></span>
+<span id="cb2-166"><a href="#cb2-166" aria-hidden="true" tabindex="-1"></a>                    pygame.draw.rect(</span>
+<span id="cb2-167"><a href="#cb2-167" aria-hidden="true" tabindex="-1"></a>                        canvas,</span>
+<span id="cb2-168"><a href="#cb2-168" aria-hidden="true" tabindex="-1"></a>                        (<span class="dv">255</span>, <span class="dv">255</span>, <span class="dv">0</span>), <span class="co"># 黄色</span></span>
+<span id="cb2-169"><a href="#cb2-169" aria-hidden="true" tabindex="-1"></a>                        pygame.Rect(</span>
+<span id="cb2-170"><a href="#cb2-170" aria-hidden="true" tabindex="-1"></a>                            pix_square_size <span class="op">*</span> col,</span>
+<span id="cb2-171"><a href="#cb2-171" aria-hidden="true" tabindex="-1"></a>                            pix_square_size <span class="op">*</span> row,</span>
+<span id="cb2-172"><a href="#cb2-172" aria-hidden="true" tabindex="-1"></a>                            pix_square_size,</span>
+<span id="cb2-173"><a href="#cb2-173" aria-hidden="true" tabindex="-1"></a>                            pix_square_size,</span>
+<span id="cb2-174"><a href="#cb2-174" aria-hidden="true" tabindex="-1"></a>                        ),</span>
+<span id="cb2-175"><a href="#cb2-175" aria-hidden="true" tabindex="-1"></a>                    )</span>
+<span id="cb2-176"><a href="#cb2-176" aria-hidden="true" tabindex="-1"></a>                <span class="cf">elif</span> <span class="va">self</span>._grid_map[row, col] <span class="op">==</span> <span class="dv">3</span>: <span class="co"># 陷阱</span></span>
+<span id="cb2-177"><a href="#cb2-177" aria-hidden="true" tabindex="-1"></a>                    pygame.draw.rect(</span>
+<span id="cb2-178"><a href="#cb2-178" aria-hidden="true" tabindex="-1"></a>                        canvas,</span>
+<span id="cb2-179"><a href="#cb2-179" aria-hidden="true" tabindex="-1"></a>                        (<span class="dv">255</span>, <span class="dv">0</span>, <span class="dv">0</span>), <span class="co"># 红色</span></span>
+<span id="cb2-180"><a href="#cb2-180" aria-hidden="true" tabindex="-1"></a>                        pygame.Rect(</span>
+<span id="cb2-181"><a href="#cb2-181" aria-hidden="true" tabindex="-1"></a>                            pix_square_size <span class="op">*</span> col,</span>
+<span id="cb2-182"><a href="#cb2-182" aria-hidden="true" tabindex="-1"></a>                            pix_square_size <span class="op">*</span> row,</span>
+<span id="cb2-183"><a href="#cb2-183" aria-hidden="true" tabindex="-1"></a>                            pix_square_size,</span>
+<span id="cb2-184"><a href="#cb2-184" aria-hidden="true" tabindex="-1"></a>                            pix_square_size,</span>
+<span id="cb2-185"><a href="#cb2-185" aria-hidden="true" tabindex="-1"></a>                        ),</span>
+<span id="cb2-186"><a href="#cb2-186" aria-hidden="true" tabindex="-1"></a>                    )</span>
+<span id="cb2-187"><a href="#cb2-187" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-188"><a href="#cb2-188" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 绘制智能体</span></span>
+<span id="cb2-189"><a href="#cb2-189" aria-hidden="true" tabindex="-1"></a>        <span class="im">import</span> pygame</span>
+<span id="cb2-190"><a href="#cb2-190" aria-hidden="true" tabindex="-1"></a>        pygame.draw.circle(</span>
+<span id="cb2-191"><a href="#cb2-191" aria-hidden="true" tabindex="-1"></a>            canvas,</span>
+<span id="cb2-192"><a href="#cb2-192" aria-hidden="true" tabindex="-1"></a>            (<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">255</span>), <span class="co"># 蓝色</span></span>
+<span id="cb2-193"><a href="#cb2-193" aria-hidden="true" tabindex="-1"></a>            (<span class="va">self</span>._agent_location <span class="op">+</span> <span class="fl">0.5</span>) <span class="op">*</span> pix_square_size,</span>
+<span id="cb2-194"><a href="#cb2-194" aria-hidden="true" tabindex="-1"></a>            <span class="bu">min</span>(pix_square_size, pix_square_size) <span class="op">/</span> <span class="dv">3</span>,</span>
+<span id="cb2-195"><a href="#cb2-195" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb2-196"><a href="#cb2-196" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-197"><a href="#cb2-197" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="va">self</span>.render_mode <span class="op">==</span> <span class="st">"human"</span>:</span>
+<span id="cb2-198"><a href="#cb2-198" aria-hidden="true" tabindex="-1"></a>            <span class="co"># The following line copies our drawings from `canvas` to the visible window</span></span>
+<span id="cb2-199"><a href="#cb2-199" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>.window.blit(canvas, canvas.get_rect())</span>
+<span id="cb2-200"><a href="#cb2-200" aria-hidden="true" tabindex="-1"></a>            pygame.event.pump()</span>
+<span id="cb2-201"><a href="#cb2-201" aria-hidden="true" tabindex="-1"></a>            pygame.display.flip()</span>
+<span id="cb2-202"><a href="#cb2-202" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-203"><a href="#cb2-203" aria-hidden="true" tabindex="-1"></a>            <span class="co"># We need to ensure that human-rendering occurs at the predefined FPS.</span></span>
+<span id="cb2-204"><a href="#cb2-204" aria-hidden="true" tabindex="-1"></a>            <span class="co"># The following line will automatically add a delay to keep the FPS stable.</span></span>
+<span id="cb2-205"><a href="#cb2-205" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>.clock.tick(<span class="va">self</span>.metadata[<span class="st">"render_fps"</span>])</span>
+<span id="cb2-206"><a href="#cb2-206" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span>:  <span class="co"># rgb_array</span></span>
+<span id="cb2-207"><a href="#cb2-207" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> np.transpose(</span>
+<span id="cb2-208"><a href="#cb2-208" aria-hidden="true" tabindex="-1"></a>                np.array(pygame.surfarray.pixels3d(canvas)), axes<span class="op">=</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">2</span>)</span>
+<span id="cb2-209"><a href="#cb2-209" aria-hidden="true" tabindex="-1"></a>            )</span>
+<span id="cb2-210"><a href="#cb2-210" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-211"><a href="#cb2-211" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> close(<span class="va">self</span>):</span>
+<span id="cb2-212"><a href="#cb2-212" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="va">self</span>.window <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span>:</span>
+<span id="cb2-213"><a href="#cb2-213" aria-hidden="true" tabindex="-1"></a>            <span class="im">import</span> pygame</span>
+<span id="cb2-214"><a href="#cb2-214" aria-hidden="true" tabindex="-1"></a>            pygame.display.quit()</span>
+<span id="cb2-215"><a href="#cb2-215" aria-hidden="true" tabindex="-1"></a>            pygame.quit()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<li><p><strong>注册自定义环境</strong></p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> gymnasium.envs.registration <span class="im">import</span> register</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>register(</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="bu">id</span><span class="op">=</span><span class="st">"GridWorld-v0"</span>, <span class="co"># 环境 ID</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    entry_point<span class="op">=</span><span class="st">"__main__:GridWorldEnv"</span>, <span class="co">#  指向自定义环境类</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    kwargs<span class="op">=</span>{<span class="st">"render_mode"</span>: <span class="st">"human"</span>, <span class="st">"size"</span>: <span class="dv">5</span>}, <span class="co">#  环境初始化参数</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    max_episode_steps<span class="op">=</span><span class="dv">300</span>, <span class="co">#  最大 episode 步数</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>注意</strong>: <code>entry_point="__main__:GridWorldEnv"</code> 假设你的 <code>GridWorldEnv</code> 类定义在当前脚本文件中。如果你的环境类定义在单独的文件中，需要修改 <code>entry_point</code> 指向你的环境类。 例如，如果你的环境类定义在 <code>envs/grid_world.py</code> 文件中，并且类名为 <code>CustomGridWorldEnv</code>, 则 <code>entry_point</code> 应该修改为 <code>entry_point="envs.grid_world:CustomGridWorldEnv"</code>。</p></li>
+<li><p><strong>测试自定义环境</strong></p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> gymnasium <span class="im">as</span> gym</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co"># 导入注册自定义环境 (确保注册代码在运行前被执行)</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> week2</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co"># 创建自定义 Grid World 环境</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>env <span class="op">=</span> gym.make(<span class="st">"GridWorld-v0"</span>)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>observation, info <span class="op">=</span> env.reset()</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">10</span>):</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    action <span class="op">=</span> env.action_space.sample() <span class="co"># 随机动作</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    observation, reward, terminated, truncated, info <span class="op">=</span> env.step(action)</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> terminated <span class="kw">or</span> truncated:</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>        observation, info <span class="op">=</span> env.reset()</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    env.render() <span class="co"># 渲染环境 (human 模式下会显示窗口)</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>env.close()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+</ol>
+</section>
+<section id="ai-辅助编程实践" class="level4">
+<h4 class="anchored" data-anchor-id="ai-辅助编程实践">4.3 AI 辅助编程实践</h4>
+<ul>
+<li><strong>使用 GitHub Copilot 或 Tabnine 等 AI 工具</strong>，辅助完成 Grid World 环境代码的编写。</li>
+<li><strong>例如</strong>：
+<ul>
+<li>可以尝试输入注释 <code># 创建 GridWorldEnv 类</code>，让 AI 工具自动补全类定义代码。</li>
+<li>可以尝试输入函数签名 <code>def step(self, action):</code>，让 AI 工具自动生成 <code>step</code> 函数的代码框架。</li>
+<li>可以利用 AI 工具的代码补全、代码片段生成、代码解释等功能，提高代码编写效率，并理解代码逻辑。</li>
+</ul></li>
+</ul>
+</section>
+</section>
+</section>
+<section id="第二次课小组项目一迷宫寻宝-grid-world-环境搭建" class="level2">
+<h2 class="anchored" data-anchor-id="第二次课小组项目一迷宫寻宝-grid-world-环境搭建">第二次课：小组项目一：迷宫寻宝 (Grid World) 环境搭建</h2>
+<section id="小组项目一迷宫寻宝-grid-world-环境搭建" class="level3">
+<h3 class="anchored" data-anchor-id="小组项目一迷宫寻宝-grid-world-环境搭建">1. 小组项目一：迷宫寻宝 (Grid World) 环境搭建</h3>
+<ul>
+<li><strong>项目目标</strong>：
+<ul>
+<li>以小组为单位，基于第一次课的代码框架，<strong>独立完成</strong>迷宫环境 (Grid World) 的搭建。</li>
+<li><strong>扩展迷宫地图</strong>，设计更复杂的迷宫场景 (例如：增加更多障碍物、宝藏、陷阱等)。</li>
+<li><strong>实现基本的环境渲染</strong>，能够可视化智能体在迷宫中的探索过程。</li>
+</ul></li>
+<li><strong>代码框架</strong>：
+<ul>
+<li>提供第一次课中 <code>GridWorldEnv</code> 类的代码框架 (作为项目的基础)。</li>
+<li>小组需要<strong>自行完成代码的补全、修改和扩展</strong>。</li>
+</ul></li>
+<li><strong>AI 辅助工具</strong>：
+<ul>
+<li>鼓励学生<strong>充分利用</strong> GitHub Copilot, Tabnine 等 AI 辅助编程工具，提高开发效率。</li>
+<li><strong>但强调</strong>：AI 工具是辅助手段，学生需要理解代码逻辑，<strong>不能完全依赖</strong> AI 工具生成代码，而忽略代码理解和调试。</li>
+</ul></li>
+<li><strong>项目提交</strong>：
+<ul>
+<li>小组<strong>提交</strong>完整的 Grid World 环境代码 (Python 文件)。</li>
+<li><strong>无需提交</strong>项目报告。</li>
+</ul></li>
+</ul>
+</section>
+<section id="答疑与指导" class="level3">
+<h3 class="anchored" data-anchor-id="答疑与指导">2. 答疑与指导</h3>
+<ul>
+<li><strong>解答学生在环境搭建过程中遇到的问题</strong>。</li>
+<li><strong>重点关注</strong>：
+<ul>
+<li>Gymnasium 库的使用方法。</li>
+<li>自定义环境类的结构和接口。</li>
+<li>状态空间、动作空间、奖励函数的设计。</li>
+<li>环境渲染的实现。</li>
+<li>AI 辅助工具的使用技巧。</li>
+</ul></li>
+</ul>
+</section>
+<section id="布置小组项目一迷宫寻宝-grid-world-环境搭建" class="level3">
+<h3 class="anchored" data-anchor-id="布置小组项目一迷宫寻宝-grid-world-环境搭建">3. 布置小组项目一：迷宫寻宝 (Grid World) 环境搭建</h3>
+<ul>
+<li><strong>明确项目要求、提交时间和评分标准</strong> (本次项目<strong>不评分</strong>，作为后续项目的基础)。</li>
+<li><strong>鼓励小组积极探索、尝试</strong>，遇到问题及时提问。</li>
+<li><strong>建议小组</strong>：
+<ul>
+<li><strong>提前开始</strong>项目，预留充足的开发和调试时间。</li>
+<li><strong>分工合作</strong>，提高开发效率。</li>
+<li><strong>充分利用</strong> AI 辅助工具，但也要注重代码理解和调试能力。</li>
+<li><strong>相互交流、学习</strong>，共同解决问题。</li>
+</ul></li>
+</ul>
+</section>
+<section id="课后作业" class="level3">
+<h3 class="anchored" data-anchor-id="课后作业">课后作业</h3>
+<ol type="1">
+<li><strong>完成小组项目一：迷宫寻宝 (Grid World) 环境搭建</strong>。</li>
+<li><strong>思考题</strong>：
+<ul>
+<li>在 Grid World 环境中，如何设计更有效的奖励函数，以引导智能体更快地找到宝藏？</li>
+<li>如果迷宫地图非常大，状态空间会变得很大，对强化学习算法会产生什么影响？</li>
+<li>如何使用 AI 辅助工具更高效地进行强化学习代码开发？</li>
+</ul></li>
+</ol>
+</section>
+<section id="预习资料" class="level3">
+<h3 class="anchored" data-anchor-id="预习资料">预习资料</h3>
+<ol type="1">
+<li><strong>阅读材料</strong>：
+<ul>
+<li>Gymnasium 官方文档 (自定义环境部分)。</li>
+<li>强化学习算法基础：Q-Learning 算法初步。</li>
+<li>探索-利用平衡的更多策略 (例如：<span class="math inline">\(\epsilon\)</span>-greedy 退火策略、UCB 算法等)。</li>
+</ul></li>
+<li><strong>视频资源</strong>：
+<ul>
+<li>Grid World 环境搭建详解。</li>
+<li>Q-Learning 算法原理讲解 (初步了解)。</li>
+<li>探索与利用的平衡策略讲解。</li>
+</ul></li>
+<li><strong>下周预习重点</strong>：
+<ul>
+<li>Q-Learning 算法原理和步骤。</li>
+<li>Q-Table 的更新规则。</li>
+<li>使用 Q-Learning 算法解决 Grid World 迷宫寻宝问题。</li>
+</ul></li>
+</ol>
+<hr>
+<p><strong>请注意</strong>:</p>
+<ul>
+<li><strong>代码框架</strong>: 第一次课的代码框架，指的是第一次课中 <code>GridWorldEnv</code> 类的代码。学生需要基于这个代码框架进行扩展和修改，完成小组项目一。</li>
+<li><strong>环境注册</strong>: 请确保在运行 Grid World 环境代码之前，已经执行了环境注册代码 (<code>register(...)</code>)。可以将注册代码放在单独的文件中，或者放在运行环境代码的脚本文件的开头。</li>
+<li><strong>AI 辅助工具</strong>: 鼓励学生使用 AI 辅助工具，但务必强调理解代码逻辑的重要性，避免过度依赖 AI 工具。</li>
+<li><strong>小组项目</strong>: 小组项目一旨在让学生熟悉 Gymnasium 库和自定义环境的流程，为后续的强化学习算法实践打下基础。</li>
+</ul>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./week1.html" class="pagination-link" aria-label="第一周：强化学习入门">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">第一周：强化学习入门</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./week3.html" class="pagination-link" aria-label="第三周：Q-Learning 算法详解与实践">
+        <span class="nav-page-text"><span class="chapter-title">第三周：Q-Learning 算法详解与实践</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

@@ -1,0 +1,102 @@
+.mermaid {
+    font-family: var(--bs-body-font-family);
+    font-size: var(--bs-body-font-size);
+    color: var(--bs-body-color);
+    background-color: transparent !important;
+}
+
+/* 确保所有背景都是透明的 */
+.mermaid rect,
+.mermaid circle,
+.mermaid ellipse,
+.mermaid polygon,
+.mermaid path,
+.mermaid g,
+.mermaid .node,
+.mermaid .cluster,
+.mermaid .cluster-background,
+.mermaid .cluster rect.background,
+.mermaid foreignObject {
+    fill: transparent !important;
+    background-color: transparent !important;
+}
+
+/* 统一所有边框样式 */
+.mermaid .node rect,
+.mermaid .node circle,
+.mermaid .node ellipse,
+.mermaid .node polygon,
+.mermaid .node path,
+.mermaid .cluster rect {
+    stroke: var(--bs-body-color);
+    stroke-width: 1px;
+}
+
+/* 统一连接线样式 */
+.mermaid .edgePath .path {
+    stroke: var(--bs-body-color);
+    stroke-width: 1px;
+    fill: none !important;
+}
+
+/* 统一所有文字样式 */
+.mermaid .label,
+.mermaid .nodeLabel,
+.mermaid .edgeLabel,
+.mermaid .cluster .label,
+.mermaid text,
+.mermaid span,
+.mermaid foreignObject div {
+    color: var(--bs-body-color) !important;
+    font-size: var(--bs-body-font-size) !important;
+    font-family: var(--bs-body-font-family) !important;
+    background-color: transparent !important;
+    fill: var(--bs-body-color) !important;
+}
+
+/* 处理 subgraph 特殊样式 */
+.mermaid .cluster {
+    fill: transparent !important;
+    background-color: transparent !important;
+}
+
+.mermaid .cluster rect {
+    fill: transparent !important;
+    stroke: var(--bs-body-color);
+    rx: 5px;
+    ry: 5px;
+}
+
+/* 确保 subgraph 标题正确 */
+.mermaid .cluster .label {
+    font-weight: normal !important;
+}
+
+/* 处理特殊元素 */
+.mermaid marker path {
+    fill: var(--bs-body-color) !important;
+    stroke: none !important;
+}
+
+/* 确保背景完全透明 */
+.mermaid > svg {
+    background-color: transparent !important;
+}
+
+.mermaid g[class*="flowchart-"] {
+    fill: transparent !important;
+    background-color: transparent !important;
+}
+
+/* 处理所有可能的背景元素 */
+.mermaid .section0,
+.mermaid .section1,
+.mermaid .section2,
+.mermaid .section3,
+.mermaid .section4,
+.mermaid .section5,
+.mermaid .section6,
+.mermaid .section7 {
+    fill: transparent !important;
+    background-color: transparent !important;
+} 

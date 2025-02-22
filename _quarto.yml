@@ -1,0 +1,27 @@
+project:
+  type: book
+
+book:
+  title: "智能计算"
+  author: "陆海波"
+  date: today
+  chapters:
+    - index.qmd
+    - syllbus.qmd
+    - week1.qmd
+    - week2.qmd
+    - week3.qmd
+    - week4.qmd
+format:
+  html:
+    theme: cosmo
+    css:
+      - styles/custom.css
+      - styles/mermaid.css
+    toc: true
+    number-sections: false
+    code-fold: true
+    callout-appearance: "none"
+    include-in-header:
+      - text: |
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xkm/sYwpb+ilR5gUw==" crossorigin="anonymous" referrerpolicy="no-referrer">
