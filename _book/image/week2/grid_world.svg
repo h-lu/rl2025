@@ -1,0 +1,56 @@
+<svg width="500" height="500" xmlns="http://www.w3.org/2000/svg">
+  <!-- 背景 -->
+  <rect width="500" height="500" fill="#f8f9fa" rx="10" ry="10"/>
+  
+  <!-- 标题 -->
+  <text x="250" y="30" font-family="Arial" font-size="20" font-weight="bold" fill="#333" text-anchor="middle">Grid World 环境</text>
+  
+  <!-- 网格 -->
+  <g transform="translate(100, 80)">
+    <!-- 网格线 -->
+    <line x1="0" y1="0" x2="300" y2="0" stroke="#ccc" stroke-width="2"/>
+    <line x1="0" y1="60" x2="300" y2="60" stroke="#ccc" stroke-width="2"/>
+    <line x1="0" y1="120" x2="300" y2="120" stroke="#ccc" stroke-width="2"/>
+    <line x1="0" y1="180" x2="300" y2="180" stroke="#ccc" stroke-width="2"/>
+    <line x1="0" y1="240" x2="300" y2="240" stroke="#ccc" stroke-width="2"/>
+    <line x1="0" y1="300" x2="300" y2="300" stroke="#ccc" stroke-width="2"/>
+    
+    <line x1="0" y1="0" x2="0" y2="300" stroke="#ccc" stroke-width="2"/>
+    <line x1="60" y1="0" x2="60" y2="300" stroke="#ccc" stroke-width="2"/>
+    <line x1="120" y1="0" x2="120" y2="300" stroke="#ccc" stroke-width="2"/>
+    <line x1="180" y1="0" x2="180" y2="300" stroke="#ccc" stroke-width="2"/>
+    <line x1="240" y1="0" x2="240" y2="300" stroke="#ccc" stroke-width="2"/>
+    <line x1="300" y1="0" x2="300" y2="300" stroke="#ccc" stroke-width="2"/>
+    
+    <!-- 障碍物 -->
+    <rect x="60" y="60" width="60" height="60" fill="#888"/>
+    <rect x="180" y="60" width="60" height="60" fill="#888"/>
+    <rect x="60" y="180" width="60" height="60" fill="#888"/>
+    <rect x="180" y="180" width="60" height="60" fill="#888"/>
+    
+    <!-- 智能体 -->
+    <circle cx="30" cy="30" r="20" fill="#4285f4"/>
+    <text x="30" y="35" font-family="Arial" font-size="16" fill="white" text-anchor="middle">A</text>
+    
+    <!-- 目标 -->
+    <rect x="240" y="240" width="60" height="60" fill="#34a853"/>
+    <text x="270" y="280" font-family="Arial" font-size="16" fill="white" text-anchor="middle">G</text>
+    
+    <!-- 陷阱 -->
+    <rect x="240" y="120" width="60" height="60" fill="#ea4335"/>
+    <text x="270" y="160" font-family="Arial" font-size="16" fill="white" text-anchor="middle">T</text>
+  </g>
+  
+  <!-- 图例 -->
+  <rect x="100" y="400" width="20" height="20" fill="#4285f4"/>
+  <text x="130" y="415" font-family="Arial" font-size="14" fill="#333">智能体</text>
+  
+  <rect x="180" y="400" width="20" height="20" fill="#888"/>
+  <text x="210" y="415" font-family="Arial" font-size="14" fill="#333">障碍物</text>
+  
+  <rect x="260" y="400" width="20" height="20" fill="#34a853"/>
+  <text x="290" y="415" font-family="Arial" font-size="14" fill="#333">目标</text>
+  
+  <rect x="340" y="400" width="20" height="20" fill="#ea4335"/>
+  <text x="370" y="415" font-family="Arial" font-size="14" fill="#333">陷阱</text>
+</svg> 

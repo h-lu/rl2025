@@ -48,13 +48,8 @@ title: "第二周：强化学习框架与迷宫环境"
 
 ::: {.callout-tip}
 ## MDP 过程示意图
-```{mermaid}
-graph LR
-    S --> A(动作 Action)
-    A --> S'(下一个状态 State)
-    S' --> R(奖励 Reward)
-    R --> S
-```
+
+![马尔可夫决策过程](image/week2/mdp_process.svg)
 :::
 
 ::: {.callout-important}
@@ -75,6 +70,41 @@ graph LR
 $V_{\pi}(s) = \sum_{a \in A} \pi(a|s) Q_{\pi}(s, a)$
 :::
 
+::: {.callout-note}
+## 价值函数的数学表达
+
+### V 函数的数学定义
+$$V_{\pi}(s) = \mathbb{E}_{\pi}\left[ \sum_{k=0}^{\infty} \gamma^k R_{t+k+1} | S_t = s \right]$$
+
+- $\gamma$ 是折扣因子，取值范围 [0, 1]
+- $R_t$ 是在时间步 t 获得的奖励
+- $\mathbb{E}_{\pi}$ 表示在策略 $\pi$ 下的期望
+
+### Q 函数的数学定义
+$$Q_{\pi}(s, a) = \mathbb{E}_{\pi}\left[ \sum_{k=0}^{\infty} \gamma^k R_{t+k+1} | S_t = s, A_t = a \right]$$
+
+### 贝尔曼方程
+贝尔曼方程是强化学习中的核心等式，描述了当前状态的价值与下一个状态价值之间的关系：
+
+**V 函数的贝尔曼方程**：
+$$V_{\pi}(s) = \sum_{a} \pi(a|s) \sum_{s',r} p(s',r|s,a)[r + \gamma V_{\pi}(s')]$$
+
+**Q 函数的贝尔曼方程**：
+$$Q_{\pi}(s,a) = \sum_{s',r} p(s',r|s,a)[r + \gamma \sum_{a'} \pi(a'|s') Q_{\pi}(s',a')]$$
+
+### 最优价值函数
+强化学习的目标是找到最优策略，对应的最优价值函数定义为：
+
+**最优状态价值函数**：
+$$V^*(s) = \max_{\pi} V_{\pi}(s) = \max_{a} Q^*(s,a)$$
+
+**最优动作价值函数**：
+$$Q^*(s,a) = \max_{\pi} Q_{\pi}(s,a) = \mathbb{E}\left[R_{t+1} + \gamma \max_{a'} Q^*(S_{t+1},a') | S_t=s, A_t=a\right]$$
+
+如果我们知道最优价值函数，最优策略可以通过选择每个状态下价值最高的动作得到：
+$$\pi^*(s) = \arg\max_{a} Q^*(s,a)$$
+:::
+
 ::: {.callout-warning}
 ## 探索与利用的平衡
 探索 (Exploration) 与利用 (Exploitation) 是强化学习中一个核心的权衡问题：
@@ -91,6 +121,12 @@ $V_{\pi}(s) = \sum_{a \in A} \pi(a|s) Q_{\pi}(s, a)$
 - 以概率 $\epsilon$ 随机选择动作 (探索)
 - 以概率 $1-\epsilon$ 选择当前最优动作 (利用)
 - $\epsilon$ 随训练进行逐渐减小
+:::
+
+::: {.callout-tip}
+## 探索与利用的平衡图示
+
+![探索与利用的平衡](image/week2/exploration_exploitation.svg)
 :::
 
 ::: {.callout-note}
@@ -293,3 +329,88 @@ class GridWorldEnv(gym.Env):
 -   **环境注册**:  请确保在运行 Grid World 环境代码之前，已经执行了环境注册代码 (`register(...)`)。可以将注册代码放在单独的文件中，或者放在运行环境代码的脚本文件的开头。
 -   **AI 辅助工具**:  鼓励学生使用 AI 辅助工具，但务必强调理解代码逻辑的重要性，避免过度依赖 AI 工具。
 -   **小组项目**:  小组项目一旨在让学生熟悉 Gymnasium 库和自定义环境的流程，为后续的强化学习算法实践打下基础。
+
+::: {.callout-tip}
+## Grid World 环境可视化
+
+![Grid World 环境](image/week2/grid_world.svg)
+:::
+
+::: {.callout-note}
+## 完整的Grid World环境实现 - step()方法
+
+```python
+def step(self, action):
+    """
+    执行一步动作，返回下一个状态、奖励、是否终止等信息
+    
+    参数:
+        action: 动作，0=上, 1=右, 2=下, 3=左
+        
+    返回:
+        observation: 新的状态
+        reward: 获得的奖励
+        terminated: 是否到达终止状态（目标或陷阱）
+        truncated: 是否达到最大步数
+        info: 额外信息
+    """
+    # 动作映射到方向变化 (行,列)
+    direction = {
+        0: (-1, 0),  # 上
+        1: (0, 1),   # 右
+        2: (1, 0),   # 下
+        3: (0, -1)   # 左
+    }
+    
+    # 计算新位置
+    delta_row, delta_col = direction[action]
+    new_position = self._agent_location + np.array([delta_row, delta_col])
+    
+    # 检查是否越界或撞墙
+    if (
+        0 <= new_position[0] < self.size 
+        and 0 <= new_position[1] < self.size 
+        and self._grid_map[new_position[0], new_position[1]] != 1
+    ):
+        self._agent_location = new_position
+    
+    # 获取当前位置的单元格类型
+    current_cell = self._grid_map[self._agent_location[0], self._agent_location[1]]
+    
+    # 初始化奖励和终止状态
+    reward = -0.1  # 每一步的小惩罚，鼓励快速到达目标
+    terminated = False
+    truncated = False
+    
+    # 根据当前位置计算奖励和是否终止
+    if np.array_equal(self._agent_location, self._target_location):
+        # 到达目标
+        reward = 1.0
+        terminated = True
+    elif np.array_equal(self._agent_location, self._trap_location):
+        # 掉入陷阱
+        reward = -1.0
+        terminated = True
+    
+    # 将智能体位置转换为离散观测空间的索引
+    observation = self._agent_location[0] * self.size + self._agent_location[1]
+    
+    # 如果需要渲染，渲染当前帧
+    if self.render_mode == "human":
+        self.render()
+    
+    return observation, reward, terminated, truncated, {}
+```
+:::
+
+::: {.callout-note}
+## Q-Learning 算法流程
+
+![Q-Learning 算法流程](image/week2/q_learning_diagram.svg)
+:::
+
+::: {.callout-tip}
+## 价值迭代算法
+
+![价值迭代算法](image/week2/value_iteration.svg)
+:::

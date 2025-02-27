@@ -1,0 +1,31 @@
+<svg width="600" height="300" xmlns="http://www.w3.org/2000/svg">
+  <!-- 背景 -->
+  <rect width="600" height="300" fill="#f8f9fa" rx="10" ry="10"/>
+  
+  <!-- 智能体 -->
+  <rect x="120" y="100" width="120" height="80" fill="#4285f4" rx="10" ry="10"/>
+  <text x="180" y="145" font-family="Arial" font-size="16" fill="white" text-anchor="middle">智能体</text>
+  
+  <!-- 环境 -->
+  <rect x="360" y="100" width="120" height="80" fill="#34a853" rx="10" ry="10"/>
+  <text x="420" y="145" font-family="Arial" font-size="16" fill="white" text-anchor="middle">环境</text>
+  
+  <!-- 动作箭头 -->
+  <path d="M 240 120 L 360 120" stroke="#ea4335" stroke-width="3" fill="none" marker-end="url(#arrowhead)"/>
+  <text x="300" y="110" font-family="Arial" font-size="14" fill="#ea4335" text-anchor="middle">动作</text>
+  
+  <!-- 状态箭头 -->
+  <path d="M 360 140 L 240 140" stroke="#fbbc05" stroke-width="3" fill="none" marker-end="url(#arrowhead)"/>
+  <text x="300" y="160" font-family="Arial" font-size="14" fill="#fbbc05" text-anchor="middle">状态</text>
+  
+  <!-- 奖励箭头 -->
+  <path d="M 360 160 L 240 160" stroke="#46bdc6" stroke-width="3" fill="none" marker-end="url(#arrowhead)"/>
+  <text x="300" y="180" font-family="Arial" font-size="14" fill="#46bdc6" text-anchor="middle">奖励</text>
+  
+  <!-- 箭头定义 -->
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" />
+    </marker>
+  </defs>
+</svg> 

@@ -102,9 +102,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "Search"
   }
 }</script>
-<script src="site_libs/quarto-diagram/mermaid.min.js"></script>
-<script src="site_libs/quarto-diagram/mermaid-init.js"></script>
-<link href="site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xkm/sYwpb+ilR5gUw==" crossorigin="anonymous" referrerpolicy="no-referrer">
 
   <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
@@ -344,21 +341,11 @@ MDP 过程示意图
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<div class="cell" data-layout-align="default">
-<div class="cell-output-display">
-<div>
-<p></p><figure class="figure"><p></p>
-<div>
-<pre class="mermaid mermaid-js">graph LR
-    S --&gt; A(动作 Action)
-    A --&gt; S'(下一个状态 State)
-    S' --&gt; R(奖励 Reward)
-    R --&gt; S
-</pre>
-</div>
-<p></p></figure><p></p>
-</div>
-</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="image/week2/mdp_process.svg" class="img-fluid figure-img"></p>
+<figcaption>马尔可夫决策过程</figcaption>
+</figure>
 </div>
 </div>
 </div>
@@ -395,6 +382,44 @@ MDP 过程示意图
 </section>
 </div>
 </div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+价值函数的数学表达
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<section id="v-函数的数学定义" class="level3">
+<h3 class="anchored" data-anchor-id="v-函数的数学定义">V 函数的数学定义</h3>
+<p><span class="math display">\[V_{\pi}(s) = \mathbb{E}_{\pi}\left[ \sum_{k=0}^{\infty} \gamma^k R_{t+k+1} | S_t = s \right]\]</span></p>
+<ul>
+<li><span class="math inline">\(\gamma\)</span> 是折扣因子，取值范围 [0, 1]</li>
+<li><span class="math inline">\(R_t\)</span> 是在时间步 t 获得的奖励</li>
+<li><span class="math inline">\(\mathbb{E}_{\pi}\)</span> 表示在策略 <span class="math inline">\(\pi\)</span> 下的期望</li>
+</ul>
+</section>
+<section id="q-函数的数学定义" class="level3">
+<h3 class="anchored" data-anchor-id="q-函数的数学定义">Q 函数的数学定义</h3>
+<p><span class="math display">\[Q_{\pi}(s, a) = \mathbb{E}_{\pi}\left[ \sum_{k=0}^{\infty} \gamma^k R_{t+k+1} | S_t = s, A_t = a \right]\]</span></p>
+</section>
+<section id="贝尔曼方程" class="level3">
+<h3 class="anchored" data-anchor-id="贝尔曼方程">贝尔曼方程</h3>
+<p>贝尔曼方程是强化学习中的核心等式，描述了当前状态的价值与下一个状态价值之间的关系：</p>
+<p><strong>V 函数的贝尔曼方程</strong>： <span class="math display">\[V_{\pi}(s) = \sum_{a} \pi(a|s) \sum_{s',r} p(s',r|s,a)[r + \gamma V_{\pi}(s')]\]</span></p>
+<p><strong>Q 函数的贝尔曼方程</strong>： <span class="math display">\[Q_{\pi}(s,a) = \sum_{s',r} p(s',r|s,a)[r + \gamma \sum_{a'} \pi(a'|s') Q_{\pi}(s',a')]\]</span></p>
+</section>
+<section id="最优价值函数" class="level3">
+<h3 class="anchored" data-anchor-id="最优价值函数">最优价值函数</h3>
+<p>强化学习的目标是找到最优策略，对应的最优价值函数定义为：</p>
+<p><strong>最优状态价值函数</strong>： <span class="math display">\[V^*(s) = \max_{\pi} V_{\pi}(s) = \max_{a} Q^*(s,a)\]</span></p>
+<p><strong>最优动作价值函数</strong>： <span class="math display">\[Q^*(s,a) = \max_{\pi} Q_{\pi}(s,a) = \mathbb{E}\left[R_{t+1} + \gamma \max_{a'} Q^*(S_{t+1},a') | S_t=s, A_t=a\right]\]</span></p>
+<p>如果我们知道最优价值函数，最优策略可以通过选择每个状态下价值最高的动作得到： <span class="math display">\[\pi^*(s) = \arg\max_{a} Q^*(s,a)\]</span></p>
+</section>
+</div>
+</div>
 <div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -428,6 +453,24 @@ MDP 过程示意图
 <li><span class="math inline">\(\epsilon\)</span> 随训练进行逐渐减小</li>
 </ul>
 </section>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+探索与利用的平衡图示
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="image/week2/exploration_exploitation.svg" class="img-fluid figure-img"></p>
+<figcaption>探索与利用的平衡</figcaption>
+</figure>
+</div>
 </div>
 </div>
 <div class="callout callout-style-default callout-note callout-titled">
@@ -706,6 +749,132 @@ Grid World 环境搭建
 <li><strong>AI 辅助工具</strong>: 鼓励学生使用 AI 辅助工具，但务必强调理解代码逻辑的重要性，避免过度依赖 AI 工具。</li>
 <li><strong>小组项目</strong>: 小组项目一旨在让学生熟悉 Gymnasium 库和自定义环境的流程，为后续的强化学习算法实践打下基础。</li>
 </ul>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Grid World 环境可视化
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="image/week2/grid_world.svg" class="img-fluid figure-img"></p>
+<figcaption>Grid World 环境</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+完整的Grid World环境实现 - step()方法
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> step(<span class="va">self</span>, action):</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">    执行一步动作，返回下一个状态、奖励、是否终止等信息</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co">    </span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co">    参数:</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co">        action: 动作，0=上, 1=右, 2=下, 3=左</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co">        </span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co">    返回:</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co">        observation: 新的状态</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co">        reward: 获得的奖励</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co">        terminated: 是否到达终止状态（目标或陷阱）</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="co">        truncated: 是否达到最大步数</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="co">        info: 额外信息</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 动作映射到方向变化 (行,列)</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    direction <span class="op">=</span> {</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>        <span class="dv">0</span>: (<span class="op">-</span><span class="dv">1</span>, <span class="dv">0</span>),  <span class="co"># 上</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>        <span class="dv">1</span>: (<span class="dv">0</span>, <span class="dv">1</span>),   <span class="co"># 右</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>        <span class="dv">2</span>: (<span class="dv">1</span>, <span class="dv">0</span>),   <span class="co"># 下</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>        <span class="dv">3</span>: (<span class="dv">0</span>, <span class="op">-</span><span class="dv">1</span>)   <span class="co"># 左</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 计算新位置</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>    delta_row, delta_col <span class="op">=</span> direction[action]</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>    new_position <span class="op">=</span> <span class="va">self</span>._agent_location <span class="op">+</span> np.array([delta_row, delta_col])</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 检查是否越界或撞墙</span></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>        <span class="dv">0</span> <span class="op">&lt;=</span> new_position[<span class="dv">0</span>] <span class="op">&lt;</span> <span class="va">self</span>.size </span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>        <span class="kw">and</span> <span class="dv">0</span> <span class="op">&lt;=</span> new_position[<span class="dv">1</span>] <span class="op">&lt;</span> <span class="va">self</span>.size </span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>        <span class="kw">and</span> <span class="va">self</span>._grid_map[new_position[<span class="dv">0</span>], new_position[<span class="dv">1</span>]] <span class="op">!=</span> <span class="dv">1</span></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>    ):</span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>._agent_location <span class="op">=</span> new_position</span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 获取当前位置的单元格类型</span></span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>    current_cell <span class="op">=</span> <span class="va">self</span>._grid_map[<span class="va">self</span>._agent_location[<span class="dv">0</span>], <span class="va">self</span>._agent_location[<span class="dv">1</span>]]</span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 初始化奖励和终止状态</span></span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>    reward <span class="op">=</span> <span class="op">-</span><span class="fl">0.1</span>  <span class="co"># 每一步的小惩罚，鼓励快速到达目标</span></span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>    terminated <span class="op">=</span> <span class="va">False</span></span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>    truncated <span class="op">=</span> <span class="va">False</span></span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 根据当前位置计算奖励和是否终止</span></span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> np.array_equal(<span class="va">self</span>._agent_location, <span class="va">self</span>._target_location):</span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 到达目标</span></span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a>        reward <span class="op">=</span> <span class="fl">1.0</span></span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a>        terminated <span class="op">=</span> <span class="va">True</span></span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a>    <span class="cf">elif</span> np.array_equal(<span class="va">self</span>._agent_location, <span class="va">self</span>._trap_location):</span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 掉入陷阱</span></span>
+<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a>        reward <span class="op">=</span> <span class="op">-</span><span class="fl">1.0</span></span>
+<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a>        terminated <span class="op">=</span> <span class="va">True</span></span>
+<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 将智能体位置转换为离散观测空间的索引</span></span>
+<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a>    observation <span class="op">=</span> <span class="va">self</span>._agent_location[<span class="dv">0</span>] <span class="op">*</span> <span class="va">self</span>.size <span class="op">+</span> <span class="va">self</span>._agent_location[<span class="dv">1</span>]</span>
+<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 如果需要渲染，渲染当前帧</span></span>
+<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="va">self</span>.render_mode <span class="op">==</span> <span class="st">"human"</span>:</span>
+<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.render()</span>
+<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> observation, reward, terminated, truncated, {}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Q-Learning 算法流程
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="image/week2/q_learning_diagram.svg" class="img-fluid figure-img"></p>
+<figcaption>Q-Learning 算法流程</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+价值迭代算法
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="image/week2/value_iteration.svg" class="img-fluid figure-img"></p>
+<figcaption>价值迭代算法</figcaption>
+</figure>
+</div>
+</div>
+</div>
 
 
 </section>

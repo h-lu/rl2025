@@ -255,7 +255,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <section id="强化学习的核心概念" class="level3">
-<h3 class="anchored" data-anchor-id="强化学习的核心概念">1. 强化学习的核心概念</h3>
+<h3 class="anchored">1. 强化学习的核心概念</h3>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -306,6 +306,35 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 </div>
 </div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+强化学习交互过程可视化
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="image/week1/rl_interaction.svg" class="img-fluid figure-img"></p>
+<figcaption>强化学习交互过程</figcaption>
+</figure>
+</div>
+<section id="强化学习基本流程" class="level2">
+<h2 class="anchored" data-anchor-id="强化学习基本流程">强化学习基本流程</h2>
+<ol type="1">
+<li>智能体观察环境，获取当前状态</li>
+<li>基于当前状态和策略选择一个动作</li>
+<li>执行动作，与环境交互</li>
+<li>环境转移到新状态，并给予智能体奖励</li>
+<li>智能体根据获得的奖励更新其策略</li>
+<li>重复上述过程，直到学习收敛或达到终止条件</li>
+</ol>
+</section>
+</div>
+</div>
 </section>
 <section id="机器学习方法对比" class="level3">
 <h3 class="anchored" data-anchor-id="机器学习方法对比">2. 机器学习方法对比</h3>
@@ -319,42 +348,27 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th>特征</th>
-<th>强化学习</th>
-<th>监督学习</th>
-<th>无监督学习</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>学习方式</td>
-<td>通过交互和尝试</td>
-<td>从标注数据中学习</td>
-<td>从数据模式中学习</td>
-</tr>
-<tr class="even">
-<td>数据需求</td>
-<td>无需标注数据</td>
-<td>需要大量标注数据</td>
-<td>无需标注数据</td>
-</tr>
-<tr class="odd">
-<td>反馈类型</td>
-<td>奖励信号(延迟)</td>
-<td>即时准确的标签</td>
-<td>无直接反馈</td>
-</tr>
-<tr class="even">
-<td>适用场景</td>
-<td>决策和控制问题</td>
-<td>分类和回归问题</td>
-<td>聚类和降维问题</td>
-</tr>
-</tbody>
-</table>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="image/week1/ml_comparison.svg" class="img-fluid figure-img"></p>
+<figcaption>机器学习方法对比</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+三种学习方法的本质差异
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>监督学习</strong>：有”老师”（标签）直接告诉模型正确答案，模型通过对比其预测与正确答案之间的差距来学习。</p>
+<p><strong>无监督学习</strong>：没有”老师”，模型需要自己从数据中寻找规律和模式，不依赖外部反馈。</p>
+<p><strong>强化学习</strong>：有”评价者”而非”老师”，评价者只告诉模型其行为的好坏（奖励信号），但不直接告诉正确答案，模型需要通过尝试和探索来找到获取最大奖励的策略。</p>
 </div>
 </div>
 </section>
@@ -535,6 +549,24 @@ CartPole 环境说明
 <p>CartPole 是强化学习入门的经典环境，目标是通过左右移动小车来保持杆子平衡</p>
 </div>
 </div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+CartPole 环境可视化
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="image/week1/cartpole_env.svg" class="img-fluid figure-img"></p>
+<figcaption>CartPole环境</figcaption>
+</figure>
+</div>
+</div>
+</div>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -595,6 +627,59 @@ CartPole 环境说明
 <span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>        <span class="cf">break</span></span>
 <span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>env.close()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+简单规则策略实现示例
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>对于CartPole任务，我们可以实现一个基于当前状态的简单规则策略，而不是随机选择动作：</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> simple_rule_policy(observation):</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co">    基于杆子角度和角速度的简单规则策略</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co">    </span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co">    参数：</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co">        observation: 环境观测值，包含4个状态变量</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co">        </span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co">    返回：</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co">        action: 0(向左推)或1(向右推)</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 解析观测值</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    cart_position, cart_velocity, pole_angle, pole_velocity <span class="op">=</span> observation</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 如果杆子正在向右倾斜，则向右推车（让杆子回到中心）</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> pole_angle <span class="op">&gt;</span> <span class="dv">0</span>:</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="dv">1</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 如果杆子正在向左倾斜，则向左推车</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="dv">0</span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a><span class="co"># 使用规则策略运行环境</span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>observation, info <span class="op">=</span> env.reset()</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>total_reward <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> step <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1000</span>):  <span class="co"># 设置更大的步数上限</span></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 使用规则策略选择动作</span></span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>    action <span class="op">=</span> simple_rule_policy(observation)</span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 执行动作</span></span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>    observation, reward, terminated, truncated, info <span class="op">=</span> env.step(action)</span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>    total_reward <span class="op">+=</span> reward</span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 判断是否需要重置</span></span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> terminated <span class="kw">or</span> truncated:</span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"Episode finished after </span><span class="sc">{</span>step <span class="op">+</span> <span class="dv">1</span><span class="sc">}</span><span class="ss"> steps"</span>)</span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"Total reward: </span><span class="sc">{</span>total_reward<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a>        <span class="cf">break</span></span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a>env.close()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>这个简单的规则策略基于杆子的倾斜角度来决定将小车向哪个方向推动，虽然简单，但通常比随机策略能获得更好的性能。在强化学习中，我们的目标是通过学习来自动发现这样的策略，甚至找到更好的策略。</p>
 </div>
 </div>
 <div class="callout callout-style-default callout-important callout-titled">

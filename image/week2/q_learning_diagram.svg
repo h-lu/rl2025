@@ -1,0 +1,50 @@
+<svg width="600" height="550" xmlns="http://www.w3.org/2000/svg">
+  <!-- 背景 -->
+  <rect width="600" height="550" fill="#f8f9fa" rx="10" ry="10"/>
+  
+  <!-- 标题 -->
+  <text x="300" y="30" font-family="Arial" font-size="20" font-weight="bold" fill="#333" text-anchor="middle">Q-Learning 算法流程</text>
+  
+  <!-- 流程图框和箭头 -->
+  <!-- 初始化 -->
+  <rect x="200" y="60" width="200" height="60" fill="#4285f4" rx="10" ry="10" opacity="0.8"/>
+  <text x="300" y="95" font-family="Arial" font-size="16" fill="white" text-anchor="middle">初始化 Q 表</text>
+  
+  <!-- 选择动作 -->
+  <rect x="200" y="160" width="200" height="60" fill="#fbbc05" rx="10" ry="10" opacity="0.8"/>
+  <text x="300" y="195" font-family="Arial" font-size="16" fill="white" text-anchor="middle">基于ε-greedy选择动作</text>
+  
+  <!-- 执行动作 -->
+  <rect x="200" y="260" width="200" height="60" fill="#ea4335" rx="10" ry="10" opacity="0.8"/>
+  <text x="300" y="295" font-family="Arial" font-size="16" fill="white" text-anchor="middle">执行动作获取奖励和新状态</text>
+  
+  <!-- 更新Q值 -->
+  <rect x="200" y="360" width="200" height="60" fill="#34a853" rx="10" ry="10" opacity="0.8"/>
+  <text x="300" y="380" font-family="Arial" font-size="14" fill="white" text-anchor="middle">更新Q值</text>
+  <text x="300" y="405" font-family="Arial" font-size="12" fill="white" text-anchor="middle">Q(s,a) ← Q(s,a) + α[r + γ max Q(s',a') - Q(s,a)]</text>
+  
+  <!-- 是否结束 -->
+  <polygon points="300,460 350,490 300,520 250,490" fill="#46bdc6" opacity="0.8"/>
+  <text x="300" y="495" font-family="Arial" font-size="16" fill="white" text-anchor="middle">结束?</text>
+  
+  <!-- 箭头 -->
+  <path d="M 300 120 L 300 160" stroke="#333" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  <path d="M 300 220 L 300 260" stroke="#333" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  <path d="M 300 320 L 300 360" stroke="#333" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  <path d="M 300 420 L 300 460" stroke="#333" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  
+  <!-- 循环箭头 -->
+  <path d="M 250 490 L 100 490 L 100 195 L 200 195" stroke="#333" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  <text x="140" y="480" font-family="Arial" font-size="14" fill="#333" text-anchor="middle">否，继续迭代</text>
+  
+  <!-- 结束箭头 -->
+  <path d="M 350 490 L 500 490" stroke="#333" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  <text x="420" y="480" font-family="Arial" font-size="14" fill="#333" text-anchor="middle">是，输出Q表</text>
+  
+  <!-- 箭头定义 -->
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" />
+    </marker>
+  </defs>
+</svg> 

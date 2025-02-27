@@ -1,0 +1,75 @@
+<svg width="600" height="400" xmlns="http://www.w3.org/2000/svg">
+  <!-- 背景 -->
+  <rect width="600" height="400" fill="#f8f9fa" rx="10" ry="10"/>
+  
+  <!-- 标题 -->
+  <text x="300" y="30" font-family="Arial" font-size="20" font-weight="bold" fill="#333" text-anchor="middle">价值迭代算法</text>
+  
+  <!-- 网格 - 表示状态空间 -->
+  <g transform="translate(100, 80)">
+    <!-- 第一行网格 -->
+    <rect x="0" y="0" width="50" height="50" fill="#fff" stroke="#ccc" stroke-width="1"/>
+    <rect x="50" y="0" width="50" height="50" fill="#fff" stroke="#ccc" stroke-width="1"/>
+    <rect x="100" y="0" width="50" height="50" fill="#fff" stroke="#ccc" stroke-width="1"/>
+    <rect x="150" y="0" width="50" height="50" fill="#fff" stroke="#ccc" stroke-width="1"/>
+    
+    <!-- 第二行网格 -->
+    <rect x="0" y="50" width="50" height="50" fill="#fff" stroke="#ccc" stroke-width="1"/>
+    <rect x="50" y="50" width="50" height="50" fill="#fff" stroke="#ccc" stroke-width="1"/>
+    <rect x="100" y="50" width="50" height="50" fill="#fff" stroke="#ccc" stroke-width="1"/>
+    <rect x="150" y="50" width="50" height="50" fill="#fff" stroke="#ccc" stroke-width="1"/>
+    
+    <!-- 第三行网格 -->
+    <rect x="0" y="100" width="50" height="50" fill="#fff" stroke="#ccc" stroke-width="1"/>
+    <rect x="50" y="100" width="50" height="50" fill="#fff" stroke="#ccc" stroke-width="1"/>
+    <rect x="100" y="100" width="50" height="50" fill="#fff" stroke="#ccc" stroke-width="1"/>
+    <rect x="150" y="100" width="50" height="50" fill="#fff" stroke="#ccc" stroke-width="1"/>
+    
+    <!-- 第四行网格 -->
+    <rect x="0" y="150" width="50" height="50" fill="#fff" stroke="#ccc" stroke-width="1"/>
+    <rect x="50" y="150" width="50" height="50" fill="#fff" stroke="#ccc" stroke-width="1"/>
+    <rect x="100" y="150" width="50" height="50" fill="#fff" stroke="#ccc" stroke-width="1"/>
+    <rect x="150" y="150" width="50" height="50" fill="#fff" stroke="#ccc" stroke-width="1"/>
+    
+    <!-- 价值标签 -->
+    <text x="25" y="30" font-family="Arial" font-size="16" fill="#4285f4" text-anchor="middle">0.0</text>
+    <text x="75" y="30" font-family="Arial" font-size="16" fill="#4285f4" text-anchor="middle">0.1</text>
+    <text x="125" y="30" font-family="Arial" font-size="16" fill="#4285f4" text-anchor="middle">0.2</text>
+    <text x="175" y="30" font-family="Arial" font-size="16" fill="#4285f4" text-anchor="middle">0.3</text>
+    
+    <text x="25" y="80" font-family="Arial" font-size="16" fill="#4285f4" text-anchor="middle">0.1</text>
+    <text x="75" y="80" font-family="Arial" font-size="16" fill="#4285f4" text-anchor="middle">0.3</text>
+    <text x="125" y="80" font-family="Arial" font-size="16" fill="#4285f4" text-anchor="middle">0.4</text>
+    <text x="175" y="80" font-family="Arial" font-size="16" fill="#4285f4" text-anchor="middle">0.5</text>
+    
+    <text x="25" y="130" font-family="Arial" font-size="16" fill="#4285f4" text-anchor="middle">0.2</text>
+    <text x="75" y="130" font-family="Arial" font-size="16" fill="#4285f4" text-anchor="middle">0.4</text>
+    <text x="125" y="130" font-family="Arial" font-size="16" fill="#4285f4" text-anchor="middle">0.6</text>
+    <text x="175" y="130" font-family="Arial" font-size="16" fill="#4285f4" text-anchor="middle">0.7</text>
+    
+    <text x="25" y="180" font-family="Arial" font-size="16" fill="#4285f4" text-anchor="middle">0.3</text>
+    <text x="75" y="180" font-family="Arial" font-size="16" fill="#4285f4" text-anchor="middle">0.5</text>
+    <text x="125" y="180" font-family="Arial" font-size="16" fill="#4285f4" text-anchor="middle">0.7</text>
+    <text x="175" y="180" font-family="Arial" font-size="16" fill="#4285f4" text-anchor="middle">1.0</text>
+  </g>
+  
+  <!-- 迭代公式 -->
+  <rect x="300" y="120" width="250" height="80" fill="#fbbc05" rx="10" ry="10" opacity="0.1"/>
+  <text x="425" y="150" font-family="Arial" font-size="16" font-weight="bold" fill="#333" text-anchor="middle">价值迭代公式:</text>
+  <text x="425" y="180" font-family="Arial" font-size="14" fill="#333" text-anchor="middle">V(s) ← max[R(s,a) + γ∑P(s'|s,a)V(s')]</text>
+  <text x="425" y="195" font-family="Arial" font-size="14" fill="#333" text-anchor="middle">a</text>
+  
+  <!-- 算法步骤 -->
+  <rect x="100" y="260" width="450" height="120" fill="#4285f4" rx="10" ry="10" opacity="0.1"/>
+  <text x="325" y="285" font-family="Arial" font-size="16" font-weight="bold" fill="#333" text-anchor="middle">价值迭代算法步骤:</text>
+  <text x="130" y="310" font-family="Arial" font-size="14" fill="#333" text-anchor="start">1. 初始化价值函数 V(s) = 0，对所有状态 s</text>
+  <text x="130" y="335" font-family="Arial" font-size="14" fill="#333" text-anchor="start">2. 对每个状态 s，更新: V(s) ← max[R(s,a) + γ∑P(s'|s,a)V(s')]</text>
+  <text x="130" y="360" font-family="Arial" font-size="14" fill="#333" text-anchor="start">3. 重复步骤2，直到价值函数收敛 (变化小于阈值)</text>
+  
+  <!-- 箭头定义 -->
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" />
+    </marker>
+  </defs>
+</svg> 

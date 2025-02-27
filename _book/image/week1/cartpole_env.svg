@@ -1,0 +1,34 @@
+<svg width="500" height="200" xmlns="http://www.w3.org/2000/svg">
+  <!-- 背景 -->
+  <rect width="500" height="200" fill="#f8f9fa" rx="10" ry="10"/>
+  
+  <!-- 地面 -->
+  <line x1="50" y1="150" x2="450" y2="150" stroke="#888" stroke-width="2"/>
+  
+  <!-- 小车 -->
+  <rect x="225" y="140" width="50" height="10" fill="#4285f4"/>
+  
+  <!-- 杆子 -->
+  <line x1="250" y1="140" x2="250" y2="60" stroke="#ea4335" stroke-width="4"/>
+  
+  <!-- 向左移动箭头 -->
+  <path d="M 190 130 L 210 130" stroke="#34a853" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  <text x="175" y="130" font-family="Arial" font-size="12" fill="#34a853" text-anchor="middle">左移</text>
+  
+  <!-- 向右移动箭头 -->
+  <path d="M 290 130 L 310 130" stroke="#34a853" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  <text x="325" y="130" font-family="Arial" font-size="12" fill="#34a853" text-anchor="middle">右移</text>
+  
+  <!-- 标题 -->
+  <text x="250" y="30" font-family="Arial" font-size="18" font-weight="bold" fill="#333" text-anchor="middle">CartPole 环境</text>
+  
+  <!-- 标注 -->
+  <text x="250" y="180" font-family="Arial" font-size="14" fill="#333" text-anchor="middle">目标：通过移动小车保持杆子直立</text>
+  
+  <!-- 箭头定义 -->
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" />
+    </marker>
+  </defs>
+</svg> 

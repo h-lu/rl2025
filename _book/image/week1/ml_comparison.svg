@@ -1,0 +1,63 @@
+<svg width="650" height="450" xmlns="http://www.w3.org/2000/svg">
+  <!-- 背景 -->
+  <rect width="650" height="450" fill="#f8f9fa" rx="10" ry="10"/>
+  
+  <!-- 标题 -->
+  <text x="325" y="30" font-family="Arial" font-size="20" font-weight="bold" fill="#333" text-anchor="middle">机器学习方法对比</text>
+  
+  <!-- 强化学习 -->
+  <rect x="50" y="70" width="150" height="320" fill="#4285f4" rx="10" ry="10" opacity="0.2"/>
+  <text x="125" y="100" font-family="Arial" font-size="16" font-weight="bold" fill="#4285f4" text-anchor="middle">强化学习</text>
+  
+  <!-- 监督学习 -->
+  <rect x="250" y="70" width="150" height="320" fill="#ea4335" rx="10" ry="10" opacity="0.2"/>
+  <text x="325" y="100" font-family="Arial" font-size="16" font-weight="bold" fill="#ea4335" text-anchor="middle">监督学习</text>
+  
+  <!-- 无监督学习 -->
+  <rect x="450" y="70" width="150" height="320" fill="#34a853" rx="10" ry="10" opacity="0.2"/>
+  <text x="525" y="100" font-family="Arial" font-size="16" font-weight="bold" fill="#34a853" text-anchor="middle">无监督学习</text>
+  
+  <!-- 学习方式 -->
+  <text x="125" y="140" font-family="Arial" font-size="14" fill="#333" text-anchor="middle">通过交互和尝试</text>
+  <text x="325" y="140" font-family="Arial" font-size="14" fill="#333" text-anchor="middle">从标注数据中学习</text>
+  <text x="525" y="140" font-family="Arial" font-size="14" fill="#333" text-anchor="middle">从数据模式中学习</text>
+  
+  <!-- 数据需求 -->
+  <text x="125" y="180" font-family="Arial" font-size="14" fill="#333" text-anchor="middle">无需标注数据</text>
+  <text x="325" y="180" font-family="Arial" font-size="14" fill="#333" text-anchor="middle">需要大量标注数据</text>
+  <text x="525" y="180" font-family="Arial" font-size="14" fill="#333" text-anchor="middle">无需标注数据</text>
+  
+  <!-- 反馈类型 -->
+  <text x="125" y="220" font-family="Arial" font-size="14" fill="#333" text-anchor="middle">奖励信号(延迟)</text>
+  <text x="325" y="220" font-family="Arial" font-size="14" fill="#333" text-anchor="middle">即时准确的标签</text>
+  <text x="525" y="220" font-family="Arial" font-size="14" fill="#333" text-anchor="middle">无直接反馈</text>
+  
+  <!-- 适用场景 -->
+  <text x="125" y="260" font-family="Arial" font-size="14" fill="#333" text-anchor="middle">决策和控制问题</text>
+  <text x="325" y="260" font-family="Arial" font-size="14" fill="#333" text-anchor="middle">分类和回归问题</text>
+  <text x="525" y="260" font-family="Arial" font-size="14" fill="#333" text-anchor="middle">聚类和降维问题</text>
+  
+  <!-- 学习目标 -->
+  <text x="125" y="300" font-family="Arial" font-size="14" fill="#333" text-anchor="middle">最大化累积奖励</text>
+  <text x="325" y="300" font-family="Arial" font-size="14" fill="#333" text-anchor="middle">最小化预测误差</text>
+  <text x="525" y="300" font-family="Arial" font-size="14" fill="#333" text-anchor="middle">发现数据中的模式</text>
+  
+  <!-- 训练难度 -->
+  <text x="125" y="340" font-family="Arial" font-size="14" fill="#333" text-anchor="middle">较高(探索利用平衡)</text>
+  <text x="325" y="340" font-family="Arial" font-size="14" fill="#333" text-anchor="middle">中等</text>
+  <text x="525" y="340" font-family="Arial" font-size="14" fill="#333" text-anchor="middle">相对较低</text>
+  
+  <!-- 业务应用 -->
+  <text x="125" y="380" font-family="Arial" font-size="12" fill="#333" text-anchor="middle">推荐系统、广告投放</text>
+  <text x="325" y="380" font-family="Arial" font-size="12" fill="#333" text-anchor="middle">图像识别、垃圾邮件过滤</text>
+  <text x="525" y="380" font-family="Arial" font-size="12" fill="#333" text-anchor="middle">客户分群、异常检测</text>
+  
+  <!-- 标签 -->
+  <text x="20" y="140" font-family="Arial" font-size="14" font-weight="bold" fill="#333" text-anchor="start">学习方式:</text>
+  <text x="20" y="180" font-family="Arial" font-size="14" font-weight="bold" fill="#333" text-anchor="start">数据需求:</text>
+  <text x="20" y="220" font-family="Arial" font-size="14" font-weight="bold" fill="#333" text-anchor="start">反馈类型:</text>
+  <text x="20" y="260" font-family="Arial" font-size="14" font-weight="bold" fill="#333" text-anchor="start">适用场景:</text>
+  <text x="20" y="300" font-family="Arial" font-size="14" font-weight="bold" fill="#333" text-anchor="start">学习目标:</text>
+  <text x="20" y="340" font-family="Arial" font-size="14" font-weight="bold" fill="#333" text-anchor="start">训练难度:</text>
+  <text x="20" y="380" font-family="Arial" font-size="14" font-weight="bold" fill="#333" text-anchor="start">业务应用:</text>
+</svg> 

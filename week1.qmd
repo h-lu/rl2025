@@ -45,16 +45,36 @@
 - 奖励信号指导智能体改进决策
 :::
 
+::: {.callout-tip}
+## 强化学习交互过程可视化
+
+![强化学习交互过程](image/week1/rl_interaction.svg)
+
+## 强化学习基本流程
+1. 智能体观察环境，获取当前状态
+2. 基于当前状态和策略选择一个动作
+3. 执行动作，与环境交互
+4. 环境转移到新状态，并给予智能体奖励
+5. 智能体根据获得的奖励更新其策略
+6. 重复上述过程，直到学习收敛或达到终止条件
+:::
+
 ### 2. 机器学习方法对比
 
 ::: {.callout-important}
 ## 学习方法对比
-| 特征 | 强化学习 | 监督学习 | 无监督学习 |
-|------|----------|----------|------------|
-| 学习方式 | 通过交互和尝试 | 从标注数据中学习 | 从数据模式中学习 |
-| 数据需求 | 无需标注数据 | 需要大量标注数据 | 无需标注数据 |
-| 反馈类型 | 奖励信号(延迟) | 即时准确的标签 | 无直接反馈 |
-| 适用场景 | 决策和控制问题 | 分类和回归问题 | 聚类和降维问题 |
+
+![机器学习方法对比](image/week1/ml_comparison.svg)
+:::
+
+::: {.callout-note}
+## 三种学习方法的本质差异
+
+**监督学习**：有"老师"（标签）直接告诉模型正确答案，模型通过对比其预测与正确答案之间的差距来学习。
+
+**无监督学习**：没有"老师"，模型需要自己从数据中寻找规律和模式，不依赖外部反馈。
+
+**强化学习**：有"评价者"而非"老师"，评价者只告诉模型其行为的好坏（奖励信号），但不直接告诉正确答案，模型需要通过尝试和探索来找到获取最大奖励的策略。
 :::
 
 ### 3. 商业应用案例详解
@@ -154,6 +174,12 @@ model.learn(total_timesteps=10000)
 CartPole 是强化学习入门的经典环境，目标是通过左右移动小车来保持杆子平衡
 :::
 
+::: {.callout-tip}
+## CartPole 环境可视化
+
+![CartPole环境](image/week1/cartpole_env.svg)
+:::
+
 ::: {.callout-note}
 ## 环境参数
 ```python
@@ -202,6 +228,55 @@ for step in range(100):
 
 env.close()
 ```
+:::
+
+::: {.callout-note}
+## 简单规则策略实现示例
+对于CartPole任务，我们可以实现一个基于当前状态的简单规则策略，而不是随机选择动作：
+
+```python
+def simple_rule_policy(observation):
+    """
+    基于杆子角度和角速度的简单规则策略
+    
+    参数：
+        observation: 环境观测值，包含4个状态变量
+        
+    返回：
+        action: 0(向左推)或1(向右推)
+    """
+    # 解析观测值
+    cart_position, cart_velocity, pole_angle, pole_velocity = observation
+    
+    # 如果杆子正在向右倾斜，则向右推车（让杆子回到中心）
+    if pole_angle > 0:
+        return 1
+    # 如果杆子正在向左倾斜，则向左推车
+    else:
+        return 0
+
+# 使用规则策略运行环境
+observation, info = env.reset()
+total_reward = 0
+
+for step in range(1000):  # 设置更大的步数上限
+    # 使用规则策略选择动作
+    action = simple_rule_policy(observation)
+    
+    # 执行动作
+    observation, reward, terminated, truncated, info = env.step(action)
+    total_reward += reward
+    
+    # 判断是否需要重置
+    if terminated or truncated:
+        print(f"Episode finished after {step + 1} steps")
+        print(f"Total reward: {total_reward}")
+        break
+
+env.close()
+```
+
+这个简单的规则策略基于杆子的倾斜角度来决定将小车向哪个方向推动，虽然简单，但通常比随机策略能获得更好的性能。在强化学习中，我们的目标是通过学习来自动发现这样的策略，甚至找到更好的策略。
 :::
 
 ::: {.callout-important}
