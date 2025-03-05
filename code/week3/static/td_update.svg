@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="700" height="300" viewBox="0 0 700 300">
+  <defs>
+    <style>
+      .formula {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        font-size: 28px;
+      }
+      .annotation {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        font-size: 16px;
+      }
+      .bracket {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        font-size: 28px;
+      }
+      .symbol {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        font-style: italic;
+        font-size: 28px;
+      }
+      .highlight-yellow {
+        fill: #fff3cd;
+        stroke: #ffeeba;
+        stroke-width: 1px;
+        opacity: 0.8;
+      }
+      .highlight-blue {
+        fill: #e3f2fd;
+        stroke: #bbdefb;
+        stroke-width: 1px;
+        opacity: 0.8;
+      }
+      .highlight-green {
+        fill: #e8f5e9;
+        stroke: #c8e6c9;
+        stroke-width: 1px;
+        opacity: 0.8;
+      }
+      .arrow {
+        fill: none;
+        stroke: #2c3e50;
+        stroke-width: 1.5;
+        marker-end: url(#arrowhead);
+      }
+      .title {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        font-size: 24px;
+        font-weight: bold;
+      }
+    </style>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#2c3e50" />
+    </marker>
+  </defs>
+  
+  <!-- 标题 -->
+  <text x="350" y="40" text-anchor="middle" class="title">Q-Learning 更新公式</text>
+  
+  <!-- 主公式背景 -->
+  <rect x="50" y="80" width="600" height="60" rx="5" fill="#f8f9fa" stroke="#dfe4ea" stroke-width="1" />
+  
+  <!-- 公式组件 -->
+  <text x="100" y="120" class="formula">Q(s, a)</text>
+  <text x="175" y="120" class="formula">←</text>
+  <text x="210" y="120" class="formula">Q(s, a)</text>
+  <text x="285" y="120" class="formula">+</text>
+  <text x="305" y="120" class="formula">α</text>
+  <text x="320" y="120" class="bracket">[</text>
+  <text x="335" y="120" class="formula">r</text>
+  <text x="350" y="120" class="formula">+</text>
+  <text x="370" y="120" class="formula">γ</text>
+  <text x="390" y="120" class="formula">max Q(s', a')</text>
+  <text x="540" y="120" class="formula">-</text>
+  <text x="560" y="120" class="formula">Q(s, a)</text>
+  <text x="635" y="120" class="bracket">]</text>
+  
+  <!-- 高亮区域 -->
+  <rect x="330" y="95" width="200" height="35" rx="5" class="highlight-yellow" />
+  <rect x="305" y="95" width="20" height="35" rx="5" class="highlight-blue" />
+  <rect x="175" y="95" width="30" height="35" rx="5" class="highlight-green" />
+  
+  <!-- 注释说明 -->
+  <text x="100" y="180" class="annotation">当前状态-动作对的Q值</text>
+  <text x="430" y="180" class="annotation">TD目标: 即时奖励 + 折扣后的下一状态最大Q值</text>
+  <text x="305" y="210" class="annotation">学习率: 控制更新步长</text>
+  <text x="190" y="210" class="annotation">更新操作</text>
+  
+  <!-- 连接线 -->
+  <path d="M 100 130 L 100 170" class="arrow" />
+  <path d="M 430 140 L 430 170" class="arrow" />
+  <path d="M 305 140 L 305 200" class="arrow" />
+  <path d="M 190 140 L 190 200" class="arrow" />
+  
+  <!-- 公式组件额外注释 -->
+  <text x="335" y="240" class="annotation">r: 即时奖励</text>
+  <text x="370" y="240" class="annotation">γ: 折扣因子 (0-1)</text>
+  <text x="470" y="240" class="annotation">max Q(s', a'): 下一状态的最大Q值</text>
+  <path d="M 335 130 L 335 230" class="arrow" />
+  <path d="M 370 130 L 370 230" class="arrow" />
+  <path d="M 470 130 L 470 230" class="arrow" />
+  
+  <!-- TD误差标注 -->
+  <path d="M 430 85 L 480 60" class="arrow" />
+  <text x="500" y="60" class="annotation">TD误差: 目标与当前估计的差值</text>
+</svg> 
