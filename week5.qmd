@@ -1,0 +1,290 @@
+---
+title: "第五周：项目一展示与深度 Q 网络初探"
+---
+
+::: {.callout-tip appearance="simple"}
+## 本周学习目标
+- 通过项目一展示，了解不同小组的实现思路和优化方法
+- 理解 Q-Learning 算法在复杂问题上的局限性
+- 掌握深度学习的基本概念，特别是在强化学习中的应用
+- 了解深度 Q 网络 (DQN) 的基本原理和关键技术
+- 理解经验回放 (Experience Replay) 和目标网络 (Target Network) 的作用
+:::
+
+## 第一次课：小组项目一展示与点评
+
+::: {.callout-important}
+## 项目展示规范
+- 每组展示时间：5-10分钟
+- 展示内容：问题定义、算法实现、实验结果、优化方法、遇到的挑战和解决方案
+- 展示后问答：5分钟
+:::
+
+::: {.callout-note}
+## 项目评分标准
+
+### 技术实现 (40%)
+- 算法实现的正确性
+- 代码质量和结构
+- 探索策略的有效性
+- 参数调优的合理性
+
+### 实验结果 (30%)
+- 算法收敛性
+- 智能体表现
+- 可视化质量
+- 结果分析深度
+
+### 展示质量 (20%)
+- 展示清晰度
+- 技术表达准确性
+- 问题回答能力
+- 时间控制
+
+### 团队协作 (10%)
+- 任务分工合理性
+- 协作效率
+- 项目完整性
+:::
+
+::: {.callout-tip}
+## 优秀项目分享要点
+1. 创新性解决方案
+2. 有效的探索策略改进
+3. 巧妙的奖励函数设计
+4. 高效的算法实现
+5. 直观的可视化展示
+:::
+
+::: {.callout-warning}
+## 常见问题与改进方向
+- Q表设计不合理
+- 探索策略过于简单
+- 奖励函数设计不当
+- 参数调整不充分
+- 代码效率有待提高
+- 可视化展示不直观
+:::
+
+## 第二次课：深度 Q 网络 (DQN) 详解
+
+::: {.callout-important}
+## Q-Learning 的局限性
+
+### 状态空间爆炸问题
+- 传统 Q 表无法处理大规模或连续状态空间
+- 例如：在 Atari 游戏中，即使假设每个像素只有两种颜色（例如黑白），84×84像素的图像输入也会产生超过2^(84*84)种不同状态。实际上，Atari 游戏通常是彩色的，状态空间会更加庞大。
+- 现实问题中状态往往是高维的，表格表示方法不可行
+
+### 泛化能力不足
+- 表格型 Q-Learning 无法泛化到未见过的状态
+- 每个状态都需要单独学习，样本利用率低
+- 无法有效利用状态之间的相似性和共享特征
+:::
+
+::: {.callout-note}
+## 神经网络基础
+
+### 神经网络结构
+- **输入层**：接收状态信息（如游戏屏幕像素或状态向量）
+- **隐藏层**：提取特征，发现模式（通常使用ReLU激活函数）
+- **输出层**：预测每个动作的 Q 值（通常使用线性激活函数）
+
+### 函数近似
+- 神经网络作为函数近似器 Q(s,a;θ)，θ是网络参数
+- 输入状态s，输出各动作a的价值估计
+- 通过随机梯度下降优化参数θ
+
+### 表示能力
+- 能够自动提取状态特征，无需人工设计
+- 通过共享参数捕捉状态间的相似性
+- 具有强大的泛化能力，能预测未见过状态的价值
+:::
+
+::: {.callout-tip}
+## 深度 Q 网络 (DQN) 原理
+
+### 基本思想
+- 用神经网络替代 Q 表格
+- 网络输入：状态向量
+- 网络输出：每个动作的 Q 值估计
+- 损失函数：均方误差 MSE(target_Q, predicted_Q) 
+
+### 两大关键创新
+1. **经验回放 (Experience Replay)**
+   - 存储交互经验元组 (s, a, r, s')
+   - 从经验缓冲区随机采样进行批量学习
+   - 打破样本相关性，提高数据效率，稳定训练
+
+2. **目标网络 (Target Network)**
+   - 维护两个网络：Q网络（频繁更新）和目标网络（定期更新）
+   - Q网络用于选择动作和当前估计
+   - 目标网络用于计算目标Q值
+   - 减少目标移动问题，提高训练稳定性
+
+### DQN 算法流程
+```python
+# 初始化
+Q网络和目标网络（相同初始参数）
+经验回放缓冲区 D，容量为N
+
+for 每个回合:
+    初始化状态 s
+    
+    for 每个时间步 t:
+        # 交互阶段
+        根据ε-贪婪策略选择动作 a（基于Q网络）
+        执行动作 a，获得奖励 r 和下一状态 s'
+        将经验 (s, a, r, s', done) 存入缓冲区 D
+        
+        # 学习阶段
+        从 D 中随机采样小批量经验
+        计算目标 Q 值：
+            若 s' 为终止状态: y = r
+            否则: y = r + γ * max_a' Q'(s', a')  # Q'是目标网络
+        
+        最小化损失: L = (Q(s, a) - y)²  # Q是Q网络
+        使用梯度下降更新Q网络参数
+        
+        s = s'
+        
+        # 定期更新目标网络
+        每 C 步: 目标网络参数 ← Q网络参数
+```
+:::
+
+::: {.callout-warning}
+## 经验回放详解
+
+### 核心作用
+- **打破样本相关性**：连续采样的状态高度相关，随机采样打破这种相关性
+- **提高数据效率**：每个经验可以被多次使用，减少环境交互次数
+- **稳定训练**：平滑采样分布，减少参数更新的方差
+- **均衡经验分布**：不同情景的经验都有机会被学习，避免过拟合
+
+### 实现要点
+```python
+class ReplayBuffer:
+    def __init__(self, capacity):
+        self.buffer = deque(maxlen=capacity)  # 固定容量的双端队列
+    
+    def add(self, state, action, reward, next_state, done):
+        # 存储经验元组
+        self.buffer.append((state, action, reward, next_state, done))
+    
+    def sample(self, batch_size):
+        # 随机采样批次经验
+        experiences = random.sample(self.buffer, batch_size)
+        
+        # 解析为分离的数组，便于批量处理
+        states, actions, rewards, next_states, dones = zip(*experiences)
+        return np.array(states), np.array(actions), np.array(rewards), \
+               np.array(next_states), np.array(dones)
+```
+
+### 进阶版本
+- **优先经验回放 (Prioritized Experience Replay)**：根据TD误差分配优先级，重要经验被更频繁采样
+- **分层经验回放 (Hindsight Experience Replay)**：重新标记目标，从失败经验中学习
+:::
+
+::: {.callout-warning}
+## 目标网络详解
+
+### 核心原理
+- 在 Q-learning 中使用同一网络同时产生目标和当前估计会导致不稳定
+- **移动目标问题**：当前网络参数θ影响目标值，目标值又用于更新θ，形成不稳定循环
+- 目标网络"冻结"目标值计算，降低训练不稳定性
+
+### 关键实现
+```python
+# 初始化
+q_network = create_model()      # 主网络
+target_network = create_model() # 目标网络
+target_network.set_weights(q_network.get_weights())  # 初始权重相同
+
+# 学习过程
+def learn(experiences):
+    states, actions, rewards, next_states, dones = experiences
+    
+    # 使用目标网络计算下一状态的最大Q值
+    target_q_values = target_network.predict(next_states)
+    max_target_q = np.max(target_q_values, axis=1)
+    
+    # 计算TD目标
+    targets = rewards + (gamma * max_target_q * (1 - dones))
+    
+    # 更新主网络
+    current_q = q_network.predict(states)
+    for i, action in enumerate(actions):
+        current_q[i][action] = targets[i]
+    q_network.fit(states, current_q, epochs=1, verbose=0)
+    
+# 定期更新目标网络
+if step % update_frequency == 0:
+    target_network.set_weights(q_network.get_weights())
+```
+
+### 更新策略
+- **硬更新**：每C步完全复制参数（原始DQN方法）
+- **软更新**：每步用小比例τ混合参数 θ_target = τ·θ + (1-τ)·θ_target（DDPG等算法采用）
+:::
+
+::: {.callout-note}
+## DQN 与 Q-Learning 对比
+
+### 相同点
+- 都是基于时序差分(TD)学习的价值函数方法
+- 都使用最大化动作价值函数(Q)的方法
+- 都采用ε-贪婪策略平衡探索与利用
+- 都应用折扣因子γ来权衡短期与长期奖励
+
+### 关键区别
+
+| 特性 | 表格型 Q-Learning | 深度 Q 网络 (DQN) |
+|------|----------------|----------------|
+| 价值表示 | Q表格 | 神经网络 |
+| 状态空间 | 小规模离散状态 | 大规模/连续状态 |
+| 更新方式 | 单样本更新 | 批量更新 |
+| 参数数量 | 状态数×动作数 | 神经网络权重数量 |
+| 稳定性技巧 | 无 | 经验回放+目标网络 |
+| 泛化能力 | 无 | 强 |
+| 样本效率 | 低 | 高 |
+| 计算复杂度 | 低 | 高 |
+:::
+
+::: {.callout-tip}
+## 重要扩展和改进
+
+### 双重DQN (Double DQN)
+- 解决Q值过高估计问题
+- 使用主网络选择动作，目标网络评估其价值
+
+### 决斗网络架构 (Dueling Network)
+- 将Q值分解为状态价值V(s)和优势函数A(s,a)
+- Q(s,a) = V(s) + A(s,a) - mean(A(s,:))
+- 提高价值估计的稳定性
+
+### 分布式DQN (Distributional DQN)
+- 学习奖励分布而非单一期望值
+- 捕捉环境的随机性和不确定性
+
+### Rainbow DQN
+- 集成六种DQN改进技术
+- 包括优先经验回放、多步学习、噪声网络等
+:::
+
+::: {.callout-tip}
+## 课后作业
+1. 阅读DQN原始论文：[Playing Atari with Deep Reinforcement Learning](https://www.cs.toronto.edu/~vmnih/docs/dqn.pdf)
+2. 下载并运行本周代码示例，熟悉经验回放和目标网络的实现方式
+3. 选择一个简单环境（如CartPole），实现基础版DQN算法
+4. 分析不同超参数（如探索率、更新频率）对训练性能的影响
+:::
+
+::: {.callout-warning}
+## 下周预习重点
+1. DQN变体算法（Double DQN、Dueling DQN）的工作原理
+2. 连续动作空间强化学习算法（DDPG、SAC）的基础知识
+3. 策略梯度方法的基本原理
+4. 深度强化学习的稳定性和采样效率问题
+::: 

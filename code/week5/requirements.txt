@@ -1,0 +1,17 @@
+# DQN算法交互式教程依赖
+
+# 核心框架
+tensorflow>=2.10.0
+streamlit>=1.23.0
+gymnasium>=0.28.1
+
+# 数据处理和可视化
+numpy>=1.22.0
+matplotlib>=3.5.0
+pandas>=1.4.0
+altair>=4.2.0
+pillow>=9.0.0
+
+# 动画和交互
+plotly>=5.10.0
+tqdm>=4.64.0 

@@ -6,7 +6,14 @@ import matplotlib.pyplot as plt
 from dynamic_pricing_gym import DynamicPricingGymEnv, q_learning
 
 def show():
-    st.title("基于Gymnasium的动态定价模型")
+    """展示动态定价模型的Streamlit界面"""
+    
+    # 设置页面标题
+    st.title("强化学习动态定价模型")
+    
+    # 用于存储最终批次的Q表，只在训练结束后一次性显示热图
+    final_q_table = None
+    final_visit_stats = None
     
     st.markdown("""
     ## 模型介绍
@@ -253,10 +260,6 @@ def show():
         coverage_chart = st.empty()
         q_value_container = st.container()  # 使用固定容器而非empty
         visit_stats_chart = st.empty()
-        
-        # 用于存储最终批次的Q表，只在训练结束后一次性显示热图
-        final_q_table = None
-        final_visit_stats = None
         
         # 训练模型并记录进度
         with st.spinner("训练中..."):
