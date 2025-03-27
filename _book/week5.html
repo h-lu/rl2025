@@ -1,0 +1,1255 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>第五周：项目一展示与深度 Q 网络初探 – 智能计算</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./week4.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xkm/sYwpb+ilR5gUw==" crossorigin="anonymous" referrerpolicy="no-referrer">
+
+
+<link rel="stylesheet" href="styles/custom.css">
+<link rel="stylesheet" href="styles/mermaid.css">
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./week5.html"><span class="chapter-title">第五周：项目一展示与深度 Q 网络初探</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">智能计算</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">课程介绍</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./syllbus.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">课程大纲</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week1.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">第一周：强化学习入门</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week2.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">第二周：强化学习框架与迷宫环境</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week3.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">第三周：Q-Learning 算法详解与实践</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week4.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">第四周：Q-Learning 算法优化与改进</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week5.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">第五周：项目一展示与深度 Q 网络初探</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#第一次课小组项目一展示与点评" id="toc-第一次课小组项目一展示与点评" class="nav-link active" data-scroll-target="#第一次课小组项目一展示与点评">第一次课：小组项目一展示与点评</a></li>
+  <li><a href="#第二次课深度-q-网络-dqn-详解" id="toc-第二次课深度-q-网络-dqn-详解" class="nav-link" data-scroll-target="#第二次课深度-q-网络-dqn-详解">第二次课：深度 Q 网络 (DQN) 详解</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-title">第五周：项目一展示与深度 Q 网络初探</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="callout callout-style-simple callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+本周学习目标
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>通过项目一展示，了解不同小组的实现思路和优化方法</li>
+<li>理解 Q-Learning 算法在复杂问题上的局限性</li>
+<li>掌握深度学习的基本概念，特别是在强化学习中的应用</li>
+<li>了解深度 Q 网络 (DQN) 的基本原理和关键技术</li>
+<li>理解经验回放 (Experience Replay) 和目标网络 (Target Network) 的作用</li>
+</ul>
+</div>
+</div>
+<section id="第一次课小组项目一展示与点评" class="level2">
+<h2 class="anchored" data-anchor-id="第一次课小组项目一展示与点评">第一次课：小组项目一展示与点评</h2>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+项目展示规范
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>每组展示时间：5-10分钟</li>
+<li>展示内容：问题定义、算法实现、实验结果、优化方法、遇到的挑战和解决方案</li>
+<li>展示后问答：5分钟</li>
+</ul>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+项目评分标准
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<section id="技术实现-40" class="level3">
+<h3 class="anchored" data-anchor-id="技术实现-40">技术实现 (40%)</h3>
+<ul>
+<li>算法实现的正确性</li>
+<li>代码质量和结构</li>
+<li>探索策略的有效性</li>
+<li>参数调优的合理性</li>
+</ul>
+</section>
+<section id="实验结果-30" class="level3">
+<h3 class="anchored" data-anchor-id="实验结果-30">实验结果 (30%)</h3>
+<ul>
+<li>算法收敛性</li>
+<li>智能体表现</li>
+<li>可视化质量</li>
+<li>结果分析深度</li>
+</ul>
+</section>
+<section id="展示质量-20" class="level3">
+<h3 class="anchored" data-anchor-id="展示质量-20">展示质量 (20%)</h3>
+<ul>
+<li>展示清晰度</li>
+<li>技术表达准确性</li>
+<li>问题回答能力</li>
+<li>时间控制</li>
+</ul>
+</section>
+<section id="团队协作-10" class="level3">
+<h3 class="anchored" data-anchor-id="团队协作-10">团队协作 (10%)</h3>
+<ul>
+<li>任务分工合理性</li>
+<li>协作效率</li>
+<li>项目完整性</li>
+</ul>
+</section>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+优秀项目分享要点
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li>创新性解决方案</li>
+<li>有效的探索策略改进</li>
+<li>巧妙的奖励函数设计</li>
+<li>高效的算法实现</li>
+<li>直观的可视化展示</li>
+</ol>
+</div>
+</div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+常见问题与改进方向
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>Q表设计不合理</li>
+<li>探索策略过于简单</li>
+<li>奖励函数设计不当</li>
+<li>参数调整不充分</li>
+<li>代码效率有待提高</li>
+<li>可视化展示不直观</li>
+</ul>
+</div>
+</div>
+</section>
+<section id="第二次课深度-q-网络-dqn-详解" class="level2">
+<h2 class="anchored" data-anchor-id="第二次课深度-q-网络-dqn-详解">第二次课：深度 Q 网络 (DQN) 详解</h2>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Q-Learning 的局限性
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<section id="状态空间爆炸问题" class="level3">
+<h3 class="anchored" data-anchor-id="状态空间爆炸问题">状态空间爆炸问题</h3>
+<ul>
+<li>传统 Q 表无法处理大规模或连续状态空间</li>
+<li>例如：在 Atari 游戏中，即使假设每个像素只有两种颜色（例如黑白），84×84像素的图像输入也会产生超过2^(84*84)种不同状态。实际上，Atari 游戏通常是彩色的，状态空间会更加庞大。</li>
+<li>现实问题中状态往往是高维的，表格表示方法不可行</li>
+</ul>
+</section>
+<section id="泛化能力不足" class="level3">
+<h3 class="anchored" data-anchor-id="泛化能力不足">泛化能力不足</h3>
+<ul>
+<li>表格型 Q-Learning 无法泛化到未见过的状态</li>
+<li>每个状态都需要单独学习，样本利用率低</li>
+<li>无法有效利用状态之间的相似性和共享特征</li>
+</ul>
+</section>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+神经网络基础
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<section id="神经网络结构" class="level3">
+<h3 class="anchored" data-anchor-id="神经网络结构">神经网络结构</h3>
+<ul>
+<li><strong>输入层</strong>：接收状态信息（如游戏屏幕像素或状态向量）</li>
+<li><strong>隐藏层</strong>：提取特征，发现模式（通常使用ReLU激活函数）</li>
+<li><strong>输出层</strong>：预测每个动作的 Q 值（通常使用线性激活函数）</li>
+</ul>
+</section>
+<section id="函数近似" class="level3">
+<h3 class="anchored" data-anchor-id="函数近似">函数近似</h3>
+<ul>
+<li>神经网络作为函数近似器 Q(s,a;θ)，θ是网络参数</li>
+<li>输入状态s，输出各动作a的价值估计</li>
+<li>通过随机梯度下降优化参数θ</li>
+</ul>
+</section>
+<section id="表示能力" class="level3">
+<h3 class="anchored" data-anchor-id="表示能力">表示能力</h3>
+<ul>
+<li>能够自动提取状态特征，无需人工设计</li>
+<li>通过共享参数捕捉状态间的相似性</li>
+<li>具有强大的泛化能力，能预测未见过状态的价值</li>
+</ul>
+</section>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+深度 Q 网络 (DQN) 原理
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<section id="基本思想" class="level3">
+<h3 class="anchored" data-anchor-id="基本思想">基本思想</h3>
+<ul>
+<li>用神经网络替代 Q 表格</li>
+<li>网络输入：状态向量</li>
+<li>网络输出：每个动作的 Q 值估计</li>
+<li>损失函数：均方误差 MSE(target_Q, predicted_Q)</li>
+</ul>
+</section>
+<section id="两大关键创新" class="level3">
+<h3 class="anchored" data-anchor-id="两大关键创新">两大关键创新</h3>
+<ol type="1">
+<li><strong>经验回放 (Experience Replay)</strong>
+<ul>
+<li>存储交互经验元组 (s, a, r, s’)</li>
+<li>从经验缓冲区随机采样进行批量学习</li>
+<li>打破样本相关性，提高数据效率，稳定训练</li>
+</ul></li>
+<li><strong>目标网络 (Target Network)</strong>
+<ul>
+<li>维护两个网络：Q网络（频繁更新）和目标网络（定期更新）</li>
+<li>Q网络用于选择动作和当前估计</li>
+<li>目标网络用于计算目标Q值</li>
+<li>减少目标移动问题，提高训练稳定性</li>
+</ul></li>
+</ol>
+</section>
+<section id="dqn-算法流程" class="level3">
+<h3 class="anchored" data-anchor-id="dqn-算法流程">DQN 算法流程</h3>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 初始化</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>Q网络和目标网络（相同初始参数）</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>经验回放缓冲区 D，容量为N</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> 每个回合:</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    初始化状态 s</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> 每个时间步 t:</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 交互阶段</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>        根据ε<span class="op">-</span>贪婪策略选择动作 a（基于Q网络）</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>        执行动作 a，获得奖励 r 和下一状态 s<span class="st">'</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="er">        将经验 </span>(s, a, r, s<span class="st">', done) 存入缓冲区 D</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="er">        </span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 学习阶段</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>        从 D 中随机采样小批量经验</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>        计算目标 Q 值：</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>            若 s<span class="st">' 为终止状态: y = r</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="er">            否则: y = r + γ * max_a' Q'(s', a')  # Q'是目标网络</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>        最小化损失: L <span class="op">=</span> (Q(s, a) <span class="op">-</span> y)²  <span class="co"># Q是Q网络</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>        使用梯度下降更新Q网络参数</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>        s <span class="op">=</span> s<span class="st">'</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="er">        </span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 定期更新目标网络</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>        每 C 步: 目标网络参数 ← Q网络参数</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="dqn-完整架构图" class="level3">
+<h3 class="anchored" data-anchor-id="dqn-完整架构图">DQN 完整架构图</h3>
+<svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
+    <!-- 背景 -->
+    <rect width="800" height="600" fill="#f9f9f9"></rect>
+    
+    <!-- 标题 -->
+    <text x="400" y="40" font-family="Arial, sans-serif" font-size="24" text-anchor="middle" font-weight="bold">深度Q网络(DQN)架构图</text>
+    
+    <!-- 智能体容器 -->
+    <rect x="60" y="70" width="680" height="480" rx="10" ry="10" fill="#eef6ff" stroke="#0066cc" stroke-width="2" stroke-dasharray="5,5"></rect>
+    <text x="110" y="95" font-family="Arial, sans-serif" font-size="18" fill="#0066cc">DQN智能体</text>
+    
+    <!-- 环境 -->
+    <rect x="100" y="130" width="160" height="80" rx="8" ry="8" fill="#d1e7dd" stroke="#198754" stroke-width="2"></rect>
+    <text x="180" y="175" font-family="Arial, sans-serif" font-size="16" text-anchor="middle" fill="#198754">环境</text>
+    <text x="180" y="195" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#198754">(CartPole/Atari)</text>
+    
+    <!-- Q网络 -->
+    <rect x="320" y="130" width="160" height="80" rx="8" ry="8" fill="#cfe2ff" stroke="#0d6efd" stroke-width="2"></rect>
+    <text x="400" y="170" font-family="Arial, sans-serif" font-size="16" text-anchor="middle" fill="#0d6efd">Q网络</text>
+    <text x="400" y="190" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#0d6efd">(频繁更新)</text>
+    
+    <!-- 目标网络 -->
+    <rect x="540" y="130" width="160" height="80" rx="8" ry="8" fill="#cfe2ff" stroke="#0d6efd" stroke-width="2"></rect>
+    <text x="620" y="170" font-family="Arial, sans-serif" font-size="16" text-anchor="middle" fill="#0d6efd">目标网络</text>
+    <text x="620" y="190" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#0d6efd">(定期更新)</text>
+    
+    <!-- 经验回放缓冲区 -->
+    <rect x="320" y="360" width="160" height="80" rx="8" ry="8" fill="#fff3cd" stroke="#ffc107" stroke-width="2"></rect>
+    <text x="400" y="400" font-family="Arial, sans-serif" font-size="16" text-anchor="middle" fill="#774600">经验回放缓冲区</text>
+    <text x="400" y="420" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#774600">(存储和采样经验)</text>
+    
+    <!-- Q网络到环境的动作选择 -->
+    <path d="M320,170 L260,170" stroke="#0d6efd" stroke-width="2" fill="none" marker-end="url(#arrowhead)"></path>
+    <text x="290" y="160" font-family="Arial, sans-serif" font-size="12" text-anchor="middle">选择动作</text>
+    
+    <!-- 环境到经验缓冲区的连接 -->
+    <path d="M180,210 L180,300 L320,400" stroke="#198754" stroke-width="2" fill="none" marker-end="url(#arrowhead)"></path>
+    <text x="170" y="270" font-family="Arial, sans-serif" font-size="12" text-anchor="middle">经验</text>
+    <text x="170" y="285" font-family="Arial, sans-serif" font-size="12" text-anchor="middle">(s,a,r,s',done)</text>
+    
+    <!-- 经验缓冲区到Q网络的连接 -->
+    <path d="M400,360 L400,210" stroke="#ffc107" stroke-width="2" fill="none" marker-end="url(#arrowhead)"></path>
+    <text x="420" y="290" font-family="Arial, sans-serif" font-size="12" text-anchor="middle">随机采样批次</text>
+    
+    <!-- 目标网络用于计算目标值 -->
+    <path d="M540,190 L480,190" stroke="#0d6efd" stroke-width="2" fill="none" marker-end="url(#arrowhead)"></path>
+    <text x="510" y="210" font-family="Arial, sans-serif" font-size="12" text-anchor="middle">目标Q值</text>
+    
+    <!-- Q网络到目标网络的更新 -->
+    <path d="M480,150 L540,150" stroke="#ff5722" stroke-width="2" fill="none" marker-end="url(#arrowhead)" stroke-dasharray="5,3"></path>
+    <text x="510" y="140" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#ff5722">定期复制参数</text>
+    
+    <!-- 损失计算和反向传播 -->
+    <rect x="320" y="250" width="160" height="60" rx="8" ry="8" fill="#f8d7da" stroke="#dc3545" stroke-width="2"></rect>
+    <text x="400" y="280" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#dc3545">TD损失计算</text>
+    <text x="400" y="295" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" fill="#dc3545">(Q(s,a) - target)²</text>
+    
+    <!-- 箭头定义 -->
+    <defs>
+        <marker id="arrowhead" markerwidth="10" markerheight="7" refx="9" refy="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#333"></polygon>
+        </marker>
+    </defs>
+    
+    <!-- 图例 -->
+    <rect x="100" y="500" width="600" height="30" rx="5" ry="5" fill="#f8f9fa" stroke="#6c757d" stroke-width="1"></rect>
+    <text x="400" y="520" font-family="Arial, sans-serif" font-size="14" text-anchor="middle">
+        <tspan fill="#0d6efd">■ 神经网络</tspan>
+        <tspan dx="20" fill="#198754">■ 环境</tspan>
+        <tspan dx="20" fill="#774600">■ 经验回放</tspan>
+        <tspan dx="20" fill="#dc3545">■ 损失计算</tspan>
+    </text>
+</svg>
+<p>上图展示了DQN算法的完整架构，包含了所有核心组件及其交互关系：</p>
+<ol type="1">
+<li><strong>环境与智能体交互</strong>：Q网络选择动作，环境返回新状态和奖励</li>
+<li><strong>经验存储</strong>：经验元组(s,a,r,s’,done)被存储到经验回放缓冲区</li>
+<li><strong>批量学习</strong>：从缓冲区随机采样经验批次用于训练</li>
+<li><strong>目标计算</strong>：目标网络提供稳定的Q值估计</li>
+<li><strong>网络更新</strong>：根据TD损失更新Q网络参数</li>
+<li><strong>参数同步</strong>：定期将Q网络参数复制到目标网络</li>
+</ol>
+<p>这一架构设计解决了传统Q-learning在处理复杂状态空间时的局限性，通过两大创新（经验回放和目标网络）提高了学习稳定性和效率。</p>
+</section>
+</div>
+</div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+经验回放详解
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<section id="核心作用" class="level3">
+<h3 class="anchored" data-anchor-id="核心作用">核心作用</h3>
+<ul>
+<li><strong>打破样本相关性</strong>：连续采样的状态高度相关，随机采样打破这种相关性</li>
+<li><strong>提高数据效率</strong>：每个经验可以被多次使用，减少环境交互次数</li>
+<li><strong>稳定训练</strong>：平滑采样分布，减少参数更新的方差</li>
+<li><strong>均衡经验分布</strong>：不同情景的经验都有机会被学习，避免过拟合</li>
+</ul>
+</section>
+<section id="实现要点" class="level3">
+<h3 class="anchored" data-anchor-id="实现要点">实现要点</h3>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> ReplayBuffer:</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, capacity):</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.<span class="bu">buffer</span> <span class="op">=</span> deque(maxlen<span class="op">=</span>capacity)  <span class="co"># 固定容量的双端队列</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> add(<span class="va">self</span>, state, action, reward, next_state, done):</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 存储经验元组</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.<span class="bu">buffer</span>.append((state, action, reward, next_state, done))</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> sample(<span class="va">self</span>, batch_size):</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 随机采样批次经验</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>        experiences <span class="op">=</span> random.sample(<span class="va">self</span>.<span class="bu">buffer</span>, batch_size)</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 解析为分离的数组，便于批量处理</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>        states, actions, rewards, next_states, dones <span class="op">=</span> <span class="bu">zip</span>(<span class="op">*</span>experiences)</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> np.array(states), np.array(actions), np.array(rewards), <span class="op">\</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>               np.array(next_states), np.array(dones)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="进阶版本" class="level3">
+<h3 class="anchored" data-anchor-id="进阶版本">进阶版本</h3>
+<ul>
+<li><strong>优先经验回放 (Prioritized Experience Replay)</strong>：根据TD误差分配优先级，重要经验被更频繁采样</li>
+<li><strong>分层经验回放 (Hindsight Experience Replay)</strong>：重新标记目标，从失败经验中学习</li>
+</ul>
+</section>
+</div>
+</div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+目标网络详解
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<section id="核心原理" class="level3">
+<h3 class="anchored" data-anchor-id="核心原理">核心原理</h3>
+<ul>
+<li>在 Q-learning 中使用同一网络同时产生目标和当前估计会导致不稳定</li>
+<li><strong>移动目标问题</strong>：当前网络参数θ影响目标值，目标值又用于更新θ，形成不稳定循环</li>
+<li>目标网络”冻结”目标值计算，降低训练不稳定性</li>
+</ul>
+</section>
+<section id="关键实现" class="level3">
+<h3 class="anchored" data-anchor-id="关键实现">关键实现</h3>
+<div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 初始化</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>q_network <span class="op">=</span> create_model()      <span class="co"># 主网络</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>target_network <span class="op">=</span> create_model() <span class="co"># 目标网络</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>target_network.set_weights(q_network.get_weights())  <span class="co"># 初始权重相同</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 学习过程</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> learn(experiences):</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    states, actions, rewards, next_states, dones <span class="op">=</span> experiences</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 使用目标网络计算下一状态的最大Q值</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    target_q_values <span class="op">=</span> target_network.predict(next_states)</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    max_target_q <span class="op">=</span> np.<span class="bu">max</span>(target_q_values, axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 计算TD目标</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    targets <span class="op">=</span> rewards <span class="op">+</span> (gamma <span class="op">*</span> max_target_q <span class="op">*</span> (<span class="dv">1</span> <span class="op">-</span> dones))</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 更新主网络</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    current_q <span class="op">=</span> q_network.predict(states)</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i, action <span class="kw">in</span> <span class="bu">enumerate</span>(actions):</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>        current_q[i][action] <span class="op">=</span> targets[i]</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>    q_network.fit(states, current_q, epochs<span class="op">=</span><span class="dv">1</span>, verbose<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a><span class="co"># 定期更新目标网络</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> step <span class="op">%</span> update_frequency <span class="op">==</span> <span class="dv">0</span>:</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>    target_network.set_weights(q_network.get_weights())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="更新策略" class="level3">
+<h3 class="anchored" data-anchor-id="更新策略">更新策略</h3>
+<ul>
+<li><strong>硬更新</strong>：每C步完全复制参数（原始DQN方法）</li>
+<li><strong>软更新</strong>：每步用小比例τ混合参数 θ_target = τ·θ + (1-τ)·θ_target（DDPG等算法采用）</li>
+</ul>
+</section>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+DQN 与 Q-Learning 对比
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<section id="相同点" class="level3">
+<h3 class="anchored" data-anchor-id="相同点">相同点</h3>
+<ul>
+<li>都是基于时序差分(TD)学习的价值函数方法</li>
+<li>都使用最大化动作价值函数(Q)的方法</li>
+<li>都采用ε-贪婪策略平衡探索与利用</li>
+<li>都应用折扣因子γ来权衡短期与长期奖励</li>
+</ul>
+</section>
+<section id="关键区别" class="level3">
+<h3 class="anchored" data-anchor-id="关键区别">关键区别</h3>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>特性</th>
+<th>表格型 Q-Learning</th>
+<th>深度 Q 网络 (DQN)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>价值表示</td>
+<td>Q表格</td>
+<td>神经网络</td>
+</tr>
+<tr class="even">
+<td>状态空间</td>
+<td>小规模离散状态</td>
+<td>大规模/连续状态</td>
+</tr>
+<tr class="odd">
+<td>更新方式</td>
+<td>单样本更新</td>
+<td>批量更新</td>
+</tr>
+<tr class="even">
+<td>参数数量</td>
+<td>状态数×动作数</td>
+<td>神经网络权重数量</td>
+</tr>
+<tr class="odd">
+<td>稳定性技巧</td>
+<td>无</td>
+<td>经验回放+目标网络</td>
+</tr>
+<tr class="even">
+<td>泛化能力</td>
+<td>无</td>
+<td>强</td>
+</tr>
+<tr class="odd">
+<td>样本效率</td>
+<td>低</td>
+<td>高</td>
+</tr>
+<tr class="even">
+<td>计算复杂度</td>
+<td>低</td>
+<td>高</td>
+</tr>
+</tbody>
+</table>
+</section>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+重要扩展和改进
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<section id="双重dqn-double-dqn" class="level3">
+<h3 class="anchored" data-anchor-id="双重dqn-double-dqn">双重DQN (Double DQN)</h3>
+<ul>
+<li>解决Q值过高估计问题</li>
+<li>使用主网络选择动作，目标网络评估其价值</li>
+</ul>
+</section>
+<section id="决斗网络架构-dueling-network" class="level3">
+<h3 class="anchored" data-anchor-id="决斗网络架构-dueling-network">决斗网络架构 (Dueling Network)</h3>
+<ul>
+<li>将Q值分解为状态价值V(s)和优势函数A(s,a)</li>
+<li>Q(s,a) = V(s) + A(s,a) - mean(A(s,:))</li>
+<li>提高价值估计的稳定性</li>
+</ul>
+</section>
+<section id="分布式dqn-distributional-dqn" class="level3">
+<h3 class="anchored" data-anchor-id="分布式dqn-distributional-dqn">分布式DQN (Distributional DQN)</h3>
+<ul>
+<li>学习奖励分布而非单一期望值</li>
+<li>捕捉环境的随机性和不确定性</li>
+</ul>
+</section>
+<section id="rainbow-dqn" class="level3">
+<h3 class="anchored" data-anchor-id="rainbow-dqn">Rainbow DQN</h3>
+<ul>
+<li>集成六种DQN改进技术</li>
+<li>包括优先经验回放、多步学习、噪声网络等</li>
+</ul>
+</section>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+课后作业
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li>阅读DQN原始论文：<a href="https://www.cs.toronto.edu/~vmnih/docs/dqn.pdf">Playing Atari with Deep Reinforcement Learning</a></li>
+<li>下载并运行本周代码示例，熟悉经验回放和目标网络的实现方式</li>
+<li>选择一个简单环境（如CartPole），实现基础版DQN算法</li>
+<li>分析不同超参数（如探索率、更新频率）对训练性能的影响</li>
+</ol>
+</div>
+</div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+下周预习重点
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li>DQN变体算法（Double DQN、Dueling DQN）的工作原理</li>
+<li>连续动作空间强化学习算法（DDPG、SAC）的基础知识</li>
+<li>策略梯度方法的基本原理</li>
+<li>深度强化学习的稳定性和采样效率问题</li>
+</ol>
+</div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./week4.html" class="pagination-link" aria-label="第四周：Q-Learning 算法优化与改进">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">第四周：Q-Learning 算法优化与改进</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

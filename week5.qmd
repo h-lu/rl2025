@@ -151,6 +151,95 @@ for 每个回合:
         # 定期更新目标网络
         每 C 步: 目标网络参数 ← Q网络参数
 ```
+
+### DQN 完整架构图
+
+```{=html}
+<svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
+    <!-- 背景 -->
+    <rect width="800" height="600" fill="#f9f9f9"/>
+    
+    <!-- 标题 -->
+    <text x="400" y="40" font-family="Arial, sans-serif" font-size="24" text-anchor="middle" font-weight="bold">深度Q网络(DQN)架构图</text>
+    
+    <!-- 智能体容器 -->
+    <rect x="60" y="70" width="680" height="480" rx="10" ry="10" fill="#eef6ff" stroke="#0066cc" stroke-width="2" stroke-dasharray="5,5"/>
+    <text x="110" y="95" font-family="Arial, sans-serif" font-size="18" fill="#0066cc">DQN智能体</text>
+    
+    <!-- 环境 -->
+    <rect x="100" y="130" width="160" height="80" rx="8" ry="8" fill="#d1e7dd" stroke="#198754" stroke-width="2"/>
+    <text x="180" y="175" font-family="Arial, sans-serif" font-size="16" text-anchor="middle" fill="#198754">环境</text>
+    <text x="180" y="195" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#198754">(CartPole/Atari)</text>
+    
+    <!-- Q网络 -->
+    <rect x="320" y="130" width="160" height="80" rx="8" ry="8" fill="#cfe2ff" stroke="#0d6efd" stroke-width="2"/>
+    <text x="400" y="170" font-family="Arial, sans-serif" font-size="16" text-anchor="middle" fill="#0d6efd">Q网络</text>
+    <text x="400" y="190" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#0d6efd">(频繁更新)</text>
+    
+    <!-- 目标网络 -->
+    <rect x="540" y="130" width="160" height="80" rx="8" ry="8" fill="#cfe2ff" stroke="#0d6efd" stroke-width="2"/>
+    <text x="620" y="170" font-family="Arial, sans-serif" font-size="16" text-anchor="middle" fill="#0d6efd">目标网络</text>
+    <text x="620" y="190" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#0d6efd">(定期更新)</text>
+    
+    <!-- 经验回放缓冲区 -->
+    <rect x="320" y="360" width="160" height="80" rx="8" ry="8" fill="#fff3cd" stroke="#ffc107" stroke-width="2"/>
+    <text x="400" y="400" font-family="Arial, sans-serif" font-size="16" text-anchor="middle" fill="#774600">经验回放缓冲区</text>
+    <text x="400" y="420" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#774600">(存储和采样经验)</text>
+    
+    <!-- Q网络到环境的动作选择 -->
+    <path d="M320,170 L260,170" stroke="#0d6efd" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+    <text x="290" y="160" font-family="Arial, sans-serif" font-size="12" text-anchor="middle">选择动作</text>
+    
+    <!-- 环境到经验缓冲区的连接 -->
+    <path d="M180,210 L180,300 L320,400" stroke="#198754" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+    <text x="170" y="270" font-family="Arial, sans-serif" font-size="12" text-anchor="middle">经验</text>
+    <text x="170" y="285" font-family="Arial, sans-serif" font-size="12" text-anchor="middle">(s,a,r,s',done)</text>
+    
+    <!-- 经验缓冲区到Q网络的连接 -->
+    <path d="M400,360 L400,210" stroke="#ffc107" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+    <text x="420" y="290" font-family="Arial, sans-serif" font-size="12" text-anchor="middle">随机采样批次</text>
+    
+    <!-- 目标网络用于计算目标值 -->
+    <path d="M540,190 L480,190" stroke="#0d6efd" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+    <text x="510" y="210" font-family="Arial, sans-serif" font-size="12" text-anchor="middle">目标Q值</text>
+    
+    <!-- Q网络到目标网络的更新 -->
+    <path d="M480,150 L540,150" stroke="#ff5722" stroke-width="2" fill="none" marker-end="url(#arrowhead)" stroke-dasharray="5,3"/>
+    <text x="510" y="140" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#ff5722">定期复制参数</text>
+    
+    <!-- 损失计算和反向传播 -->
+    <rect x="320" y="250" width="160" height="60" rx="8" ry="8" fill="#f8d7da" stroke="#dc3545" stroke-width="2"/>
+    <text x="400" y="280" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#dc3545">TD损失计算</text>
+    <text x="400" y="295" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" fill="#dc3545">(Q(s,a) - target)²</text>
+    
+    <!-- 箭头定义 -->
+    <defs>
+        <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#333"/>
+        </marker>
+    </defs>
+    
+    <!-- 图例 -->
+    <rect x="100" y="500" width="600" height="30" rx="5" ry="5" fill="#f8f9fa" stroke="#6c757d" stroke-width="1"/>
+    <text x="400" y="520" font-family="Arial, sans-serif" font-size="14" text-anchor="middle">
+        <tspan fill="#0d6efd">■ 神经网络</tspan>
+        <tspan dx="20" fill="#198754">■ 环境</tspan>
+        <tspan dx="20" fill="#774600">■ 经验回放</tspan>
+        <tspan dx="20" fill="#dc3545">■ 损失计算</tspan>
+    </text>
+</svg>
+```
+
+上图展示了DQN算法的完整架构，包含了所有核心组件及其交互关系：
+
+1. **环境与智能体交互**：Q网络选择动作，环境返回新状态和奖励
+2. **经验存储**：经验元组(s,a,r,s',done)被存储到经验回放缓冲区
+3. **批量学习**：从缓冲区随机采样经验批次用于训练
+4. **目标计算**：目标网络提供稳定的Q值估计
+5. **网络更新**：根据TD损失更新Q网络参数
+6. **参数同步**：定期将Q网络参数复制到目标网络
+
+这一架构设计解决了传统Q-learning在处理复杂状态空间时的局限性，通过两大创新（经验回放和目标网络）提高了学习稳定性和效率。
 :::
 
 ::: {.callout-warning}
