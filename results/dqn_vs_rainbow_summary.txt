@@ -1,0 +1,5 @@
+标准DQN 平均训练分数: 17.20
+Rainbow DQN 平均训练分数: 13.90
+标准DQN 评估分数: 15.80
+Rainbow DQN 评估分数: 9.50
+Rainbow vs 标准DQN 提升: -39.87%

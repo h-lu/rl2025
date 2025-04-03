@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>第五周：项目一展示与深度 Q 网络初探 – 智能计算</title>
+<title>第五周：从Q-Learning到深度Q网络 – 智能计算</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -64,6 +64,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
+<link href="./week7.html" rel="next">
 <link href="./week4.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -117,7 +118,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./week5.html"><span class="chapter-title">第五周：项目一展示与深度 Q 网络初探</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./week5.html"><span class="chapter-title">第五周：从Q-Learning到深度Q网络</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -174,7 +175,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./week5.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">第五周：项目一展示与深度 Q 网络初探</span></a>
+  <a href="./week5.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">第五周：从Q-Learning到深度Q网络</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week7.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">第七周：深入探索DQN——改进、调优与实战</span></a>
   </div>
 </li>
     </ul>
@@ -187,8 +193,25 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#第一次课小组项目一展示与点评" id="toc-第一次课小组项目一展示与点评" class="nav-link active" data-scroll-target="#第一次课小组项目一展示与点评">第一次课：小组项目一展示与点评</a></li>
-  <li><a href="#第二次课深度-q-网络-dqn-详解" id="toc-第二次课深度-q-网络-dqn-详解" class="nav-link" data-scroll-target="#第二次课深度-q-网络-dqn-详解">第二次课：深度 Q 网络 (DQN) 详解</a></li>
+  <li><a href="#项目一回顾与q-learning的局限" id="toc-项目一回顾与q-learning的局限" class="nav-link active" data-scroll-target="#项目一回顾与q-learning的局限">项目一回顾与Q-Learning的局限</a>
+  <ul class="collapse">
+  <li><a href="#q-learning面临的主要挑战" id="toc-q-learning面临的主要挑战" class="nav-link" data-scroll-target="#q-learning面临的主要挑战">Q-Learning面临的主要挑战</a></li>
+  </ul></li>
+  <li><a href="#神经网络强化学习的新引擎" id="toc-神经网络强化学习的新引擎" class="nav-link" data-scroll-target="#神经网络强化学习的新引擎">神经网络：强化学习的新引擎</a>
+  <ul class="collapse">
+  <li><a href="#为什么是神经网络" id="toc-为什么是神经网络" class="nav-link" data-scroll-target="#为什么是神经网络">为什么是神经网络？</a></li>
+  <li><a href="#在强化学习中的应用" id="toc-在强化学习中的应用" class="nav-link" data-scroll-target="#在强化学习中的应用">在强化学习中的应用</a></li>
+  </ul></li>
+  <li><a href="#深度q网络-dqn-原理详解" id="toc-深度q网络-dqn-原理详解" class="nav-link" data-scroll-target="#深度q网络-dqn-原理详解">深度Q网络 (DQN) 原理详解</a>
+  <ul class="collapse">
+  <li><a href="#基本思想" id="toc-基本思想" class="nav-link" data-scroll-target="#基本思想">基本思想</a></li>
+  <li><a href="#关键挑战与创新" id="toc-关键挑战与创新" class="nav-link" data-scroll-target="#关键挑战与创新">关键挑战与创新</a></li>
+  <li><a href="#dqn-算法流程概览" id="toc-dqn-算法流程概览" class="nav-link" data-scroll-target="#dqn-算法流程概览">DQN 算法流程概览</a></li>
+  <li><a href="#dqn-架构图" id="toc-dqn-架构图" class="nav-link" data-scroll-target="#dqn-架构图">DQN 架构图</a></li>
+  </ul></li>
+  <li><a href="#深入理解两大关键技术" id="toc-深入理解两大关键技术" class="nav-link" data-scroll-target="#深入理解两大关键技术">深入理解两大关键技术</a></li>
+  <li><a href="#dqn-与-q-learning-对比总结" id="toc-dqn-与-q-learning-对比总结" class="nav-link" data-scroll-target="#dqn-与-q-learning-对比总结">DQN 与 Q-Learning 对比总结</a></li>
+  <li><a href="#展望dqn的扩展与改进" id="toc-展望dqn的扩展与改进" class="nav-link" data-scroll-target="#展望dqn的扩展与改进">展望：DQN的扩展与改进</a></li>
   </ul>
 </nav>
     </div>
@@ -197,7 +220,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-title">第五周：项目一展示与深度 Q 网络初探</span></h1>
+<h1 class="title"><span class="chapter-title">第五周：从Q-Learning到深度Q网络</span></h1>
 </div>
 
 
@@ -224,255 +247,145 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<ul>
-<li>通过项目一展示，了解不同小组的实现思路和优化方法</li>
-<li>理解 Q-Learning 算法在复杂问题上的局限性</li>
-<li>掌握深度学习的基本概念，特别是在强化学习中的应用</li>
-<li>了解深度 Q 网络 (DQN) 的基本原理和关键技术</li>
-<li>理解经验回放 (Experience Replay) 和目标网络 (Target Network) 的作用</li>
-</ul>
-</div>
-</div>
-<section id="第一次课小组项目一展示与点评" class="level2">
-<h2 class="anchored" data-anchor-id="第一次课小组项目一展示与点评">第一次课：小组项目一展示与点评</h2>
-<div class="callout callout-style-default callout-important callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-项目展示规范
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<ul>
-<li>每组展示时间：5-10分钟</li>
-<li>展示内容：问题定义、算法实现、实验结果、优化方法、遇到的挑战和解决方案</li>
-<li>展示后问答：5分钟</li>
-</ul>
-</div>
-</div>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-项目评分标准
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<section id="技术实现-40" class="level3">
-<h3 class="anchored" data-anchor-id="技术实现-40">技术实现 (40%)</h3>
-<ul>
-<li>算法实现的正确性</li>
-<li>代码质量和结构</li>
-<li>探索策略的有效性</li>
-<li>参数调优的合理性</li>
-</ul>
-</section>
-<section id="实验结果-30" class="level3">
-<h3 class="anchored" data-anchor-id="实验结果-30">实验结果 (30%)</h3>
-<ul>
-<li>算法收敛性</li>
-<li>智能体表现</li>
-<li>可视化质量</li>
-<li>结果分析深度</li>
-</ul>
-</section>
-<section id="展示质量-20" class="level3">
-<h3 class="anchored" data-anchor-id="展示质量-20">展示质量 (20%)</h3>
-<ul>
-<li>展示清晰度</li>
-<li>技术表达准确性</li>
-<li>问题回答能力</li>
-<li>时间控制</li>
-</ul>
-</section>
-<section id="团队协作-10" class="level3">
-<h3 class="anchored" data-anchor-id="团队协作-10">团队协作 (10%)</h3>
-<ul>
-<li>任务分工合理性</li>
-<li>协作效率</li>
-<li>项目完整性</li>
-</ul>
-</section>
-</div>
-</div>
-<div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-优秀项目分享要点
-</div>
-</div>
-<div class="callout-body-container callout-body">
 <ol type="1">
-<li>创新性解决方案</li>
-<li>有效的探索策略改进</li>
-<li>巧妙的奖励函数设计</li>
-<li>高效的算法实现</li>
-<li>直观的可视化展示</li>
+<li><strong>回顾与反思：</strong> 通过项目一的实践，理解表格型Q-Learning在实际应用中的优势与局限。</li>
+<li><strong>认识局限：</strong> 明确Q-Learning在处理复杂问题（大规模/连续状态空间）时面临的挑战。</li>
+<li><strong>搭建桥梁：</strong> 了解神经网络作为函数近似器的基本原理及其在强化学习中的潜力。</li>
+<li><strong>掌握核心：</strong> 理解深度Q网络 (DQN) 的基本思想，特别是两大关键创新：经验回放 (Experience Replay) 和目标网络 (Target Network) 的作用与原理。</li>
+<li><strong>初步实践：</strong> 了解DQN的基本算法流程和架构。</li>
 </ol>
 </div>
 </div>
-<div class="callout callout-style-default callout-warning callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-常见问题与改进方向
-</div>
-</div>
-<div class="callout-body-container callout-body">
+<section id="项目一回顾与q-learning的局限" class="level2">
+<h2 class="anchored" data-anchor-id="项目一回顾与q-learning的局限">项目一回顾与Q-Learning的局限</h2>
+<p>在完成并展示了第一个项目后，我们对Q-Learning有了更深入的实践体会。它在解决状态和动作空间有限的问题上表现出色。但同时，我们也可能遇到了它的瓶颈。</p>
+<p><strong>思考一下：</strong> 在你的项目一中，如果状态空间变得极其庞大（例如，从简单的网格世界变成高分辨率的图像输入），或者状态变成连续的（例如，机器人的关节角度），你认为基于Q表格的方法会遇到什么问题？</p>
+<section id="q-learning面临的主要挑战" class="level3">
+<h3 class="anchored" data-anchor-id="q-learning面临的主要挑战">Q-Learning面临的主要挑战</h3>
+<ol type="1">
+<li><strong>状态空间爆炸 (State Space Explosion):</strong>
 <ul>
-<li>Q表设计不合理</li>
-<li>探索策略过于简单</li>
-<li>奖励函数设计不当</li>
-<li>参数调整不充分</li>
-<li>代码效率有待提高</li>
-<li>可视化展示不直观</li>
-</ul>
-</div>
-</div>
+<li>对于具有大量状态的环境，维护一个巨大的Q表格变得不现实。想象一下，即使是一个简单的84x84像素的黑白图像，状态数量也超过 (2^{84 })！彩色图像或更复杂的输入会让这个数字变得更加天文。</li>
+<li>现实世界中的许多问题都涉及高维或连续的状态空间，表格方法难以适用。</li>
+</ul></li>
+<li><strong>缺乏泛化能力 (Lack of Generalization):</strong>
+<ul>
+<li>表格型Q-Learning为每一个状态独立学习Q值，无法利用状态之间的相似性。</li>
+<li>它无法将在某个状态学到的经验泛化到”相似但未见过”的状态。</li>
+<li>这意味着智能体需要访问并学习几乎所有可能的状态，导致样本效率低下。</li>
+</ul></li>
+</ol>
+<p>为了克服这些限制，我们需要引入更强大的工具——<strong>深度学习</strong>。</p>
+<hr>
 </section>
-<section id="第二次课深度-q-网络-dqn-详解" class="level2">
-<h2 class="anchored" data-anchor-id="第二次课深度-q-网络-dqn-详解">第二次课：深度 Q 网络 (DQN) 详解</h2>
-<div class="callout callout-style-default callout-important callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Q-Learning 的局限性
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<section id="状态空间爆炸问题" class="level3">
-<h3 class="anchored" data-anchor-id="状态空间爆炸问题">状态空间爆炸问题</h3>
+</section>
+<section id="神经网络强化学习的新引擎" class="level2">
+<h2 class="anchored" data-anchor-id="神经网络强化学习的新引擎">神经网络：强化学习的新引擎</h2>
+<p>神经网络（特别是深度神经网络）以其强大的<strong>函数近似 (Function Approximation)</strong> 能力，为解决Q-Learning的局限性提供了可能。</p>
+<section id="为什么是神经网络" class="level3">
+<h3 class="anchored" data-anchor-id="为什么是神经网络">为什么是神经网络？</h3>
 <ul>
-<li>传统 Q 表无法处理大规模或连续状态空间</li>
-<li>例如：在 Atari 游戏中，即使假设每个像素只有两种颜色（例如黑白），84×84像素的图像输入也会产生超过2^(84*84)种不同状态。实际上，Atari 游戏通常是彩色的，状态空间会更加庞大。</li>
-<li>现实问题中状态往往是高维的，表格表示方法不可行</li>
+<li><strong>自动特征提取:</strong> 神经网络可以从原始输入（如图像像素、传感器读数）中自动学习有用的特征表示，无需人工设计。</li>
+<li><strong>泛化能力:</strong> 通过在不同状态间共享参数（权重），神经网络可以将学到的知识泛化到相似的、未曾明确访问过的状态。</li>
+<li><strong>处理高维输入:</strong> 神经网络天然适合处理高维数据，如图像、文本等。</li>
 </ul>
 </section>
-<section id="泛化能力不足" class="level3">
-<h3 class="anchored" data-anchor-id="泛化能力不足">泛化能力不足</h3>
+<section id="在强化学习中的应用" class="level3">
+<h3 class="anchored" data-anchor-id="在强化学习中的应用">在强化学习中的应用</h3>
+<p>我们可以用一个神经网络来近似Q函数，记作 (Q(s, a; ))，其中 () 代表网络的所有可学习参数（权重和偏置）。</p>
 <ul>
-<li>表格型 Q-Learning 无法泛化到未见过的状态</li>
-<li>每个状态都需要单独学习，样本利用率低</li>
-<li>无法有效利用状态之间的相似性和共享特征</li>
+<li><strong>输入:</strong> 状态 (s) (例如，游戏画面的像素矩阵，或状态特征向量)。</li>
+<li><strong>输出:</strong> 对于给定的状态 (s)，网络输出所有可能动作 (a) 的Q值估计。</li>
+<li><strong>学习:</strong> 通过优化算法（如随机梯度下降及其变种）调整参数 ()，使得网络的输出 (Q(s, a; )) 尽可能接近目标Q值。</li>
 </ul>
+<p>这种用神经网络来近似Q函数的方法，正是<strong>深度Q网络 (Deep Q-Network, DQN)</strong> 的核心思想。</p>
+<hr>
 </section>
-</div>
-</div>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-神经网络基础
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<section id="神经网络结构" class="level3">
-<h3 class="anchored" data-anchor-id="神经网络结构">神经网络结构</h3>
-<ul>
-<li><strong>输入层</strong>：接收状态信息（如游戏屏幕像素或状态向量）</li>
-<li><strong>隐藏层</strong>：提取特征，发现模式（通常使用ReLU激活函数）</li>
-<li><strong>输出层</strong>：预测每个动作的 Q 值（通常使用线性激活函数）</li>
-</ul>
 </section>
-<section id="函数近似" class="level3">
-<h3 class="anchored" data-anchor-id="函数近似">函数近似</h3>
-<ul>
-<li>神经网络作为函数近似器 Q(s,a;θ)，θ是网络参数</li>
-<li>输入状态s，输出各动作a的价值估计</li>
-<li>通过随机梯度下降优化参数θ</li>
-</ul>
-</section>
-<section id="表示能力" class="level3">
-<h3 class="anchored" data-anchor-id="表示能力">表示能力</h3>
-<ul>
-<li>能够自动提取状态特征，无需人工设计</li>
-<li>通过共享参数捕捉状态间的相似性</li>
-<li>具有强大的泛化能力，能预测未见过状态的价值</li>
-</ul>
-</section>
-</div>
-</div>
-<div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-深度 Q 网络 (DQN) 原理
-</div>
-</div>
-<div class="callout-body-container callout-body">
+<section id="深度q网络-dqn-原理详解" class="level2">
+<h2 class="anchored" data-anchor-id="深度q网络-dqn-原理详解">深度Q网络 (DQN) 原理详解</h2>
+<p>DQN由DeepMind提出，首次成功地将深度学习与强化学习结合，并在Atari游戏上达到了超越人类水平的表现。</p>
 <section id="基本思想" class="level3">
 <h3 class="anchored" data-anchor-id="基本思想">基本思想</h3>
-<ul>
-<li>用神经网络替代 Q 表格</li>
-<li>网络输入：状态向量</li>
-<li>网络输出：每个动作的 Q 值估计</li>
-<li>损失函数：均方误差 MSE(target_Q, predicted_Q)</li>
-</ul>
+<p>用一个深度神经网络（通常是卷积神经网络CNN处理图像输入，或全连接网络MLP处理向量输入）来代替巨大的Q表格，即 (Q(s, a) Q(s, a; ))。</p>
 </section>
-<section id="两大关键创新" class="level3">
-<h3 class="anchored" data-anchor-id="两大关键创新">两大关键创新</h3>
+<section id="关键挑战与创新" class="level3">
+<h3 class="anchored" data-anchor-id="关键挑战与创新">关键挑战与创新</h3>
+<p>直接用神经网络替代Q表进行训练并不稳定。主要因为： 1. <strong>样本相关性:</strong> 强化学习中连续采集的样本 (s, a, r, s’) 之间高度相关，违反了许多机器学习算法的独立同分布假设，导致训练不稳定。 2. <strong>目标值不稳定:</strong> Q值的目标 (y = r + _{a’} Q(s’, a’; )) 依赖于正在更新的网络参数 ()。目标值随着网络的更新而不断变化，就像追逐一个移动的目标，容易导致训练发散。</p>
+<p>DQN引入了两大关键技术来解决这些问题：</p>
 <ol type="1">
-<li><strong>经验回放 (Experience Replay)</strong>
+<li><strong>经验回放 (Experience Replay):</strong>
 <ul>
-<li>存储交互经验元组 (s, a, r, s’)</li>
-<li>从经验缓冲区随机采样进行批量学习</li>
-<li>打破样本相关性，提高数据效率，稳定训练</li>
+<li><strong>是什么？</strong> 创建一个存储经验的缓冲区（通常是一个固定大小的队列），将智能体与环境交互产生的经验元组 ((s_t, a_t, r_{t+1}, s_{t+1}, )) 存储起来。</li>
+<li><strong>怎么用？</strong> 在训练时，不直接使用刚产生的经验，而是从缓冲区中<strong>随机采样</strong>一个小批量 (mini-batch) 的经验来训练Q网络。</li>
+<li><strong>为什么有效？</strong>
+<ul>
+<li><strong>打破相关性:</strong> 随机采样打乱了经验的时间顺序，降低了样本间的相关性。</li>
+<li><strong>提高数据效率:</strong> 每个经验可能被多次采样和学习，充分利用了来之不易的交互数据。</li>
+<li><strong>平滑学习:</strong> 通过批次学习，梯度的更新更加平稳。</li>
 </ul></li>
-<li><strong>目标网络 (Target Network)</strong>
+</ul></li>
+<li><strong>目标网络 (Target Network):</strong>
 <ul>
-<li>维护两个网络：Q网络（频繁更新）和目标网络（定期更新）</li>
-<li>Q网络用于选择动作和当前估计</li>
-<li>目标网络用于计算目标Q值</li>
-<li>减少目标移动问题，提高训练稳定性</li>
+<li><strong>是什么？</strong> 使用两个结构相同但参数不同的神经网络：
+<ul>
+<li><strong>Q网络 (或称主网络):</strong> 参数为 ()，这个网络在训练过程中<strong>频繁更新</strong>，并且用于<strong>实际的动作选择</strong>。</li>
+<li><strong>目标网络:</strong> 参数为 (^-)，这个网络的参数<strong>定期</strong>从Q网络复制而来（例如，每 C 步），在计算目标Q值时<strong>保持固定</strong>。</li>
+</ul></li>
+<li><strong>怎么用？</strong> 在计算TD目标 (y) 时，使用<strong>目标网络</strong>来估计下一状态的最大Q值：
+<ul>
+<li>如果 (s’) 是终止状态: (y = r)</li>
+<li>否则: (y = r + _{a’} Q(s’, a’; ^-)) （注意这里用的是 (^-)）</li>
+</ul></li>
+<li><strong>为什么有效？</strong> 通过固定目标网络一段时间，使得TD目标 (y) 相对稳定，降低了Q网络更新目标与自身变化之间的耦合，从而提高了训练的稳定性。</li>
 </ul></li>
 </ol>
 </section>
-<section id="dqn-算法流程" class="level3">
-<h3 class="anchored" data-anchor-id="dqn-算法流程">DQN 算法流程</h3>
+<section id="dqn-算法流程概览" class="level3">
+<h3 class="anchored" data-anchor-id="dqn-算法流程概览">DQN 算法流程概览</h3>
 <div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 初始化</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>Q网络和目标网络（相同初始参数）</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>经验回放缓冲区 D，容量为N</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> 每个回合:</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    初始化状态 s</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> 每个时间步 t:</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 交互阶段</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>        根据ε<span class="op">-</span>贪婪策略选择动作 a（基于Q网络）</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>        执行动作 a，获得奖励 r 和下一状态 s<span class="st">'</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="er">        将经验 </span>(s, a, r, s<span class="st">', done) 存入缓冲区 D</span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="er">        </span></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 学习阶段</span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>        从 D 中随机采样小批量经验</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>        计算目标 Q 值：</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>            若 s<span class="st">' 为终止状态: y = r</span></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="er">            否则: y = r + γ * max_a' Q'(s', a')  # Q'是目标网络</span></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>        </span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>        最小化损失: L <span class="op">=</span> (Q(s, a) <span class="op">-</span> y)²  <span class="co"># Q是Q网络</span></span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>        使用梯度下降更新Q网络参数</span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>        </span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>        s <span class="op">=</span> s<span class="st">'</span></span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="er">        </span></span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 定期更新目标网络</span></span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>        每 C 步: 目标网络参数 ← Q网络参数</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>创建 Q网络 Q(s, a<span class="op">;</span> θ) 和 目标网络 Q<span class="st">'(s, a; θ⁻)</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="er">将 Q网络 的参数复制给 目标网络 </span>(θ⁻ ← θ)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>初始化 经验回放缓冲区 D，容量为 N</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> 每个回合 (episode):</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    获取初始状态 s</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> 每个时间步 t:</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 1. 与环境交互</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>        根据当前 Q网络 Q(s, ·<span class="op">;</span> θ) 和 ε<span class="op">-</span>greedy 策略选择动作 a</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>        执行动作 a，观察奖励 r 和下一个状态 s<span class="st">'</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="er">        将经验转移 </span>(s, a, r, s<span class="st">', done) 存储到缓冲区 D</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="er">        </span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 2. 从缓冲区采样</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>        如果 D 中经验数量足够:</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>            从 D 中随机采样一个 小批量 (mini<span class="op">-</span>batch) 的经验 (sⱼ, aⱼ, rⱼ₊₁, sⱼ₊₁, doneⱼ)</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>            <span class="co"># 3. 计算目标 Q 值</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>            计算目标 yⱼ:</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> doneⱼ:</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>                    yⱼ <span class="op">=</span> rⱼ₊₁</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>                <span class="cf">else</span>:</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>                    <span class="co"># 使用目标网络计算下一状态的最大Q值</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>                    yⱼ <span class="op">=</span> rⱼ₊₁ <span class="op">+</span> γ <span class="op">*</span> maxₐ<span class="st">' Q'</span>(sⱼ₊₁, a<span class="st">'; θ⁻)</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="er">            </span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>            <span class="co"># 4. 计算损失并更新 Q 网络</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>            计算损失 L <span class="op">=</span> ( Q(sⱼ, aⱼ<span class="op">;</span> θ) <span class="op">-</span> yⱼ )²  (通常是均方误差或 Huber loss)</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>            执行一步梯度下降，更新 Q网络 的参数 θ</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 5. 更新状态</span></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>        s <span class="op">=</span> s<span class="st">'</span></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a><span class="er">        </span></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 6. 定期更新目标网络</span></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>        每隔 C 步:</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>            将 Q网络 的参数复制给 目标网络 (θ⁻ ← θ)</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> done: <span class="co"># 如果回合结束</span></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>            <span class="cf">break</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-<section id="dqn-完整架构图" class="level3">
-<h3 class="anchored" data-anchor-id="dqn-完整架构图">DQN 完整架构图</h3>
+<section id="dqn-架构图" class="level3">
+<h3 class="anchored" data-anchor-id="dqn-架构图">DQN 架构图</h3>
+<p>为了更直观地理解各组件如何协同工作，请看下面的架构图：</p>
 <svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
     <!-- 背景 -->
     <rect width="800" height="600" fill="#f9f9f9"></rect>
@@ -506,29 +419,30 @@ Q-Learning 的局限性
     
     <!-- Q网络到环境的动作选择 -->
     <path d="M320,170 L260,170" stroke="#0d6efd" stroke-width="2" fill="none" marker-end="url(#arrowhead)"></path>
-    <text x="290" y="160" font-family="Arial, sans-serif" font-size="12" text-anchor="middle">选择动作</text>
+    <text x="290" y="160" font-family="Arial, sans-serif" font-size="12" text-anchor="middle">选择动作 (a)</text>
     
     <!-- 环境到经验缓冲区的连接 -->
     <path d="M180,210 L180,300 L320,400" stroke="#198754" stroke-width="2" fill="none" marker-end="url(#arrowhead)"></path>
-    <text x="170" y="270" font-family="Arial, sans-serif" font-size="12" text-anchor="middle">经验</text>
+    <text x="170" y="270" font-family="Arial, sans-serif" font-size="12" text-anchor="middle">存储经验</text>
     <text x="170" y="285" font-family="Arial, sans-serif" font-size="12" text-anchor="middle">(s,a,r,s',done)</text>
     
     <!-- 经验缓冲区到Q网络的连接 -->
     <path d="M400,360 L400,210" stroke="#ffc107" stroke-width="2" fill="none" marker-end="url(#arrowhead)"></path>
-    <text x="420" y="290" font-family="Arial, sans-serif" font-size="12" text-anchor="middle">随机采样批次</text>
+    <text x="430" y="290" font-family="Arial, sans-serif" font-size="12" text-anchor="start">采样批次 (sⱼ,aⱼ,rⱼ₊₁,sⱼ₊₁)</text>
     
     <!-- 目标网络用于计算目标值 -->
-    <path d="M540,190 L480,190" stroke="#0d6efd" stroke-width="2" fill="none" marker-end="url(#arrowhead)"></path>
-    <text x="510" y="210" font-family="Arial, sans-serif" font-size="12" text-anchor="middle">目标Q值</text>
+    <path d="M540,190 C 500,230 460,230 480,190" stroke="#0d6efd" stroke-width="2" fill="none" marker-end="url(#arrowhead)"></path>
+    <text x="510" y="230" font-family="Arial, sans-serif" font-size="12" text-anchor="middle">计算目标值 yⱼ</text>
+    <text x="510" y="245" font-family="Arial, sans-serif" font-size="10" text-anchor="middle">(使用 Q')</text>
     
     <!-- Q网络到目标网络的更新 -->
     <path d="M480,150 L540,150" stroke="#ff5722" stroke-width="2" fill="none" marker-end="url(#arrowhead)" stroke-dasharray="5,3"></path>
-    <text x="510" y="140" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#ff5722">定期复制参数</text>
+    <text x="510" y="140" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#ff5722">定期复制参数 (θ⁻ ← θ)</text>
     
     <!-- 损失计算和反向传播 -->
     <rect x="320" y="250" width="160" height="60" rx="8" ry="8" fill="#f8d7da" stroke="#dc3545" stroke-width="2"></rect>
-    <text x="400" y="280" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#dc3545">TD损失计算</text>
-    <text x="400" y="295" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" fill="#dc3545">(Q(s,a) - target)²</text>
+    <text x="400" y="280" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#dc3545">计算损失</text>
+    <text x="400" y="295" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" fill="#dc3545">(Q(sⱼ,aⱼ;θ) - yⱼ)²</text>
     
     <!-- 箭头定义 -->
     <defs>
@@ -546,252 +460,216 @@ Q-Learning 的局限性
         <tspan dx="20" fill="#dc3545">■ 损失计算</tspan>
     </text>
 </svg>
-<p>上图展示了DQN算法的完整架构，包含了所有核心组件及其交互关系：</p>
-<ol type="1">
-<li><strong>环境与智能体交互</strong>：Q网络选择动作，环境返回新状态和奖励</li>
-<li><strong>经验存储</strong>：经验元组(s,a,r,s’,done)被存储到经验回放缓冲区</li>
-<li><strong>批量学习</strong>：从缓冲区随机采样经验批次用于训练</li>
-<li><strong>目标计算</strong>：目标网络提供稳定的Q值估计</li>
-<li><strong>网络更新</strong>：根据TD损失更新Q网络参数</li>
-<li><strong>参数同步</strong>：定期将Q网络参数复制到目标网络</li>
-</ol>
-<p>这一架构设计解决了传统Q-learning在处理复杂状态空间时的局限性，通过两大创新（经验回放和目标网络）提高了学习稳定性和效率。</p>
+<p>这张图清晰地展示了DQN的各个部分如何交互：Q网络与环境互动并产生经验，经验存入缓冲区，然后从缓冲区采样用于训练Q网络，而目标网络则提供稳定的目标值计算，并定期从Q网络同步参数。</p>
+<hr>
 </section>
-</div>
-</div>
-<div class="callout callout-style-default callout-warning callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-经验回放详解
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<section id="核心作用" class="level3">
-<h3 class="anchored" data-anchor-id="核心作用">核心作用</h3>
+</section>
+<section id="深入理解两大关键技术" class="level2">
+<h2 class="anchored" data-anchor-id="深入理解两大关键技术">深入理解两大关键技术</h2>
+<p>让我们更详细地探讨经验回放和目标网络。</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true">经验回放 (Experience Replay)</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">目标网络 (Target Network)</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
 <ul>
-<li><strong>打破样本相关性</strong>：连续采样的状态高度相关，随机采样打破这种相关性</li>
-<li><strong>提高数据效率</strong>：每个经验可以被多次使用，减少环境交互次数</li>
-<li><strong>稳定训练</strong>：平滑采样分布，减少参数更新的方差</li>
-<li><strong>均衡经验分布</strong>：不同情景的经验都有机会被学习，避免过拟合</li>
-</ul>
-</section>
-<section id="实现要点" class="level3">
-<h3 class="anchored" data-anchor-id="实现要点">实现要点</h3>
-<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> ReplayBuffer:</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, capacity):</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.<span class="bu">buffer</span> <span class="op">=</span> deque(maxlen<span class="op">=</span>capacity)  <span class="co"># 固定容量的双端队列</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> add(<span class="va">self</span>, state, action, reward, next_state, done):</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 存储经验元组</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.<span class="bu">buffer</span>.append((state, action, reward, next_state, done))</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> sample(<span class="va">self</span>, batch_size):</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 随机采样批次经验</span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>        experiences <span class="op">=</span> random.sample(<span class="va">self</span>.<span class="bu">buffer</span>, batch_size)</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>        </span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 解析为分离的数组，便于批量处理</span></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>        states, actions, rewards, next_states, dones <span class="op">=</span> <span class="bu">zip</span>(<span class="op">*</span>experiences)</span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> np.array(states), np.array(actions), np.array(rewards), <span class="op">\</span></span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>               np.array(next_states), np.array(dones)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</section>
-<section id="进阶版本" class="level3">
-<h3 class="anchored" data-anchor-id="进阶版本">进阶版本</h3>
+<li><p><strong>核心作用:</strong></p>
 <ul>
-<li><strong>优先经验回放 (Prioritized Experience Replay)</strong>：根据TD误差分配优先级，重要经验被更频繁采样</li>
-<li><strong>分层经验回放 (Hindsight Experience Replay)</strong>：重新标记目标，从失败经验中学习</li>
+<li><strong>打破样本相关性:</strong> 强化学习的序贯决策过程导致相邻样本高度相关。随机采样打破了这种时间上的依赖，使得样本更接近独立同分布，有利于神经网络训练。</li>
+<li><strong>提高数据效率:</strong> 环境交互通常是昂贵的。经验回放使得智能体可以反复利用过去的经验进行学习，极大提高了样本的利用率。</li>
+<li><strong>稳定训练过程:</strong> 对整个缓冲区进行采样，可以平滑数据分布的变化，避免训练过程因遇到连续的相似或极端样本而剧烈波动。</li>
+</ul></li>
+<li><p><strong>实现要点:</strong></p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> collections <span class="im">import</span> deque</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> random</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> ReplayBuffer:</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, capacity):</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 使用双端队列存储经验，自动丢弃旧经验</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.<span class="bu">buffer</span> <span class="op">=</span> deque(maxlen<span class="op">=</span>capacity)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> add(<span class="va">self</span>, state, action, reward, next_state, done):</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 将经验元组添加到缓冲区</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>        experience <span class="op">=</span> (state, action, reward, next_state, done)</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.<span class="bu">buffer</span>.append(experience)</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> sample(<span class="va">self</span>, batch_size):</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 从缓冲区中随机采样指定数量的经验</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 确保缓冲区内有足够经验才进行采样</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="bu">len</span>(<span class="va">self</span>.<span class="bu">buffer</span>) <span class="op">&lt;</span> batch_size:</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="va">None</span> <span class="co"># 或者抛出异常，或返回空值</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>        batch <span class="op">=</span> random.sample(<span class="va">self</span>.<span class="bu">buffer</span>, batch_size)</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 将批次中的经验解压，方便后续处理</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 注意：这里假设状态等是numpy数组或其他可以直接堆叠的格式</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>        states, actions, rewards, next_states, dones <span class="op">=</span> <span class="bu">map</span>(np.stack, <span class="bu">zip</span>(<span class="op">*</span>batch))</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> states, actions, rewards, next_states, dones</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__len__</span>(<span class="va">self</span>):</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 返回当前缓冲区中的经验数量</span></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="bu">len</span>(<span class="va">self</span>.<span class="bu">buffer</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<li><p><strong>思考与讨论:</strong> 缓冲区大小 (capacity) 如何选择？太大或太小会有什么影响？除了随机采样，还有哪些更高级的采样策略？（提示：第七周会讲到优先经验回放）</p></li>
 </ul>
-</section>
 </div>
-</div>
-<div class="callout callout-style-default callout-warning callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-目标网络详解
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<section id="核心原理" class="level3">
-<h3 class="anchored" data-anchor-id="核心原理">核心原理</h3>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
 <ul>
-<li>在 Q-learning 中使用同一网络同时产生目标和当前估计会导致不稳定</li>
-<li><strong>移动目标问题</strong>：当前网络参数θ影响目标值，目标值又用于更新θ，形成不稳定循环</li>
-<li>目标网络”冻结”目标值计算，降低训练不稳定性</li>
-</ul>
-</section>
-<section id="关键实现" class="level3">
-<h3 class="anchored" data-anchor-id="关键实现">关键实现</h3>
-<div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 初始化</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>q_network <span class="op">=</span> create_model()      <span class="co"># 主网络</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>target_network <span class="op">=</span> create_model() <span class="co"># 目标网络</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>target_network.set_weights(q_network.get_weights())  <span class="co"># 初始权重相同</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 学习过程</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> learn(experiences):</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    states, actions, rewards, next_states, dones <span class="op">=</span> experiences</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 使用目标网络计算下一状态的最大Q值</span></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    target_q_values <span class="op">=</span> target_network.predict(next_states)</span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    max_target_q <span class="op">=</span> np.<span class="bu">max</span>(target_q_values, axis<span class="op">=</span><span class="dv">1</span>)</span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 计算TD目标</span></span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    targets <span class="op">=</span> rewards <span class="op">+</span> (gamma <span class="op">*</span> max_target_q <span class="op">*</span> (<span class="dv">1</span> <span class="op">-</span> dones))</span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 更新主网络</span></span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    current_q <span class="op">=</span> q_network.predict(states)</span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i, action <span class="kw">in</span> <span class="bu">enumerate</span>(actions):</span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>        current_q[i][action] <span class="op">=</span> targets[i]</span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>    q_network.fit(states, current_q, epochs<span class="op">=</span><span class="dv">1</span>, verbose<span class="op">=</span><span class="dv">0</span>)</span>
-<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a><span class="co"># 定期更新目标网络</span></span>
-<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> step <span class="op">%</span> update_frequency <span class="op">==</span> <span class="dv">0</span>:</span>
-<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>    target_network.set_weights(q_network.get_weights())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</section>
-<section id="更新策略" class="level3">
-<h3 class="anchored" data-anchor-id="更新策略">更新策略</h3>
+<li><p><strong>核心原理:</strong> 解决”移动目标”问题。</p>
 <ul>
-<li><strong>硬更新</strong>：每C步完全复制参数（原始DQN方法）</li>
-<li><strong>软更新</strong>：每步用小比例τ混合参数 θ_target = τ·θ + (1-τ)·θ_target（DDPG等算法采用）</li>
-</ul>
-</section>
-</div>
-</div>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-DQN 与 Q-Learning 对比
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<section id="相同点" class="level3">
-<h3 class="anchored" data-anchor-id="相同点">相同点</h3>
+<li>在标准的Q-Learning更新 (Q(s,a) Q(s,a) + ) 中，如果用神经网络近似Q函数，目标值 (r + _{a’} Q(s’,a’; )) 会随着 () 的更新而不断变化。</li>
+<li>这意味着我们用来计算更新目标的”尺子”本身也在不停地变动，导致学习过程不稳定，容易震荡或发散。</li>
+<li>目标网络通过”冻结”目标Q值计算中使用的网络参数 (^-) 一段时间，提供了一个相对稳定的学习目标。</li>
+</ul></li>
+<li><p><strong>关键实现:</strong></p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> tensorflow <span class="im">as</span> tf <span class="co"># 或 torch</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 假设 model_builder() 函数能创建我们的Q网络模型</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>q_network <span class="op">=</span> model_builder()</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>target_network <span class="op">=</span> model_builder()</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 初始化：确保目标网络权重与Q网络一致</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>target_network.set_weights(q_network.get_weights())</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co"># 在学习/训练函数中:</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> train_step(batch):</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    states, actions, rewards, next_states, dones <span class="op">=</span> batch</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 1. 使用 *目标网络* 预测下一状态的Q值</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    next_q_values_target <span class="op">=</span> target_network.predict(next_states) </span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 2. 计算下一状态的最大Q值</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    max_next_q <span class="op">=</span> np.<span class="bu">max</span>(next_q_values_target, axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 3. 计算 TD 目标 y</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    target_y <span class="op">=</span> rewards <span class="op">+</span> gamma <span class="op">*</span> max_next_q <span class="op">*</span> (<span class="dv">1</span> <span class="op">-</span> dones) </span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 4. 使用 *Q网络* 计算损失并执行梯度更新</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> tf.GradientTape() <span class="im">as</span> tape:</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 获取当前状态下，实际采取动作的Q值预测</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>        q_values <span class="op">=</span> q_network(states)</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>        action_indices <span class="op">=</span> tf.stack([tf.<span class="bu">range</span>(<span class="bu">len</span>(actions)), actions], axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>        current_q_pred <span class="op">=</span> tf.gather_nd(q_values, action_indices)</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 计算损失 (例如 MSE)</span></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>        loss <span class="op">=</span> tf.keras.losses.mean_squared_error(target_y, current_q_pred)</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 计算梯度并更新 Q 网络</span></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>    grads <span class="op">=</span> tape.gradient(loss, q_network.trainable_variables)</span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>    optimizer.apply_gradients(<span class="bu">zip</span>(grads, q_network.trainable_variables))</span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> loss</span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a><span class="co"># 在主训练循环中定期更新目标网络:</span></span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> global_step <span class="op">%</span> target_update_frequency <span class="op">==</span> <span class="dv">0</span>:</span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Step </span><span class="sc">{</span>global_step<span class="sc">}</span><span class="ss">: Updating target network."</span>)</span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>    target_network.set_weights(q_network.get_weights())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<li><p><strong>更新策略:</strong></p>
 <ul>
-<li>都是基于时序差分(TD)学习的价值函数方法</li>
-<li>都使用最大化动作价值函数(Q)的方法</li>
-<li>都采用ε-贪婪策略平衡探索与利用</li>
-<li>都应用折扣因子γ来权衡短期与长期奖励</li>
+<li><strong>硬更新 (Hard Update):</strong> 每隔 C 步，将Q网络的参数 () 完全复制给目标网络 (^-) (如上代码所示)。这是原始DQN论文中使用的方法。</li>
+<li><strong>软更新 (Soft Update):</strong> 每一步（或每隔几步）都进行微小的更新： (^- + (1-) ^-) 。其中 () 是一个很小的数（例如 0.001 或 0.01）。这种方式更新更平滑，在一些算法（如DDPG）中更常用。</li>
+<li><strong>思考:</strong> 硬更新的更新频率 C 如何选择？软更新的 () 如何选择？它们各有什么优缺点？</li>
+</ul></li>
 </ul>
+</div>
+</div>
+</div>
+<hr>
 </section>
-<section id="关键区别" class="level3">
-<h3 class="anchored" data-anchor-id="关键区别">关键区别</h3>
+<section id="dqn-与-q-learning-对比总结" class="level2">
+<h2 class="anchored" data-anchor-id="dqn-与-q-learning-对比总结">DQN 与 Q-Learning 对比总结</h2>
 <table class="caption-top table">
+<colgroup>
+<col style="width: 17%">
+<col style="width: 39%">
+<col style="width: 43%">
+</colgroup>
 <thead>
 <tr class="header">
-<th>特性</th>
-<th>表格型 Q-Learning</th>
-<th>深度 Q 网络 (DQN)</th>
+<th style="text-align: left;">特性</th>
+<th style="text-align: left;">表格型 Q-Learning</th>
+<th style="text-align: left;">深度 Q 网络 (DQN)</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>价值表示</td>
-<td>Q表格</td>
-<td>神经网络</td>
+<td style="text-align: left;"><strong>价值表示</strong></td>
+<td style="text-align: left;">Q表格 (显式存储每个状态-动作对的值)</td>
+<td style="text-align: left;">神经网络 (隐式表示，通过参数近似)</td>
 </tr>
 <tr class="even">
-<td>状态空间</td>
-<td>小规模离散状态</td>
-<td>大规模/连续状态</td>
+<td style="text-align: left;"><strong>状态空间</strong></td>
+<td style="text-align: left;">仅限小规模、离散状态</td>
+<td style="text-align: left;">可处理大规模、高维甚至连续状态 (通过离散化或特定架构)</td>
 </tr>
 <tr class="odd">
-<td>更新方式</td>
-<td>单样本更新</td>
-<td>批量更新</td>
+<td style="text-align: left;"><strong>价值更新</strong></td>
+<td style="text-align: left;">单个样本更新 Q(s,a)</td>
+<td style="text-align: left;">从经验回放中采样<strong>批量</strong>样本进行更新</td>
 </tr>
 <tr class="even">
-<td>参数数量</td>
-<td>状态数×动作数</td>
-<td>神经网络权重数量</td>
+<td style="text-align: left;"><strong>参数数量</strong></td>
+<td style="text-align: left;">状态数 × 动作数</td>
+<td style="text-align: left;">神经网络的权重和偏置数量 (通常远小于前者)</td>
 </tr>
 <tr class="odd">
-<td>稳定性技巧</td>
-<td>无</td>
-<td>经验回放+目标网络</td>
+<td style="text-align: left;"><strong>稳定性技巧</strong></td>
+<td style="text-align: left;">无特定技巧</td>
+<td style="text-align: left;"><strong>经验回放</strong> + <strong>目标网络</strong></td>
 </tr>
 <tr class="even">
-<td>泛化能力</td>
-<td>无</td>
-<td>强</td>
+<td style="text-align: left;"><strong>泛化能力</strong></td>
+<td style="text-align: left;">基本无</td>
+<td style="text-align: left;"><strong>强</strong> (神经网络的核心优势)</td>
 </tr>
 <tr class="odd">
-<td>样本效率</td>
-<td>低</td>
-<td>高</td>
+<td style="text-align: left;"><strong>样本效率</strong></td>
+<td style="text-align: left;">低 (需要大量探索覆盖状态空间)</td>
+<td style="text-align: left;"><strong>相对较高</strong> (经验回放提高了利用率)</td>
 </tr>
 <tr class="even">
-<td>计算复杂度</td>
-<td>低</td>
-<td>高</td>
+<td style="text-align: left;"><strong>计算复杂度</strong></td>
+<td style="text-align: left;">更新快，查询快 (表格查找)</td>
+<td style="text-align: left;">训练慢 (神经网络前向/反向传播)，查询相对快</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>适用场景</strong></td>
+<td style="text-align: left;">状态/动作空间小的简单问题</td>
+<td style="text-align: left;">状态空间复杂、需要泛化能力的问题 (如游戏)</td>
 </tr>
 </tbody>
 </table>
+<hr>
 </section>
-</div>
-</div>
+<section id="展望dqn的扩展与改进" class="level2">
+<h2 class="anchored" data-anchor-id="展望dqn的扩展与改进">展望：DQN的扩展与改进</h2>
+<p>DQN是一个里程碑，但并非终点。后续研究提出了许多重要的改进，进一步提升了其性能和稳定性，我们将在后续课程中深入探讨其中一些：</p>
+<ul>
+<li><strong>双重DQN (Double DQN):</strong> 旨在解决标准DQN中的Q值过高估计问题。</li>
+<li><strong>决斗网络架构 (Dueling Network Architecture):</strong> 将Q值分解为状态价值和动作优势，可能在某些环境中学习更高效。</li>
+<li><strong>优先经验回放 (Prioritized Experience Replay):</strong> 更智能地从经验回放缓冲区中采样，优先学习”有价值”的经验。</li>
+<li><strong>分布式DQN (Distributional DQN):</strong> 不再只学习Q值的期望，而是学习其完整的值分布。</li>
+<li><strong>噪声网络 (Noisy Nets):</strong> 一种更有效的探索策略。</li>
+<li><strong>彩虹DQN (Rainbow):</strong> 集成了上述多种改进技术，达到了非常高的性能。</li>
+</ul>
+<hr>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-重要扩展和改进
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<section id="双重dqn-double-dqn" class="level3">
-<h3 class="anchored" data-anchor-id="双重dqn-double-dqn">双重DQN (Double DQN)</h3>
-<ul>
-<li>解决Q值过高估计问题</li>
-<li>使用主网络选择动作，目标网络评估其价值</li>
-</ul>
-</section>
-<section id="决斗网络架构-dueling-network" class="level3">
-<h3 class="anchored" data-anchor-id="决斗网络架构-dueling-network">决斗网络架构 (Dueling Network)</h3>
-<ul>
-<li>将Q值分解为状态价值V(s)和优势函数A(s,a)</li>
-<li>Q(s,a) = V(s) + A(s,a) - mean(A(s,:))</li>
-<li>提高价值估计的稳定性</li>
-</ul>
-</section>
-<section id="分布式dqn-distributional-dqn" class="level3">
-<h3 class="anchored" data-anchor-id="分布式dqn-distributional-dqn">分布式DQN (Distributional DQN)</h3>
-<ul>
-<li>学习奖励分布而非单一期望值</li>
-<li>捕捉环境的随机性和不确定性</li>
-</ul>
-</section>
-<section id="rainbow-dqn" class="level3">
-<h3 class="anchored" data-anchor-id="rainbow-dqn">Rainbow DQN</h3>
-<ul>
-<li>集成六种DQN改进技术</li>
-<li>包括优先经验回放、多步学习、噪声网络等</li>
-</ul>
-</section>
-</div>
-</div>
-<div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-课后作业
+课后活动与实践
 </div>
 </div>
 <div class="callout-body-container callout-body">
 <ol type="1">
-<li>阅读DQN原始论文：<a href="https://www.cs.toronto.edu/~vmnih/docs/dqn.pdf">Playing Atari with Deep Reinforcement Learning</a></li>
-<li>下载并运行本周代码示例，熟悉经验回放和目标网络的实现方式</li>
-<li>选择一个简单环境（如CartPole），实现基础版DQN算法</li>
-<li>分析不同超参数（如探索率、更新频率）对训练性能的影响</li>
+<li><strong>文献阅读:</strong> 尝试阅读DQN的原始论文 (<a href="https://arxiv.org/abs/1312.5602">Playing Atari with Deep Reinforcement Learning by Mnih et al., 2013/2015</a> 或 Nature 版本 <a href="https://www.nature.com/articles/nature14236">Human-level control through deep reinforcement learning</a>)，重点理解引言、方法（特别是经验回放和目标网络部分）和实验设置。</li>
+<li><strong>代码探索:</strong> 下载并运行课程提供的DQN代码示例。仔细阅读代码，理解<code>ReplayBuffer</code>类和目标网络的创建、使用及更新逻辑。</li>
+<li><strong>动手实践:</strong> 选择一个你熟悉且相对简单的环境（例如Gym库中的<code>CartPole-v1</code>），尝试实现一个基础版本的DQN算法。
+<ul>
+<li><strong>网络结构:</strong> 可以从简单的全连接网络开始（例如，输入层 -&gt; 隐藏层(ReLU) -&gt; 输出层(线性)）。</li>
+<li><strong>核心组件:</strong> 确保正确实现了经验回放缓冲区和目标网络的定期更新。</li>
+<li><strong>超参数:</strong> 尝试调整一些基本超参数，如学习率、ε-greedy的衰减率、缓冲区大小、目标网络更新频率、批次大小等，观察它们对训练过程和最终性能的影响。</li>
+</ul></li>
+<li><strong>思考:</strong> 在CartPole环境中，状态是4维的连续向量。DQN如何处理这种连续状态输入？与处理离散状态的Q-Learning相比有何不同？</li>
 </ol>
 </div>
 </div>
@@ -805,11 +683,12 @@ DQN 与 Q-Learning 对比
 </div>
 </div>
 <div class="callout-body-container callout-body">
+<p>本周我们学习了DQN的基础，下周将深入探讨其重要的变体和调优技巧。请提前思考和了解：</p>
 <ol type="1">
-<li>DQN变体算法（Double DQN、Dueling DQN）的工作原理</li>
-<li>连续动作空间强化学习算法（DDPG、SAC）的基础知识</li>
-<li>策略梯度方法的基本原理</li>
-<li>深度强化学习的稳定性和采样效率问题</li>
+<li><strong>Double DQN</strong> 和 <strong>Dueling DQN</strong> 分别试图解决标准DQN的什么问题？它们的核心思想是什么？</li>
+<li>除了ε-greedy，还有哪些<strong>探索策略</strong>？它们相比ε-greedy有何优劣？（例如，了解一下Noisy Networks或Boltzmann探索）</li>
+<li>训练深度强化学习模型时，有哪些常见的<strong>超参数</strong>需要调整？（例如，学习率、批次大小、缓冲区大小、目标网络更新频率等）它们各自的作用是什么？</li>
+<li>如何有效地<strong>监控和调试</strong>深度强化学习的训练过程？（了解一下TensorBoard等工具的作用）</li>
 </ol>
 </div>
 </div>
@@ -1245,6 +1124,9 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       </a>          
   </div>
   <div class="nav-page nav-page-next">
+      <a href="./week7.html" class="pagination-link" aria-label="第七周：深入探索DQN——改进、调优与实战">
+        <span class="nav-page-text"><span class="chapter-title">第七周：深入探索DQN——改进、调优与实战</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
   </div>
 </nav>
 </div> <!-- /content -->

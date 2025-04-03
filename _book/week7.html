@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>第七周：深入探索DQN——改进、调优与实战 – 智能计算</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./week5.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xkm/sYwpb+ilR5gUw==" crossorigin="anonymous" referrerpolicy="no-referrer">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="styles/custom.css">
+<link rel="stylesheet" href="styles/mermaid.css">
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./week7.html"><span class="chapter-title">第七周：深入探索DQN——改进、调优与实战</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">智能计算</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">课程介绍</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./syllbus.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">课程大纲</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week1.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">第一周：强化学习入门</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week2.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">第二周：强化学习框架与迷宫环境</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week3.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">第三周：Q-Learning 算法详解与实践</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week4.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">第四周：Q-Learning 算法优化与改进</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week5.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">第五周：从Q-Learning到深度Q网络</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week7.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">第七周：深入探索DQN——改进、调优与实战</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#温故知新为何要改进dqn" id="toc-温故知新为何要改进dqn" class="nav-link active" data-scroll-target="#温故知新为何要改进dqn">温故知新：为何要改进DQN？</a></li>
+  <li><a href="#dqn的核心改进方法" id="toc-dqn的核心改进方法" class="nav-link" data-scroll-target="#dqn的核心改进方法">DQN的核心改进方法</a></li>
+  <li><a href="#探索的艺术如何更聪明地探索" id="toc-探索的艺术如何更聪明地探索" class="nav-link" data-scroll-target="#探索的艺术如何更聪明地探索">探索的艺术：如何更聪明地探索？</a></li>
+  <li><a href="#dqn训练调优与监控技巧" id="toc-dqn训练调优与监控技巧" class="nav-link" data-scroll-target="#dqn训练调优与监控技巧">DQN训练调优与监控技巧</a></li>
+  <li><a href="#小组项目实战挑战与优化" id="toc-小组项目实战挑战与优化" class="nav-link" data-scroll-target="#小组项目实战挑战与优化">小组项目实战：挑战与优化</a>
+  <ul class="collapse">
+  <li><a href="#常见挑战与应对策略" id="toc-常见挑战与应对策略" class="nav-link" data-scroll-target="#常见挑战与应对策略">常见挑战与应对策略</a></li>
+  </ul></li>
+  <li><a href="#进阶视野彩虹dqn-rainbow" id="toc-进阶视野彩虹dqn-rainbow" class="nav-link" data-scroll-target="#进阶视野彩虹dqn-rainbow">进阶视野：彩虹DQN (Rainbow)</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-title">第七周：深入探索DQN——改进、调优与实战</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="callout callout-style-simple callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+本周学习目标
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li><strong>理解</strong> 标准DQN的局限性，<strong>掌握</strong> 至少两种核心改进方法（如Double DQN, Dueling DQN）的原理与应用场景。</li>
+<li><strong>分析</strong> 不同探索策略（ε-greedy退火, Noisy Networks, Boltzmann）的优缺点，并能<strong>选择</strong> 合适的策略。</li>
+<li><strong>学习</strong> DQN训练过程中的关键超参数调优技巧和奖励设计原则。</li>
+<li><strong>应用</strong> TensorBoard等工具<strong>监控</strong>和<strong>分析</strong>训练过程。</li>
+<li><strong>实践</strong> 将所学改进和调优技巧应用于小组项目（如CartPole），<strong>解决</strong> 遇到的实际问题，<strong>提升</strong> 模型性能。</li>
+<li><strong>了解</strong> Rainbow DQN等前沿进展，拓宽视野。</li>
+</ol>
+</div>
+</div>
+<section id="温故知新为何要改进dqn" class="level2">
+<h2 class="anchored" data-anchor-id="温故知新为何要改进dqn">温故知新：为何要改进DQN？</h2>
+<p>在上周的学习中，我们掌握了标准DQN算法的核心思想及其在解决离散动作空间问题上的优势。然而，标准DQN并非完美，它在实际应用中也暴露出一些局限性。</p>
+<p><strong>思考一下：</strong> 结合你上周的学习和实验经验，标准DQN在哪些方面可能存在不足？（提示：可以从Q值估计的准确性、学习效率、探索方式等方面考虑。）</p>
+<p>本周，我们将深入探讨标准DQN的主要局限性，并学习一系列强大的改进方法，为你的DQN武器库增添更多利器。</p>
+<hr>
+</section>
+<section id="dqn的核心改进方法" class="level2">
+<h2 class="anchored" data-anchor-id="dqn的核心改进方法">DQN的核心改进方法</h2>
+<p>为了克服标准DQN的局限性，研究者们提出了多种有效的改进策略。下面我们来学习其中最核心的几种：</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true">Double DQN：告别Q值过高估计</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">Dueling DQN：状态价值与动作优势的分离</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false">优先经验回放 (PER)：让学习更聚焦</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" role="tab" aria-controls="tabset-1-4" aria-selected="false">多步学习：看得更远一点</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<ul>
+<li><p><strong>核心问题:</strong> 标准DQN在计算目标Q值时，使用同一个网络既选择最大Q值对应的动作，又评估该动作的Q值 ( <span class="math inline">\(r + \gamma \max_{a'} Q(s', a'; \theta^-)\)</span> )。这容易导致对Q值的<strong>过高估计 (overestimation)</strong>，尤其是在学习初期或存在噪声时，某个被随机高估的Q值更容易被<code>max</code>操作选中，导致策略学习产生偏差。</p></li>
+<li><p><strong>解决方案:</strong> Double DQN巧妙地将<strong>动作选择</strong>和<strong>动作评估</strong>解耦。它使用当前的主网络 <span class="math inline">\(Q(s, a; \theta)\)</span> 来选择下一个状态 <span class="math inline">\(s'\)</span> 的最优动作 <span class="math inline">\(a^* = \arg\max_{a'} Q(s', a'; \theta)\)</span>，然后使用目标网络 <span class="math inline">\(Q(s', a; \theta^-)\)</span> 来评估这个选定动作的价值。</p>
+<ul>
+<li><strong>Double DQN 目标:</strong> <span class="math inline">\(r + \gamma Q(s', a^*; \theta^-) = r + \gamma Q(s', \arg\max_{a'} Q(s', a'; \theta); \theta^-)\)</span></li>
+</ul></li>
+<li><p><strong>代码关键点:</strong> 在计算目标Q值时，需要先用主网络预测下一个状态的所有动作的Q值，找出最大Q值对应的动作索引，然后用目标网络预测下一个状态的所有动作的Q值，并取出该索引对应的Q值用于计算目标。</p></li>
+<li><p><strong>思考:</strong> Double DQN是否在所有情况下都优于标准DQN？它在哪些场景下能发挥更大优势？</p></li>
+</ul>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<ul>
+<li><p><strong>思考:</strong> 想象一个场景，无论你向左还是向右移动，最终的奖励可能都差不多，因为当前所处的状态本身就很有价值（或很危险）。这启发我们：状态本身的价值 (Value) 和在特定状态下采取某个动作相对于其他动作的优势 (Advantage) 是不是可以分开考虑？</p></li>
+<li><p><strong>原理:</strong> Dueling DQN正是基于这种思想。它将Q值函数 <span class="math inline">\(Q(s,a)\)</span> 分解为两部分：</p>
+<ol type="1">
+<li><strong>状态价值函数 <span class="math inline">\(V(s)\)</span>:</strong> 表示处于状态 <span class="math inline">\(s\)</span> 本身的价值，与具体动作无关。</li>
+<li><strong>动作优势函数 <span class="math inline">\(A(s,a)\)</span>:</strong> 表示在状态 <span class="math inline">\(s\)</span> 下，采取动作 <span class="math inline">\(a\)</span> 相对于采取平均动作的好坏程度。</li>
+</ol>
+<p>网络结构上，通常有一个共享的特征提取层，然后分叉为两个流：一个输出标量 <span class="math inline">\(V(s)\)</span>，另一个输出每个动作的优势 <span class="math inline">\(A(s,a)\)</span>。最后将两者结合得到Q值。为了保证 <span class="math inline">\(V(s)\)</span> 真正学到的是状态价值，并解决 <span class="math inline">\(V\)</span> 和 <span class="math inline">\(A\)</span> 的不可辨识问题 (identifiability issue)，通常采用以下聚合方式：</p>
+<ul>
+<li><span class="math inline">\(Q(s,a) = V(s) + (A(s,a) - \frac{1}{|\mathcal{A}|}\sum_{a' \in \mathcal{A}} A(s,a'))\)</span> （减去优势函数的均值可以使优势函数的均值为零，让 <span class="math inline">\(V(s)\)</span> 更好地代表状态价值。）</li>
+</ul></li>
+<li><p><strong>代码关键点:</strong> 需要设计一个包含共享层、价值流分支和优势流分支的网络结构，并根据上述公式在<code>forward</code>方法中组合输出。</p></li>
+<li><p><strong>讨论:</strong> Dueling DQN在哪些类型的环境中可能特别有效？为什么？（提示：考虑那些状态价值比动作选择更重要的环境，或者动作空间很大但很多动作影响相似的环境。）</p></li>
+</ul>
+</div>
+<div id="tabset-1-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-3-tab">
+<ul>
+<li><p><strong>核心问题:</strong> 标准DQN的经验回放是均匀采样，这意味着所有经验（无论重要与否）被选中的概率都相同。但直觉上，那些带来”惊喜”（即预测误差很大）的经验应该包含更多值得学习的信息。</p></li>
+<li><p><strong>解决方案:</strong> 优先经验回放 (Prioritized Experience Replay, PER) 根据经验的<strong>重要性</strong>来赋予不同的采样概率，让智能体更频繁地从重要的经验中学习。</p>
+<ul>
+<li><strong>重要性度量:</strong> 通常使用<strong>TD误差 (Temporal Difference error)</strong> 的绝对值 <span class="math inline">\(|\delta_i| = |y_i - Q(s_i, a_i; \theta)|\)</span> 来衡量。TD误差越大，表示当前的Q值预测与目标值差距越大，该经验越”令人惊讶”，学习价值可能越高。</li>
+<li><strong>采样概率:</strong> 经验 (i) 被采样的概率 (P(i)) 与其优先级 (p_i) 成正比。优先级通常基于TD误差计算：<span class="math inline">\(p_i = (|\delta_i| + \epsilon)^\alpha\)</span>，其中 <span class="math inline">\(\epsilon\)</span> 是一个很小的正数（防止优先级为0），<span class="math inline">\(\alpha \in [0, 1]\)</span> 是一个超参数，控制优先级的程度（<span class="math inline">\(\alpha=0\)</span> 时退化为均匀采样）。</li>
+<li>$ P(i) = $</li>
+<li><strong>偏差修正:</strong> 优先采样会引入偏差，因为重要的样本被重复学习的次数更多。为了修正这种偏差，PER引入了<strong>重要性采样 (Importance Sampling, IS) 权重</strong> <span class="math inline">\(w_i\)</span> 来调整这些样本在梯度更新中的贡献：
+<ul>
+<li><span class="math inline">\(w_i = \left(\frac{1}{N} \cdot \frac{1}{P(i)}\right)^\beta = \left(\frac{\sum_k p_k}{N \cdot p_i}\right)^\beta\)</span> 其中 <span class="math inline">\(N\)</span> 是缓冲区大小，<span class="math inline">\(\beta \in [0, 1]\)</span> 是另一个超参数，用于控制权重的大小（通常从一个较小的值开始，在训练过程中逐渐增加到1）。这个权重 <span class="math inline">\(w_i\)</span> 会被用来缩放对应样本的损失。</li>
+</ul></li>
+</ul></li>
+<li><p><strong>思考:</strong> PER如何提高样本效率？它在实现上可能引入哪些新的复杂性和计算开销？如何选择合适的 <span class="math inline">\(\alpha\)</span> 和 <span class="math inline">\(\beta\)</span> 值？</p></li>
+<li><p><strong>选学/挑战:</strong> 为了高效地实现按优先级采样和更新优先级，PER通常使用一种称为<strong>SumTree</strong>的数据结构。尝试理解SumTree的工作原理。</p></li>
+</ul>
+</div>
+<div id="tabset-1-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-4-tab">
+<ul>
+<li><p><strong>核心问题:</strong> 标准DQN使用单步TD目标 <span class="math inline">\(r_t + \gamma \max_a Q(s_{t+1}, a)\)</span>，只利用了一步的真实奖励 <span class="math inline">\(r_t\)</span>，而后续的价值完全依赖于估计值 <span class="math inline">\(Q(s_{t+1}, a)\)</span>。这可能导致学习信号传播较慢，并且过于依赖可能有偏差的Q值估计。</p></li>
+<li><p><strong>解决方案:</strong> 多步学习 (Multi-step Learning) 使用未来 <span class="math inline">\(n\)</span> 步的累计折扣奖励和第 <span class="math inline">\(n\)</span> 步之后的Q值估计来构建目标值，看得更”远”。</p>
+<ul>
+<li><strong>n步回报 (n-step return):</strong> <span class="math inline">\(R_t^{(n)} = r_{t+1} + \gamma r_{t+2} + \dots + \gamma^{n-1} r_{t+n} + \gamma^n \max_{a'} Q(s_{t+n}, a'; \theta^-)\)</span> （注意：这里用 <span class="math inline">\(r_{t+1}\)</span> 表示 <span class="math inline">\(s_t, a_t\)</span> 得到的奖励，与之前公式的 <span class="math inline">\(r\)</span> 对应）</li>
+<li>这个 <span class="math inline">\(R_t^{(n)}\)</span> 将替代单步TD目标 <span class="math inline">\(r_{t+1} + \gamma \max_{a'} Q(s_{t+1}, a'; \theta^-)\)</span> 用于计算TD误差和更新Q网络。</li>
+</ul></li>
+<li><p><strong>优势:</strong></p>
+<ul>
+<li>更快地传播奖励信息，特别是对于奖励稀疏的环境。</li>
+<li>减少了对早期不准确的Q值估计的依赖。</li>
+</ul></li>
+<li><p><strong>讨论:</strong> 选择n步学习的步数 <span class="math inline">\(n\)</span> 时需要考虑哪些因素？ <span class="math inline">\(n\)</span> 越大越好吗？（提示：考虑偏差和方差的权衡。更大的 <span class="math inline">\(n\)</span> 通常有更低的偏差但更高的方差。）</p></li>
+</ul>
+</div>
+</div>
+</div>
+<hr>
+</section>
+<section id="探索的艺术如何更聪明地探索" class="level2">
+<h2 class="anchored" data-anchor-id="探索的艺术如何更聪明地探索">探索的艺术：如何更聪明地探索？</h2>
+<p>探索 (Exploration) 与利用 (Exploitation) 的平衡是强化学习中的经典问题。除了我们熟悉的ε-greedy策略及其退火方法，还有更”聪明”的探索策略。</p>
+<ul>
+<li><p><strong>回顾:</strong> ε-greedy策略是如何工作的？它的主要缺点是什么？（提示：随机性、与状态无关、需要手动调整ε衰减）</p></li>
+<li><p><strong>思考与对比:</strong></p>
+<ul>
+<li><strong>Noisy Networks (噪声网络):</strong>
+<ul>
+<li><strong>核心思想:</strong> 不再依赖于外部的随机决策（如ε-greedy），而是直接在网络的<strong>权重</strong>中引入可学习的<strong>参数化噪声</strong>。智能体通过学习噪声的大小来自适应地进行探索。</li>
+<li><strong>实现:</strong> 将网络中的线性层（<code>nn.Linear</code>）替换为<code>NoisyLinear</code>层。在训练时，层的权重和偏置会加入通过网络学习到的噪声；在评估时，则关闭噪声，使用确定的权重进行决策。</li>
+<li><strong>优势:</strong> 探索是<strong>状态相关的</strong> (因为噪声通过网络传播，受输入状态影响)，并且探索的程度是<strong>自适应学习</strong>的，无需手动设计复杂的ε衰减方案。通常比ε-greedy更有效地探索环境。</li>
+</ul></li>
+<li><strong>Boltzmann探索 (Softmax Exploration):</strong>
+<ul>
+<li><strong>原理:</strong> 根据当前状态下各个动作的Q值估计，计算一个<strong>概率分布</strong>，然后根据这个概率分布来随机选择动作。Q值越高的动作被选中的概率越大。</li>
+<li><strong>公式:</strong> <span class="math inline">\(P(a|s) = \frac{\exp(Q(s,a)/\tau)}{\sum_{a'}\exp(Q(s,a')/\tau)}\)</span></li>
+<li><span class="math inline">\(\tau\)</span> 称为<strong>温度 (temperature)</strong> 参数。<span class="math inline">\(\tau\)</span> 越大，概率分布越接近均匀分布（探索性越强）；<span class="math inline">\(\tau\)</span> 越小，概率分布越集中在Q值最高的动作上（利用性越强）。通常也需要对 <span class="math inline">\(\tau\)</span> 进行退火。</li>
+<li><strong>与ε-greedy对比:</strong> Boltzmann探索不是完全随机地选择非最优动作，而是根据Q值的相对大小来决定探索的方向，可能比ε-greedy更倾向于探索”看起来有潜力”的次优动作。</li>
+</ul></li>
+</ul></li>
+<li><p><strong>为你的项目选择:</strong> 考虑你的CartPole项目或其他正在进行的项目，你会选择哪种探索策略（ε-greedy退火, Noisy Networks, Boltzmann）？说明你的理由。</p></li>
+</ul>
+<hr>
+</section>
+<section id="dqn训练调优与监控技巧" class="level2">
+<h2 class="anchored" data-anchor-id="dqn训练调优与监控技巧">DQN训练调优与监控技巧</h2>
+<p>获得良好性能的DQN模型往往需要细致的调优和有效的监控。</p>
+<ul>
+<li><strong>网络结构:</strong>
+<ul>
+<li>对于简单问题（如CartPole），通常2-3个隐藏层，每层64-256个神经元就足够了。</li>
+<li>对于更复杂的视觉输入问题（如Atari游戏），通常使用卷积层提取特征，再接全连接层。</li>
+<li>并非越深或越宽的网络越好，需要根据问题复杂度进行选择。</li>
+<li><strong>激活函数:</strong> 隐藏层常用ReLU及其变种（如LeakyReLU），输出层（计算Q值）通常不需要激活函数。</li>
+</ul></li>
+<li><strong>关键超参数:</strong>
+<ul>
+<li><strong>学习率 (Learning Rate):</strong> 常用范围 1e-4 到 1e-3。太大会导致训练不稳定，太小则收敛缓慢。Adam等自适应优化器通常效果较好，也可以配合学习率调度（逐步降低学习率）。</li>
+<li><strong>批次大小 (Batch Size):</strong> 常用范围 32 到 256。更大的批次通常提供更稳定的梯度估计，但也更消耗内存和计算资源。</li>
+<li><strong>经验回放缓冲区大小 (Replay Buffer Size):</strong> 常用范围 1万到100万。缓冲区需要足够大以保证样本多样性，打破数据相关性，但过大可能包含太多陈旧的、不再符合当前策略的经验。</li>
+<li><strong>目标网络更新频率 (Target Network Update Frequency):</strong> 对于硬更新，常用每隔几百到几万个训练步更新一次。更新太频繁可能导致目标不稳定，太慢则可能导致学习滞后。也可以使用<strong>软更新 (Soft Update)</strong>：每次训练步都按一个小的比例 <span class="math inline">\(\tau\)</span> (e.g., 0.001, 0.01) 更新目标网络参数：<span class="math inline">\(\theta^- \leftarrow \tau \theta + (1-\tau) \theta^-\)</span>。</li>
+</ul></li>
+<li><strong>奖励设计 (Reward Engineering):</strong>
+<ul>
+<li><strong>奖励塑形 (Reward Shaping):</strong> 设计中间奖励引导智能体学习，但要小心引入不期望的偏差。</li>
+<li><strong>奖励归一化/裁剪 (Reward Normalization/Clipping):</strong> 将奖励缩放到一个固定范围（如[-1, 1]）通常有助于稳定训练，防止Q值爆炸。</li>
+</ul></li>
+<li><strong>使用TensorBoard监控训练:</strong>
+<ul>
+<li>可视化是理解和调试强化学习过程的关键。TensorBoard是一个强大的工具。</li>
+<li><strong>为什么要监控？</strong> 观察学习进展，发现潜在问题（如不收敛、震荡、梯度消失/爆炸），比较不同超参数/算法的效果。</li>
+<li><strong>关键监控指标:</strong>
+<ul>
+<li><code>Episode Reward</code>: 每个回合的总奖励，是我们最关心的性能指标。</li>
+<li><code>Loss</code>: TD误差或损失函数的值，观察其是否逐渐下降并稳定。</li>
+<li><code>Epsilon</code> (如果使用ε-greedy): 观察探索率是否按预期衰减。</li>
+<li><code>Q-values</code>: 观察平均或最大Q值的变化趋势，可以帮助判断是否存在过高估计等问题。</li>
+<li><code>Gradients/Weights</code>: 监控梯度范数和权重分布有助于发现训练不稳定的问题。</li>
+</ul></li>
+<li><strong>实践:</strong> 学习如何在你的代码中集成TensorBoard (<code>torch.utils.tensorboard.SummaryWriter</code>) 来记录上述指标。</li>
+</ul></li>
+</ul>
+<hr>
+</section>
+<section id="小组项目实战挑战与优化" class="level2">
+<h2 class="anchored" data-anchor-id="小组项目实战挑战与优化">小组项目实战：挑战与优化</h2>
+<p>现在，是时候将我们学到的新知识应用到实际项目中了！第二次课我们将聚焦于解决你在项目中遇到的问题，并尝试应用各种改进和调优技巧来提升模型性能。</p>
+<section id="常见挑战与应对策略" class="level3">
+<h3 class="anchored" data-anchor-id="常见挑战与应对策略">常见挑战与应对策略</h3>
+<p>在训练DQN（尤其是在优化如CartPole这样的项目时）可能会遇到各种问题。以下是一些常见问题及其可能的分析方向和解决思路：</p>
+<ul>
+<li><strong>模型不收敛 / 性能很差:</strong>
+<ul>
+<li><strong>检查清单:</strong> 奖励函数设计是否合理？状态或奖励是否进行了归一化？学习率设置是否合适（过大或过小）？探索策略是否有效（探索不足或过早停止探索）？网络结构是否过于复杂或简单？经验回放缓冲区是否太小？目标网络更新频率是否恰当？代码实现是否存在Bug？</li>
+<li><strong>调试工具:</strong> 打印关键变量（如状态、奖励、Q值、损失）；单步调试；利用TensorBoard监控指标变化；编写简单的测试用例验证代码逻辑。</li>
+<li><strong>尝试方案:</strong> 调整学习率；更换或调整探索策略参数；简化或复杂化网络结构；调整缓冲区大小和更新频率；尝试Double/Dueling DQN等改进；仔细检查环境交互和数据处理代码。</li>
+</ul></li>
+<li><strong>训练不稳定 / 奖励大幅震荡:</strong>
+<ul>
+<li><strong>可能原因:</strong> 学习率过大；目标网络更新过于频繁（硬更新）或 <span class="math inline">\(\tau\)</span> 过大（软更新）；批次大小过小导致梯度方差大；经验回放缓冲区未能有效打破数据相关性；奖励尺度过大。</li>
+<li><strong>尝试方案:</strong> 降低学习率；降低目标网络更新频率或减小软更新的 <span class="math inline">\(\tau\)</span>；尝试梯度裁剪 (Gradient Clipping) 限制梯度范数；增大批次大小；确保缓冲区足够大且采样有效；对奖励进行归一化或裁剪。</li>
+</ul></li>
+<li><strong>探索不足 / 过早收敛到次优策略:</strong>
+<ul>
+<li><strong>可能原因:</strong> 初始探索率 <span class="math inline">\(\epsilon\)</span> 或温度 <span class="math inline">\(\tau\)</span> 设置过低；探索率衰减过快；探索策略本身效率不高。</li>
+<li><strong>尝试方案:</strong> 提高初始探索率；减缓探索率衰减速度或调整衰减方式；尝试Noisy Networks或Boltzmann探索等更高级的探索策略；检查奖励函数是否会过早惩罚探索行为。</li>
+</ul></li>
+</ul>
+<p><strong>分享与讨论:</strong> 你在项目中遇到了哪些具体问题？尝试过哪些解决方法？和其他同学交流你的经验和困惑。</p>
+<hr>
+</section>
+</section>
+<section id="进阶视野彩虹dqn-rainbow" class="level2">
+<h2 class="anchored" data-anchor-id="进阶视野彩虹dqn-rainbow">进阶视野：彩虹DQN (Rainbow)</h2>
+<p>DQN的研究并未停止。一个里程碑式的工作是<strong>Rainbow DQN</strong>，它并非提出全新的思想，而是巧妙地将之前我们讨论过的多种DQN改进技术（以及一种称为<strong>分布式RL</strong>的技术）集成到了一个统一的框架中。</p>
+<ul>
+<li><p><strong>核心组件:</strong> Rainbow通常集成了：</p>
+<ol type="1">
+<li><strong>Double DQN</strong></li>
+<li><strong>优先经验回放 (PER)</strong></li>
+<li><strong>Dueling Networks</strong></li>
+<li><strong>多步学习 (Multi-step Learning)</strong></li>
+<li><strong>分布式RL (Distributional RL):</strong> 不再只学习Q值的期望，而是学习Q值的完整分布。</li>
+<li><strong>Noisy Nets</strong></li>
+</ol></li>
+<li><p><strong>核心思想:</strong> “集大成者”。研究者发现，这些改进之间存在一定的<strong>协同效应</strong>，将它们组合在一起的效果往往优于单个改进或简单的两两组合。</p></li>
+<li><p><strong>意义:</strong> Rainbow展示了组合已有改进可以大幅提升性能和样本效率，为后续研究提供了基准。它也启发我们，在解决复杂问题时，可以考虑融合多种方法的优点。虽然我们不要求完整实现Rainbow，但了解它的构成有助于我们理解各项改进的重要性和相互关系。</p></li>
+</ul>
+<hr>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+课后活动与作业
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li><strong>代码实践:</strong> 在你的小组项目中（如CartPole或其他环境），选择并完整实现<strong>至少一项</strong>本周学习的DQN改进（Double DQN, Dueling DQN, PER, Multi-step Learning, Noisy Nets），并与你之前的基线DQN进行<strong>实验对比</strong>。</li>
+<li><strong>实验报告:</strong> 撰写一份简单的实验报告，包含以下内容：
+<ul>
+<li>清晰描述你选择并实现的改进方法的原理。</li>
+<li>展示你的对比实验结果（<strong>必须包含</strong>使用TensorBoard或其他绘图工具生成的关键性能图表，如：<strong>每个回合奖励</strong>随训练步数/回合数的变化曲线，<strong>损失函数</strong>变化曲线等）。清晰标注图中不同曲线对应的算法。</li>
+<li>分析和讨论你的实验结果：改进方法是否带来了预期的性能提升？效果如何？如果没有达到预期效果，可能的原因是什么？</li>
+<li>简述你在实现和实验过程中遇到的主要挑战以及你是如何解决的。</li>
+</ul></li>
+<li><strong>思考:</strong> Rainbow DQN集成了多种技术。你认为这些技术之间可能存在怎样的相互作用（例如，哪些技术组合可能效果特别好，哪些可能存在冲突或冗余）？请阐述你的想法。</li>
+</ol>
+</div>
+</div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+下周预习重点
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>在深入了解了基于价值的DQN方法之后，下周我们将探索另一大类强化学习算法：<strong>基于策略的方法 (Policy-Based Methods)</strong>。请思考并尝试了解以下问题：</p>
+<ol type="1">
+<li><strong>策略梯度 (Policy Gradient) 的核心思想是什么？</strong> 它与基于价值的方法（如DQN直接学习Q值）有何根本不同？（提示：策略梯度方法直接学习策略函数 <span class="math inline">\(\pi(a|s)\)</span>）</li>
+<li><strong>REINFORCE 算法是如何工作的？</strong> 它是最基础的策略梯度算法之一，尝试理解其更新规则背后的直觉。它的主要优缺点是什么？</li>
+<li><strong>Actor-Critic 方法试图解决什么问题？</strong> 它如何结合基于价值和基于策略的方法？其基本框架是怎样的？</li>
+<li><strong>思考:</strong> 为什么DQN通常不适用于<strong>连续动作空间</strong>（例如，控制机器人的关节角度）？下周我们将学习的基于策略的方法（特别是Actor-Critic的变种）如何解决这个问题？</li>
+</ol>
+</div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./week5.html" class="pagination-link" aria-label="第五周：从Q-Learning到深度Q网络">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">第五周：从Q-Learning到深度Q网络</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

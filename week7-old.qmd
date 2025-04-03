@@ -1,0 +1,595 @@
+---
+title: "第七周：DQN算法改进与调优"
+---
+
+::: {.callout-tip appearance="simple"}
+## 本周学习目标
+- 了解DQN算法的主要改进方向和变种
+- 掌握不同的探索策略及其在强化学习中的应用
+- 学习DQN算法的调参技巧和最佳实践
+- 解决小组项目二中遇到的实际问题
+- 提升DQN在平衡杆(CartPole)环境中的性能
+:::
+
+## 第一次课：DQN算法改进与调优
+
+::: {.callout-important}
+## DQN算法的改进方向
+
+### Double DQN
+- **问题背景**：
+  - 标准DQN倾向于过高估计Q值，导致次优策略
+  - 原因：同时使用**最大化操作**和**值估计**计算目标Q值
+  - 随机高估的Q值更容易被max操作选中
+  - 随着训练进行，这种正偏差会累积，导致训练不稳定
+
+- **算法原理**：
+  - 将动作选择和动作评估分离
+  - **标准DQN目标**：r + γ * max_a' Q(s', a'; θ⁻)
+  - **Double DQN目标**：r + γ * Q(s', argmax_a' Q(s', a'; θ); θ⁻)
+  - 主网络负责选择"最佳"动作，目标网络负责评估
+
+- **代码实现**：
+```python
+def learn_double_dqn(self, experiences):
+    states, actions, rewards, next_states, dones = experiences
+    
+    # 使用主网络选择动作
+    next_actions = np.argmax(self.q_network.predict(next_states), axis=1)
+    
+    # 使用目标网络评估所选动作的Q值
+    target_q_values = self.target_network.predict(next_states)
+    max_target_q = np.array([target_q_values[i, action] 
+                            for i, action in enumerate(next_actions)])
+    
+    # 计算目标Q值
+    targets = rewards + (self.gamma * max_target_q * (1 - dones))
+    
+    # 更新Q网络
+    target_f = self.q_network.predict(states)
+    for i, action in enumerate(actions):
+        target_f[i][action] = targets[i]
+    
+    self.q_network.fit(states, target_f, epochs=1, verbose=0)
+```
+
+- **为什么有效**：
+  - 即使主网络高估某动作的价值，目标网络可能不会给出同样高的估计
+  - 即使目标网络定期更新，两网络间的时间差足够产生不同估计
+  - 实验表明比标准DQN有更准确的价值估计和更稳定的学习过程
+  
+### Dueling DQN
+- **核心思想**：
+  - 将Q值函数分解为两个独立部分：
+    1. **状态价值函数V(s)**：评估处于特定状态的价值，与选择什么动作无关
+    2. **优势函数A(s,a)**：评估在状态s下采取动作a相对于平均的优势
+
+- **网络架构**：
+  - 共享的特征提取层（如卷积层或全连接层）
+  - 分叉为两个独立的流：价值流和优势流
+  - 价值流输出单个标量V(s)
+  - 优势流输出动作数量大小的向量A(s,a)
+  - 组合方式：Q(s,a) = V(s) + (A(s,a) - mean(A(s,:)))
+
+- **代码实现**：
+```python
+class DuelingDQN(nn.Module):
+    def __init__(self, input_dim, output_dim):
+        super(DuelingDQN, self).__init__()
+        # 特征提取层
+        self.feature_layer = nn.Sequential(
+            nn.Linear(input_dim, 128),
+            nn.ReLU()
+        )
+        
+        # 价值流
+        self.value_stream = nn.Sequential(
+            nn.Linear(128, 128),
+            nn.ReLU(),
+            nn.Linear(128, 1)  # 输出单个值
+        )
+        
+        # 优势流
+        self.advantage_stream = nn.Sequential(
+            nn.Linear(128, 128),
+            nn.ReLU(),
+            nn.Linear(128, output_dim)  # 输出每个动作的优势
+        )
+    
+    def forward(self, x):
+        features = self.feature_layer(x)
+        
+        value = self.value_stream(features)
+        advantages = self.advantage_stream(features)
+        
+        # Q值计算: V(s) + (A(s,a) - mean(A(s,:)))
+        q_values = value + (advantages - advantages.mean(dim=1, keepdim=True))
+        
+        return q_values
+```
+
+- **优势**：
+  - 在很多状态下，动作选择影响较小而状态本身价值更重要
+  - 可以直接学习状态价值，无需通过每个动作间接推断
+  - 对未见过的状态-动作对有更好的泛化能力
+  - 特别适合大量状态而动作较少的环境
+
+### 优先经验回放 (Prioritized Experience Replay)
+- **基本原理**：
+  - 标准经验回放均匀采样，将所有经验视为等价
+  - 但实际上，有些经验比其他经验更有价值（如罕见事件、意外结果）
+  - 优先经验回放根据经验的"重要性"分配不同的采样概率
+
+- **重要性定义**：
+  - 使用TD误差的绝对值衡量经验的重要性：|r + γ·max_a Q(s',a) - Q(s,a)|
+  - TD误差越大，表示模型预测与实际目标差距越大
+  - 从这样的经验中学习的潜力越大
+
+- **采样机制**：
+  - 采样概率：P(i) = (|δᵢ| + ε)ᵅ / Σⱼ(|δⱼ| + ε)ᵅ
+  - ε是小常数(如0.01)，确保所有经验都有被采样的机会
+  - α控制优先级影响程度(0≤α≤1)：α=0为均匀采样，α=1为完全按TD误差比例
+
+- **偏差修正**：
+  - 优先采样会引入偏差(重要经验被过度代表)
+  - 使用重要性采样权重修正：wᵢ = (N·P(i))⁻ᵝ / max_j wⱼ
+  - β控制修正程度(0≤β≤1)，通常从小值开始逐渐增加到1
+
+- **代码实现**：
+```python
+class PrioritizedReplayBuffer:
+    def __init__(self, capacity, alpha=0.6, beta_start=0.4):
+        self.capacity = capacity
+        self.alpha = alpha      # 控制优先级影响
+        self.beta = beta_start  # 控制偏差修正
+        self.buffer = []
+        self.priorities = np.zeros((capacity,), dtype=np.float32)
+        self.position = 0
+    
+    def add(self, state, action, reward, next_state, done):
+        # 新经验的优先级设为最大优先级
+        max_priority = self.priorities.max() if self.buffer else 1.0
+        
+        if len(self.buffer) < self.capacity:
+            self.buffer.append((state, action, reward, next_state, done))
+        else:
+            self.buffer[self.position] = (state, action, reward, next_state, done)
+        
+        self.priorities[self.position] = max_priority
+        self.position = (self.position + 1) % self.capacity
+    
+    def sample(self, batch_size):
+        # 计算采样概率
+        probs = self.priorities[:len(self.buffer)] ** self.alpha
+        probs /= probs.sum()
+        
+        # 采样索引
+        indices = np.random.choice(len(self.buffer), batch_size, p=probs)
+        
+        # 计算重要性权重
+        weights = (len(self.buffer) * probs[indices]) ** (-self.beta)
+        weights /= weights.max()
+        
+        # 获取样本
+        states, actions, rewards, next_states, dones = zip(*[self.buffer[idx] for idx in indices])
+        return np.array(states), np.array(actions), np.array(rewards), \
+               np.array(next_states), np.array(dones), indices, weights
+    
+    def update_priorities(self, indices, td_errors):
+        # 更新优先级
+        for idx, td_error in zip(indices, td_errors):
+            self.priorities[idx] = abs(td_error) + 1e-6
+```
+
+- **性能提升**：
+  - 更高的样本效率：更频繁地从有价值的经验中学习
+  - 更快的收敛速度：通常可以加快2-3倍
+  - 更好的最终性能：特别是在奖励稀疏的环境中
+
+### 多步学习 (Multi-step Learning)
+- **基本原理**：
+  - 标准DQN使用单步TD学习：目标值 = r_t + γ·max_a Q(s_{t+1}, a)
+  - 存在问题：1) 仅利用一步之后的信息; 2) 过度依赖估计值
+  - 多步学习通过考虑更长的奖励序列解决这些问题：
+  - 目标值 = r_t + γ·r_{t+1} + γ²·r_{t+2} + ... + γⁿ·max_a Q(s_{t+n}, a)
+
+- **优势**：
+  - 更快的奖励传播：使价值信息传播得更远
+  - 减轻函数近似误差：减少对估计值的依赖
+  - 提高训练稳定性：特别是在训练初期
+  - 在奖励稀疏的环境中特别有效
+
+- **代码实现**：
+```python
+class MultiStepBuffer:
+    def __init__(self, capacity, n_steps=3, gamma=0.99):
+        self.capacity = capacity
+        self.n_steps = n_steps
+        self.gamma = gamma
+        self.buffer = []
+        self.position = 0
+        self.n_step_buffer = deque(maxlen=n_steps)
+    
+    def _get_n_step_info(self):
+        """计算n步回报"""
+        first_transition = self.n_step_buffer[0]
+        final_transition = self.n_step_buffer[-1]
+        
+        state = first_transition[0]
+        action = first_transition[1]
+        next_state = final_transition[3]
+        done = final_transition[4]
+        
+        # 计算n步折扣奖励
+        reward = 0
+        for i, transition in enumerate(self.n_step_buffer):
+            reward += (self.gamma ** i) * transition[2]
+        
+        return state, action, reward, next_state, done
+    
+    def add(self, state, action, reward, next_state, done):
+        # 添加到n步缓冲区
+        self.n_step_buffer.append((state, action, reward, next_state, done))
+        
+        # 如果n步缓冲区未满且当前转移非终止状态，不存储
+        if len(self.n_step_buffer) < self.n_steps and not done:
+            return
+        
+        # 计算n步回报并存储
+        state, action, reward, next_state, done = self._get_n_step_info()
+        
+        if len(self.buffer) < self.capacity:
+            self.buffer.append((state, action, reward, next_state, done))
+        else:
+            self.buffer[self.position] = (state, action, reward, next_state, done)
+        
+        self.position = (self.position + 1) % self.capacity
+        
+        # 终止状态时清空n步缓冲区
+        if done:
+            self.n_step_buffer.clear()
+```
+
+- **步数选择**：
+  - 小的n值(2-3)：更稳定，方差更小，适合噪声大的环境
+  - 中等n值(3-5)：大多数环境的良好默认值
+  - 大的n值(5-10)：奖励稀疏环境中更有效，但需要更多样本
+:::
+
+::: {.callout-note}
+## 探索策略
+
+### ε-greedy退火策略
+- **基本原理**：
+  - 初始设置较高的ε值(如0.9)鼓励探索
+  - 随着训练进行，逐渐降低ε值(如降至0.1或0.01)
+  - 常用衰减公式：ε = εₘᵢₙ + (εₘₐₓ-εₘᵢₙ)e⁻ᵏᵗ
+  - 平衡早期探索与后期利用的需求
+
+### Noisy Networks
+- **探索困境**：
+  - 传统ε-greedy策略的局限性：
+    - 探索完全随机，不考虑状态信息
+    - 探索程度(ε值)需手动设计退火方案
+    - 对所有状态使用相同的ε值
+
+- **核心思想**：
+  - 直接在网络参数中引入可学习的噪声
+  - 噪声参数通过反向传播自动学习
+  - 取代ε-greedy，实现状态相关和自适应的探索
+  - 公式：y = (μw + σw⊙εw)x + (μb + σb⊙εb)
+    - μw, μb: 可学习的均值参数(类似标准网络的权重和偏置)
+    - σw, σb: 可学习的标准差参数(控制噪声强度)
+    - εw, εb: 噪声样本，每次前向传播重新采样
+    - ⊙: 元素级乘法(Hadamard乘积)
+
+- **代码实现**：
+```python
+class NoisyLinear(nn.Module):
+    def __init__(self, in_features, out_features, sigma_init=0.017):
+        super(NoisyLinear, self).__init__()
+        self.in_features = in_features
+        self.out_features = out_features
+        
+        # 可学习参数 - 均值
+        self.weight_mu = nn.Parameter(torch.Tensor(out_features, in_features))
+        self.bias_mu = nn.Parameter(torch.Tensor(out_features))
+        
+        # 可学习参数 - 标准差
+        self.weight_sigma = nn.Parameter(torch.Tensor(out_features, in_features))
+        self.bias_sigma = nn.Parameter(torch.Tensor(out_features))
+        
+        # 注册缓冲区用于噪声
+        self.register_buffer('weight_epsilon', torch.Tensor(out_features, in_features))
+        self.register_buffer('bias_epsilon', torch.Tensor(out_features))
+        
+        self.reset_parameters()
+        self.reset_noise()
+    
+    def reset_parameters(self):
+        mu_range = 1 / math.sqrt(self.in_features)
+        self.weight_mu.data.uniform_(-mu_range, mu_range)
+        self.weight_sigma.data.fill_(self.sigma_init / math.sqrt(self.in_features))
+        self.bias_mu.data.uniform_(-mu_range, mu_range)
+        self.bias_sigma.data.fill_(self.sigma_init / math.sqrt(self.out_features))
+    
+    def reset_noise(self):
+        self.weight_epsilon.normal_()
+        self.bias_epsilon.normal_()
+    
+    def forward(self, x):
+        if self.training:  # 训练模式才使用噪声
+            weight = self.weight_mu + self.weight_sigma * self.weight_epsilon
+            bias = self.bias_mu + self.bias_sigma * self.bias_epsilon
+        else:  # 评估模式使用均值
+            weight = self.weight_mu
+            bias = self.bias_mu
+        return F.linear(x, weight, bias)
+```
+
+- **应用方式**：
+  - 替换DQN网络中的普通线性层为噪声线性层
+  - 移除ε-greedy策略，直接使用网络输出选择动作
+  - 训练过程会自动调整噪声参数，平衡探索与利用
+
+- **优势**：
+  - 状态相关的探索：根据状态不确定性自动调整探索程度
+  - 自适应学习：无需手动设计探索率衰减方案
+  - 更高效的探索：不是完全随机，而是在有潜力的动作上添加噪声
+  - 在多种环境(特别是Atari游戏)中展现出更好的性能
+
+### Boltzmann探索
+- **原理与实现**：
+  - 基于Q值的概率分布选择动作
+  - P(a|s) ∝ exp(Q(s,a)/τ)
+  - τ为温度参数，控制探索程度
+  - 高温时行为接近均匀随机，低温时更贪婪
+  - 相比ε-greedy，更好地反映动作价值差异
+:::
+
+::: {.callout-tip}
+## DQN算法调参技巧
+
+### 网络结构设计
+- **隐藏层设计**：
+  - 简单环境(CartPole)：2-3个隐藏层，每层64-256个神经元
+  - 复杂环境(Atari)：卷积层+全连接层
+  - 过浅网络表达能力不足，过深网络训练困难
+- **激活函数选择**：
+  - 隐藏层通常使用ReLU：计算简单、缓解梯度消失
+  - 避免在最后一层使用非线性激活函数
+
+### 超参数优化
+- **学习率**：
+  - 典型范围：1e-4至1e-3
+  - 太大导致不稳定，太小收敛慢
+  - 可使用自适应优化器(Adam)和学习率调度
+- **批次大小(batch size)**：
+  - 典型范围：32至256
+  - 更大批次提高稳定性，但增加内存消耗
+  - 小批次有正则化效果，但方差大
+- **经验缓冲区大小**：
+  - 典型范围：1万至100万经验
+  - 太小降低样本多样性，太大包含过时经验
+  - 根据环境复杂度和任务持续时间调整
+- **目标网络更新频率**：
+  - 典型范围：每100至10000步
+  - 更新过频导致不稳定，过慢导致学习迟缓
+  - 可考虑软更新(Polyak平均)替代硬更新
+
+### 奖励设计
+- **尺度归一化**：将奖励限制在合理范围(如[-1,1])
+- **奖励剪裁**：限制在[-1,1]减少值函数震荡
+- **奖励整形**：引入辅助奖励加速学习
+:::
+
+::: {.callout-warning}
+## 使用TensorBoard监控训练过程
+
+### 基础设置
+```python
+from torch.utils.tensorboard import SummaryWriter
+
+# 创建日志写入器
+writer = SummaryWriter('runs/dqn_experiment')
+
+# 在训练循环中记录关键指标
+def train_step(episode):
+    # ...训练代码...
+    
+    # 记录关键指标
+    writer.add_scalar('Training/Episode Reward', episode_reward, episode)
+    writer.add_scalar('Training/Loss', loss.item(), episode)
+    writer.add_scalar('Training/Epsilon', epsilon, episode)
+    
+    # 每隔几个episode记录网络权重直方图
+    if episode % 100 == 0:
+        for name, param in model.named_parameters():
+            writer.add_histogram(f'Parameters/{name}', param, episode)
+            
+    # ...训练代码...
+```
+
+### 关键监控指标
+- **奖励曲线**：每个episode的累积奖励
+- **损失函数**：TD误差的变化趋势
+- **探索率**：ε值的衰减曲线
+- **Q值分布**：了解价值估计的变化
+- **梯度范数**：检测梯度爆炸问题
+- **参数直方图**：观察权重分布变化
+
+### 可视化技巧
+- **多次实验对比**：不同超参数设置的性能比较
+- **平滑曲线**：使用移动平均减少噪声
+- **标记关键事件**：记录学习率变化、探索策略调整等
+:::
+
+## 第二次课：小组项目二：DQN算法优化与问题解决
+
+::: {.callout-important}
+## 项目优化方向
+
+### 算法改进
+- 实现Double DQN减少过估计问题
+- 尝试Dueling架构提高学习效率
+- 比较不同探索策略对性能的影响
+
+### 模型调优
+- 测试不同网络结构(层数、宽度)
+- 对比不同激活函数(ReLU, LeakyReLU等)
+- 尝试不同批归一化策略
+
+### 训练稳定性
+- 梯度裁剪避免梯度爆炸
+- 学习率调度提高收敛性
+- 调整目标网络更新频率
+:::
+
+::: {.callout-note}
+## 调试与问题解决
+
+### 常见问题
+- **学习不稳定**：
+  - 减小学习率
+  - 增加经验回放缓冲区大小
+  - 更频繁地更新目标网络
+- **无法收敛**：
+  - 检查奖励设计是否合理
+  - 验证网络输入是否正确归一化
+  - 简化问题，从简单场景开始
+- **探索不足**：
+  - 提高初始探索率
+  - 降低探索率衰减速度
+  - 尝试不同的探索策略
+
+### 调试工具
+```python
+# 保存中间状态和决策过程
+def debug_episode(env, agent, max_steps=1000):
+    state = env.reset()
+    debug_info = []
+    
+    for step in range(max_steps):
+        # 记录当前状态
+        q_values = agent.q_network(torch.FloatTensor(state).unsqueeze(0)).detach().numpy()[0]
+        
+        # 选择动作
+        action = agent.select_action(state)
+        
+        # 环境交互
+        next_state, reward, done, _ = env.step(action)
+        
+        # 记录调试信息
+        debug_info.append({
+            'step': step,
+            'state': state.copy(),
+            'q_values': q_values,
+            'action': action,
+            'reward': reward,
+            'next_state': next_state.copy(),
+            'done': done
+        })
+        
+        state = next_state
+        if done:
+            break
+    
+    # 保存调试信息
+    import json
+    with open('debug_episode.json', 'w') as f:
+        json.dump(debug_info, f, indent=2)
+    
+    return debug_info
+```
+
+### 分析方法
+- **可视化Q值分布**：检测过高估计或坍塌
+- **动作分布分析**：验证探索行为是否合理
+- **轨迹分析**：对比成功与失败episode的差异
+- **梯度监控**：发现训练不稳定的原因
+:::
+
+::: {.callout-warning}
+## 小组讨论要点
+
+### 交流项目进展
+- 各组算法实现情况
+- 训练结果与对比实验
+- 遇到的技术挑战
+
+### 问题集中讨论
+- 模型不收敛的原因分析
+- 环境交互时的异常处理
+- 超参数选择的经验分享
+
+### 优化建议
+- 代码效率提升方法
+- 训练加速策略
+- 结果可视化技巧
+:::
+
+::: {.callout-tip}
+## 进阶技巧分享
+
+### 彩虹DQN (Rainbow)
+- **核心思想**：
+  - 集成多种独立改进技术，创造性能超越单个改进的算法
+  - 不仅提高性能，还增强算法的稳健性和通用性
+  - "集成学习"思想应用于强化学习算法设计
+
+- **六大核心组件**：
+  1. **Double DQN**：解决Q值过高估计问题
+  2. **优先经验回放**：基于TD误差优先采样重要经验
+  3. **决斗网络架构**：分离状态价值和动作优势
+  4. **多步学习**：使用n步回报加速价值传播
+  5. **分布式RL**：学习完整奖励分布而非单点估计
+  6. **噪声网络**：替代ε-greedy实现自适应探索
+
+- **算法工作流程**：
+  1. **经验收集**：使用带噪声的Dueling网络选择动作，存储经验
+  2. **样本选择**：基于TD误差优先采样并计算重要性权重
+  3. **目标计算**：使用多步回报和Double DQN避免过高估计
+  4. **网络更新**：更新分布式Dueling架构网络，更新经验优先级
+
+- **性能表现**：
+  - 相比原始DQN平均性能提高约250%
+  - 样本效率提高约3-4倍
+  - 组件间存在协同效应，整合性能超过简单叠加效果
+  - 在Atari游戏套件上创造了当时最高分数
+
+- **组件重要性**：
+  - 最重要：分布式RL、优先经验回放
+  - 中等重要：多步学习、噪声网络
+  - 有价值但影响较小：Double DQN、Dueling架构
+
+- **实施建议**：
+  - 从基础DQN开始，逐步添加组件
+  - 资源有限时优先实现优先回放和Double DQN
+  - 关键超参数：多步学习的步数n(3-5)、分布式原子数(51)
+  
+### 集成Attention机制
+- 使用注意力机制处理复杂状态
+- 提高对关键特征的识别能力
+- 改进长期依赖的建模能力
+
+### 迁移学习
+- 利用预训练网络加速学习
+- 从简单环境迁移到复杂环境
+- 跨任务知识共享与泛化
+:::
+
+::: {.callout-tip}
+## 课后作业
+1. 在CartPole环境上实现Double DQN，对比与标准DQN的性能差异
+2. 分析不同探索策略对学习过程的影响，绘制奖励曲线并解释观察到的现象
+3. 使用TensorBoard记录并可视化训练过程中的关键指标
+4. 对小组项目中的DQN算法进行至少两项改进，并在报告中分析改进效果
+:::
+
+::: {.callout-warning}
+## 下周预习重点
+1. 策略梯度方法的基本原理
+2. REINFORCE算法的实现细节
+3. 基于Actor-Critic架构的算法框架
+4. 连续动作空间中的强化学习算法
+::: 

@@ -13,6 +13,7 @@ book:
     - week3.qmd
     - week4.qmd
     - week5.qmd
+    - week7.qmd
 format:
   html:
     theme: cosmo

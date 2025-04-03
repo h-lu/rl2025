@@ -1,0 +1,6 @@
+streamlit==1.31.0
+numpy==1.26.0
+matplotlib==3.7.2
+gymnasium==0.29.1
+torch==2.1.0
+pandas==2.1.0 
