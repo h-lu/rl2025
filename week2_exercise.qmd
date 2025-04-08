@@ -1,0 +1,90 @@
+---
+title: "Week 2 - 学生练习"
+subtitle: "序贯决策建模 - 马尔可夫决策过程 (MDP)"
+---
+
+# 练习目标
+
+*   巩固对马尔可夫性质的理解，并思考如何在实际问题中近似它。
+*   练习将商业问题形式化为 MDP 的五个要素 ($S$, $A$, $P$, $R$, $\gamma$)。
+*   熟练计算给定奖励序列下的回报 (Return) $G_t$，并理解折扣因子 $\gamma$ 的影响。
+*   加深对策略 $\pi$、价值函数 $V_\pi$ 和 $Q_\pi$ 定义的理解。
+*   巩固对 Bellman 期望方程结构和含义的理解。
+*   确保成功安装 Gym/Gymnasium 环境。
+
+# 练习内容
+
+## 练习 1: 马尔可夫性质思考
+
+1.  **场景分析:** 回顾上周练习中你选择的一个商业场景。你认为你当时定义的状态 $S$ 严格满足马尔可夫性质吗？为什么？如果需要改进状态 $S$ 以更好地近似马尔可夫性质，你会添加哪些信息？（简要说明即可）
+2.  **信息与状态:** 假设你在玩一个简单的纸牌游戏（如 Blackjack）。如果状态 $S$ 只包含你当前手牌的点数，这满足马尔可夫性质吗？为什么？为了更好地满足马尔可夫性质，状态 $S$ 至少还需要包含哪些信息？
+
+## 练习 2: MDP 形式化练习 - 简单资源分配
+
+假设你管理一个计算资源池（例如，一定数量的 GPU）。每天你需要决定将多少比例的资源分配给两个任务：任务 A（可能带来高收益，但不确定性大）和任务 B（收益稳定但较低）。你的目标是最大化未来 7 天的总预期收益。
+
+请尝试定义这个问题的 MDP 要素：
+
+*   **状态 ($S$):** 你认为需要哪些信息来做决策？（例如，剩余天数？当前资源分配比例？过去任务的收益情况？）请至少列出 2-3 个状态变量，并说明是离散还是连续。
+*   **动作 ($A$):** 你可以采取哪些分配动作？（例如，离散的分配比例 [100% A, 50% A/50% B, 100% B]？还是连续的比例？）
+*   **奖励 ($R$):** 如何定义单日的奖励？（例如，当天两个任务的总收益？）
+*   **转移概率 ($P$):** 下一个状态如何依赖于当前状态和动作？（描述性说明即可，例如，天数减一，任务收益可能有随机性，这会如何影响下一天的状态？）
+*   **折扣因子 ($\gamma$):** 你会选择什么样的折扣因子？为什么？
+
+## 练习 3: 计算回报 (Return)
+
+假设一个智能体在一个回合制任务中经历了一个序列，获得的奖励如下：
+$R_0 = -1, R_1 = -1, R_2 = -1, R_3 = 10$ (回合结束)
+
+请计算在不同折扣因子 $\gamma$ 下，以下时间步的回报 $G_t$：
+
+1.  当 $\gamma = 1$ 时，计算 $G_0, G_1, G_2, G_3$。
+2.  当 $\gamma = 0.9$ 时，计算 $G_0, G_1, G_2, G_3$。（保留两位小数）
+3.  比较 $\gamma=1$ 和 $\gamma=0.9$ 时 $G_0$ 的值。哪个更大？这反映了折扣因子的什么作用？
+
+## 练习 4: 理解 Bellman 期望方程
+
+$$V_{\pi}(s) = \sum_{a \in A} \pi(a|s) \sum_{s' \in S} P(s'|s,a) [R(s,a,s') + \gamma V_{\pi}(s')]$$
+
+请用你自己的话解释这个方程的含义，特别是以下部分：
+
+*   $\pi(a|s)$ 代表什么？
+*   $P(s'|s,a)$ 代表什么？
+*   $R(s,a,s')$ 代表什么？
+*   $\gamma V_{\pi}(s')$ 代表什么？
+*   整个方程如何体现了“当前状态的价值 = 即时奖励的期望 + 未来状态价值的折扣期望”？
+
+## 练习 5: Gym/Gymnasium 环境检查
+
+1.  请确认你已经按照讲义指导，在你的 Python 环境（推荐使用虚拟环境）中成功安装了 `gymnasium` 库。
+2.  请运行以下 Python 代码片段，并将**输出结果**（包括你的环境信息和输出）粘贴到你的答案中。
+
+```python
+import gymnasium as gym
+import platform
+import sys
+
+print(f"Python Version: {sys.version}")
+print(f"Operating System: {platform.system()} {platform.release()}")
+print(f"Gymnasium Version: {gym.__version__}")
+
+try:
+    env = gym.make("CartPole-v1")
+    print("\nSuccessfully created CartPole-v1 environment.")
+    print(f"Observation Space: {env.observation_space}")
+    print(f"Action Space: {env.action_space}")
+    env.close()
+except Exception as e:
+    print(f"\nError creating environment: {e}")
+    print("Please ensure gymnasium and necessary dependencies are installed correctly.")
+
+```
+
+# 提交要求
+
+*   请将你的答案整理成一个文档（如 Word, PDF, 或 Markdown 文件）。
+*   对于练习 1, 2, 4，请清晰地阐述你的思考和定义。
+*   对于练习 3，请列出计算结果。
+*   对于练习 5，请粘贴你的代码运行输出结果。
+*   文件命名格式：`姓名_学号_Week2_Exercise.xxx`。
+*   通过教学平台提交。

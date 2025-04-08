@@ -1,0 +1,412 @@
+---
+title: "Week 6: 同策略控制 - SARSA"
+---
+
+# 回顾：无模型预测 (MC & TD)
+
+前两周我们学习了两种主要的无模型**预测 (Prediction)** 方法：
+
+*   **蒙特卡洛 (MC):** 从完整回合的经验中学习，使用平均回报 $G_t$ 估计 $V_\pi$ 或 $Q_\pi$。无偏，高方差，需等待回合结束。
+*   **时序差分 (TD(0)):** 从单步经验 ($S_t$, $A_t$, $R_{t+1}$, $S_{t+1}$) 中学习，使用 TD 目标 $R_{t+1} + \gamma V(S_{t+1})$ (或 $R_{t+1} + \gamma Q(S_{t+1}, A_{t+1})$) 进行自举更新。有偏，低方差，可在线学习。
+
+这些方法的目标都是**评估一个给定的策略 $\pi$**。但我们的最终目标通常是找到**最优策略 $\pi^*$**。现在，我们将从**预测**转向**控制 (Control)**。
+
+# 从预测到控制：广义策略迭代 (GPI)
+
+**控制问题:** 如何在不知道环境模型的情况下，找到最优策略 $\pi^*$？
+
+核心思想是**广义策略迭代 (Generalized Policy Iteration, GPI)**。GPI 是一个通用的框架，它交替进行两个过程：
+
+1.  **策略评估 (Policy Evaluation):** 估计当前策略 $\pi$ 的价值函数 ($V_\pi$ 或 $Q_\pi$)。我们已经学习了 MC 和 TD 作为无模型评估方法。
+2.  **策略改进 (Policy Improvement):** 利用当前的价值函数估计，改进策略 $\pi$，使其变得更好。
+
+这两个过程相互作用，最终趋向于最优策略 $\pi^*$ 和最优价值函数 $V_\pi^*$。
+
+![Generalized Policy Iteration (GPI)](https://miro.medium.com/v2/resize:fit:1400/format:webp/0*yjZOZGbAZkeQoLJv.png)
+*(图片来源: Sutton & Barto, Reinforcement Learning: An Introduction)*
+
+**策略改进步骤:**
+
+如果我们有了动作值函数 $Q_\pi(s, a)$ 的估计，如何在状态 $s$ 改进策略？
+
+一个自然的想法是采取**贪心 (Greedy)** 策略：在状态 $s$ 下，选择那个使得 $Q_\pi(s, a)$ 最大的动作 $a$。
+$\pi'(s) = \text{argmax}_a Q_\pi(s, a)$
+
+可以证明，对于任何非最优策略 $\pi$，通过对其 $Q_\pi$ 进行贪心化得到的策略 $\pi'$，必然满足 $V_{\pi'}(s) \geq V_\pi(s)$ 对所有状态 $s$ 成立（**策略改进定理 Policy Improvement Theorem**）。这意味着贪心策略 $\pi'$ 比原策略 $\pi$ 更好或一样好。
+
+
+::: {.callout-note title="策略改进定理 (Policy Improvement Theorem)" collapse="true"}
+**策略改进定理**是强化学习领域的一个关键理论贡献，最早由 Bellman (1957) 在《Dynamic Programming》中提出，后经 Howard (1960) 在《Dynamic Programming and Markov Processes》中系统阐述。该定理为基于贪心策略改进的强化学习算法提供了坚实的理论基础，确保了策略优化的有效性。具体内容如下：
+
+给定一个策略 $\pi$ 及其对应的动作值函数 $Q_\pi(s, a)$，如果定义一个新的策略 $\pi'$ 满足：
+
+$\pi'(s) = \text{argmax}_a Q_\pi(s, a), \forall s \in S$
+
+即 $\pi'$ 是在每个状态 $s$ 下选择使 $Q_\pi(s, a)$ 最大的动作 $a$ 的贪心策略，那么 $\pi'$ 至少与 $\pi$ 一样好，即：
+
+$V_{\pi'}(s) \geq V_\pi(s), \forall s \in S$
+
+**证明思路:**
+
+1.  根据 $Q_\pi(s, a)$ 的定义，有：
+    $Q_\pi(s, \pi'(s)) = \mathbb{E}[R_{t+1} + \gamma V_\pi(S_{t+1}) | S_t = s, A_t = \pi'(s)]$
+2.  由于 $\pi'$ 是贪心策略，$Q_\pi(s, \pi'(s)) \geq Q_\pi(s, \pi(s)) = V_\pi(s)$
+3.  通过数学归纳法可以证明 $V_{\pi'}(s) \geq V_\pi(s)$ 对所有状态 $s$ 成立
+
+**意义:**
+
+*   该定理为策略迭代算法提供了理论保证，确保每次策略改进都能得到更好的策略。
+*   它解释了为什么贪心策略改进是有效的，为许多强化学习算法（如 SARSA、Q-learning）奠定了基础。
+*   结合策略评估和策略改进，可以保证最终收敛到最优策略 $\pi^*$。
+:::
+
+
+**GPI 流程:**
+
+$\pi_0 \rightarrow$ (评估 E) $\rightarrow Q_{\pi_0} \rightarrow$ (改进 I) $\rightarrow \pi_1 \rightarrow$ (评估 E) $\rightarrow Q_{\pi_1} \rightarrow$ (改进 I) $\rightarrow \pi_2 \rightarrow ... \rightarrow \pi^* \rightarrow Q^*$
+
+::: {.callout-note title="无模型强化学习中的关键挑战"}
+在无模型设置下，我们需要解决两个核心问题：
+
+1.  **策略评估的挑战:** 如何在没有环境模型的情况下，有效地进行策略评估？这通常需要在蒙特卡洛方法（MC）和时间差分学习（TD）之间进行权衡和选择。
+   
+2.  **探索与利用的平衡:** 如何确保策略改进过程能够持续探索，而不是过早地陷入局部最优的贪心策略？这需要设计合适的探索机制，如ε-greedy策略或基于置信度的探索方法。
+:::
+
+# 基于动作值函数 (Q) 的控制
+
+在无模型控制中，我们通常直接学习**动作值函数 $Q(s, a)$** 而不是状态值函数 $V(s)$。
+
+**原因:**
+
+*   如果我们只有 $V(s)$，要进行策略改进（选择最优动作），我们仍然需要知道环境模型 $P(s'|s, a)$ 和 $R(s, a, s')$ 才能计算出哪个动作 $a$ 能带来最大的 $E[R + \gamma V(s')]$。
+*   如果我们直接学习了 $Q(s, a)$，策略改进就变得非常简单：直接选择使 $Q(s, a)$ 最大的动作 $a$ 即可 ($argmax_a Q(s, a)$)，不再需要环境模型。
+
+因此，接下来的无模型控制算法都将聚焦于学习 $Q(s, a)$。
+
+# 同策略 (On-Policy) vs. 异策略 (Off-Policy)
+
+在 GPI 框架下，根据**用于生成经验数据的策略**和**正在评估和改进的策略**是否相同，可以将无模型控制算法分为两类：
+
+*   **同策略 (On-Policy):** 用来产生行为（收集数据）的策略，与我们正在评估和改进的策略是**同一个**策略。智能体一边按照当前策略 $\pi$ 行动，一边利用这些行动经验来评估和改进策略 $\pi$ 本身。
+    *   *优点:* 概念相对简单，通常比较稳定。
+    *   *缺点:* 学习到的策略会受到探索机制的影响（为了收集数据必须进行探索），可能无法学习到真正的最优确定性策略，而是学习到一个包含探索的最优“行为”策略。
+*   **异策略 (Off-Policy):** 用来产生行为的策略（**行为策略 Behavior Policy**, $\mu$）与我们正在评估和改进的目标策略（**目标策略 Target Policy**, $\pi$）是**不同的**策略。智能体可以根据一个（通常更具探索性的）策略 $\mu$ 来行动和收集数据，但利用这些数据来评估和改进另一个（通常是贪心的）目标策略 $\pi$。
+    *   *优点:* 可以利用历史数据或其他智能体的经验；目标策略可以与行为策略解耦，更容易学习到确定性的最优策略。
+    *   *缺点:* 算法通常更复杂，可能方差更大或收敛更慢（需要重要性采样等技术）。
+
+::: {.callout-tip title="如何选择同策略 vs. 异策略"}
+**选择同策略 (On-Policy) 的情况:**
+
+*   当需要学习一个**包含探索**的策略时，例如在需要持续探索的环境中。
+*   当算法需要**简单稳定**，且不需要利用历史数据时。
+*   当行为策略和目标策略**必须一致**时，例如在某些安全关键应用中。
+
+**选择异策略 (Off-Policy) 的情况:**
+
+*   当需要学习一个**确定性**的最优策略时。
+*   当需要**重用历史数据**或利用其他智能体的经验时。
+*   当行为策略需要**更激进地探索**，而目标策略需要更保守时。
+
+**实际应用中的考虑:**
+
+*   **数据效率:** 异策略通常更高效，可以重复利用数据。
+*   **收敛速度:** 同策略通常收敛更快，但可能不是最优解。
+*   **实现复杂度:** 异策略通常需要更复杂的算法（如重要性采样）。
+*   **应用场景:** 根据具体任务需求选择，例如机器人控制可能更适合同策略，而游戏AI可能更适合异策略。
+:::
+
+
+本周我们学习第一个**同策略 (On-Policy)** 控制算法：SARSA。
+
+# SARSA: 同策略 TD 控制
+
+SARSA（State-Action-Reward-State-Action，状态-动作-奖励-状态-动作）是一种基于TD(0)的同策略控制算法。其名称来源于算法更新 $Q(s,a)$ 时所使用的五元组经验序列：当前状态 $S$、执行的动作 $A$、获得的奖励 $R$、转移到的下一状态 $S'$，以及在下一状态 $S'$ 下根据当前策略选择的动作 $A'$。
+
+**核心思想:**
+
+1.  使用 TD(0) 的思想来估计动作值函数 $Q_\pi(s, a)$。
+2.  策略评估和策略改进紧密结合，每一步都在更新 $Q$ 值并可能调整策略。
+3.  遵循的策略 $\pi$ 通常是一个在贪心策略基础上加入探索机制的策略（如 $\epsilon$-greedy）。
+
+**SARSA 更新规则:**
+
+在时间步 $t$，智能体处于状态 $S_t$，根据当前策略 $\pi$ (通常是 $Q$ 的 $\epsilon$-greedy 策略) 选择并执行动作 $A_t$，观察到奖励 $R_{t+1}$ 和下一个状态 $S_{t+1}$。然后，**在真正执行下一步动作之前**，智能体**再次根据当前策略 $\pi$** 在新状态 $S_{t+1}$ 选择下一个动作 $A_{t+1}$。
+
+利用这个五元组 $(S_t, A_t, R_{t+1}, S_{t+1}, A_{t+1})$，SARSA 按如下规则更新 $Q(S_t, A_t)$：
+
+$$Q(S_t, A_t) ← Q(S_t, A_t) + \alpha [ R_{t+1} + \gamma Q(S_{t+1}, A_{t+1}) - Q(S_t, A_t) ]$$
+
+**对比 TD(0) 预测 $V(S_t)$:**
+$$V(S_t) ← V(S_t) + \alpha [ R_{t+1} + \gamma V(S_{t+1}) - V(S_t) ]$$
+
+**关键区别:**
+
+*   SARSA 更新的是 **$Q(S_t, A_t)$**。
+*   SARSA 的 TD 目标是 **$R_{t+1} + \gamma Q(S_{t+1}, A_{t+1})$**。注意这里使用的是**实际在 $S_{t+1}$ 将要执行的动作 $A_{t+1}$** (根据当前策略 $\pi$ 选择的) 对应的 $Q$ 值，而不是像 Q-Learning 那样使用 $\max_a' Q(S_{t+1}, a')$。这正是 SARSA 是**同策略**的原因：更新 $Q(S_t, A_t)$ 时，考虑的是**实际遵循当前策略 $\pi$** 会发生的下一个状态-动作对 $(S_{t+1}, A_{t+1})$ 的价值。
+
+
+## $ε$-greedy 探索策略
+
+为了在 GPI 中平衡探索与利用，SARSA (以及许多其他 RL 算法) 通常使用 **$ε$-greedy (epsilon-greedy)** 策略。
+
+**$ε$-greedy 策略:**
+
+*   以 $1-\epsilon$ 的概率选择当前估计最优的动作 (利用)： $a = \text{argmax}_{a'} Q(s, a')$
+*   以 $\epsilon$ 的概率从所有可用动作中随机选择一个 (探索)： $a = \text{random action}$
+
+其中 $\epsilon$ 是一个小的正数 (e.g., 0.1, 0.05)。
+
+*   **$\epsilon$ 较大:** 探索性强，有助于发现更好的策略，但收敛可能较慢。
+*   **$\epsilon$ 较小:** 利用性强，收敛可能较快，但容易陷入局部最优。
+*   通常 $\epsilon$ 会随着训练的进行而逐渐**衰减 (decay)**，例如从 1.0 或 0.5 逐渐减小到一个很小的值（如 0.01），实现早期多探索、后期多利用。
+
+
+::: {.callout-tip title="SARSA 的收敛性及理论证明" collapse="true"}
+SARSA 作为一种重要的同策略 TD 控制算法，其收敛性得到了理论证明：
+
+*   **收敛性条件:** 在满足以下条件时，SARSA 可以收敛到最优策略：
+    1.  所有状态-动作对被无限次访问（通过 ε-greedy 等探索策略保证）
+    2.  学习率 $\alpha$ 需要满足 Robbins-Monro 条件：$\sum_{t=1}^{\infty} \alpha_t = \infty$ 且 $\sum_{t=1}^{\infty} \alpha_t^2 < \infty$。例如，可以使用 $\alpha_t = \frac{1}{t}$ 这样的学习率序列，它满足 $\sum_{t=1}^{\infty} \frac{1}{t} = \infty$ 且 $\sum_{t=1}^{\infty} \frac{1}{t^2} < \infty$。
+    3.  策略逐渐趋向于贪心（如 $\epsilon$ 逐渐衰减到 0）
+
+*   **理论证明:** 
+    *   Singh 等人在 2000 年的论文《Convergence Results for Single-Step On-Policy Reinforcement-Learning Algorithms》中严格证明了 SARSA 的收敛性。
+    *   Tsitsiklis 在 1994 年的工作为 TD 方法的收敛性提供了理论基础，这些理论也适用于 SARSA。
+
+*   **实际表现:**
+    *   在实践中，SARSA 通常能够稳定收敛，特别是在 ε 逐渐衰减的情况下。
+    *   由于是同策略算法，SARSA 在学习过程中会考虑探索的影响，因此最终收敛的策略通常是一个包含探索的 ε-greedy 策略。
+    *   相比 Q-learning，SARSA 的收敛可能更稳定，但最终策略可能不是完全贪心的。
+
+*   **注意事项:**
+    *   如果 ε 不衰减到 0，SARSA 会收敛到一个 ε-soft 策略，而不是完全贪心的最优策略。
+    *   在非平稳环境中，可能需要保持一定的 ε 值来持续探索。
+:::
+
+
+## SARSA 算法伪代码
+
+
+    初始化:
+    对所有 s ∈ S, a ∈ A(s)，Q(s, a) ← 任意值（例如 0）
+    α ← 学习率（小的正数）
+    γ ← 折扣因子（0 ≤ γ ≤ 1）
+    ε ← 探索率（小的正数，例如 0.1）
+
+    对每个回合循环:
+    初始化 S（回合的第一个状态）
+    根据 Q 派生的策略（例如 ε-greedy）从 S 选择动作 A
+
+    对回合中的每一步循环:
+        执行动作 A，观察奖励 R 和下一个状态 S'
+        根据 Q 派生的策略（例如 ε-greedy）从 S' 选择下一个动作 A'
+
+        # 核心更新步骤 (SARSA)
+        Q(S, A) ← Q(S, A) + α * [R + γ * Q(S', A') - Q(S, A)]
+
+        S ← S'
+        A ← A' # 更新当前动作用于下一次迭代
+
+        如果 S 是终止状态，结束内部循环
+
+
+**解释:**
+
+1.  初始化 Q(s, a)，学习率 α，折扣因子 γ，探索率 ε。
+2.  对于每个回合：
+3.  获取起始状态 S。
+4.  根据当前的 Q 值和 ε-greedy 策略选择第一个动作 A。
+5.  对于回合中的每一步：
+6.  执行动作 A，观察到奖励 R 和下一个状态 S'。
+7.  **关键:** 根据当前的 Q 值和 ε-greedy 策略，在**新状态 S'** 选择**下一个**将要执行的动作 A'。
+8.  **计算 TD 目标:** target = R + γ * Q(S', A') (如果 S' 是终止状态，target = R)。
+9.  **计算 TD 误差:** δ = target - Q(S, A)。
+10. **更新 Q 值:** Q(S, A) ← Q(S, A) + α * δ。
+11. 将当前状态更新为 S'，将当前动作更新为 A'，准备下一步迭代。
+12. 如果 S' 是终止状态，结束当前回合。
+
+# Lab 4: SARSA 实践
+
+## 目标
+
+1.  在一个简单的环境中（如 Gridworld 或 CliffWalking）实现或运行 SARSA 算法。
+2.  观察 SARSA 学习到的策略和价值函数。
+3.  分析探索率 $\epsilon$ 对学习过程和最终性能的影响。
+
+## 环境选择
+
+*   **Gridworld:** 可以继续使用上周 Lab 的 Gridworld 环境。SARSA 的目标是找到从起点到目标点的最优路径。
+*   **CliffWalking (悬崖行走):**
+    *   Gymnasium 内置环境 (`gym.make("CliffWalking-v0")`)。
+    *   一个 4x12 的网格。起点在左下角，目标在右下角。中间有一段区域是悬崖。
+    *   动作：上(0), 右(1), 下(2), 左(3)。
+    *   奖励：到达目标 +0，掉下悬崖 -100 (回合结束)，其他每走一步 -1。
+    *   目标是找到一条避开悬崖、尽快到达终点的路径。这是一个经典的比较 SARSA 和 Q-Learning 的环境。
+
+我们将以 CliffWalking 为例进行说明。
+
+## 示例代码框架 (CliffWalking - SARSA)
+
+```python
+import gymnasium as gym
+import numpy as np
+from collections import defaultdict
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# 创建 CliffWalking 环境
+env = gym.make("CliffWalking-v0")
+
+# 1. 初始化参数
+alpha = 0.1       # 学习率
+gamma = 0.99      # 折扣因子
+epsilon = 0.1     # 探索率 (初始值)
+# epsilon_decay = 0.999 # (可选) Epsilon 衰减率
+# min_epsilon = 0.01   # (可选) 最小 Epsilon
+num_episodes = 500
+
+# 初始化 Q 表 (状态是离散的数字 0-47)
+# Q = defaultdict(lambda: np.zeros(env.action_space.n))
+# 使用 numpy 数组更高效
+Q = np.zeros((env.observation_space.n, env.action_space.n))
+
+# 记录每回合奖励，用于观察学习过程
+episode_rewards = []
+
+# 2. ε-Greedy 策略函数
+def choose_action_epsilon_greedy(state, current_epsilon):
+    if np.random.rand() < current_epsilon:
+        return env.action_space.sample() # 探索：随机选择动作
+    else:
+        # 利用：选择 Q 值最大的动作 (如果 Q 值相同，随机选一个)
+        q_values = Q[state, :]
+        max_q = np.max(q_values)
+        # 找出所有具有最大 Q 值的动作的索引
+        # 添加一个小的检查，防止所有Q值都是0的情况（在早期可能发生）
+        if np.all(q_values == q_values[0]):
+             return env.action_space.sample()
+        best_actions = np.where(q_values == max_q)[0]
+        return np.random.choice(best_actions)
+
+# 3. SARSA 主循环
+current_epsilon = epsilon
+for i in range(num_episodes):
+    state, info = env.reset()
+    action = choose_action_epsilon_greedy(state, current_epsilon)
+    terminated = False
+    truncated = False
+    total_reward = 0
+
+    while not (terminated or truncated):
+        # 执行动作，观察 S', R
+        next_state, reward, terminated, truncated, info = env.step(action)
+
+        # 在 S' 选择下一个动作 A' (根据当前策略)
+        next_action = choose_action_epsilon_greedy(next_state, current_epsilon)
+
+        # SARSA 更新
+        td_target = reward + gamma * Q[next_state, next_action] * (1 - terminated) # 如果终止，未来价值为0
+        td_error = td_target - Q[state, action]
+        Q[state, action] = Q[state, action] + alpha * td_error
+
+        state = next_state
+        action = next_action
+        total_reward += reward
+
+    episode_rewards.append(total_reward)
+
+    # (可选) Epsilon 衰减
+    # current_epsilon = max(min_epsilon, current_epsilon * epsilon_decay)
+
+    if (i + 1) % 100 == 0:
+        print(f"Episode {i+1}/{num_episodes}, Total Reward: {total_reward}, Epsilon: {current_epsilon:.3f}")
+
+
+# 4. 可视化学习过程 (奖励曲线)
+plt.figure(figsize=(10, 5))
+plt.plot(episode_rewards)
+# 平滑处理，看得更清楚
+# 使用 pandas 进行移动平均计算更方便
+try:
+    import pandas as pd
+    moving_avg = pd.Series(episode_rewards).rolling(window=50).mean() # 计算50个周期的移动平均
+    plt.plot(moving_avg, label='Moving Average (window=50)', color='red')
+    plt.legend()
+except ImportError:
+    print("Pandas not installed, skipping moving average plot.")
+
+plt.xlabel("Episode")
+plt.ylabel("Total Reward per Episode")
+plt.title(f"SARSA Learning Curve (ε={epsilon})")
+plt.grid(True)
+plt.show()
+
+# 5. 可视化最终策略 (可选)
+# 可以创建一个网格，用箭头表示每个状态下 Q 值最大的动作
+def plot_policy(Q_table, env_shape=(4, 12)):
+    policy_grid = np.empty(env_shape, dtype=str)
+    actions_map = {0: '↑', 1: '→', 2: '↓', 3: '←'} # 上右下左
+
+    for r in range(env_shape[0]):
+        for c in range(env_shape[1]):
+            state = r * env_shape[1] + c
+            # CliffWalking-v0: 37-46 are cliff states, 47 is goal
+            if 37 <= state <= 46:
+                policy_grid[r, c] = 'X' # Cliff
+                continue
+            if state == 47:
+                policy_grid[r, c] = 'G' # Goal
+                continue
+            if state == 36: # Start state
+                 policy_grid[r, c] = 'S'
+
+
+            # Check if Q-values for this state are all zero (might happen early on)
+            if np.all(Q_table[state, :] == 0):
+                 # Assign a default action or symbol if Q-values are zero and not cliff/goal/start
+                 if policy_grid[r, c] == '': # Avoid overwriting S, G, X
+                    policy_grid[r, c] = '.' # Indicate unvisited or zero Q
+            else:
+                best_action = np.argmax(Q_table[state, :])
+                policy_grid[r, c] = actions_map[best_action]
+
+
+    plt.figure(figsize=(8, 3))
+    # Create a dummy data array for heatmap background coloring if needed
+    dummy_data = np.zeros(env_shape)
+    # Mark cliff states for potential background coloring
+    dummy_data[3, 1:-1] = -1 # Example: mark cliff row with -1
+
+    sns.heatmap(dummy_data, annot=policy_grid, fmt="", cmap="coolwarm", # Use a cmap that distinguishes cliff
+                cbar=False, linewidths=.5, linecolor='black', annot_kws={"size": 12})
+    plt.title("Learned Policy (Arrows indicate best action)")
+    plt.xticks([])
+    plt.yticks([])
+    plt.show()
+
+plot_policy(Q)
+
+
+env.close()
+```
+
+## 任务与思考
+
+1.  **运行代码:** 运行上述 CliffWalking SARSA 代码。观察奖励曲线是否逐渐上升（虽然可能会因为探索而波动）？观察最终学到的策略（箭头图）是否能够避开悬崖并到达终点？
+2.  **分析 ε 的影响:**
+    *   尝试不同的固定 ε 值（例如 ε=0.01, ε=0.1, ε=0.5）。比较奖励曲线的收敛速度和最终的平均奖励水平。ε 太小或太大分别有什么问题？
+    *   (可选) 实现 ε 衰减机制。观察与固定 ε 相比，学习过程有何不同？
+3.  **分析 α 的影响:** 尝试不同的学习率 α（例如 α=0.01, α=0.1, α=0.5）。α 太小或太大分别有什么影响？
+4.  **SARSA 的路径:** SARSA 学到的路径是“安全”路径（远离悬崖）还是“危险”路径（贴着悬崖走）？为什么？（提示：考虑 ε-greedy 策略在悬崖边探索的可能性以及 SARSA 的更新方式）。
+
+## 提交要求
+
+*   提交你的 SARSA 实现代码。
+*   提交不同 ε 值下的奖励曲线图。
+*   提交最终学到的策略可视化图。
+*   提交一份简短的分析报告，讨论 ε 和 α 的影响，并解释 SARSA 在 CliffWalking 环境中学到的路径特点及其原因。
+
+---
+
+**下周预告:** 学习另一种重要的 TD 控制算法：异策略 TD 控制 - Q-Learning，并与 SARSA 进行对比。

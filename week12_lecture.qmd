@@ -1,0 +1,237 @@
+---
+title: "Week 12: Actor-Critic 方法"
+---
+
+# 回顾：策略梯度 (Policy Gradient) 与 REINFORCE
+
+上周我们学习了策略梯度 (PG) 方法：
+
+*   **核心思想:** 直接参数化策略 π(a|s, **θ**) 并优化参数 **θ** 以最大化预期回报 J(**θ**)。
+*   **优化方式:** 梯度上升 **θ** ← **θ** + α ∇J(**θ**)。
+*   **策略梯度定理:** ∇J(**θ**) = E_{π_θ} [ ∇ log π(A_t|S_t, **θ**) * Qπ(S_t, A_t) ] (或使用 G_t)。
+*   **REINFORCE 算法:** 使用蒙特卡洛方法估计 Qπ (即使用完整回报 G_t)。
+    *   ∇J(**θ**) ≈ E_{π_θ} [ ∇ log π(A_t|S_t, **θ**) * G_t ]
+    *   **缺点:** 高方差，收敛慢，需要完整回合。
+*   **基线 (Baseline):** 为了减小方差，从回报中减去一个与动作无关的基线 b(S_t)。
+    *   ∇J(**θ**) ≈ E_{π_θ} [ ∇ log π(A_t|S_t, **θ**) * (G_t - b(S_t)) ]
+    *   常用的基线是状态值函数 Vπ(S_t)。
+    *   **优势函数 (Advantage Function):** Aπ(S_t, A_t) = Qπ(S_t, A_t) - Vπ(S_t)。
+    *   梯度变为：∇J(**θ**) = E_{π_θ} [ ∇ log π(A_t|S_t, **θ**) * Aπ(S_t, A_t) ]
+
+**问题:** 如何在不知道 Qπ 和 Vπ 的情况下，有效地估计优势函数 Aπ 并进行策略更新？
+
+# Actor-Critic 框架
+
+Actor-Critic (AC) 方法提供了一个优雅的解决方案，它结合了**策略梯度**和**TD学习**的思想。
+
+**核心思想:** 维护两个参数化的模型（通常是神经网络）：
+
+1.  **Actor (行动者):**
+    *   参数化的**策略** π(a|s, **θ**)。
+    *   负责根据当前状态 s **选择动作** a。
+    *   目标是优化参数 **θ** 以改进策略。
+2.  **Critic (评论家):**
+    *   参数化的**价值函数**（通常是状态值函数 V(s, **w**) 或动作值函数 Q(s, a, **w**)）。
+    *   负责**评估** Actor 选择的动作有多好。
+    *   目标是学习准确的价值估计，参数为 **w**。
+
+**交互流程:**
+
+1.  Actor 根据当前状态 S_t 和策略 π(·|·, **θ**) 选择动作 A_t。
+2.  执行动作 A_t，观察到奖励 R_{t+1} 和下一个状态 S_{t+1}。
+3.  Critic 利用这个转移 (S_t, A_t, R_{t+1}, S_{t+1}) 来**评估**动作 A_t 的好坏，并**更新**其价值函数参数 **w**。
+4.  Actor 利用 Critic 的评估信息来**更新**其策略参数 **θ**。
+
+![Actor-Critic Architecture](https://spinningup.openai.com/en/latest/_images/actor_critic.svg)
+*(图片来源: OpenAI Spinning Up)*
+
+**Critic 如何帮助 Actor？**
+
+Critic 的主要作用是提供一个比蒙特卡洛回报 G_t **方差更低**的信号来指导 Actor 的学习。这通常通过以下方式实现：
+
+*   **计算 TD 误差:** 如果 Critic 学习的是状态值函数 V(s, **w**)，它可以计算 TD 误差：
+    *   δ_t = R_{t+1} + γ V(S_{t+1}, **w**) - V(S_t, **w**)
+    *   这个 TD 误差 δ_t 可以作为优势函数 Aπ(S_t, A_t) 的一个（有偏但低方差的）**估计**。
+*   **更新 Actor:** Actor 使用这个 TD 误差来更新策略参数 **θ**：
+    *   **θ** ← **θ** + α * ∇ log π(A_t|S_t, **θ**) * δ_t
+    *   **直观理解:**
+        *   如果 δ_t > 0 (实际回报 R_{t+1} + 未来预期 γV(S') 比当前预期 V(S) 要好)，说明动作 A_t 是个好动作，增加其概率。
+        *   如果 δ_t < 0 (实际回报比预期差)，说明动作 A_t 是个坏动作，减小其概率。
+*   **更新 Critic:** Critic 也需要学习，通常使用 TD 学习来更新其参数 **w**，目标是最小化 TD 误差（使其对 Vπ 的估计更准确）：
+    *   **w** ← **w** + β * δ_t * ∇ V(S_t, **w**) (β 是 Critic 的学习率)
+
+**优势:**
+
+*   **结合了 PG 和 TD:** 利用 TD 学习的低方差和在线学习能力来改进策略梯度的高方差问题。
+*   **更稳定高效:** 通常比纯粹的 REINFORCE 算法收敛更快、更稳定。
+
+# 优势函数估计 (Advantage Function Estimation)
+
+在 Actor-Critic 中，我们希望使用优势函数 Aπ(S_t, A_t) = Qπ(S_t, A_t) - Vπ(S_t) 来更新 Actor。但我们通常只有状态值函数 V 的估计。
+
+如何估计 Aπ(S_t, A_t)？
+
+回顾 TD 误差：
+δ_t = R_{t+1} + γ V(S_{t+1}, **w**) - V(S_t, **w**)
+
+可以证明，TD 误差 δ_t 是优势函数 Aπ(S_t, A_t) 的一个（有偏）估计：
+E[δ_t | S_t, A_t] ≈ Aπ(S_t, A_t)
+
+因此，许多 Actor-Critic 算法直接使用 TD 误差 δ_t 作为优势函数的估计来更新 Actor：
+
+**Actor 更新:** **θ** ← **θ** + α * ∇ log π(A_t|S_t, **θ**) * δ_t
+**Critic 更新:** **w** ← **w** + β * δ_t * ∇ V(S_t, **w**)
+
+# A2C / A3C 算法概念
+
+**A2C (Advantage Actor-Critic):**
+
+*   这是 Actor-Critic 的一个**同步 (Synchronous)**、**确定性 (Deterministic)** 版本。
+*   通常使用**多个并行的环境**实例来收集经验数据。
+*   智能体在所有环境中执行一步，收集一批 (S, A, R, S') 数据。
+*   使用这批数据计算 TD 误差 δ 和梯度，然后**一次性**更新 Actor 和 Critic 的参数。
+*   由于是同步更新，实现相对简单。Stable Baselines3 中的 `A2C` 实现的就是这种思想。
+
+**A3C (Asynchronous Advantage Actor-Critic):**
+
+*   这是 Actor-Critic 的一个**异步 (Asynchronous)** 版本，是早期 DRL 的一个里程碑式算法。
+*   **核心思想:** 创建多个并行的 Actor-Learner 线程，每个线程都有自己的环境副本和模型参数副本。
+*   每个线程独立地与环境交互，计算梯度（Actor 和 Critic 的梯度）。
+*   **异步更新:** 各个线程**独立地、异步地**将计算出的梯度应用到**全局共享**的模型参数上。
+*   **优点:** 不需要经验回放缓冲区（异步性本身提供了数据去相关性）；通过并行化提高了训练速度。
+*   **缺点:** 实现相对复杂；异步更新可能导致某些线程使用过时的参数进行计算。
+
+::: {.callout-note title="A2C vs. A3C"}
+实践中发现，A2C（使用并行环境的同步版本）通常能达到与 A3C 相当甚至更好的性能，并且实现更简单、更容易复现。因此，现代框架（如 Stable Baselines3）通常提供 A2C 的实现。
+:::
+
+# Lab 7: 使用 Stable Baselines3 运行 A2C
+
+## 目标
+
+1.  使用 Stable Baselines3 (SB3) 运行 A2C 算法。
+2.  在 CartPole (离散动作) 或 Pendulum (连续动作) 环境上进行实验。
+3.  对比 A2C 和 DQN (在 CartPole 上) 的训练过程和结果。
+4.  理解 Actor-Critic 方法相对于 DQN 的优势（尤其是在处理连续动作空间方面）。
+
+## 环境选择
+
+*   **CartPole-v1:** 离散动作空间。可以与上周的 DQN 进行直接比较。
+*   **Pendulum-v1:** **连续动作空间**。
+    *   目标: 通过施加力矩，将倒立摆摆动到最高点并保持稳定。
+    *   状态: [cos(杆角度), sin(杆角度), 杆角速度] (连续)。
+    *   动作: 施加的力矩 (连续值，通常在 [-2.0, 2.0] 之间)。
+    *   奖励: 与杆子角度和角速度有关，目标是最大化奖励（最小化“成本”）。
+    *   **注意:** DQN 无法直接处理 Pendulum 的连续动作空间，而 A2C 可以。
+
+## 示例代码 (SB3 A2C on CartPole)
+
+```python
+import gymnasium as gym
+from stable_baselines3 import A2C
+from stable_baselines3.common.env_util import make_vec_env
+from stable_baselines3.common.evaluation import evaluate_policy
+import time
+import os
+
+# 创建日志目录
+log_dir = "/tmp/gym_a2c/"
+os.makedirs(log_dir, exist_ok=True)
+
+# 1. 创建环境 (A2C 通常需要向量化环境)
+vec_env = make_vec_env("CartPole-v1", n_envs=8) # A2C 通常使用更多并行环境
+
+# 2. 定义 A2C 模型
+# A2C 使用 "MlpPolicy" 或 "CnnPolicy"
+# 关键超参数:
+# n_steps: 每个环境在更新前运行多少步 (影响 TD 估计的长度)
+# vf_coef: 值函数损失的系数 (Critic loss weight)
+# ent_coef: 熵正则化系数 (鼓励探索)
+model = A2C("MlpPolicy", vec_env, verbose=1,
+            gamma=0.99,             # 折扣因子
+            n_steps=5,              # 每个环境更新前运行 5 步
+            vf_coef=0.5,            # 值函数损失系数
+            ent_coef=0.0,           # 熵正则化系数 (CartPole 通常不需要太多探索)
+            learning_rate=7e-4,     # 学习率 (A2C 通常用稍高一点的学习率)
+            tensorboard_log=log_dir
+           )
+
+# 3. 训练模型
+print("Starting A2C training on CartPole...")
+start_time = time.time()
+model.learn(total_timesteps=100000, log_interval=50) # 训练步数与 DQN 保持一致
+end_time = time.time()
+print(f"Training finished in {end_time - start_time:.2f} seconds.")
+
+# 4. 保存模型
+model_path = os.path.join(log_dir, "a2c_cartpole_sb3")
+model.save(model_path)
+print(f"Model saved to {model_path}.zip")
+
+# 5. 评估训练好的模型
+print("Evaluating trained A2C model...")
+eval_env = gym.make("CartPole-v1")
+mean_reward, std_reward = evaluate_policy(model, eval_env, n_eval_episodes=20, deterministic=True)
+print(f"Evaluation results (A2C): Mean reward = {mean_reward:.2f} +/- {std_reward:.2f}")
+
+vec_env.close()
+eval_env.close()
+
+print(f"To view training logs, run: tensorboard --logdir {log_dir}")
+
+# --- (可选) 运行 A2C on Pendulum-v1 ---
+# print("\nStarting A2C training on Pendulum...")
+# log_dir_pendulum = "/tmp/gym_a2c_pendulum/"
+# os.makedirs(log_dir_pendulum, exist_ok=True)
+# vec_env_pendulum = make_vec_env("Pendulum-v1", n_envs=8)
+# model_pendulum = A2C("MlpPolicy", vec_env_pendulum, verbose=1,
+#                      gamma=0.99,
+#                      n_steps=5,
+#                      vf_coef=0.5,
+#                      ent_coef=0.0, # Pendulum 可能需要一点熵正则化
+#                      learning_rate=7e-4,
+#                      tensorboard_log=log_dir_pendulum
+#                     )
+# start_time = time.time()
+# model_pendulum.learn(total_timesteps=200000, log_interval=50) # Pendulum 可能需要更多步数
+# end_time = time.time()
+# print(f"Pendulum training finished in {end_time - start_time:.2f} seconds.")
+# model_path_pendulum = os.path.join(log_dir_pendulum, "a2c_pendulum_sb3")
+# model_pendulum.save(model_path_pendulum)
+# print(f"Pendulum model saved to {model_path_pendulum}.zip")
+
+# print("Evaluating trained A2C model on Pendulum...")
+# eval_env_pendulum = gym.make("Pendulum-v1")
+# mean_reward_p, std_reward_p = evaluate_policy(model_pendulum, eval_env_pendulum, n_eval_episodes=10, deterministic=True)
+# print(f"Evaluation results (A2C on Pendulum): Mean reward = {mean_reward_p:.2f} +/- {std_reward_p:.2f}")
+# vec_env_pendulum.close()
+# eval_env_pendulum.close()
+# print(f"To view Pendulum training logs, run: tensorboard --logdir {log_dir_pendulum}")
+```
+
+## 任务与思考
+
+1.  **运行 A2C on CartPole:** 运行代码的前半部分（CartPole）。使用 TensorBoard 观察训练曲线 (`rollout/ep_rew_mean`)。查看最终的评估结果。
+2.  **对比 A2C 与 DQN (CartPole):**
+    *   比较 A2C 和上周 DQN 在 CartPole 上的**收敛速度**（达到相似性能所需的步数）和**最终性能**（评估奖励）。哪个表现更好或更快？（注意：超参数可能需要调整才能公平比较）。
+    *   考虑两种算法的**样本效率**。哪个算法似乎需要更少的交互步数来学习？（提示：DQN 使用经验回放，A2C 通常是 On-Policy）。
+3.  **(可选) 运行 A2C on Pendulum:** 取消注释代码的后半部分，运行 A2C 解决 Pendulum-v1 问题。观察训练曲线和评估结果。思考为什么 DQN 无法直接用于此任务，而 A2C 可以？
+4.  **分析 Actor-Critic:**
+    *   解释 Actor-Critic 框架如何结合策略学习和价值学习。
+    *   Critic 在 Actor-Critic 中扮演什么角色？它如何帮助 Actor 学习？
+    *   什么是优势函数？为什么在策略梯度更新中使用优势函数估计（如 TD 误差）通常比使用原始回报更好？
+
+## 提交要求
+
+*   提交你运行和修改后的 SB3 A2C 代码 (至少包含 CartPole 部分)。
+*   提交 A2C 在 CartPole 上的 TensorBoard 训练曲线截图。
+*   提交 A2C 在 CartPole 上的评估结果。
+*   提交一份简短的分析报告，讨论：
+    *   A2C 与 DQN 在 CartPole 上的性能对比（收敛速度、最终性能、可能的样本效率差异）。
+    *   (如果运行了 Pendulum) 解释为什么 A2C 适用于连续动作空间而 DQN 不适用。
+    *   Actor-Critic 框架的基本原理以及 Critic 的作用。
+    *   优势函数及其在降低方差方面的作用。
+
+---
+
+**下周预告:** 商业案例分析 1 - 动态定价/资源优化。我们将深入探讨如何将前面学到的 RL 概念（MDP 定义、价值函数、Q-Learning、DQN、A2C 等）应用于更具体的商业场景，并讨论其中的挑战。

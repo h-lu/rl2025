@@ -1,0 +1,1294 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Week 6: 同策略控制 - SARSA – 智能计算</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./week7_lecture.html" rel="next">
+<link href="./week5_lecture.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xkm/sYwpb+ilR5gUw==" crossorigin="anonymous" referrerpolicy="no-referrer">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="styles/custom.css">
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./week1_lecture.html">讲义</a></li><li class="breadcrumb-item"><a href="./week6_lecture.html"><span class="chapter-title">Week 6: 同策略控制 - SARSA</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">智能计算</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">课程介绍</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">讲义</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week1_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 1: 商业决策智能化与强化学习概览</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week2_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 2: 序贯决策建模 - 马尔可夫决策过程 (MDP)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week3_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 3: 最优决策与 Bellman 最优方程</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week4_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 4: 蒙特卡洛方法 - 从完整经验中学习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week5_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 5: 时序差分学习 - 从不完整经验中学习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week6_lecture.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Week 6: 同策略控制 - SARSA</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week7_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 7: 异策略控制 - Q-Learning (重点)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week8_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 8: Q-Learning 应用讨论与中期回顾</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week9_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 9: 函数逼近入门</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week10_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 10: 深度 Q 网络 (DQN)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week11_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 11: 策略梯度方法 (Policy Gradient Methods)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week12_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 12: Actor-Critic 方法</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week13_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 13: 商业案例分析 1 - 动态定价与资源优化</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week14_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 14: 商业案例分析 2 - 个性化推荐与营销</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week15_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 15: 实践挑战、伦理规范与项目指导</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week16_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 16: 课程总结与未来展望</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">练习</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week1_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 1 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week2_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 2 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week3_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 3 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week4_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 4 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week5_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 5 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week6_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 6 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week7_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 7 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week8_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 8 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week9_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 9 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week10_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 10 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week11_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 11 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week12_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 12 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week13_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 13 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week14_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 14 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week15_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 15 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week16_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 16 - 学生练习</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#回顾无模型预测-mc-td" id="toc-回顾无模型预测-mc-td" class="nav-link active" data-scroll-target="#回顾无模型预测-mc-td">回顾：无模型预测 (MC &amp; TD)</a></li>
+  <li><a href="#从预测到控制广义策略迭代-gpi" id="toc-从预测到控制广义策略迭代-gpi" class="nav-link" data-scroll-target="#从预测到控制广义策略迭代-gpi">从预测到控制：广义策略迭代 (GPI)</a></li>
+  <li><a href="#基于动作值函数-q-的控制" id="toc-基于动作值函数-q-的控制" class="nav-link" data-scroll-target="#基于动作值函数-q-的控制">基于动作值函数 (Q) 的控制</a></li>
+  <li><a href="#同策略-on-policy-vs.-异策略-off-policy" id="toc-同策略-on-policy-vs.-异策略-off-policy" class="nav-link" data-scroll-target="#同策略-on-policy-vs.-异策略-off-policy">同策略 (On-Policy) vs.&nbsp;异策略 (Off-Policy)</a></li>
+  <li><a href="#sarsa-同策略-td-控制" id="toc-sarsa-同策略-td-控制" class="nav-link" data-scroll-target="#sarsa-同策略-td-控制">SARSA: 同策略 TD 控制</a>
+  <ul class="collapse">
+  <li><a href="#ε-greedy-探索策略" id="toc-ε-greedy-探索策略" class="nav-link" data-scroll-target="#ε-greedy-探索策略"><span class="math inline">\(ε\)</span>-greedy 探索策略</a></li>
+  <li><a href="#sarsa-算法伪代码" id="toc-sarsa-算法伪代码" class="nav-link" data-scroll-target="#sarsa-算法伪代码">SARSA 算法伪代码</a></li>
+  </ul></li>
+  <li><a href="#lab-4-sarsa-实践" id="toc-lab-4-sarsa-实践" class="nav-link" data-scroll-target="#lab-4-sarsa-实践">Lab 4: SARSA 实践</a>
+  <ul class="collapse">
+  <li><a href="#目标" id="toc-目标" class="nav-link" data-scroll-target="#目标">目标</a></li>
+  <li><a href="#环境选择" id="toc-环境选择" class="nav-link" data-scroll-target="#环境选择">环境选择</a></li>
+  <li><a href="#示例代码框架-cliffwalking---sarsa" id="toc-示例代码框架-cliffwalking---sarsa" class="nav-link" data-scroll-target="#示例代码框架-cliffwalking---sarsa">示例代码框架 (CliffWalking - SARSA)</a></li>
+  <li><a href="#任务与思考" id="toc-任务与思考" class="nav-link" data-scroll-target="#任务与思考">任务与思考</a></li>
+  <li><a href="#提交要求" id="toc-提交要求" class="nav-link" data-scroll-target="#提交要求">提交要求</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./week1_lecture.html">讲义</a></li><li class="breadcrumb-item"><a href="./week6_lecture.html"><span class="chapter-title">Week 6: 同策略控制 - SARSA</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-title">Week 6: 同策略控制 - SARSA</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="回顾无模型预测-mc-td" class="level1">
+<h1>回顾：无模型预测 (MC &amp; TD)</h1>
+<p>前两周我们学习了两种主要的无模型<strong>预测 (Prediction)</strong> 方法：</p>
+<ul>
+<li><strong>蒙特卡洛 (MC):</strong> 从完整回合的经验中学习，使用平均回报 <span class="math inline">\(G_t\)</span> 估计 <span class="math inline">\(V_\pi\)</span> 或 <span class="math inline">\(Q_\pi\)</span>。无偏，高方差，需等待回合结束。</li>
+<li><strong>时序差分 (TD(0)):</strong> 从单步经验 (<span class="math inline">\(S_t\)</span>, <span class="math inline">\(A_t\)</span>, <span class="math inline">\(R_{t+1}\)</span>, <span class="math inline">\(S_{t+1}\)</span>) 中学习，使用 TD 目标 <span class="math inline">\(R_{t+1} + \gamma V(S_{t+1})\)</span> (或 <span class="math inline">\(R_{t+1} + \gamma Q(S_{t+1}, A_{t+1})\)</span>) 进行自举更新。有偏，低方差，可在线学习。</li>
+</ul>
+<p>这些方法的目标都是<strong>评估一个给定的策略 <span class="math inline">\(\pi\)</span></strong>。但我们的最终目标通常是找到<strong>最优策略 <span class="math inline">\(\pi^*\)</span></strong>。现在，我们将从<strong>预测</strong>转向<strong>控制 (Control)</strong>。</p>
+</section>
+<section id="从预测到控制广义策略迭代-gpi" class="level1">
+<h1>从预测到控制：广义策略迭代 (GPI)</h1>
+<p><strong>控制问题:</strong> 如何在不知道环境模型的情况下，找到最优策略 <span class="math inline">\(\pi^*\)</span>？</p>
+<p>核心思想是<strong>广义策略迭代 (Generalized Policy Iteration, GPI)</strong>。GPI 是一个通用的框架，它交替进行两个过程：</p>
+<ol type="1">
+<li><strong>策略评估 (Policy Evaluation):</strong> 估计当前策略 <span class="math inline">\(\pi\)</span> 的价值函数 (<span class="math inline">\(V_\pi\)</span> 或 <span class="math inline">\(Q_\pi\)</span>)。我们已经学习了 MC 和 TD 作为无模型评估方法。</li>
+<li><strong>策略改进 (Policy Improvement):</strong> 利用当前的价值函数估计，改进策略 <span class="math inline">\(\pi\)</span>，使其变得更好。</li>
+</ol>
+<p>这两个过程相互作用，最终趋向于最优策略 <span class="math inline">\(\pi^*\)</span> 和最优价值函数 <span class="math inline">\(V_\pi^*\)</span>。</p>
+<p><img src="https://miro.medium.com/v2/resize:fit:1400/format:webp/0*yjZOZGbAZkeQoLJv.png" class="img-fluid" alt="Generalized Policy Iteration (GPI)"> <em>(图片来源: Sutton &amp; Barto, Reinforcement Learning: An Introduction)</em></p>
+<p><strong>策略改进步骤:</strong></p>
+<p>如果我们有了动作值函数 <span class="math inline">\(Q_\pi(s, a)\)</span> 的估计，如何在状态 <span class="math inline">\(s\)</span> 改进策略？</p>
+<p>一个自然的想法是采取<strong>贪心 (Greedy)</strong> 策略：在状态 <span class="math inline">\(s\)</span> 下，选择那个使得 <span class="math inline">\(Q_\pi(s, a)\)</span> 最大的动作 <span class="math inline">\(a\)</span>。 <span class="math inline">\(\pi'(s) = \text{argmax}_a Q_\pi(s, a)\)</span></p>
+<p>可以证明，对于任何非最优策略 <span class="math inline">\(\pi\)</span>，通过对其 <span class="math inline">\(Q_\pi\)</span> 进行贪心化得到的策略 <span class="math inline">\(\pi'\)</span>，必然满足 <span class="math inline">\(V_{\pi'}(s) \geq V_\pi(s)\)</span> 对所有状态 <span class="math inline">\(s\)</span> 成立（<strong>策略改进定理 Policy Improvement Theorem</strong>）。这意味着贪心策略 <span class="math inline">\(\pi'\)</span> 比原策略 <span class="math inline">\(\pi\)</span> 更好或一样好。</p>
+<div class="callout callout-style-default callout-note callout-titled" title="策略改进定理 (Policy Improvement Theorem)">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+策略改进定理 (Policy Improvement Theorem)
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><strong>策略改进定理</strong>是强化学习领域的一个关键理论贡献，最早由 Bellman (1957) 在《Dynamic Programming》中提出，后经 Howard (1960) 在《Dynamic Programming and Markov Processes》中系统阐述。该定理为基于贪心策略改进的强化学习算法提供了坚实的理论基础，确保了策略优化的有效性。具体内容如下：</p>
+<p>给定一个策略 <span class="math inline">\(\pi\)</span> 及其对应的动作值函数 <span class="math inline">\(Q_\pi(s, a)\)</span>，如果定义一个新的策略 <span class="math inline">\(\pi'\)</span> 满足：</p>
+<p><span class="math inline">\(\pi'(s) = \text{argmax}_a Q_\pi(s, a), \forall s \in S\)</span></p>
+<p>即 <span class="math inline">\(\pi'\)</span> 是在每个状态 <span class="math inline">\(s\)</span> 下选择使 <span class="math inline">\(Q_\pi(s, a)\)</span> 最大的动作 <span class="math inline">\(a\)</span> 的贪心策略，那么 <span class="math inline">\(\pi'\)</span> 至少与 <span class="math inline">\(\pi\)</span> 一样好，即：</p>
+<p><span class="math inline">\(V_{\pi'}(s) \geq V_\pi(s), \forall s \in S\)</span></p>
+<p><strong>证明思路:</strong></p>
+<ol type="1">
+<li>根据 <span class="math inline">\(Q_\pi(s, a)\)</span> 的定义，有： <span class="math inline">\(Q_\pi(s, \pi'(s)) = \mathbb{E}[R_{t+1} + \gamma V_\pi(S_{t+1}) | S_t = s, A_t = \pi'(s)]\)</span></li>
+<li>由于 <span class="math inline">\(\pi'\)</span> 是贪心策略，<span class="math inline">\(Q_\pi(s, \pi'(s)) \geq Q_\pi(s, \pi(s)) = V_\pi(s)\)</span></li>
+<li>通过数学归纳法可以证明 <span class="math inline">\(V_{\pi'}(s) \geq V_\pi(s)\)</span> 对所有状态 <span class="math inline">\(s\)</span> 成立</li>
+</ol>
+<p><strong>意义:</strong></p>
+<ul>
+<li>该定理为策略迭代算法提供了理论保证，确保每次策略改进都能得到更好的策略。</li>
+<li>它解释了为什么贪心策略改进是有效的，为许多强化学习算法（如 SARSA、Q-learning）奠定了基础。</li>
+<li>结合策略评估和策略改进，可以保证最终收敛到最优策略 <span class="math inline">\(\pi^*\)</span>。</li>
+</ul>
+</div>
+</div>
+</div>
+<p><strong>GPI 流程:</strong></p>
+<p><span class="math inline">\(\pi_0 \rightarrow\)</span> (评估 E) <span class="math inline">\(\rightarrow Q_{\pi_0} \rightarrow\)</span> (改进 I) <span class="math inline">\(\rightarrow \pi_1 \rightarrow\)</span> (评估 E) <span class="math inline">\(\rightarrow Q_{\pi_1} \rightarrow\)</span> (改进 I) <span class="math inline">\(\rightarrow \pi_2 \rightarrow ... \rightarrow \pi^* \rightarrow Q^*\)</span></p>
+<div class="callout callout-style-default callout-note callout-titled" title="无模型强化学习中的关键挑战">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+无模型强化学习中的关键挑战
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>在无模型设置下，我们需要解决两个核心问题：</p>
+<ol type="1">
+<li><p><strong>策略评估的挑战:</strong> 如何在没有环境模型的情况下，有效地进行策略评估？这通常需要在蒙特卡洛方法（MC）和时间差分学习（TD）之间进行权衡和选择。</p></li>
+<li><p><strong>探索与利用的平衡:</strong> 如何确保策略改进过程能够持续探索，而不是过早地陷入局部最优的贪心策略？这需要设计合适的探索机制，如ε-greedy策略或基于置信度的探索方法。</p></li>
+</ol>
+</div>
+</div>
+</section>
+<section id="基于动作值函数-q-的控制" class="level1">
+<h1>基于动作值函数 (Q) 的控制</h1>
+<p>在无模型控制中，我们通常直接学习<strong>动作值函数 <span class="math inline">\(Q(s, a)\)</span></strong> 而不是状态值函数 <span class="math inline">\(V(s)\)</span>。</p>
+<p><strong>原因:</strong></p>
+<ul>
+<li>如果我们只有 <span class="math inline">\(V(s)\)</span>，要进行策略改进（选择最优动作），我们仍然需要知道环境模型 <span class="math inline">\(P(s'|s, a)\)</span> 和 <span class="math inline">\(R(s, a, s')\)</span> 才能计算出哪个动作 <span class="math inline">\(a\)</span> 能带来最大的 <span class="math inline">\(E[R + \gamma V(s')]\)</span>。</li>
+<li>如果我们直接学习了 <span class="math inline">\(Q(s, a)\)</span>，策略改进就变得非常简单：直接选择使 <span class="math inline">\(Q(s, a)\)</span> 最大的动作 <span class="math inline">\(a\)</span> 即可 (<span class="math inline">\(argmax_a Q(s, a)\)</span>)，不再需要环境模型。</li>
+</ul>
+<p>因此，接下来的无模型控制算法都将聚焦于学习 <span class="math inline">\(Q(s, a)\)</span>。</p>
+</section>
+<section id="同策略-on-policy-vs.-异策略-off-policy" class="level1">
+<h1>同策略 (On-Policy) vs.&nbsp;异策略 (Off-Policy)</h1>
+<p>在 GPI 框架下，根据<strong>用于生成经验数据的策略</strong>和<strong>正在评估和改进的策略</strong>是否相同，可以将无模型控制算法分为两类：</p>
+<ul>
+<li><strong>同策略 (On-Policy):</strong> 用来产生行为（收集数据）的策略，与我们正在评估和改进的策略是<strong>同一个</strong>策略。智能体一边按照当前策略 <span class="math inline">\(\pi\)</span> 行动，一边利用这些行动经验来评估和改进策略 <span class="math inline">\(\pi\)</span> 本身。
+<ul>
+<li><em>优点:</em> 概念相对简单，通常比较稳定。</li>
+<li><em>缺点:</em> 学习到的策略会受到探索机制的影响（为了收集数据必须进行探索），可能无法学习到真正的最优确定性策略，而是学习到一个包含探索的最优“行为”策略。</li>
+</ul></li>
+<li><strong>异策略 (Off-Policy):</strong> 用来产生行为的策略（<strong>行为策略 Behavior Policy</strong>, <span class="math inline">\(\mu\)</span>）与我们正在评估和改进的目标策略（<strong>目标策略 Target Policy</strong>, <span class="math inline">\(\pi\)</span>）是<strong>不同的</strong>策略。智能体可以根据一个（通常更具探索性的）策略 <span class="math inline">\(\mu\)</span> 来行动和收集数据，但利用这些数据来评估和改进另一个（通常是贪心的）目标策略 <span class="math inline">\(\pi\)</span>。
+<ul>
+<li><em>优点:</em> 可以利用历史数据或其他智能体的经验；目标策略可以与行为策略解耦，更容易学习到确定性的最优策略。</li>
+<li><em>缺点:</em> 算法通常更复杂，可能方差更大或收敛更慢（需要重要性采样等技术）。</li>
+</ul></li>
+</ul>
+<div class="callout callout-style-default callout-tip callout-titled" title="如何选择同策略 vs. 异策略">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+如何选择同策略 vs.&nbsp;异策略
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>选择同策略 (On-Policy) 的情况:</strong></p>
+<ul>
+<li>当需要学习一个<strong>包含探索</strong>的策略时，例如在需要持续探索的环境中。</li>
+<li>当算法需要<strong>简单稳定</strong>，且不需要利用历史数据时。</li>
+<li>当行为策略和目标策略<strong>必须一致</strong>时，例如在某些安全关键应用中。</li>
+</ul>
+<p><strong>选择异策略 (Off-Policy) 的情况:</strong></p>
+<ul>
+<li>当需要学习一个<strong>确定性</strong>的最优策略时。</li>
+<li>当需要<strong>重用历史数据</strong>或利用其他智能体的经验时。</li>
+<li>当行为策略需要<strong>更激进地探索</strong>，而目标策略需要更保守时。</li>
+</ul>
+<p><strong>实际应用中的考虑:</strong></p>
+<ul>
+<li><strong>数据效率:</strong> 异策略通常更高效，可以重复利用数据。</li>
+<li><strong>收敛速度:</strong> 同策略通常收敛更快，但可能不是最优解。</li>
+<li><strong>实现复杂度:</strong> 异策略通常需要更复杂的算法（如重要性采样）。</li>
+<li><strong>应用场景:</strong> 根据具体任务需求选择，例如机器人控制可能更适合同策略，而游戏AI可能更适合异策略。</li>
+</ul>
+</div>
+</div>
+<p>本周我们学习第一个<strong>同策略 (On-Policy)</strong> 控制算法：SARSA。</p>
+</section>
+<section id="sarsa-同策略-td-控制" class="level1">
+<h1>SARSA: 同策略 TD 控制</h1>
+<p>SARSA（State-Action-Reward-State-Action，状态-动作-奖励-状态-动作）是一种基于TD(0)的同策略控制算法。其名称来源于算法更新 <span class="math inline">\(Q(s,a)\)</span> 时所使用的五元组经验序列：当前状态 <span class="math inline">\(S\)</span>、执行的动作 <span class="math inline">\(A\)</span>、获得的奖励 <span class="math inline">\(R\)</span>、转移到的下一状态 <span class="math inline">\(S'\)</span>，以及在下一状态 <span class="math inline">\(S'\)</span> 下根据当前策略选择的动作 <span class="math inline">\(A'\)</span>。</p>
+<p><strong>核心思想:</strong></p>
+<ol type="1">
+<li>使用 TD(0) 的思想来估计动作值函数 <span class="math inline">\(Q_\pi(s, a)\)</span>。</li>
+<li>策略评估和策略改进紧密结合，每一步都在更新 <span class="math inline">\(Q\)</span> 值并可能调整策略。</li>
+<li>遵循的策略 <span class="math inline">\(\pi\)</span> 通常是一个在贪心策略基础上加入探索机制的策略（如 <span class="math inline">\(\epsilon\)</span>-greedy）。</li>
+</ol>
+<p><strong>SARSA 更新规则:</strong></p>
+<p>在时间步 <span class="math inline">\(t\)</span>，智能体处于状态 <span class="math inline">\(S_t\)</span>，根据当前策略 <span class="math inline">\(\pi\)</span> (通常是 <span class="math inline">\(Q\)</span> 的 <span class="math inline">\(\epsilon\)</span>-greedy 策略) 选择并执行动作 <span class="math inline">\(A_t\)</span>，观察到奖励 <span class="math inline">\(R_{t+1}\)</span> 和下一个状态 <span class="math inline">\(S_{t+1}\)</span>。然后，<strong>在真正执行下一步动作之前</strong>，智能体<strong>再次根据当前策略 <span class="math inline">\(\pi\)</span></strong> 在新状态 <span class="math inline">\(S_{t+1}\)</span> 选择下一个动作 <span class="math inline">\(A_{t+1}\)</span>。</p>
+<p>利用这个五元组 <span class="math inline">\((S_t, A_t, R_{t+1}, S_{t+1}, A_{t+1})\)</span>，SARSA 按如下规则更新 <span class="math inline">\(Q(S_t, A_t)\)</span>：</p>
+<p><span class="math display">\[Q(S_t, A_t) ← Q(S_t, A_t) + \alpha [ R_{t+1} + \gamma Q(S_{t+1}, A_{t+1}) - Q(S_t, A_t) ]\]</span></p>
+<p><strong>对比 TD(0) 预测 <span class="math inline">\(V(S_t)\)</span>:</strong> <span class="math display">\[V(S_t) ← V(S_t) + \alpha [ R_{t+1} + \gamma V(S_{t+1}) - V(S_t) ]\]</span></p>
+<p><strong>关键区别:</strong></p>
+<ul>
+<li>SARSA 更新的是 <strong><span class="math inline">\(Q(S_t, A_t)\)</span></strong>。</li>
+<li>SARSA 的 TD 目标是 <strong><span class="math inline">\(R_{t+1} + \gamma Q(S_{t+1}, A_{t+1})\)</span></strong>。注意这里使用的是<strong>实际在 <span class="math inline">\(S_{t+1}\)</span> 将要执行的动作 <span class="math inline">\(A_{t+1}\)</span></strong> (根据当前策略 <span class="math inline">\(\pi\)</span> 选择的) 对应的 <span class="math inline">\(Q\)</span> 值，而不是像 Q-Learning 那样使用 <span class="math inline">\(\max_a' Q(S_{t+1}, a')\)</span>。这正是 SARSA 是<strong>同策略</strong>的原因：更新 <span class="math inline">\(Q(S_t, A_t)\)</span> 时，考虑的是<strong>实际遵循当前策略 <span class="math inline">\(\pi\)</span></strong> 会发生的下一个状态-动作对 <span class="math inline">\((S_{t+1}, A_{t+1})\)</span> 的价值。</li>
+</ul>
+<section id="ε-greedy-探索策略" class="level2">
+<h2 class="anchored" data-anchor-id="ε-greedy-探索策略"><span class="math inline">\(ε\)</span>-greedy 探索策略</h2>
+<p>为了在 GPI 中平衡探索与利用，SARSA (以及许多其他 RL 算法) 通常使用 <strong><span class="math inline">\(ε\)</span>-greedy (epsilon-greedy)</strong> 策略。</p>
+<p><strong><span class="math inline">\(ε\)</span>-greedy 策略:</strong></p>
+<ul>
+<li>以 <span class="math inline">\(1-\epsilon\)</span> 的概率选择当前估计最优的动作 (利用)： <span class="math inline">\(a = \text{argmax}_{a'} Q(s, a')\)</span></li>
+<li>以 <span class="math inline">\(\epsilon\)</span> 的概率从所有可用动作中随机选择一个 (探索)： <span class="math inline">\(a = \text{random action}\)</span></li>
+</ul>
+<p>其中 <span class="math inline">\(\epsilon\)</span> 是一个小的正数 (e.g., 0.1, 0.05)。</p>
+<ul>
+<li><strong><span class="math inline">\(\epsilon\)</span> 较大:</strong> 探索性强，有助于发现更好的策略，但收敛可能较慢。</li>
+<li><strong><span class="math inline">\(\epsilon\)</span> 较小:</strong> 利用性强，收敛可能较快，但容易陷入局部最优。</li>
+<li>通常 <span class="math inline">\(\epsilon\)</span> 会随着训练的进行而逐渐<strong>衰减 (decay)</strong>，例如从 1.0 或 0.5 逐渐减小到一个很小的值（如 0.01），实现早期多探索、后期多利用。</li>
+</ul>
+<div class="callout callout-style-default callout-tip callout-titled" title="SARSA 的收敛性及理论证明">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+SARSA 的收敛性及理论证明
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>SARSA 作为一种重要的同策略 TD 控制算法，其收敛性得到了理论证明：</p>
+<ul>
+<li><strong>收敛性条件:</strong> 在满足以下条件时，SARSA 可以收敛到最优策略：
+<ol type="1">
+<li>所有状态-动作对被无限次访问（通过 ε-greedy 等探索策略保证）</li>
+<li>学习率 <span class="math inline">\(\alpha\)</span> 需要满足 Robbins-Monro 条件：<span class="math inline">\(\sum_{t=1}^{\infty} \alpha_t = \infty\)</span> 且 <span class="math inline">\(\sum_{t=1}^{\infty} \alpha_t^2 &lt; \infty\)</span>。例如，可以使用 <span class="math inline">\(\alpha_t = \frac{1}{t}\)</span> 这样的学习率序列，它满足 <span class="math inline">\(\sum_{t=1}^{\infty} \frac{1}{t} = \infty\)</span> 且 <span class="math inline">\(\sum_{t=1}^{\infty} \frac{1}{t^2} &lt; \infty\)</span>。</li>
+<li>策略逐渐趋向于贪心（如 <span class="math inline">\(\epsilon\)</span> 逐渐衰减到 0）</li>
+</ol></li>
+<li><strong>理论证明:</strong>
+<ul>
+<li>Singh 等人在 2000 年的论文《Convergence Results for Single-Step On-Policy Reinforcement-Learning Algorithms》中严格证明了 SARSA 的收敛性。</li>
+<li>Tsitsiklis 在 1994 年的工作为 TD 方法的收敛性提供了理论基础，这些理论也适用于 SARSA。</li>
+</ul></li>
+<li><strong>实际表现:</strong>
+<ul>
+<li>在实践中，SARSA 通常能够稳定收敛，特别是在 ε 逐渐衰减的情况下。</li>
+<li>由于是同策略算法，SARSA 在学习过程中会考虑探索的影响，因此最终收敛的策略通常是一个包含探索的 ε-greedy 策略。</li>
+<li>相比 Q-learning，SARSA 的收敛可能更稳定，但最终策略可能不是完全贪心的。</li>
+</ul></li>
+<li><strong>注意事项:</strong>
+<ul>
+<li>如果 ε 不衰减到 0，SARSA 会收敛到一个 ε-soft 策略，而不是完全贪心的最优策略。</li>
+<li>在非平稳环境中，可能需要保持一定的 ε 值来持续探索。</li>
+</ul></li>
+</ul>
+</div>
+</div>
+</div>
+</section>
+<section id="sarsa-算法伪代码" class="level2">
+<h2 class="anchored" data-anchor-id="sarsa-算法伪代码">SARSA 算法伪代码</h2>
+<pre><code>初始化:
+对所有 s ∈ S, a ∈ A(s)，Q(s, a) ← 任意值（例如 0）
+α ← 学习率（小的正数）
+γ ← 折扣因子（0 ≤ γ ≤ 1）
+ε ← 探索率（小的正数，例如 0.1）
+
+对每个回合循环:
+初始化 S（回合的第一个状态）
+根据 Q 派生的策略（例如 ε-greedy）从 S 选择动作 A
+
+对回合中的每一步循环:
+    执行动作 A，观察奖励 R 和下一个状态 S'
+    根据 Q 派生的策略（例如 ε-greedy）从 S' 选择下一个动作 A'
+
+    # 核心更新步骤 (SARSA)
+    Q(S, A) ← Q(S, A) + α * [R + γ * Q(S', A') - Q(S, A)]
+
+    S ← S'
+    A ← A' # 更新当前动作用于下一次迭代
+
+    如果 S 是终止状态，结束内部循环</code></pre>
+<p><strong>解释:</strong></p>
+<ol type="1">
+<li>初始化 Q(s, a)，学习率 α，折扣因子 γ，探索率 ε。</li>
+<li>对于每个回合：</li>
+<li>获取起始状态 S。</li>
+<li>根据当前的 Q 值和 ε-greedy 策略选择第一个动作 A。</li>
+<li>对于回合中的每一步：</li>
+<li>执行动作 A，观察到奖励 R 和下一个状态 S’。</li>
+<li><strong>关键:</strong> 根据当前的 Q 值和 ε-greedy 策略，在<strong>新状态 S’</strong> 选择<strong>下一个</strong>将要执行的动作 A’。</li>
+<li><strong>计算 TD 目标:</strong> target = R + γ * Q(S’, A’) (如果 S’ 是终止状态，target = R)。</li>
+<li><strong>计算 TD 误差:</strong> δ = target - Q(S, A)。</li>
+<li><strong>更新 Q 值:</strong> Q(S, A) ← Q(S, A) + α * δ。</li>
+<li>将当前状态更新为 S’，将当前动作更新为 A’，准备下一步迭代。</li>
+<li>如果 S’ 是终止状态，结束当前回合。</li>
+</ol>
+</section>
+</section>
+<section id="lab-4-sarsa-实践" class="level1">
+<h1>Lab 4: SARSA 实践</h1>
+<section id="目标" class="level2">
+<h2 class="anchored" data-anchor-id="目标">目标</h2>
+<ol type="1">
+<li>在一个简单的环境中（如 Gridworld 或 CliffWalking）实现或运行 SARSA 算法。</li>
+<li>观察 SARSA 学习到的策略和价值函数。</li>
+<li>分析探索率 <span class="math inline">\(\epsilon\)</span> 对学习过程和最终性能的影响。</li>
+</ol>
+</section>
+<section id="环境选择" class="level2">
+<h2 class="anchored" data-anchor-id="环境选择">环境选择</h2>
+<ul>
+<li><strong>Gridworld:</strong> 可以继续使用上周 Lab 的 Gridworld 环境。SARSA 的目标是找到从起点到目标点的最优路径。</li>
+<li><strong>CliffWalking (悬崖行走):</strong>
+<ul>
+<li>Gymnasium 内置环境 (<code>gym.make("CliffWalking-v0")</code>)。</li>
+<li>一个 4x12 的网格。起点在左下角，目标在右下角。中间有一段区域是悬崖。</li>
+<li>动作：上(0), 右(1), 下(2), 左(3)。</li>
+<li>奖励：到达目标 +0，掉下悬崖 -100 (回合结束)，其他每走一步 -1。</li>
+<li>目标是找到一条避开悬崖、尽快到达终点的路径。这是一个经典的比较 SARSA 和 Q-Learning 的环境。</li>
+</ul></li>
+</ul>
+<p>我们将以 CliffWalking 为例进行说明。</p>
+</section>
+<section id="示例代码框架-cliffwalking---sarsa" class="level2">
+<h2 class="anchored" data-anchor-id="示例代码框架-cliffwalking---sarsa">示例代码框架 (CliffWalking - SARSA)</h2>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> gymnasium <span class="im">as</span> gym</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> collections <span class="im">import</span> defaultdict</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 创建 CliffWalking 环境</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>env <span class="op">=</span> gym.make(<span class="st">"CliffWalking-v0"</span>)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. 初始化参数</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>alpha <span class="op">=</span> <span class="fl">0.1</span>       <span class="co"># 学习率</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>gamma <span class="op">=</span> <span class="fl">0.99</span>      <span class="co"># 折扣因子</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>epsilon <span class="op">=</span> <span class="fl">0.1</span>     <span class="co"># 探索率 (初始值)</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="co"># epsilon_decay = 0.999 # (可选) Epsilon 衰减率</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="co"># min_epsilon = 0.01   # (可选) 最小 Epsilon</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>num_episodes <span class="op">=</span> <span class="dv">500</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="co"># 初始化 Q 表 (状态是离散的数字 0-47)</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Q = defaultdict(lambda: np.zeros(env.action_space.n))</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="co"># 使用 numpy 数组更高效</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>Q <span class="op">=</span> np.zeros((env.observation_space.n, env.action_space.n))</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a><span class="co"># 记录每回合奖励，用于观察学习过程</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>episode_rewards <span class="op">=</span> []</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. ε-Greedy 策略函数</span></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> choose_action_epsilon_greedy(state, current_epsilon):</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> np.random.rand() <span class="op">&lt;</span> current_epsilon:</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> env.action_space.sample() <span class="co"># 探索：随机选择动作</span></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 利用：选择 Q 值最大的动作 (如果 Q 值相同，随机选一个)</span></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>        q_values <span class="op">=</span> Q[state, :]</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>        max_q <span class="op">=</span> np.<span class="bu">max</span>(q_values)</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 找出所有具有最大 Q 值的动作的索引</span></span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 添加一个小的检查，防止所有Q值都是0的情况（在早期可能发生）</span></span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> np.<span class="bu">all</span>(q_values <span class="op">==</span> q_values[<span class="dv">0</span>]):</span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>             <span class="cf">return</span> env.action_space.sample()</span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>        best_actions <span class="op">=</span> np.where(q_values <span class="op">==</span> max_q)[<span class="dv">0</span>]</span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> np.random.choice(best_actions)</span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. SARSA 主循环</span></span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>current_epsilon <span class="op">=</span> epsilon</span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(num_episodes):</span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>    state, info <span class="op">=</span> env.reset()</span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>    action <span class="op">=</span> choose_action_epsilon_greedy(state, current_epsilon)</span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a>    terminated <span class="op">=</span> <span class="va">False</span></span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a>    truncated <span class="op">=</span> <span class="va">False</span></span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>    total_reward <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a>    <span class="cf">while</span> <span class="kw">not</span> (terminated <span class="kw">or</span> truncated):</span>
+<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 执行动作，观察 S', R</span></span>
+<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a>        next_state, reward, terminated, truncated, info <span class="op">=</span> env.step(action)</span>
+<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 在 S' 选择下一个动作 A' (根据当前策略)</span></span>
+<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a>        next_action <span class="op">=</span> choose_action_epsilon_greedy(next_state, current_epsilon)</span>
+<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a>        <span class="co"># SARSA 更新</span></span>
+<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a>        td_target <span class="op">=</span> reward <span class="op">+</span> gamma <span class="op">*</span> Q[next_state, next_action] <span class="op">*</span> (<span class="dv">1</span> <span class="op">-</span> terminated) <span class="co"># 如果终止，未来价值为0</span></span>
+<span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a>        td_error <span class="op">=</span> td_target <span class="op">-</span> Q[state, action]</span>
+<span id="cb2-60"><a href="#cb2-60" aria-hidden="true" tabindex="-1"></a>        Q[state, action] <span class="op">=</span> Q[state, action] <span class="op">+</span> alpha <span class="op">*</span> td_error</span>
+<span id="cb2-61"><a href="#cb2-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-62"><a href="#cb2-62" aria-hidden="true" tabindex="-1"></a>        state <span class="op">=</span> next_state</span>
+<span id="cb2-63"><a href="#cb2-63" aria-hidden="true" tabindex="-1"></a>        action <span class="op">=</span> next_action</span>
+<span id="cb2-64"><a href="#cb2-64" aria-hidden="true" tabindex="-1"></a>        total_reward <span class="op">+=</span> reward</span>
+<span id="cb2-65"><a href="#cb2-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-66"><a href="#cb2-66" aria-hidden="true" tabindex="-1"></a>    episode_rewards.append(total_reward)</span>
+<span id="cb2-67"><a href="#cb2-67" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-68"><a href="#cb2-68" aria-hidden="true" tabindex="-1"></a>    <span class="co"># (可选) Epsilon 衰减</span></span>
+<span id="cb2-69"><a href="#cb2-69" aria-hidden="true" tabindex="-1"></a>    <span class="co"># current_epsilon = max(min_epsilon, current_epsilon * epsilon_decay)</span></span>
+<span id="cb2-70"><a href="#cb2-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-71"><a href="#cb2-71" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (i <span class="op">+</span> <span class="dv">1</span>) <span class="op">%</span> <span class="dv">100</span> <span class="op">==</span> <span class="dv">0</span>:</span>
+<span id="cb2-72"><a href="#cb2-72" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"Episode </span><span class="sc">{</span>i<span class="op">+</span><span class="dv">1</span><span class="sc">}</span><span class="ss">/</span><span class="sc">{</span>num_episodes<span class="sc">}</span><span class="ss">, Total Reward: </span><span class="sc">{</span>total_reward<span class="sc">}</span><span class="ss">, Epsilon: </span><span class="sc">{</span>current_epsilon<span class="sc">:.3f}</span><span class="ss">"</span>)</span>
+<span id="cb2-73"><a href="#cb2-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-74"><a href="#cb2-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-75"><a href="#cb2-75" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. 可视化学习过程 (奖励曲线)</span></span>
+<span id="cb2-76"><a href="#cb2-76" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">5</span>))</span>
+<span id="cb2-77"><a href="#cb2-77" aria-hidden="true" tabindex="-1"></a>plt.plot(episode_rewards)</span>
+<span id="cb2-78"><a href="#cb2-78" aria-hidden="true" tabindex="-1"></a><span class="co"># 平滑处理，看得更清楚</span></span>
+<span id="cb2-79"><a href="#cb2-79" aria-hidden="true" tabindex="-1"></a><span class="co"># 使用 pandas 进行移动平均计算更方便</span></span>
+<span id="cb2-80"><a href="#cb2-80" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span>:</span>
+<span id="cb2-81"><a href="#cb2-81" aria-hidden="true" tabindex="-1"></a>    <span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb2-82"><a href="#cb2-82" aria-hidden="true" tabindex="-1"></a>    moving_avg <span class="op">=</span> pd.Series(episode_rewards).rolling(window<span class="op">=</span><span class="dv">50</span>).mean() <span class="co"># 计算50个周期的移动平均</span></span>
+<span id="cb2-83"><a href="#cb2-83" aria-hidden="true" tabindex="-1"></a>    plt.plot(moving_avg, label<span class="op">=</span><span class="st">'Moving Average (window=50)'</span>, color<span class="op">=</span><span class="st">'red'</span>)</span>
+<span id="cb2-84"><a href="#cb2-84" aria-hidden="true" tabindex="-1"></a>    plt.legend()</span>
+<span id="cb2-85"><a href="#cb2-85" aria-hidden="true" tabindex="-1"></a><span class="cf">except</span> <span class="pp">ImportError</span>:</span>
+<span id="cb2-86"><a href="#cb2-86" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Pandas not installed, skipping moving average plot."</span>)</span>
+<span id="cb2-87"><a href="#cb2-87" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-88"><a href="#cb2-88" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"Episode"</span>)</span>
+<span id="cb2-89"><a href="#cb2-89" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">"Total Reward per Episode"</span>)</span>
+<span id="cb2-90"><a href="#cb2-90" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="ss">f"SARSA Learning Curve (ε=</span><span class="sc">{</span>epsilon<span class="sc">}</span><span class="ss">)"</span>)</span>
+<span id="cb2-91"><a href="#cb2-91" aria-hidden="true" tabindex="-1"></a>plt.grid(<span class="va">True</span>)</span>
+<span id="cb2-92"><a href="#cb2-92" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb2-93"><a href="#cb2-93" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-94"><a href="#cb2-94" aria-hidden="true" tabindex="-1"></a><span class="co"># 5. 可视化最终策略 (可选)</span></span>
+<span id="cb2-95"><a href="#cb2-95" aria-hidden="true" tabindex="-1"></a><span class="co"># 可以创建一个网格，用箭头表示每个状态下 Q 值最大的动作</span></span>
+<span id="cb2-96"><a href="#cb2-96" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> plot_policy(Q_table, env_shape<span class="op">=</span>(<span class="dv">4</span>, <span class="dv">12</span>)):</span>
+<span id="cb2-97"><a href="#cb2-97" aria-hidden="true" tabindex="-1"></a>    policy_grid <span class="op">=</span> np.empty(env_shape, dtype<span class="op">=</span><span class="bu">str</span>)</span>
+<span id="cb2-98"><a href="#cb2-98" aria-hidden="true" tabindex="-1"></a>    actions_map <span class="op">=</span> {<span class="dv">0</span>: <span class="st">'↑'</span>, <span class="dv">1</span>: <span class="st">'→'</span>, <span class="dv">2</span>: <span class="st">'↓'</span>, <span class="dv">3</span>: <span class="st">'←'</span>} <span class="co"># 上右下左</span></span>
+<span id="cb2-99"><a href="#cb2-99" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-100"><a href="#cb2-100" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> r <span class="kw">in</span> <span class="bu">range</span>(env_shape[<span class="dv">0</span>]):</span>
+<span id="cb2-101"><a href="#cb2-101" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> c <span class="kw">in</span> <span class="bu">range</span>(env_shape[<span class="dv">1</span>]):</span>
+<span id="cb2-102"><a href="#cb2-102" aria-hidden="true" tabindex="-1"></a>            state <span class="op">=</span> r <span class="op">*</span> env_shape[<span class="dv">1</span>] <span class="op">+</span> c</span>
+<span id="cb2-103"><a href="#cb2-103" aria-hidden="true" tabindex="-1"></a>            <span class="co"># CliffWalking-v0: 37-46 are cliff states, 47 is goal</span></span>
+<span id="cb2-104"><a href="#cb2-104" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> <span class="dv">37</span> <span class="op">&lt;=</span> state <span class="op">&lt;=</span> <span class="dv">46</span>:</span>
+<span id="cb2-105"><a href="#cb2-105" aria-hidden="true" tabindex="-1"></a>                policy_grid[r, c] <span class="op">=</span> <span class="st">'X'</span> <span class="co"># Cliff</span></span>
+<span id="cb2-106"><a href="#cb2-106" aria-hidden="true" tabindex="-1"></a>                <span class="cf">continue</span></span>
+<span id="cb2-107"><a href="#cb2-107" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> state <span class="op">==</span> <span class="dv">47</span>:</span>
+<span id="cb2-108"><a href="#cb2-108" aria-hidden="true" tabindex="-1"></a>                policy_grid[r, c] <span class="op">=</span> <span class="st">'G'</span> <span class="co"># Goal</span></span>
+<span id="cb2-109"><a href="#cb2-109" aria-hidden="true" tabindex="-1"></a>                <span class="cf">continue</span></span>
+<span id="cb2-110"><a href="#cb2-110" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> state <span class="op">==</span> <span class="dv">36</span>: <span class="co"># Start state</span></span>
+<span id="cb2-111"><a href="#cb2-111" aria-hidden="true" tabindex="-1"></a>                 policy_grid[r, c] <span class="op">=</span> <span class="st">'S'</span></span>
+<span id="cb2-112"><a href="#cb2-112" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-113"><a href="#cb2-113" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-114"><a href="#cb2-114" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Check if Q-values for this state are all zero (might happen early on)</span></span>
+<span id="cb2-115"><a href="#cb2-115" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> np.<span class="bu">all</span>(Q_table[state, :] <span class="op">==</span> <span class="dv">0</span>):</span>
+<span id="cb2-116"><a href="#cb2-116" aria-hidden="true" tabindex="-1"></a>                 <span class="co"># Assign a default action or symbol if Q-values are zero and not cliff/goal/start</span></span>
+<span id="cb2-117"><a href="#cb2-117" aria-hidden="true" tabindex="-1"></a>                 <span class="cf">if</span> policy_grid[r, c] <span class="op">==</span> <span class="st">''</span>: <span class="co"># Avoid overwriting S, G, X</span></span>
+<span id="cb2-118"><a href="#cb2-118" aria-hidden="true" tabindex="-1"></a>                    policy_grid[r, c] <span class="op">=</span> <span class="st">'.'</span> <span class="co"># Indicate unvisited or zero Q</span></span>
+<span id="cb2-119"><a href="#cb2-119" aria-hidden="true" tabindex="-1"></a>            <span class="cf">else</span>:</span>
+<span id="cb2-120"><a href="#cb2-120" aria-hidden="true" tabindex="-1"></a>                best_action <span class="op">=</span> np.argmax(Q_table[state, :])</span>
+<span id="cb2-121"><a href="#cb2-121" aria-hidden="true" tabindex="-1"></a>                policy_grid[r, c] <span class="op">=</span> actions_map[best_action]</span>
+<span id="cb2-122"><a href="#cb2-122" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-123"><a href="#cb2-123" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-124"><a href="#cb2-124" aria-hidden="true" tabindex="-1"></a>    plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">3</span>))</span>
+<span id="cb2-125"><a href="#cb2-125" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Create a dummy data array for heatmap background coloring if needed</span></span>
+<span id="cb2-126"><a href="#cb2-126" aria-hidden="true" tabindex="-1"></a>    dummy_data <span class="op">=</span> np.zeros(env_shape)</span>
+<span id="cb2-127"><a href="#cb2-127" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Mark cliff states for potential background coloring</span></span>
+<span id="cb2-128"><a href="#cb2-128" aria-hidden="true" tabindex="-1"></a>    dummy_data[<span class="dv">3</span>, <span class="dv">1</span>:<span class="op">-</span><span class="dv">1</span>] <span class="op">=</span> <span class="op">-</span><span class="dv">1</span> <span class="co"># Example: mark cliff row with -1</span></span>
+<span id="cb2-129"><a href="#cb2-129" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-130"><a href="#cb2-130" aria-hidden="true" tabindex="-1"></a>    sns.heatmap(dummy_data, annot<span class="op">=</span>policy_grid, fmt<span class="op">=</span><span class="st">""</span>, cmap<span class="op">=</span><span class="st">"coolwarm"</span>, <span class="co"># Use a cmap that distinguishes cliff</span></span>
+<span id="cb2-131"><a href="#cb2-131" aria-hidden="true" tabindex="-1"></a>                cbar<span class="op">=</span><span class="va">False</span>, linewidths<span class="op">=</span><span class="fl">.5</span>, linecolor<span class="op">=</span><span class="st">'black'</span>, annot_kws<span class="op">=</span>{<span class="st">"size"</span>: <span class="dv">12</span>})</span>
+<span id="cb2-132"><a href="#cb2-132" aria-hidden="true" tabindex="-1"></a>    plt.title(<span class="st">"Learned Policy (Arrows indicate best action)"</span>)</span>
+<span id="cb2-133"><a href="#cb2-133" aria-hidden="true" tabindex="-1"></a>    plt.xticks([])</span>
+<span id="cb2-134"><a href="#cb2-134" aria-hidden="true" tabindex="-1"></a>    plt.yticks([])</span>
+<span id="cb2-135"><a href="#cb2-135" aria-hidden="true" tabindex="-1"></a>    plt.show()</span>
+<span id="cb2-136"><a href="#cb2-136" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-137"><a href="#cb2-137" aria-hidden="true" tabindex="-1"></a>plot_policy(Q)</span>
+<span id="cb2-138"><a href="#cb2-138" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-139"><a href="#cb2-139" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-140"><a href="#cb2-140" aria-hidden="true" tabindex="-1"></a>env.close()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="任务与思考" class="level2">
+<h2 class="anchored" data-anchor-id="任务与思考">任务与思考</h2>
+<ol type="1">
+<li><strong>运行代码:</strong> 运行上述 CliffWalking SARSA 代码。观察奖励曲线是否逐渐上升（虽然可能会因为探索而波动）？观察最终学到的策略（箭头图）是否能够避开悬崖并到达终点？</li>
+<li><strong>分析 ε 的影响:</strong>
+<ul>
+<li>尝试不同的固定 ε 值（例如 ε=0.01, ε=0.1, ε=0.5）。比较奖励曲线的收敛速度和最终的平均奖励水平。ε 太小或太大分别有什么问题？</li>
+<li>(可选) 实现 ε 衰减机制。观察与固定 ε 相比，学习过程有何不同？</li>
+</ul></li>
+<li><strong>分析 α 的影响:</strong> 尝试不同的学习率 α（例如 α=0.01, α=0.1, α=0.5）。α 太小或太大分别有什么影响？</li>
+<li><strong>SARSA 的路径:</strong> SARSA 学到的路径是“安全”路径（远离悬崖）还是“危险”路径（贴着悬崖走）？为什么？（提示：考虑 ε-greedy 策略在悬崖边探索的可能性以及 SARSA 的更新方式）。</li>
+</ol>
+</section>
+<section id="提交要求" class="level2">
+<h2 class="anchored" data-anchor-id="提交要求">提交要求</h2>
+<ul>
+<li>提交你的 SARSA 实现代码。</li>
+<li>提交不同 ε 值下的奖励曲线图。</li>
+<li>提交最终学到的策略可视化图。</li>
+<li>提交一份简短的分析报告，讨论 ε 和 α 的影响，并解释 SARSA 在 CliffWalking 环境中学到的路径特点及其原因。</li>
+</ul>
+<hr>
+<p><strong>下周预告:</strong> 学习另一种重要的 TD 控制算法：异策略 TD 控制 - Q-Learning，并与 SARSA 进行对比。</p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./week5_lecture.html" class="pagination-link" aria-label="Week 5: 时序差分学习 - 从不完整经验中学习">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">Week 5: 时序差分学习 - 从不完整经验中学习</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./week7_lecture.html" class="pagination-link" aria-label="Week 7: 异策略控制 - Q-Learning (重点)">
+        <span class="nav-page-text"><span class="chapter-title">Week 7: 异策略控制 - Q-Learning (重点)</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

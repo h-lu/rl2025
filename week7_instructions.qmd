@@ -1,0 +1,103 @@
+---
+title: "Week 7 - 教师指导手册"
+subtitle: "异策略控制 - Q-Learning (重点)"
+format:
+  html:
+    toc: true
+    toc-location: left
+---
+
+# 教学目标 (Learning Objectives)
+
+*   **主要目标:**
+    *   学生理解异策略 (Off-Policy) 学习的核心思想和动机（与同策略对比）。
+    *   学生掌握 Q-Learning 算法的核心思想、更新规则 (基于 S, A, R, S') 和其异策略特性。
+    *   学生能够清晰地阐述 Q-Learning 和 SARSA 的关键区别（TD 目标的不同：max vs. A'）。
+    *   学生理解 Q-Learning 为何能学习最优策略 Q\*，即使行为策略不是最优的。
+    *   学生能够运行 Lab 5 代码（CliffWalking 环境），使用 Q-Learning 算法学习策略。
+    *   学生能够通过实验对比 Q-Learning 和 SARSA 的学习过程和最终策略差异。
+    *   学生能够讨论 Off-Policy 学习的优势（如利用历史数据）。
+*   **次要目标:**
+    *   巩固 TD 学习和 GPI 的概念。
+    *   进一步培养学生对比分析不同 RL 算法的能力。
+    *   为后续学习 DQN 打下基础（DQN 是基于 Q-Learning 的）。
+
+# 重点概念 (Key Concepts)
+
+*   异策略 (Off-Policy) 学习 vs. 同策略 (On-Policy) 学习
+*   目标策略 (Target Policy) π (通常是贪心策略)
+*   行为策略 (Behavior Policy) μ (通常是 ε-greedy)
+*   Q-Learning 算法 (Off-Policy TD Control)
+*   Q-Learning 更新规则: Q(S, A) ← Q(S, A) + α [R + γ max_{a'} Q(S', a') - Q(S, A)]
+*   四元组 (S, A, R, S')
+*   Q-Learning vs. SARSA 对比 (TD 目标, 策略偏好)
+*   Off-Policy 学习的优势
+
+# 时间分配建议 (Suggested Time Allocation - 2 Sessions)
+
+*   **Session 13 (约 90 分钟):**
+    *   回顾 SARSA 及其同策略特性 (10-15 分钟): 强调其学习包含探索的策略，以及在 CliffWalking 中的“安全”路径偏好。
+    *   异策略 (Off-Policy) 学习思想 (20-25 分钟): **重点概念**。讲解目标策略与行为策略分离的动机和优势（解耦探索与利用、利用历史数据）。强调覆盖假设。
+    *   Q-Learning 算法详解 (35-40 分钟): **重点环节**。讲解 Q-Learning 的异策略特性，推导其更新规则，与 SARSA 的更新规则进行**详细对比**，强调 `max` 操作的核心作用。解释为何 Q-Learning 直接学习 Q\*。
+    *   Q-Learning 伪代码讲解 (10 分钟)。
+    *   Q&A (5 分钟)
+*   **Session 14 (约 90 分钟): Lab 5**
+    *   回顾 Q-Learning vs. SARSA 的核心区别 (10 分钟)。
+    *   Lab 5 目标与环境介绍 (10 分钟): 继续使用 CliffWalking 环境，明确 Lab 任务是实现 Q-Learning 并与 SARSA 对比。
+    *   指导运行 Lab 5 代码 (35-40 分钟): **重点环节**。带领学生理解 Q-Learning 的实现，特别是与 SARSA 代码的不同之处（TD 目标的计算）。确保学生能运行代码并观察奖励曲线和最终策略图。
+    *   结果对比与讨论 (20-25 分钟): **重点讨论**。引导学生对比 Q-Learning 和 SARSA 的奖励曲线（哪个奖励更高？哪个更稳定？）和最终策略（Q-Learning 是否走了“危险”但最优的路径？）。深入讨论造成这种差异的原因（`max` vs. A'）。讨论 Off-Policy 的优势。
+    *   Lab 提交要求说明 & Q&A (5 分钟)。
+
+# 教学活动与建议 (Teaching Activities & Suggestions)
+
+## Session 13
+
+*   **Off-Policy 引入:**
+    *   **提问:** “SARSA 学到的是包含探索（比如 ε 概率随机走）的策略价值，但我们最终想要的是不探索时的最优策略，怎么办？” “如果我们有很多过去的行车记录（可能是别人开的，或者自己以前乱开的），能不能用来学习现在的最优开车策略？” 引出 Off-Policy 的需求。
+*   **Q-Learning 算法:**
+    *   **核心对比 (Q-Learning vs. SARSA):** 这是本周的重中之重。务必让学生理解两者更新规则的**唯一但关键**的区别：
+        *   SARSA: `target = R + gamma * Q[next_state, next_action]` (A' 是实际要走的)
+        *   Q-Learning: `target = R + gamma * np.max(Q[next_state, :])` (总是用理论上最好的 a' 来估计未来)
+    *   **直观解释 `max`:** Q-Learning 在更新 Q(S, A) 时，总是假设从下一个状态 S' 开始就会采取**最优**行动 (`max_a' Q(S', a')`)，而不管行为策略 μ 实际上会选择哪个动作去探索。这使得 Q-Learning 能够“摆脱”行为策略的探索影响，直接学习最优价值函数 Q\*。
+    *   **Off-Policy 体现:** 强调更新 Q(S, A) 只需要 (S, A, R, S') 四元组，不需要知道实际执行的下一个动作 A'。
+
+## Session 14 (Lab 5)
+
+*   **Lab 代码指导:**
+    *   **定位差异:** 指导学生找到 Q-Learning 代码相对于 SARSA 代码修改的核心部分，即 TD 目标的计算从 `Q[next_state, next_action]` 变为 `np.max(Q[next_state, :])`。
+*   **结果对比与讨论 (重点):**
+    *   **策略路径差异:**
+        *   **预期结果:** SARSA 通常学到远离悬崖的安全路径；Q-Learning 通常学到贴着悬崖走的最短（最优）路径。
+        *   **提问引导:** “为什么 Q-Learning 敢贴着悬崖走？” (因为它更新时总是假设下一步会选最优动作，忽略了探索掉下去的可能性)。“为什么 SARSA 不敢？” (因为它更新时考虑了下一步实际可能因探索而掉下去的动作 A')。
+        *   **哪个更好？** 引导讨论：Q-Learning 找到了理论最优路径，但如果实际执行时仍然使用 ε-greedy，它还是有概率掉下去！SARSA 找到的路径虽然次优，但对于 ε-greedy 执行策略来说更安全，平均回报可能更高。这揭示了 On-Policy 和 Off-Policy 的微妙之处。
+    *   **奖励曲线差异:**
+        *   **预期结果:** Q-Learning 的每回合平均奖励可能波动更大（因为它有时会因为探索而掉下悬崖，得到很大的负奖励），但其学到的最优策略（如果无探索执行）对应的回报更高。SARSA 的奖励曲线可能更稳定，但最终收敛到的平均奖励可能略低于 Q-Learning 的最优策略回报。
+    *   **Off-Policy 优势讨论:**
+        *   **历史数据:** “如果只有随机策略产生的数据，SARSA 能学到最优策略吗？” (不能，因为它只能学习随机策略的价值)。“Q-Learning 呢？” (可以，因为它的更新不依赖于行为策略如何选择 A')。引出 Off-Policy 利用历史数据的优势。
+        *   **商业场景:** 讨论在实际业务中，例如电商推荐，为什么 Off-Policy 可能更受欢迎？（可以在不干扰线上用户体验的情况下，利用用户日志数据学习新策略）。
+
+# 潜在学生问题与解答 (Potential Student Questions & Answers)
+
+*   **Q: Q-Learning 的行为策略 μ 和目标策略 π 具体是什么？**
+    *   A: 在我们通常的实现中：
+        *   **行为策略 μ:** 用于与环境交互、选择**实际执行**的动作 A_t。通常是基于当前 Q 值的 **ε-greedy** 策略，以保证探索。
+        *   **目标策略 π:** 我们**想要学习**的最优策略。在 Q-Learning 中，它**隐含**在 `max_a' Q(S', a')` 这一步，即假设在下一个状态总是采取当前估计最优的动作（**贪心策略**）。Q-Learning 的目标是让 Q 函数收敛到这个贪心策略对应的最优价值函数 Q\*。
+*   **Q: Q-Learning 既然学习的是最优策略，为什么执行时还要用 ε-greedy？**
+    *   A: 这是为了**持续收集数据**以改进 Q 函数估计。如果执行时完全采用贪心策略（ε=0），一旦 Q 函数估计有误导致某个最优动作从未被选过，它可能永远没有机会被学习到。在训练过程中保持一定的探索（ε>0）是必要的。在**评估**训练好的策略时，或者**实际部署**时（如果确信模型已收敛且环境稳定），通常会使用纯贪心策略（ε=0 或 `deterministic=True`）。
+*   **Q: Off-Policy 学习是不是总比 On-Policy 好？**
+    *   A: 不一定。Off-Policy 学习更灵活（利用历史数据、解耦探索），理论上能学习最优策略，但在实践中可能面临更大的方差和收敛性问题（尤其是在与函数逼近结合时，所谓的“死亡三角”）。On-Policy 学习通常更稳定，实现更简单，但样本效率可能较低，且学到的策略受探索影响。选择哪种取决于具体问题和权衡。
+*   **Q: Lab 对比中，Q-Learning 的平均奖励有时比 SARSA 低，这和它学习最优策略矛盾吗？**
+    *   A: 不矛盾。Q-Learning 学习的是**最优策略 Q\*** 的价值。但 Lab 中评估的通常是**行为策略 μ (ε-greedy)** 的平均每回合奖励。由于 Q-Learning 学到的最优路径贴近悬崖，ε-greedy 行为策略在执行时仍有 ε 的概率会探索掉下去，导致单回合奖励很低，拉低了平均值。而 SARSA 学到的是更安全的策略，即使 ε-greedy 执行也不容易掉下去，所以平均奖励可能更稳定或更高。这正体现了学习目标（最优策略）和实际执行策略（行为策略）的分离。
+
+# 与后续课程的联系 (Connections to Future Topics)
+
+*   Q-Learning 是 **DQN (Deep Q-Network)** 的基础。DQN 就是用深度神经网络来近似 Q-Learning 中的 Q 函数，并加入了经验回放和目标网络来提高稳定性。
+*   Off-Policy 学习的概念对于理解更高级的算法（如 DDPG, SAC）以及 **Offline RL** 非常重要。
+
+# 教师准备建议 (Preparation Suggestions)
+
+*   准备好清晰对比 On-Policy 和 Off-Policy 的例子。
+*   能够流畅地讲解 Q-Learning 和 SARSA 更新规则的核心差异 (`max` vs. A')。
+*   确保 Lab 5 的 Q-Learning 代码能运行，并准备好对比 SARSA 的结果图。
+*   预先思考如何引导学生讨论 Q-Learning 和 SARSA 在 CliffWalking 中策略差异的原因及影响。
+*   准备好关于 Off-Policy 优势的讨论点。

@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Week 11: 策略梯度方法 (Policy Gradient Methods) – 智能计算</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./week12_lecture.html" rel="next">
+<link href="./week10_lecture.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xkm/sYwpb+ilR5gUw==" crossorigin="anonymous" referrerpolicy="no-referrer">
+
+
+<link rel="stylesheet" href="styles/custom.css">
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./week1_lecture.html">讲义</a></li><li class="breadcrumb-item"><a href="./week11_lecture.html"><span class="chapter-title">Week 11: 策略梯度方法 (Policy Gradient Methods)</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">智能计算</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">课程介绍</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">讲义</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week1_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 1: 商业决策智能化与强化学习概览</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week2_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 2: 序贯决策建模 - 马尔可夫决策过程 (MDP)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week3_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 3: 最优决策与 Bellman 最优方程</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week4_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 4: 蒙特卡洛方法 - 从完整经验中学习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week5_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 5: 时序差分学习 - 从不完整经验中学习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week6_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 6: 同策略控制 - SARSA</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week7_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 7: 异策略控制 - Q-Learning (重点)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week8_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 8: Q-Learning 应用讨论与中期回顾</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week9_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 9: 函数逼近入门</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week10_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 10: 深度 Q 网络 (DQN)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week11_lecture.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Week 11: 策略梯度方法 (Policy Gradient Methods)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week12_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 12: Actor-Critic 方法</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week13_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 13: 商业案例分析 1 - 动态定价与资源优化</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week14_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 14: 商业案例分析 2 - 个性化推荐与营销</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week15_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 15: 实践挑战、伦理规范与项目指导</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week16_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 16: 课程总结与未来展望</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">练习</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week1_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 1 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week2_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 2 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week3_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 3 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week4_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 4 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week5_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 5 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week6_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 6 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week7_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 7 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week8_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 8 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week9_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 9 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week10_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 10 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week11_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 11 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week12_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 12 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week13_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 13 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week14_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 14 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week15_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 15 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week16_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 16 - 学生练习</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#回顾基于价值的强化学习-value-based-rl" id="toc-回顾基于价值的强化学习-value-based-rl" class="nav-link active" data-scroll-target="#回顾基于价值的强化学习-value-based-rl">回顾：基于价值的强化学习 (Value-Based RL)</a></li>
+  <li><a href="#策略梯度方法核心思想直接学习策略" id="toc-策略梯度方法核心思想直接学习策略" class="nav-link" data-scroll-target="#策略梯度方法核心思想直接学习策略">策略梯度方法核心思想：直接学习策略</a></li>
+  <li><a href="#策略梯度定理-policy-gradient-theorem" id="toc-策略梯度定理-policy-gradient-theorem" class="nav-link" data-scroll-target="#策略梯度定理-policy-gradient-theorem">策略梯度定理 (Policy Gradient Theorem)</a></li>
+  <li><a href="#reinforce-算法-蒙特卡洛策略梯度" id="toc-reinforce-算法-蒙特卡洛策略梯度" class="nav-link" data-scroll-target="#reinforce-算法-蒙特卡洛策略梯度">REINFORCE 算法 (蒙特卡洛策略梯度)</a></li>
+  <li><a href="#基线-baseline-的作用减小方差" id="toc-基线-baseline-的作用减小方差" class="nav-link" data-scroll-target="#基线-baseline-的作用减小方差">基线 (Baseline) 的作用：减小方差</a></li>
+  <li><a href="#策略梯度方法讨论" id="toc-策略梯度方法讨论" class="nav-link" data-scroll-target="#策略梯度方法讨论">策略梯度方法讨论</a>
+  <ul class="collapse">
+  <li><a href="#优势" id="toc-优势" class="nav-link" data-scroll-target="#优势">优势</a></li>
+  <li><a href="#劣势" id="toc-劣势" class="nav-link" data-scroll-target="#劣势">劣势</a></li>
+  <li><a href="#引出-actor-critic" id="toc-引出-actor-critic" class="nav-link" data-scroll-target="#引出-actor-critic">引出 Actor-Critic</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./week1_lecture.html">讲义</a></li><li class="breadcrumb-item"><a href="./week11_lecture.html"><span class="chapter-title">Week 11: 策略梯度方法 (Policy Gradient Methods)</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-title">Week 11: 策略梯度方法 (Policy Gradient Methods)</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="回顾基于价值的强化学习-value-based-rl" class="level1">
+<h1>回顾：基于价值的强化学习 (Value-Based RL)</h1>
+<p>到目前为止，我们学习的方法（SARSA, Q-Learning, DQN）都属于<strong>基于价值 (Value-Based)</strong> 的强化学习方法。</p>
+<ul>
+<li><strong>核心思想:</strong> 学习一个<strong>价值函数</strong>（通常是动作值函数 Q(s, a)），然后<strong>隐式地</strong>从价值函数中推导出策略。
+<ul>
+<li>策略通常是相对于 Q 函数的贪心策略（或 ε-greedy）：π(s) = argmax_a Q(s, a)。</li>
+</ul></li>
+<li><strong>代表算法:</strong> Q-Learning, SARSA, DQN。</li>
+<li><strong>优点:</strong> 在离散动作空间问题上通常样本效率较高，比较稳定。</li>
+<li><strong>局限性:</strong>
+<ul>
+<li><strong>难以处理连续动作空间:</strong> <code>max_a Q(s, a)</code> 操作在连续动作空间中难以进行（需要在无限多的动作中找到最大值）。虽然有一些扩展方法（如 DDPG），但基本形式不适用。</li>
+<li><strong>可能学习到确定性策略:</strong> 基于 <code>argmax</code> 的策略通常是确定性的。但在某些情况下，最优策略本身就是<strong>随机性</strong>的（例如，在石头剪刀布游戏中，最优策略是随机出拳；或者在部分可观察环境中，需要随机性来处理不确定性）。基于价值的方法难以直接学习随机策略。</li>
+<li><strong>价值函数可能非常复杂:</strong> 有时，最优价值函数可能比最优策略本身复杂得多，学习价值函数可能比直接学习策略更困难。</li>
+</ul></li>
+</ul>
+<p>为了克服这些局限性，我们需要另一类强化学习方法：<strong>策略梯度方法 (Policy Gradient Methods)</strong>。</p>
+</section>
+<section id="策略梯度方法核心思想直接学习策略" class="level1">
+<h1>策略梯度方法核心思想：直接学习策略</h1>
+<p>策略梯度 (Policy Gradient, PG) 方法<strong>直接参数化并优化策略本身</strong>，而不是通过价值函数间接学习。</p>
+<ul>
+<li><strong>策略参数化:</strong> 我们用一个带参数 <strong>θ</strong> 的函数 π(a|s, <strong>θ</strong>) 来表示策略。这个函数直接输出在状态 s 下采取动作 a 的概率（对于离散动作）或动作的具体参数（对于连续动作）。
+<ul>
+<li>π(a|s, <strong>θ</strong>) = P(A=a | S=s, <strong>θ</strong>)</li>
+<li>参数 <strong>θ</strong> 通常是神经网络的权重。</li>
+</ul></li>
+<li><strong>目标:</strong> 找到最优的参数 <strong>θ*</strong>，使得某种性能指标 J(<strong>θ</strong>) 最大化。
+<ul>
+<li>性能指标 J(<strong>θ</strong>) 通常定义为遵循策略 π(·|·, <strong>θ</strong>) 的<strong>预期累积回报</strong>（例如，从某个起始状态分布开始的预期回报）。</li>
+</ul></li>
+<li><strong>优化方法:</strong> 使用<strong>梯度上升 (Gradient Ascent)</strong> 来优化参数 <strong>θ</strong>。我们需要计算性能指标 J(<strong>θ</strong>) 相对于参数 <strong>θ</strong> 的梯度 ∇J(<strong>θ</strong>)，然后沿着梯度的方向更新参数：
+<ul>
+<li><strong>θ</strong> ← <strong>θ</strong> + α ∇J(<strong>θ</strong>) (α 是学习率)</li>
+</ul></li>
+</ul>
+<p><strong>关键问题:</strong> 如何计算策略性能的梯度 ∇J(<strong>θ</strong>)？</p>
+</section>
+<section id="策略梯度定理-policy-gradient-theorem" class="level1">
+<h1>策略梯度定理 (Policy Gradient Theorem)</h1>
+<p>策略梯度定理提供了一种计算性能梯度 ∇J(<strong>θ</strong>) 的方法，而<strong>不需要</strong>知道环境动态模型 (P) 或价值函数的导数。这是一个非常重要的理论结果。</p>
+<p>该定理表明，性能 J(<strong>θ</strong>) 的梯度可以表示为：</p>
+<p>∇J(<strong>θ</strong>) = E_{π_θ} [ ∇ log π(A_t|S_t, <strong>θ</strong>) * G_t ] (用于回合制任务，G_t 是完整回报)</p>
+<p>或者更常用的是使用<strong>动作值函数 Qπ(s, a)</strong>：</p>
+<p>∇J(<strong>θ</strong>) = E_{π_θ} [ ∇ log π(A_t|S_t, <strong>θ</strong>) * Qπ(S_t, A_t) ]</p>
+<p>其中：</p>
+<ul>
+<li><strong>E_{π_θ} […]</strong>: 表示在遵循策略 π(·|·, <strong>θ</strong>) 时，对状态和动作分布求期望。</li>
+<li><strong>π(A_t|S_t, θ)</strong>: 在状态 S_t 采取动作 A_t 的概率（由当前策略网络给出）。</li>
+<li><strong>∇ log π(A_t|S_t, θ)</strong>: 称为 <strong>Score Function</strong>。它表示参数 <strong>θ</strong> 的微小变动对“选择动作 A_t 的对数概率”的影响方向。<code>log π</code> 的使用是为了数学上的便利和更好的梯度性质。</li>
+<li><strong>G_t</strong> 或 <strong>Qπ(S_t, A_t)</strong>: 对在状态 S_t 采取动作 A_t 后所能获得的<strong>回报的衡量</strong>。它告诉我们这个动作有多好。</li>
+</ul>
+<p><strong>直观理解:</strong></p>
+<p>梯度 ∇J(<strong>θ</strong>) 的计算涉及到两个部分的乘积，并求期望：</p>
+<ol type="1">
+<li><strong>∇ log π(A_t|S_t, θ):</strong> 这个动作 A_t 在当前策略下出现的“可能性”随参数 θ 变化的方向。</li>
+<li><strong>G_t</strong> 或 <strong>Qπ(S_t, A_t):</strong> 这个动作 A_t 最终（或预期）导致的回报有多好。</li>
+</ol>
+<ul>
+<li>如果一个动作 A_t 导致了<strong>高回报</strong> (G_t 或 Qπ 高)，我们希望<strong>增加</strong>这个动作在状态 S_t 下被选择的概率。梯度上升会调整参数 <strong>θ</strong>，使得 log π(A_t|S_t, <strong>θ</strong>) 沿着 ∇ log π(A_t|S_t, <strong>θ</strong>) 的方向移动，从而增大 π(A_t|S_t, <strong>θ</strong>)。</li>
+<li>如果一个动作 A_t 导致了<strong>低回报</strong> (G_t 或 Qπ 低)，我们希望<strong>减小</strong>这个动作被选择的概率。梯度上升会调整参数 <strong>θ</strong>，使得 log π(A_t|S_t, <strong>θ</strong>) 沿着 ∇ log π(A_t|S_t, <strong>θ</strong>) 的方向移动，但由于 G_t 或 Qπ 是负的或较小，最终效果是减小 π(A_t|S_t, <strong>θ</strong>)。</li>
+</ul>
+<p><strong>简而言之：增加好动作的概率，降低坏动作的概率。</strong></p>
+</section>
+<section id="reinforce-算法-蒙特卡洛策略梯度" class="level1">
+<h1>REINFORCE 算法 (蒙特卡洛策略梯度)</h1>
+<p>REINFORCE 是最基础的策略梯度算法之一，它直接使用策略梯度定理的第一种形式（使用完整回报 G_t）。它是一种<strong>蒙特卡洛 (Monte Carlo)</strong> 方法，因为它需要完整的样本回合来计算回报 G_t。</p>
+<p><strong>算法流程:</strong></p>
+<ol type="1">
+<li><strong>初始化</strong>策略网络 π(a|s, <strong>θ</strong>) 的参数 <strong>θ</strong>。</li>
+<li><strong>循环</strong>（对于每个回合）：
+<ol type="a">
+<li>使用当前策略 π(·|·, <strong>θ</strong>) 与环境交互，生成一个<strong>完整的回合</strong>: S₀, A₀, R₁, S₁, A₁, R₂, …, S_{T-1}, A_{T-1}, R_T。</li>
+<li>对于回合中的<strong>每一步</strong> t = 0, 1, …, T-1：
+<ol type="i">
+<li>计算从该步开始的<strong>未来折扣回报 G_t</strong>: G_t = Σ_{k=t+1}^T γ^{k-t-1} R_k。</li>
+<li>计算 <strong>Score Function * 回报</strong>: ∇ log π(A_t|S_t, <strong>θ</strong>) * G_t。</li>
+</ol></li>
+<li><strong>累加</strong>整个回合的梯度信息（或者使用回合中所有步的平均梯度）。</li>
+<li><strong>更新策略参数 θ</strong>: <strong>θ</strong> ← <strong>θ</strong> + α * (累加或平均的梯度)。</li>
+</ol></li>
+</ol>
+<p><strong>REINFORCE 伪代码:</strong></p>
+<pre><code>Initialize policy parameter θ arbitrarily
+α ← learning rate
+
+Loop forever (for each episode):
+  Generate an episode S₀, A₀, R₁, ..., S_{T-1}, A_{T-1}, R_T following π(·|·, θ)
+  Loop for each step of the episode t = 0, ..., T-1:
+    G ← Σ_{k=t+1}^T γ^{k-t-1} R_k  # Calculate the return from time t
+    # Update policy parameter θ using stochastic gradient ascent
+    θ ← θ + α * γ^t * G * ∇ log π(A_t|S_t, θ) # γ^t is sometimes included/omitted</code></pre>
+<p><em>(注意: 伪代码中的 γ^t 因子有时会被包含以强调早期状态的重要性，但更常见的形式是直接使用 G_t)</em></p>
+<p><strong>REINFORCE 的特点:</strong></p>
+<ul>
+<li><strong>简单:</strong> 算法概念相对直接。</li>
+<li><strong>无偏梯度估计:</strong> 使用完整的蒙特卡洛回报 G_t，对梯度的估计是无偏的。</li>
+<li><strong>高方差 (High Variance):</strong> 这是 REINFORCE 的主要缺点。回报 G_t 依赖于整个回合的随机性，方差很大。这导致梯度估计的方差也很大，使得训练过程不稳定，收敛速度慢，需要大量的样本回合。</li>
+<li><strong>需要完整回合:</strong> 像 MC 方法一样，需要等到回合结束后才能计算 G_t 并进行更新。</li>
+</ul>
+</section>
+<section id="基线-baseline-的作用减小方差" class="level1">
+<h1>基线 (Baseline) 的作用：减小方差</h1>
+<p>为了缓解 REINFORCE (以及其他策略梯度方法) 的高方差问题，一个关键的技术是引入<strong>基线 (Baseline)</strong>。</p>
+<p><strong>思想:</strong> 从回报 G_t (或 Qπ) 中减去一个<strong>不依赖于动作 A_t</strong> 的基线值 b(S_t)，然后再乘以 Score Function。</p>
+<p>改进后的梯度估计： ∇J(<strong>θ</strong>) ≈ E_{π_θ} [ ∇ log π(A_t|S_t, <strong>θ</strong>) * (<strong>G_t - b(S_t)</strong>) ] 或 ∇J(<strong>θ</strong>) ≈ E_{π_θ} [ ∇ log π(A_t|S_t, <strong>θ</strong>) * (<strong>Qπ(S_t, A_t) - b(S_t)</strong>) ]</p>
+<p><strong>为什么可行？</strong> 可以证明，只要基线 b(S_t) 不依赖于动作 A_t，减去它<strong>不会改变梯度估计的期望值</strong>（即梯度仍然是无偏的或近似无偏的）。 E_{π_θ} [ ∇ log π(A_t|S_t, <strong>θ</strong>) * b(S_t) ] = Σ_s dπ(s) Σ_a π(a|s, θ) ∇ log π(a|s, θ) * b(s) = Σ_s dπ(s) b(s) Σ_a ∇ π(a|s, θ) = Σ_s dπ(s) b(s) ∇ [Σ_a π(a|s, θ)] = Σ_s dπ(s) b(s) ∇ [1] = 0 (其中 dπ(s) 是策略 π 下状态 s 的稳态分布)</p>
+<p><strong>为什么有效？</strong> 通过减去一个基线，我们可以<strong>减小</strong> <code>(G_t - b(S_t))</code> 或 <code>(Qπ - b(S_t))</code> 的<strong>方差</strong>。</p>
+<ul>
+<li><strong>直观解释:</strong> 我们不再是看动作 A_t 的绝对回报 G_t 好不好，而是看它<strong>相对于这个状态 S_t 的平均水平 b(S_t) 来说</strong>好不好。
+<ul>
+<li>如果 G_t &gt; b(S_t)，说明动作 A_t 比平均水平好，我们仍然增加其概率。</li>
+<li>如果 G_t &lt; b(S_t)，说明动作 A_t 比平均水平差，我们会减小其概率。</li>
+<li>如果 G_t ≈ b(S_t)，说明动作 A_t 表现平平，梯度接近于 0，参数更新幅度很小。</li>
+</ul></li>
+<li>这使得梯度估计更加集中，减少了随机波动带来的噪声，从而<strong>加速收敛</strong>并<strong>提高稳定性</strong>。</li>
+</ul>
+<p><strong>常用的基线 b(S_t):</strong> 最常用的基线是<strong>状态值函数 Vπ(S_t)</strong>。 b(S_t) = Vπ(S_t) = E_{π_θ} [G_t | S_t = s]</p>
+<p>这时，<code>Qπ(S_t, A_t) - Vπ(S_t)</code> 被称为<strong>优势函数 (Advantage Function)</strong> Aπ(S_t, A_t)。 Aπ(S_t, A_t) = Qπ(S_t, A_t) - Vπ(S_t)</p>
+<p>优势函数衡量了在状态 S_t 采取动作 A_t <strong>比平均情况下好多少</strong>。使用优势函数通常能显著降低策略梯度的方差。</p>
+<p>梯度变为： ∇J(<strong>θ</strong>) = E_{π_θ} [ ∇ log π(A_t|S_t, <strong>θ</strong>) * Aπ(S_t, A_t) ]</p>
+<p><strong>挑战:</strong> 我们通常也不知道 Vπ(S_t)，所以需要同时学习或估计 Vπ(S_t) 作为基线。这自然地引出了 <strong>Actor-Critic</strong> 方法。</p>
+</section>
+<section id="策略梯度方法讨论" class="level1">
+<h1>策略梯度方法讨论</h1>
+<section id="优势" class="level2">
+<h2 class="anchored" data-anchor-id="优势">优势</h2>
+<ul>
+<li><strong>处理连续动作空间:</strong> 策略网络可以直接输出连续动作的参数（例如，高斯分布的均值和标准差），这是基于价值的方法难以做到的。</li>
+<li><strong>学习随机策略:</strong> 策略网络可以自然地表示随机策略 π(a|s, θ)，这在某些问题中是必要的。</li>
+<li><strong>更好的收敛性质 (某些情况下):</strong> 尽管方差可能大，但策略梯度方法有时比基于价值的方法具有更好的收敛保证（尤其是在函数逼近下）。</li>
+<li><strong>可以学习更简单的策略:</strong> 有时最优策略可能比最优价值函数简单得多，直接学习策略可能更容易。</li>
+</ul>
+</section>
+<section id="劣势" class="level2">
+<h2 class="anchored" data-anchor-id="劣势">劣势</h2>
+<ul>
+<li><strong>高方差:</strong> 基本的策略梯度方法（如 REINFORCE）梯度估计方差很大，导致收敛慢、不稳定。需要使用基线、Actor-Critic 等技术来缓解。</li>
+<li><strong>样本效率通常较低:</strong> 相对于 Off-Policy 的 DQN 等方法，On-Policy 的策略梯度方法通常需要更多的样本才能学习。</li>
+<li><strong>容易收敛到局部最优:</strong> 梯度上升可能会陷入局部最优的策略参数。</li>
+<li><strong>对超参数敏感:</strong> 学习率、基线的设计等对性能影响较大。</li>
+</ul>
+</section>
+<section id="引出-actor-critic" class="level2">
+<h2 class="anchored" data-anchor-id="引出-actor-critic">引出 Actor-Critic</h2>
+<p>基本的 REINFORCE 算法使用蒙特卡洛方法估计回报 G_t (或 Qπ)，导致高方差。引入基线 Vπ 可以减小方差，但我们又需要估计 Vπ。</p>
+<p><strong>Actor-Critic 方法</strong> 正是为了解决这个问题而提出的：</p>
+<ul>
+<li><strong>Actor (行动者):</strong> 负责<strong>选择动作</strong>。它就是我们上面讨论的策略网络 π(a|s, <strong>θ</strong>)，参数为 <strong>θ</strong>。</li>
+<li><strong>Critic (评论家):</strong> 负责<strong>评估动作的好坏</strong>。它学习一个价值函数（通常是状态值函数 V(s, <strong>w</strong>) 或动作值函数 Q(s, a, <strong>w</strong>)），参数为 <strong>w</strong>。Critic 的输出用于指导 Actor 的更新（例如，作为基线或计算优势函数）。</li>
+</ul>
+<p>Actor 和 Critic 同时学习和更新：</p>
+<ol type="1">
+<li>Actor 根据当前策略 π(·|·, <strong>θ</strong>) 选择动作 A_t。</li>
+<li>执行动作，观察 R_{t+1}, S_{t+1}。</li>
+<li>Critic 使用 TD 误差等方法更新其价值函数参数 <strong>w</strong> (学习如何更好地评估)。</li>
+<li>Actor 使用 Critic 提供的信息（如 TD 误差或优势函数估计）来更新其策略参数 <strong>θ</strong> (学习如何选择更好的动作)。</li>
+</ol>
+<p>这种结构结合了策略梯度（Actor 更新）和 TD 学习（Critic 更新）的优点，通常比纯粹的 REINFORCE 或纯粹的价值学习方法更稳定和高效。我们将在下周详细学习 Actor-Critic 方法。</p>
+<hr>
+<p><strong>下周预告:</strong> Actor-Critic 方法。我们将学习 Actor-Critic 框架，以及具体的 A2C/A3C 算法概念，并使用 Stable Baselines3 运行 A2C 算法。</p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./week10_lecture.html" class="pagination-link" aria-label="Week 10: 深度 Q 网络 (DQN)">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">Week 10: 深度 Q 网络 (DQN)</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./week12_lecture.html" class="pagination-link" aria-label="Week 12: Actor-Critic 方法">
+        <span class="nav-page-text"><span class="chapter-title">Week 12: Actor-Critic 方法</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

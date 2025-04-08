@@ -1,0 +1,1 @@
+{"entries":[],"headings":["回顾函数逼近的必要性","dqn-核心思想用神经网络逼近-q-函数","挑战q-learning-神经网络-不稳定","dqn-的关键技巧","经验回放-experience-replay","目标网络-target-network","dqn-算法流程-结合-experience-replay-和-target-network","lab-6-使用-stable-baselines3-运行-dqn-解决-cartpole","目标","stable-baselines3-dqn-超参数简介","示例代码-sb3-dqn-on-cartpole","任务与思考","提交要求","任务与思考-1","提交要求-1"],"options":{"chapters":true}}

@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Week 9: 函数逼近入门 – 智能计算</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./week10_lecture.html" rel="next">
+<link href="./week8_lecture.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xkm/sYwpb+ilR5gUw==" crossorigin="anonymous" referrerpolicy="no-referrer">
+
+
+<link rel="stylesheet" href="styles/custom.css">
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./week1_lecture.html">讲义</a></li><li class="breadcrumb-item"><a href="./week9_lecture.html"><span class="chapter-title">Week 9: 函数逼近入门</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">智能计算</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">课程介绍</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">讲义</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week1_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 1: 商业决策智能化与强化学习概览</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week2_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 2: 序贯决策建模 - 马尔可夫决策过程 (MDP)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week3_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 3: 最优决策与 Bellman 最优方程</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week4_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 4: 蒙特卡洛方法 - 从完整经验中学习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week5_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 5: 时序差分学习 - 从不完整经验中学习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week6_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 6: 同策略控制 - SARSA</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week7_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 7: 异策略控制 - Q-Learning (重点)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week8_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 8: Q-Learning 应用讨论与中期回顾</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week9_lecture.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Week 9: 函数逼近入门</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week10_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 10: 深度 Q 网络 (DQN)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week11_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 11: 策略梯度方法 (Policy Gradient Methods)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week12_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 12: Actor-Critic 方法</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week13_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 13: 商业案例分析 1 - 动态定价与资源优化</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week14_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 14: 商业案例分析 2 - 个性化推荐与营销</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week15_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 15: 实践挑战、伦理规范与项目指导</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week16_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 16: 课程总结与未来展望</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">练习</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week1_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 1 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week2_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 2 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week3_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 3 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week4_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 4 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week5_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 5 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week6_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 6 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week7_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 7 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week8_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 8 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week9_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 9 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week10_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 10 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week11_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 11 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week12_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 12 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week13_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 13 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week14_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 14 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week15_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 15 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week16_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 16 - 学生练习</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#回顾表格型强化学习方法-tabular-rl" id="toc-回顾表格型强化学习方法-tabular-rl" class="nav-link active" data-scroll-target="#回顾表格型强化学习方法-tabular-rl">回顾：表格型强化学习方法 (Tabular RL)</a></li>
+  <li><a href="#为何需要函数逼近-function-approximation" id="toc-为何需要函数逼近-function-approximation" class="nav-link" data-scroll-target="#为何需要函数逼近-function-approximation">为何需要函数逼近 (Function Approximation)？</a></li>
+  <li><a href="#函数逼近的基本思想" id="toc-函数逼近的基本思想" class="nav-link" data-scroll-target="#函数逼近的基本思想">函数逼近的基本思想</a></li>
+  <li><a href="#线性函数逼近-linear-function-approximation" id="toc-线性函数逼近-linear-function-approximation" class="nav-link" data-scroll-target="#线性函数逼近-linear-function-approximation">线性函数逼近 (Linear Function Approximation)</a></li>
+  <li><a href="#概念-lab演示表格方法的局限性-cartpole" id="toc-概念-lab演示表格方法的局限性-cartpole" class="nav-link" data-scroll-target="#概念-lab演示表格方法的局限性-cartpole">概念 Lab/演示：表格方法的局限性 (CartPole)</a></li>
+  <li><a href="#引入-stable-baselines3-sb3-库" id="toc-引入-stable-baselines3-sb3-库" class="nav-link" data-scroll-target="#引入-stable-baselines3-sb3-库">引入 Stable Baselines3 (SB3) 库</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./week1_lecture.html">讲义</a></li><li class="breadcrumb-item"><a href="./week9_lecture.html"><span class="chapter-title">Week 9: 函数逼近入门</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-title">Week 9: 函数逼近入门</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="回顾表格型强化学习方法-tabular-rl" class="level1">
+<h1>回顾：表格型强化学习方法 (Tabular RL)</h1>
+<p>到目前为止，我们学习的 MC, TD, SARSA, Q-Learning 都属于<strong>表格型 (Tabular)</strong> 强化学习方法。</p>
+<ul>
+<li><strong>核心:</strong> 使用<strong>表格</strong>来存储和更新每个状态 (V(s)) 或每个状态-动作对 (Q(s, a)) 的价值。
+<ul>
+<li>例如，Q 表是一个 |S| x |A| 大小的矩阵（或字典）。</li>
+</ul></li>
+<li><strong>适用性:</strong> 对于状态空间 S 和动作空间 A 都比较<strong>小</strong>且<strong>离散</strong>的问题效果很好（如 Gridworld, Blackjack, CliffWalking）。</li>
+</ul>
+<p><strong>局限性:</strong> 当状态或动作空间变得庞大甚至连续时，表格型方法面临巨大挑战。</p>
+</section>
+<section id="为何需要函数逼近-function-approximation" class="level1">
+<h1>为何需要函数逼近 (Function Approximation)？</h1>
+<p>表格型方法的局限主要体现在以下几个方面：</p>
+<ol type="1">
+<li><strong>维度灾难 (Curse of Dimensionality) - 状态空间巨大:</strong>
+<ul>
+<li>许多现实世界的商业问题具有非常大的状态空间。
+<ul>
+<li><strong>库存管理:</strong> 如果管理数千种商品，每种商品有多个库存水平，状态组合数量将是天文数字。<code>S = (inv_1, inv_2, ..., inv_1000)</code></li>
+<li><strong>动态定价:</strong> 如果状态包含历史价格、竞争对手价格、多种客户分群信息，状态空间会急剧膨胀。</li>
+<li><strong>游戏:</strong> 棋盘游戏（如围棋 10¹⁷⁰ 状态）、视频游戏（像素级输入，状态近乎无限）。</li>
+</ul></li>
+<li>使用表格存储所有状态（或状态-动作对）的价值变得<strong>不可行</strong>：
+<ul>
+<li><strong>内存需求:</strong> 需要巨大的内存来存储 Q 表。</li>
+<li><strong>计算需求:</strong> 访问和更新这个巨大的表格非常耗时。</li>
+<li><strong>样本效率:</strong> 需要访问每个状态（或状态-动作对）很多次才能得到准确的价值估计，这在巨大状态空间中需要天文数字般的经验数据。</li>
+</ul></li>
+</ul></li>
+<li><strong>连续状态空间 (Continuous State Spaces):</strong>
+<ul>
+<li>很多问题的状态是连续的。
+<ul>
+<li><strong>机器人控制:</strong> 关节角度、速度。</li>
+<li><strong>金融交易:</strong> 股票价格、技术指标。</li>
+<li><strong>物理模拟:</strong> CartPole 的车位置、杆角度、速度都是连续的。</li>
+</ul></li>
+<li>表格无法直接存储无限多的连续状态。虽然可以进行离散化（分箱），但这会导致信息损失，并且在高维连续空间中，离散化的格子数量仍然会爆炸式增长。</li>
+</ul></li>
+<li><strong>连续动作空间 (Continuous Action Spaces):</strong>
+<ul>
+<li>动作也可能是连续的。
+<ul>
+<li><strong>机器人控制:</strong> 电机施加的力矩。</li>
+<li><strong>自动驾驶:</strong> 方向盘转角、油门/刹车力度。</li>
+<li><strong>资源分配:</strong> 分配给不同项目的预算比例。</li>
+</ul></li>
+<li>表格型方法（特别是基于 <code>max_a Q(s, a)</code> 的方法如 Q-Learning）难以直接处理无限多的连续动作。</li>
+</ul></li>
+</ol>
+<p><strong>核心问题:</strong> 我们无法为每一个可能的状态（或状态-动作对）单独学习和存储一个值。</p>
+<p><strong>解决方案:</strong> 使用<strong>函数逼近 (Function Approximation)</strong>。</p>
+</section>
+<section id="函数逼近的基本思想" class="level1">
+<h1>函数逼近的基本思想</h1>
+<p>不再为每个 s 或 (s, a) 存储独立的价值，而是用一个<strong>带参数的函数</strong>来近似价值函数：</p>
+<ul>
+<li>近似状态值函数: V̂(s, <strong>w</strong>) ≈ Vπ(s) 或 V*(s)</li>
+<li>近似动作值函数: Q̂(s, a, <strong>w</strong>) ≈ Qπ(s, a) 或 Q*(s, a)</li>
+</ul>
+<p>其中：</p>
+<ul>
+<li><strong>V̂ / Q̂:</strong> 表示价值函数的<strong>近似值 (Approximation)</strong>。</li>
+<li><strong>w:</strong> 函数的<strong>参数 (Parameters / Weights)</strong>。这是一个维度远小于 |S| 或 |S|x|A| 的向量。</li>
+<li><strong>函数形式:</strong> 可以是各种函数，例如：
+<ul>
+<li>线性函数 (Linear Function)</li>
+<li>决策树 (Decision Tree)</li>
+<li><strong>神经网络 (Neural Network)</strong> (尤其是深度神经网络，即深度强化学习的基础)</li>
+<li>…</li>
+</ul></li>
+</ul>
+<p><strong>学习目标:</strong> 调整参数 <strong>w</strong>，使得近似函数 V̂(s, w) 或 Q̂(s, a, w) 尽可能地接近真实的价值函数 Vπ(s) / V<em>(s) 或 Qπ(s, a) / Q</em>(s, a)。</p>
+<p><strong>优势:</strong></p>
+<ol type="1">
+<li><strong>泛化 (Generalization):</strong>
+<ul>
+<li>函数逼近器可以从有限的经验中<strong>泛化</strong>到未见过或很少访问的状态。</li>
+<li>相似的状态（根据函数的特征表示）会得到相似的价值估计。</li>
+<li>学习一个状态的价值可以帮助改进对其他“相似”状态的价值估计。</li>
+</ul></li>
+<li><strong>处理大规模/连续空间:</strong>
+<ul>
+<li>参数 <strong>w</strong> 的数量远少于状态（或状态-动作对）的数量，大大减少了内存和计算需求。</li>
+<li>可以直接处理连续的状态输入（例如，神经网络可以直接接收连续值的向量作为输入）。</li>
+</ul></li>
+</ol>
+<p><strong>学习过程:</strong></p>
+<p>函数逼近下的强化学习通常借鉴<strong>监督学习</strong>的思想。我们将 RL 算法产生的<strong>目标值 (Target)</strong>（例如，MC 回报 G_t 或 TD 目标 R + γV̂(S’, w)）视为“标签”，将当前的价值估计 V̂(S, w) 或 Q̂(S, A, w) 视为模型的“预测”。然后，我们定义一个<strong>损失函数 (Loss Function)</strong> 来衡量预测与目标之间的误差，并通过<strong>梯度下降 (Gradient Descent)</strong> 等优化算法来调整参数 <strong>w</strong> 以最小化这个损失。</p>
+<p>例如，对于 TD(0) 预测 Vπ，更新参数 <strong>w</strong> 的一种常见方式是<strong>半梯度 TD(0) (Semi-gradient TD(0))</strong>:</p>
+<ul>
+<li><strong>TD 误差:</strong> δ_t = R_{t+1} + γ V̂(S_{t+1}, <strong>w</strong>) - V̂(S_t, <strong>w</strong>)</li>
+<li><strong>参数更新:</strong> <strong>w</strong> ← <strong>w</strong> + α * δ_t * ∇ V̂(S_t, <strong>w</strong>)</li>
+</ul>
+<p>其中 ∇ V̂(S_t, <strong>w</strong>) 是近似函数 V̂ 对参数 <strong>w</strong> 在状态 S_t 处的<strong>梯度</strong>。这个更新规则试图将 V̂(S_t, w) 朝着 TD 目标移动。</p>
+<div class="callout callout-style-default callout-warning callout-titled" title="半梯度 (Semi-gradient)">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+半梯度 (Semi-gradient)
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>称为“半梯度”是因为 TD 目标 R + γV̂(S’, w) 本身也依赖于参数 w，但在计算梯度时我们通常<strong>忽略</strong>目标值对 w 的依赖（即不对目标求梯度），只对当前预测 V̂(S_t, w) 求梯度。这简化了计算，并且在实践中通常有效，但可能导致理论上的一些不稳定问题（尤其是在 Off-Policy + Bootstrapping + Function Approximation 结合时，被称为“死亡三角 Deadly Triad”）。</p>
+</div>
+</div>
+</section>
+<section id="线性函数逼近-linear-function-approximation" class="level1">
+<h1>线性函数逼近 (Linear Function Approximation)</h1>
+<p>最简单的函数逼近形式之一是线性函数。</p>
+<p><strong>思想:</strong> 将状态 s 表示为一个<strong>特征向量 (Feature Vector)</strong> φ(s)。 φ(s) = (φ₁(s), φ₂(s), …, φ_d(s))ᵀ</p>
+<p>其中 d 是特征的数量，通常远小于状态总数 |S|。特征可以是：</p>
+<ul>
+<li>状态变量的原始值（如果状态是向量）。</li>
+<li>状态变量的多项式组合。</li>
+<li>基于状态的某种编码（如 Tile Coding, Radial Basis Functions）。</li>
+<li>领域知识提取的关键指标。</li>
+</ul>
+<p><strong>线性价值函数近似:</strong> V̂(s, <strong>w</strong>) = <strong>w</strong>ᵀ φ(s) = Σ_{i=1}^d w_i φ_i(s)</p>
+<p>参数 <strong>w</strong> = (w₁, w₂, …, w_d)ᵀ 是与特征对应的权重向量。价值被近似为特征的加权和。</p>
+<p><strong>参数更新 (半梯度 TD(0)):</strong> ∇ V̂(s, <strong>w</strong>) = φ(s) (线性函数对参数的梯度就是其特征向量) <strong>w</strong> ← <strong>w</strong> + α * [R + γ <strong>w</strong>ᵀ φ(S’) - <strong>w</strong>ᵀ φ(s)] * φ(s)</p>
+<p><strong>优点:</strong></p>
+<ul>
+<li>简单，计算高效。</li>
+<li>理论性质相对较好（例如，线性函数逼近下的 TD(0) 通常能收敛）。</li>
+</ul>
+<p><strong>缺点:</strong></p>
+<ul>
+<li><strong>特征工程 (Feature Engineering):</strong> 效果<strong>高度依赖</strong>于特征 φ(s) 的好坏。设计好的特征需要大量的领域知识和尝试。</li>
+<li><strong>表达能力有限:</strong> 线性模型只能表示状态特征和价值之间的线性关系，可能无法捕捉复杂的非线性价值函数。</li>
+</ul>
+<p>对于动作值函数 Q̂(s, a, w)，线性逼近可以表示为： Q̂(s, a, <strong>w</strong>) = <strong>w</strong>ᵀ φ(s, a) 其中 φ(s, a) 是状态-动作对的特征向量。</p>
+</section>
+<section id="概念-lab演示表格方法的局限性-cartpole" class="level1">
+<h1>概念 Lab/演示：表格方法的局限性 (CartPole)</h1>
+<p>回顾一下 CartPole-v1 环境：</p>
+<ul>
+<li><strong>目标:</strong> 控制小车左右移动，以保持杆子竖直不倒。</li>
+<li><strong>状态 (Observation):</strong> 一个包含 4 个<strong>连续</strong>值的向量：
+<ol type="1">
+<li>小车位置 (Cart Position)</li>
+<li>小车速度 (Cart Velocity)</li>
+<li>杆子角度 (Pole Angle)</li>
+<li>杆子角速度 (Pole Angular Velocity)</li>
+</ol></li>
+<li><strong>动作 (Action):</strong> 0 (向左推), 1 (向右推) (离散)。</li>
+<li><strong>奖励:</strong> 每保持一步奖励 +1。</li>
+<li><strong>结束条件:</strong> 杆子倾斜超过一定角度，或小车移出边界，或达到最大步数。</li>
+</ul>
+<p><strong>为什么表格型 Q-Learning/SARSA 难以处理 CartPole？</strong></p>
+<ol type="1">
+<li><strong>连续状态空间:</strong> 状态包含 4 个连续变量。理论上有无限多个可能的状态。</li>
+<li><strong>离散化的挑战:</strong>
+<ul>
+<li>我们可以尝试将每个连续变量离散化（分箱）。例如，将位置分成 10 个区间，速度分成 10 个区间，角度分成 20 个区间，角速度分成 20 个区间。</li>
+<li>即使这样粗略的离散化，总的状态数也将是 10 * 10 * 20 * 20 = 40,000 个。</li>
+<li>如果需要更精细的离散化，状态数量会急剧增加。</li>
+<li>离散化会丢失状态变量的精确信息。两个非常接近但落在不同箱子里的状态会被视为完全不同；而同一个箱子里的两个相距较远的状态会被视为相同。</li>
+</ul></li>
+<li><strong>维度灾难:</strong> 随着状态维度的增加（即使是离散化后），所需的状态数量呈指数级增长。表格方法无法有效处理。</li>
+</ol>
+<p><strong>结论:</strong> 对于像 CartPole 这样具有连续状态（即使动作是离散的）的问题，表格型方法不再适用，我们<strong>必须</strong>使用函数逼近。</p>
+</section>
+<section id="引入-stable-baselines3-sb3-库" class="level1">
+<h1>引入 Stable Baselines3 (SB3) 库</h1>
+<p>手动实现基于神经网络的函数逼近（如 DQN, A2C）涉及许多细节：网络结构设计、梯度计算、优化器选择、经验回放管理等。</p>
+<p><strong>Stable Baselines3 (SB3)</strong> 是一个基于 PyTorch 的开源库，它提供了<strong>可靠的、经过良好测试的深度强化学习 (Deep Reinforcement Learning, DRL)</strong> 算法实现。</p>
+<p><strong>主要目的:</strong> 让研究人员和开发者能够<strong>方便地使用</strong> SOTA (State-of-the-Art) 或经典的 DRL 算法来解决问题，而无需从头实现算法的复杂细节。</p>
+<p><strong>核心特点:</strong></p>
+<ul>
+<li><strong>多种 DRL 算法实现:</strong> 包括 DQN, A2C, PPO, SAC, TD3 等（我们将在后续课程中学习其中一些）。</li>
+<li><strong>统一的接口:</strong> 所有算法遵循类似的使用模式，易于切换和比较。</li>
+<li><strong>与 Gym/Gymnasium 兼容:</strong> 可以直接用于标准的 Gym/Gymnasium 环境。</li>
+<li><strong>预定义的策略网络:</strong> 为常见任务（如 MLP 网络用于向量输入，CNN 网络用于图像输入）提供了预定义的网络结构。</li>
+<li><strong>易于定制:</strong> 允许用户自定义网络结构、特征提取器等。</li>
+<li><strong>包含实用工具:</strong> 如回调函数 (Callbacks) 用于监控训练、保存模型、评估模型等。</li>
+</ul>
+<p><strong>基本用法概览 (以 DQN 为例，细节下周 Lab 讲解):</strong></p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> gymnasium <span class="im">as</span> gym</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> stable_baselines3 <span class="im">import</span> DQN</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> stable_baselines3.common.env_util <span class="im">import</span> make_vec_env <span class="co"># 用于创建向量化环境</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. 创建环境 (可以是单个环境，或多个并行环境以加速训练)</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># env = gym.make("CartPole-v1", render_mode="rgb_array") # 使用 rgb_array 模式进行训练</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>vec_env <span class="op">=</span> make_vec_env(<span class="st">"CartPole-v1"</span>, n_envs<span class="op">=</span><span class="dv">4</span>) <span class="co"># 创建 4 个并行环境</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. 定义模型 (选择算法，指定策略网络类型，传入环境)</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co"># "MlpPolicy": 使用多层感知机 (MLP) 作为 Q 网络</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> DQN(<span class="st">"MlpPolicy"</span>, vec_env, verbose<span class="op">=</span><span class="dv">1</span>, <span class="co"># verbose=1 打印训练信息</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>            learning_rate<span class="op">=</span><span class="fl">1e-4</span>,</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>            buffer_size<span class="op">=</span><span class="dv">100000</span>, <span class="co"># 经验回放缓冲区大小</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>            learning_starts<span class="op">=</span><span class="dv">1000</span>, <span class="co"># 多少步后开始学习</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>            batch_size<span class="op">=</span><span class="dv">32</span>,</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>            tau<span class="op">=</span><span class="fl">1.0</span>, <span class="co"># Target network update rate</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>            gamma<span class="op">=</span><span class="fl">0.99</span>,</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>            train_freq<span class="op">=</span><span class="dv">4</span>, <span class="co"># 每多少步训练一次</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>            gradient_steps<span class="op">=</span><span class="dv">1</span>,</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>            target_update_interval<span class="op">=</span><span class="dv">1000</span>, <span class="co"># Target network 更新频率</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>            exploration_fraction<span class="op">=</span><span class="fl">0.1</span>, <span class="co"># 探索率衰减的总步数比例</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>            exploration_final_eps<span class="op">=</span><span class="fl">0.05</span>, <span class="co"># 最终探索率</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>           )</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. 训练模型</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="co"># total_timesteps: 总的训练步数</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>model.learn(total_timesteps<span class="op">=</span><span class="dv">100000</span>, log_interval<span class="op">=</span><span class="dv">4</span>) <span class="co"># log_interval 控制打印频率</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. 保存模型</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>model.save(<span class="st">"dqn_cartpole"</span>)</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a><span class="co"># 5. 加载模型并使用 (评估/预测)</span></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a><span class="co"># del model # 删除现有模型 (可选)</span></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a><span class="co"># loaded_model = DQN.load("dqn_cartpole")</span></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a><span class="co"># # 使用加载的模型进行预测</span></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a><span class="co"># obs, info = vec_env.reset()</span></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a><span class="co"># for _ in range(1000):</span></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a><span class="co">#     action, _states = loaded_model.predict(obs, deterministic=True) # deterministic=True 使用贪心策略</span></span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a><span class="co">#     obs, rewards, terminated, truncated, infos = vec_env.step(action)</span></span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a><span class="co">#     # 注意：vec_env 的 render 需要特殊处理，或者创建一个单独的非向量化环境来可视化</span></span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a><span class="co">#     # env.render()</span></span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a><span class="co">#     if any(terminated) or any(truncated):</span></span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a><span class="co">#         obs, info = vec_env.reset()</span></span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>vec_env.close()</span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a><span class="co"># env.close() # 如果创建了单个环境</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="callout callout-style-default callout-important callout-titled" title="课程重点">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+课程重点
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>在本课程的后半部分，我们将<strong>重点学习如何使用 Stable Baselines3</strong> 来运行和理解 DRL 算法（如 DQN, A2C），而不是要求大家从头实现这些复杂的算法。你需要理解算法的核心思想、关键组件（如经验回放、目标网络）的作用，以及如何调整超参数来训练模型并分析结果。</p>
+</div>
+</div>
+<hr>
+<p><strong>下周预告:</strong> 深度 Q 网络 (Deep Q-Network, DQN)。我们将深入学习 DQN 如何使用神经网络逼近 Q 函数，以及经验回放和目标网络这两个关键技巧。Lab 6 将使用 Stable Baselines3 运行 DQN 解决 CartPole 问题。</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./week8_lecture.html" class="pagination-link" aria-label="Week 8: Q-Learning 应用讨论与中期回顾">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">Week 8: Q-Learning 应用讨论与中期回顾</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./week10_lecture.html" class="pagination-link" aria-label="Week 10: 深度 Q 网络 (DQN)">
+        <span class="nav-page-text"><span class="chapter-title">Week 10: 深度 Q 网络 (DQN)</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

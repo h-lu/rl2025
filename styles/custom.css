@@ -1,0 +1,256 @@
+/*  通用设置 (默认字体，用于其他操作系统或未识别的情况) */
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; /* 默认英文字体 */
+  font-size: 18px; /* 基础字号 */
+  line-height: 1.7; /* 行高 */
+  color: #333; /* 主要文本颜色 */
+  background-color: #f8f8f8; /* 淡灰色背景 */
+  -webkit-font-smoothing: antialiased; /* 字体抗锯齿，使字体更清晰 */
+}
+
+/*  标题样式 */
+h1, h2, h3, h4, h5, h6 {
+  font-family: serif; /* 默认衬线字体 */
+  color: #444; /* 标题颜色略深 */
+  font-weight: bold; /* 标题加粗 */
+  line-height: 1.3;
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+}
+
+h1 {
+  font-size: 2.5em; /* 一级标题字号 */
+}
+
+h2 {
+  font-size: 2em; /* 二级标题字号 */
+}
+
+h3 {
+  font-size: 1.6em; /* 三级标题字号 */
+}
+
+/*  段落样式 */
+p {
+  margin-bottom: 1.5em;
+}
+
+/*  链接样式 */
+a {
+  color: #007bff; /* 链接颜色，蓝色 */
+  text-decoration: none; /* 默认无下划线 */
+}
+
+a:hover {
+  color: #0056b3; /* 鼠标悬停链接颜色，深蓝色 */
+  text-decoration: underline; /* 鼠标悬停显示下划线 */
+}
+
+/*  代码块样式 */
+pre, code {
+  font-family: Menlo, Monaco, Consolas, "Courier New", monospace; /* 等宽字体 */
+  background-color: #f0f0f0; /* 代码块背景色 */
+  color: #222; /* 代码颜色 */
+  padding: 0.5em 1em;
+  border-radius: 5px; /* 圆角 */
+  font-size: 0.9em;
+}
+
+pre {
+  overflow-x: auto; /* 代码块水平滚动 */
+  padding: 1em;
+  line-height: 1.4;
+}
+
+/*  列表样式 */
+ul, ol {
+  margin-bottom: 1.5em;
+  padding-left: 1.5em;
+}
+
+/*  分隔线 */
+hr {
+  border: 0;
+  border-top: 1px solid #ddd;
+  margin: 2em 0;
+}
+
+/*  Quarto callout 样式 -  改进版 (标题内容上下结构) */
+.callout-note, .callout-tip, .callout-warning, .callout-important, .callout-caution {
+  display: block; /* 将 Flexbox 布局改为 Block 布局 */
+  border-radius: 8px;
+  margin-bottom: 1.5em;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  padding: 1em; /* 为 callout 容器添加内边距，包含图标和内容 */
+}
+
+.callout-icon {
+  width: auto; /* 图标区域宽度设置为 auto，不再固定宽度 */
+  height: auto; /* 图标区域高度设置为 auto，不再固定高度 */
+  display: inline-flex; /* 使用 inline-flex，使图标水平居中，垂直方向占据一行 */
+  justify-content: center;
+  align-items: center;
+  background-color: transparent;
+  font-size: 1.2em; /* 稍微减小图标字号 */
+  margin-right: 0.5em; /* 图标和标题之间增加一些间距 */
+  vertical-align: middle; /* 图标垂直居中对齐到标题 */
+}
+
+.callout-body {
+  padding: 0; /* 移除 callout-body 的内边距，内边距已添加到 callout 容器 */
+}
+
+.callout-title {
+  font-weight: bold;
+  margin-bottom: 0.2em; /* 稍微减小标题下边距 */
+  display: flex; /* 使用 Flexbox 布局，使图标和标题在同一行垂直居中对齐 */
+  align-items: center; /* 垂直居中对齐 */
+}
+
+/* 不同类型的 callout 图标颜色 */
+.callout-note {
+  background-color: #e7f3ff;
+  border-top: 3px solid #007bff;
+}
+
+.callout-note .callout-icon {
+  color: #007bff;
+}
+
+.callout-note .callout-icon::before {
+  content: "\f05a"; /* Font Awesome "info-circle" 图标 */
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;
+}
+
+.callout-tip {
+  background-color: #e8f8ec;
+  border-top: 3px solid #28a745;
+}
+
+.callout-tip .callout-icon {
+  color: #28a745;
+}
+
+.callout-tip .callout-icon::before {
+  content: "\f058"; /* Font Awesome "check-circle" 图标 */
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;
+}
+
+.callout-warning {
+  background-color: #fffbe6;
+  border-top: 3px solid #ffc107;
+}
+
+.callout-warning .callout-icon {
+  color: #ffc107;
+}
+
+.callout-warning .callout-icon::before {
+  content: "\f071"; /* Font Awesome "exclamation-triangle" 图标 */
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;
+}
+
+.callout-important {
+  background-color: #ffebee;
+  border-top: 3px solid #dc3545;
+}
+
+.callout-important .callout-icon {
+  color: #dc3545;
+}
+
+.callout-important .callout-icon::before {
+  content: "\f06a"; /* Font Awesome "exclamation-circle" 图标 */
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;
+}
+
+.callout-caution {
+  background-color: #fff2e0;
+  border-top: 3px solid #fd7e14;
+}
+
+.callout-caution .callout-icon {
+  color: #fd7e14;
+}
+
+.callout-caution .callout-icon::before {
+  content: "\f06d"; /* Font Awesome "bolt" 图标 */
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;
+}
+
+/*  目录 (TOC) 样式 */
+.quarto-title-block .title {
+  font-size: 3em; /* 文章页标题字号 */
+  font-weight: bold;
+  color: #222;
+}
+
+.quarto-title-block .subtitle {
+  font-size: 1.5em; /* 副标题字号 */
+  color: #555;
+  margin-top: 0.5em;
+}
+
+.quarto-title-block .author, .quarto-title-block .date {
+  color: #777; /* 作者和日期颜色 */
+  font-size: 1em;
+  margin-top: 1em;
+}
+
+#quarto-margin-sidebar .nav-link {
+  font-size: 0.95em; /* 侧边栏目录链接字号 */
+  color: #555;
+}
+
+#quarto-margin-sidebar .nav-link:hover {
+  color: #007bff; /* 侧边栏目录链接悬停颜色 */
+}
+
+#quarto-margin-sidebar .nav-item {
+  padding-top: 0.2em;
+  padding-bottom: 0.2em;
+}
+
+/*  页面最大宽度，居中显示 */
+.quarto- বই-page-columns {
+  max-width: 1200px; /* 页面内容最大宽度 */
+  margin: 0 auto; /* 页面居中 */
+  padding-left: 2em;
+  padding-right: 2em;
+}
+
+/*  页脚 */
+.footer {
+  text-align: center;
+  padding: 2em 0;
+  color: #777;
+  font-size: 0.9em;
+  border-top: 1px solid #eee;
+  margin-top: 4em;
+}
+
+/* Windows 系统字体设置 */
+@media screen and (os-system: windows) {
+  body {
+    font-family: "Microsoft YaHei", "SimSun", Arial, sans-serif; /* Windows 中文字体 */
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: "Microsoft YaHei", "SimSun", serif; /* Windows 标题字体 */
+  }
+}
+
+/* macOS 系统字体设置 */
+@media screen and (os-system: macos) {
+  body {
+    font-family: "PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif; /* macOS 中文字体 */
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: "PingFang SC", "Helvetica Neue", serif; /* macOS 标题字体 */
+  }
+} 

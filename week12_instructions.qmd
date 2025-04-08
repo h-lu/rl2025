@@ -1,0 +1,110 @@
+---
+title: "Week 12 - 教师指导手册"
+subtitle: "Actor-Critic 方法"
+format:
+  html:
+    toc: true
+    toc-location: left
+---
+
+# 教学目标 (Learning Objectives)
+
+*   **主要目标:**
+    *   学生理解 Actor-Critic (AC) 框架的基本思想：结合策略学习 (Actor) 和价值学习 (Critic)。
+    *   学生理解 Critic 的作用：提供低方差的评估信号（如 TD 误差或优势函数估计）来指导 Actor 更新。
+    *   学生掌握基本的 Actor-Critic 更新流程：Actor 更新策略参数 θ，Critic 更新价值参数 w。
+    *   学生了解优势函数估计在 AC 中的应用（使用 TD 误差 δ 作为 Aπ 的估计）。
+    *   学生理解 A2C (同步) 和 A3C (异步) 算法的基本概念和区别。
+    *   学生能够使用 Stable Baselines3 (SB3) 运行 A2C 算法解决 CartPole (离散动作) 和 Pendulum (连续动作) 问题。
+    *   学生能够对比 A2C 和 DQN 在 CartPole 上的表现。
+    *   学生能够解释为何 A2C 能处理连续动作空间。
+*   **次要目标:**
+    *   巩固策略梯度和 TD 学习的概念。
+    *   进一步培养学生使用 DRL 库进行实验、对比和分析的能力。
+    *   让学生了解处理连续动作空间的一种主流方法。
+
+# 重点概念 (Key Concepts)
+
+*   Actor-Critic (AC) 框架
+*   Actor (策略网络) π(a|s, **θ**)
+*   Critic (价值网络) V(s, **w**) 或 Q(s, a, **w**)
+*   Actor-Critic 交互与更新流程
+*   使用 TD 误差 δ 作为优势函数 Aπ 的估计
+*   Actor 更新规则: **θ** ← **θ** + α * ∇logπ * δ
+*   Critic 更新规则: **w** ← **w** + β * δ * ∇V
+*   A2C (Advantage Actor-Critic): 同步并行
+*   A3C (Asynchronous Advantage Actor-Critic): 异步并行 (概念)
+*   熵正则化 (Entropy Regularization) (概念, `ent_coef`)
+*   处理连续动作空间 (Actor 输出动作参数)
+*   Pendulum 环境 (作为连续动作示例)
+*   Stable Baselines3 (SB3) A2C 实现与关键超参数 (`n_steps`, `vf_coef`, `ent_coef`)
+
+# 时间分配建议 (Suggested Time Allocation - 2 Sessions)
+
+*   **Session 23 (约 90 分钟): Actor-Critic 理论**
+    *   回顾策略梯度 (PG) 和基线 (15 分钟): 强调 REINFORCE 的高方差以及引入基线 Vπ 的必要性，引出估计 Vπ 的需求。
+    *   Actor-Critic 框架 (25-30 分钟): **重点环节**。介绍 Actor 和 Critic 的角色分工。讲解两者如何交互以及 Critic 如何帮助 Actor（提供低方差指导信号）。
+    *   优势函数估计与更新规则 (20-25 分钟): 讲解如何使用 TD 误差 δ 作为优势函数的估计。展示 Actor 和 Critic 的基本更新规则。
+    *   A2C / A3C 算法概念 (15-20 分钟): 介绍 A2C（同步并行）和 A3C（异步并行）的基本思想和区别。说明 A2C 是实践中更常用的实现。提及熵正则化 (`ent_coef`) 鼓励探索的作用。
+    *   Q&A (5 分钟)
+*   **Session 24 (约 90 分钟): Lab 7 (SB3 A2C)**
+    *   回顾 Actor-Critic 框架 (5 分钟)。
+    *   Lab 7 目标与环境介绍 (10 分钟): 介绍 CartPole 和 Pendulum 环境（重点是 Pendulum 的连续动作空间）。明确 Lab 任务是用 A2C 解决这两个问题并进行对比分析。
+    *   SB3 A2C 超参数介绍 (10-15 分钟): 介绍 A2C 的关键超参数，特别是 `n_steps`, `vf_coef`, `ent_coef`。
+    *   指导运行 Lab 7 代码 (40-45 分钟): **重点环节**。带领学生运行 A2C 代码（先 CartPole，后 Pendulum）。指导查看 TensorBoard 曲线和评估结果。
+    *   结果对比与讨论 (15-20 分钟): 引导学生对比 A2C 和 DQN 在 CartPole 上的表现。讨论 A2C 为何能处理 Pendulum 的连续动作。
+    *   Lab 提交要求说明 & Q&A (5 分钟)。
+
+# 教学活动与建议 (Teaching Activities & Suggestions)
+
+## Session 23
+
+*   **Actor-Critic 引入:**
+    *   **类比:** “演员 (Actor) 在台上表演（选择动作），评论家 (Critic) 在台下打分（评估价值）。演员根据评论家的反馈调整表演（改进策略），评论家也通过观察演员的表演和观众反应来提高自己的鉴赏水平（改进价值估计）。”
+    *   **连接 PG 与 TD:** 强调 AC 结合了 PG（Actor 更新）和 TD（Critic 更新及提供 TD 误差）两者的优点。
+*   **更新规则:**
+    *   **并行性:** 强调 Actor 和 Critic 是**同时**学习和更新的。
+    *   **TD 误差的作用:** δ 不仅用于更新 Critic (使其更准)，也用于更新 Actor (告诉 Actor 这个动作比预期好还是差)。
+*   **A2C/A3C:**
+    *   **并行化动机:** 解释使用多个并行环境/线程是为了更快地收集多样化的数据，提高训练效率和稳定性（类似经验回放的作用，但机制不同）。
+    *   **同步 vs. 异步:** 简单解释 A2C 是等所有“工人”完成一批任务再统一更新“蓝图”，A3C 是每个“工人”完成任务就去更新“蓝图”，可能造成冲突但速度快。强调 A2C 更常用。
+    *   **熵正则化:** 简单解释 `ent_coef` 是为了鼓励策略保持一定的随机性（熵），避免过早收敛到确定性次优策略。
+
+## Session 24 (Lab 7)
+
+*   **SB3 A2C 超参数:**
+    *   `n_steps`: 每个环境在更新前运行的步数。可以看作是计算 TD(n) 或 GAE (Generalized Advantage Estimation) 的视野长度。影响偏差和方差。
+    *   `vf_coef`: Critic (值函数) 损失的权重。控制 Critic 学习的强度。
+    *   `ent_coef`: 熵正则化强度。太高可能导致策略过于随机，太低可能探索不足。
+*   **Lab 代码指导:**
+    *   **CartPole vs. Pendulum:** 运行 CartPole 代码后，引导学生取消注释 Pendulum 部分。强调两者环境的主要区别在于**动作空间** (离散 vs. 连续)。
+    *   **连续动作处理:** 解释 A2C 的 Actor 网络可以直接输出连续动作的参数（如高斯分布的均值和标准差），然后从中采样得到具体动作。这是 DQN 做不到的。
+    *   **TensorBoard:** 继续指导学生使用 TensorBoard 监控 `ep_rew_mean`。Pendulum 的奖励是负的，目标是让奖励接近 0 或更高。
+*   **结果讨论:**
+    *   **A2C vs. DQN (CartPole):** 引导学生从收敛速度、最终性能、稳定性等方面进行比较。通常 A2C 可能比 DQN (带经验回放) 样本效率低一些，但实现和调参可能相对简单。
+    *   **连续动作:** 强调 A2C 能够自然处理 Pendulum 的连续动作，而 DQN 需要特殊扩展（如 DDPG, SAC）才能处理。
+
+# 潜在学生问题与解答 (Potential Student Questions & Answers)
+
+*   **Q: Actor-Critic 和带基线的 REINFORCE 有什么区别？**
+    *   A: 两者都使用基线来减小方差。主要区别在于**如何估计基线 Vπ** 以及**更新频率**。REINFORCE 使用蒙特卡洛方法（完整回合回报）来估计 G_t，然后可能用 G_t 的平均值作为 Vπ 的估计（或者单独用 MC 估计 Vπ）。Actor-Critic 使用**TD 学习**来估计 Vπ（Critic 部分），并且通常**每一步**都进行更新（Actor 和 Critic 都更新），而不是像 REINFORCE 那样需要等待回合结束。这使得 Actor-Critic 通常更高效。
+*   **Q: A2C 中的 Critic 学习 V(s) 还是 Q(s, a)？**
+    *   A: 标准的 A2C 通常让 Critic 学习**状态值函数 V(s, w)**。然后使用 TD 误差 δ = R + γV(S', w) - V(S, w) 作为优势函数的估计来更新 Actor。也有一些 Actor-Critic 变种让 Critic 学习 Q(s, a, w)，但这通常更复杂。
+*   **Q: A2C 既然是 On-Policy，为什么还需要并行环境？它和经验回放有什么关系？**
+    *   A: A2C 是 On-Policy 的，意味着它使用当前策略产生的数据进行更新。使用并行环境的主要目的是**加速数据收集**和**去相关性**。多个并行的智能体同时与环境交互，可以在单位时间内收集到更多样化的经验，这在一定程度上起到了类似经验回放（打破数据相关性）的作用，但机制不同（A2C 通常不存储和重放旧经验）。这使得 On-Policy 的 A2C 也能相对稳定和高效地训练。
+*   **Q: Lab 代码里 A2C 的 `n_steps` 参数是什么意思？**
+    *   A: `n_steps` 指的是在进行一次模型更新之前，每个并行环境需要运行多少步。例如，`n_steps=5` 意味着智能体会先在每个环境里走 5 步，收集这 5 步的经验 (S, A, R, S')，然后用这些经验来计算 TD 误差（可能是多步 TD 误差或 GAE）和梯度，最后更新一次 Actor 和 Critic 的网络参数。这个参数影响了 TD 估计的偏差和方差（类似 TD(λ) 中的 λ）。
+
+# 与后续课程的联系 (Connections to Future Topics)
+
+*   Actor-Critic 是许多现代高级 DRL 算法的基础，如 PPO (Proximal Policy Optimization), SAC (Soft Actor-Critic), DDPG (Deep Deterministic Policy Gradient) 等。理解 AC 框架有助于理解这些更复杂的算法。
+*   A2C 能够处理连续动作空间，使其适用于更广泛的商业问题，如资源分配比例、连续定价、机器人控制等，这将在后续案例分析中体现。
+
+# 教师准备建议 (Preparation Suggestions)
+
+*   准备好清晰解释 Actor-Critic 框架的图示和类比。
+*   熟悉 Actor 和 Critic 的更新规则及其联系。
+*   理解 A2C 和 A3C 的核心区别。
+*   确保自己能流畅运行 Lab 7 的 A2C 代码（CartPole 和 Pendulum），并能解释关键超参数。
+*   准备好对比 A2C 和 DQN 的讨论点。
+*   （可选）准备一个简单的图示解释 Actor 如何输出连续动作（如高斯分布）。

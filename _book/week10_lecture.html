@@ -1,0 +1,1466 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Week 10: 深度 Q 网络 (DQN) – 智能计算</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./week11_lecture.html" rel="next">
+<link href="./week9_lecture.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xkm/sYwpb+ilR5gUw==" crossorigin="anonymous" referrerpolicy="no-referrer">
+
+
+<link rel="stylesheet" href="styles/custom.css">
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./week1_lecture.html">讲义</a></li><li class="breadcrumb-item"><a href="./week10_lecture.html"><span class="chapter-title">Week 10: 深度 Q 网络 (DQN)</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">智能计算</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">课程介绍</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">讲义</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week1_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 1: 商业决策智能化与强化学习概览</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week2_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 2: 序贯决策建模 - 马尔可夫决策过程 (MDP)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week3_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 3: 最优决策与 Bellman 最优方程</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week4_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 4: 蒙特卡洛方法 - 从完整经验中学习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week5_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 5: 时序差分学习 - 从不完整经验中学习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week6_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 6: 同策略控制 - SARSA</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week7_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 7: 异策略控制 - Q-Learning (重点)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week8_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 8: Q-Learning 应用讨论与中期回顾</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week9_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 9: 函数逼近入门</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week10_lecture.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Week 10: 深度 Q 网络 (DQN)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week11_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 11: 策略梯度方法 (Policy Gradient Methods)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week12_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 12: Actor-Critic 方法</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week13_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 13: 商业案例分析 1 - 动态定价与资源优化</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week14_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 14: 商业案例分析 2 - 个性化推荐与营销</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week15_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 15: 实践挑战、伦理规范与项目指导</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week16_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 16: 课程总结与未来展望</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">练习</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week1_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 1 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week2_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 2 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week3_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 3 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week4_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 4 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week5_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 5 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week6_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 6 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week7_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 7 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week8_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 8 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week9_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 9 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week10_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 10 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week11_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 11 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week12_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 12 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week13_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 13 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week14_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 14 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week15_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 15 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week16_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 16 - 学生练习</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#回顾函数逼近的必要性" id="toc-回顾函数逼近的必要性" class="nav-link active" data-scroll-target="#回顾函数逼近的必要性">回顾：函数逼近的必要性</a></li>
+  <li><a href="#dqn-核心思想用神经网络逼近-q-函数" id="toc-dqn-核心思想用神经网络逼近-q-函数" class="nav-link" data-scroll-target="#dqn-核心思想用神经网络逼近-q-函数">DQN 核心思想：用神经网络逼近 Q 函数</a></li>
+  <li><a href="#挑战q-learning-神经网络-不稳定" id="toc-挑战q-learning-神经网络-不稳定" class="nav-link" data-scroll-target="#挑战q-learning-神经网络-不稳定">挑战：Q-Learning + 神经网络 = 不稳定？</a></li>
+  <li><a href="#dqn-的关键技巧" id="toc-dqn-的关键技巧" class="nav-link" data-scroll-target="#dqn-的关键技巧">DQN 的关键技巧</a>
+  <ul class="collapse">
+  <li><a href="#经验回放-experience-replay" id="toc-经验回放-experience-replay" class="nav-link" data-scroll-target="#经验回放-experience-replay">1. 经验回放 (Experience Replay)</a></li>
+  <li><a href="#目标网络-target-network" id="toc-目标网络-target-network" class="nav-link" data-scroll-target="#目标网络-target-network">2. 目标网络 (Target Network)</a></li>
+  </ul></li>
+  <li><a href="#dqn-算法流程-结合-experience-replay-和-target-network" id="toc-dqn-算法流程-结合-experience-replay-和-target-network" class="nav-link" data-scroll-target="#dqn-算法流程-结合-experience-replay-和-target-network">DQN 算法流程 (结合 Experience Replay 和 Target Network)</a></li>
+  <li><a href="#lab-6-使用-stable-baselines3-运行-dqn-解决-cartpole" id="toc-lab-6-使用-stable-baselines3-运行-dqn-解决-cartpole" class="nav-link" data-scroll-target="#lab-6-使用-stable-baselines3-运行-dqn-解决-cartpole">Lab 6: 使用 Stable Baselines3 运行 DQN 解决 CartPole</a>
+  <ul class="collapse">
+  <li><a href="#目标" id="toc-目标" class="nav-link" data-scroll-target="#目标">目标</a></li>
+  <li><a href="#stable-baselines3-dqn-超参数简介" id="toc-stable-baselines3-dqn-超参数简介" class="nav-link" data-scroll-target="#stable-baselines3-dqn-超参数简介">Stable Baselines3 DQN 超参数简介</a></li>
+  <li><a href="#示例代码-sb3-dqn-on-cartpole" id="toc-示例代码-sb3-dqn-on-cartpole" class="nav-link" data-scroll-target="#示例代码-sb3-dqn-on-cartpole">示例代码 (SB3 DQN on CartPole)</a></li>
+  <li><a href="#任务与思考" id="toc-任务与思考" class="nav-link" data-scroll-target="#任务与思考">任务与思考</a></li>
+  <li><a href="#提交要求" id="toc-提交要求" class="nav-link" data-scroll-target="#提交要求">提交要求</a></li>
+  <li><a href="#任务与思考-1" id="toc-任务与思考-1" class="nav-link" data-scroll-target="#任务与思考-1">任务与思考</a></li>
+  <li><a href="#提交要求-1" id="toc-提交要求-1" class="nav-link" data-scroll-target="#提交要求-1">提交要求</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./week1_lecture.html">讲义</a></li><li class="breadcrumb-item"><a href="./week10_lecture.html"><span class="chapter-title">Week 10: 深度 Q 网络 (DQN)</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-title">Week 10: 深度 Q 网络 (DQN)</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="回顾函数逼近的必要性" class="level1">
+<h1>回顾：函数逼近的必要性</h1>
+<p>上周我们讨论了表格型 RL 方法的局限性：</p>
+<ul>
+<li>无法处理<strong>巨大或连续的状态空间</strong>（维度灾难）。</li>
+<li>无法处理<strong>连续动作空间</strong>（对于 Q-Learning 等）。</li>
+<li>缺乏<strong>泛化能力</strong>，需要访问每个状态（或状态-动作对）多次。</li>
+</ul>
+<p>解决方案是使用<strong>函数逼近 (Function Approximation)</strong>，用带参数的函数 V̂(s, <strong>w</strong>) 或 Q̂(s, a, <strong>w</strong>) 来近似价值函数。</p>
+<ul>
+<li><strong>线性函数逼近:</strong> 简单，但表达能力有限，且依赖特征工程。</li>
+<li><strong>非线性函数逼近 (如神经网络):</strong> 表达能力强，可以自动学习特征表示，是现代强化学习（深度强化学习）的核心。</li>
+</ul>
+<p>今天，我们将学习第一个重要的深度强化学习算法：<strong>深度 Q 网络 (Deep Q-Network, DQN)</strong>。</p>
+</section>
+<section id="dqn-核心思想用神经网络逼近-q-函数" class="level1">
+<h1>DQN 核心思想：用神经网络逼近 Q 函数</h1>
+<p>Q-Learning 的目标是学习最优动作值函数 Q*(s, a)。DQN 的核心思想就是使用一个<strong>深度神经网络 (Deep Neural Network, DNN)</strong> 作为函数逼近器来近似 Q*(s, a)。</p>
+<p>Q̂(s, a; <strong>w</strong>) ≈ Q*(s, a)</p>
+<p>其中 <strong>w</strong> 代表神经网络的权重和偏置参数。</p>
+<p><strong>网络结构通常是:</strong></p>
+<ul>
+<li><strong>输入:</strong> 状态 s (通常表示为一个向量或张量，例如 CartPole 的 4 维向量，或 Atari 游戏的屏幕像素)。</li>
+<li><strong>输出:</strong> 对于<strong>每个离散动作 a</strong>，输出一个对应的 Q 值估计 Q̂(s, a; <strong>w</strong>)。
+<ul>
+<li>例如，对于 CartPole (动作 0: 左, 动作 1: 右)，网络输出一个包含两个值的向量：[Q̂(s, 0; w), Q̂(s, 1; w)]。</li>
+</ul></li>
+</ul>
+<p><img src="https://pytorch.org/tutorials/_images/dqn.png" class="img-fluid" alt="DQN Network Architecture Example"> <em>(图片来源: PyTorch Tutorials - DQN)</em></p>
+<p><strong>学习过程 (基于 Q-Learning):</strong></p>
+<p>我们仍然使用 Q-Learning 的更新思想，但现在是更新神经网络的参数 <strong>w</strong>，而不是更新表格条目。目标是最小化 <strong>TD 误差</strong>。</p>
+<p>回顾 Q-Learning 的 TD 目标： Target = R + γ max_{a’} Q(S’, a’)</p>
+<p>在 DQN 中，我们用神经网络来计算这个目标： Target = R + γ max_{a’} Q̂(S’, a’; <strong>w</strong>)</p>
+<p>损失函数 (Loss Function) 通常使用<strong>均方误差 (Mean Squared Error, MSE)</strong> 或 <strong>Huber Loss</strong>: Loss(<strong>w</strong>) = E [ ( Target - Q̂(S, A; <strong>w</strong>) )² ]</p>
+<p>然后使用<strong>梯度下降</strong> (或其变种，如 Adam) 来更新参数 <strong>w</strong>，以减小这个损失： <strong>w</strong> ← <strong>w</strong> - α * ∇ Loss(<strong>w</strong>)</p>
+</section>
+<section id="挑战q-learning-神经网络-不稳定" class="level1">
+<h1>挑战：Q-Learning + 神经网络 = 不稳定？</h1>
+<p>将标准的 Q-Learning 直接与非线性函数逼近器（如神经网络）结合，在实践中发现<strong>非常不稳定</strong>，甚至可能<strong>发散 (diverge)</strong>。主要原因有两个：</p>
+<ol type="1">
+<li><strong>样本之间的相关性 (Correlations between samples):</strong>
+<ul>
+<li>RL 智能体收集到的经验数据 (S, A, R, S’) 是按时间顺序产生的，相邻的样本之间通常高度相关。</li>
+<li>如果直接按顺序用这些相关的样本来训练神经网络，会违反许多优化算法（如 SGD）关于样本独立同分布 (i.i.d.) 的假设，导致训练效率低下，模型可能在局部数据上过拟合，忘记过去的经验。</li>
+</ul></li>
+<li><strong>目标值与估计值的耦合 (Non-stationary targets):</strong>
+<ul>
+<li>Q-Learning 的 TD 目标 <code>Target = R + γ max_{a'} Q̂(S', a'; **w**)</code> 依赖于当前的 Q 网络参数 <strong>w</strong>。</li>
+<li>这意味着，在训练过程中，我们每更新一次参数 <strong>w</strong>，用于计算损失的<strong>目标值本身也在变化</strong>。</li>
+<li>这就像在追逐一个移动的目标，使得训练过程非常不稳定，Q 值可能会剧烈震荡甚至发散。</li>
+</ul></li>
+</ol>
+</section>
+<section id="dqn-的关键技巧" class="level1">
+<h1>DQN 的关键技巧</h1>
+<p>为了解决上述稳定性问题，DQN 引入了两个关键技巧：</p>
+<section id="经验回放-experience-replay" class="level2">
+<h2 class="anchored" data-anchor-id="经验回放-experience-replay">1. 经验回放 (Experience Replay)</h2>
+<p><strong>思想:</strong> 不再按顺序使用实时产生的经验来训练网络，而是将经验存储起来，然后随机采样进行训练。</p>
+<p><strong>机制:</strong></p>
+<ul>
+<li>维护一个<strong>回放缓冲区 (Replay Buffer / Memory)</strong> D，用于存储大量的历史转移 (transitions): (S_t, A_t, R_{t+1}, S_{t+1}, done_flag)。<code>done_flag</code> 标记 S_{t+1} 是否是终止状态。</li>
+<li>在每个时间步 t，智能体执行动作 A_t，观察到 R_{t+1}, S_{t+1} 后，将这个转移 (S_t, A_t, R_{t+1}, S_{t+1}, done) 存入缓冲区 D。如果缓冲区满了，通常会移除最旧的经验。</li>
+<li>在<strong>训练</strong>时，不是使用刚刚产生的那个转移，而是从缓冲区 D 中<strong>随机采样</strong>一个<strong>小批量 (mini-batch)</strong> 的转移 (S_j, A_j, R_{j+1}, S_{j+1}, done_j)。</li>
+<li>使用这个 mini-batch 来计算损失并更新网络参数 <strong>w</strong>。</li>
+</ul>
+<p><strong>优点:</strong></p>
+<ul>
+<li><strong>打破数据相关性:</strong> 随机采样打破了原始经验序列的时间相关性，使得样本更接近独立同分布，提高了训练的稳定性和效率。</li>
+<li><strong>提高数据利用率:</strong> 一个经验转移可能被多次采样用于训练，使得智能体能够从过去的经验中反复学习，提高了样本效率。</li>
+</ul>
+<p><img src="https://spinningup.openai.com/en/latest/_images/experience_replay.png" class="img-fluid" alt="Experience Replay"> <em>(图片来源: OpenAI Spinning Up)</em></p>
+</section>
+<section id="目标网络-target-network" class="level2">
+<h2 class="anchored" data-anchor-id="目标网络-target-network">2. 目标网络 (Target Network)</h2>
+<p><strong>思想:</strong> 使用一个<strong>独立的、更新较慢</strong>的网络来计算 TD 目标值，从而稳定目标。</p>
+<p><strong>机制:</strong></p>
+<ul>
+<li>除了主要的 Q 网络 Q̂(s, a; <strong>w</strong>) (也称为 <strong>Online Network</strong>)，再创建一个结构完全相同但参数不同的<strong>目标网络 (Target Network)</strong> Q̂(s, a; <strong>w⁻</strong>)。</li>
+<li>在计算 TD 目标时，使用<strong>目标网络</strong>的参数 <strong>w⁻</strong>:
+<ul>
+<li>Target = R + γ max_{a’} Q̂(S’, a’; <strong>w⁻</strong>) (如果 S’ 非终止)</li>
+<li>Target = R (如果 S’ 终止)</li>
+</ul></li>
+<li><strong>在线网络 Q̂(s, a; w)</strong> 的参数 <strong>w</strong> 在每个训练步（或每几个训练步）通过梯度下降进行更新。</li>
+<li><strong>目标网络 Q̂(s, a; w⁻)</strong> 的参数 <strong>w⁻</strong> <strong>不</strong>通过梯度下降更新，而是<strong>定期</strong>从在线网络复制参数：<strong>w⁻ ← w</strong> (例如，每隔 C 步，C 通常是一个较大的数，如 1000 或 10000)。或者使用<strong>软更新 (Soft Update)</strong>：<strong>w⁻ ← τw + (1-τ)w⁻</strong>，其中 τ 是一个很小的数 (e.g., 0.005)，使得目标网络参数缓慢地跟踪在线网络参数。</li>
+</ul>
+<p><strong>优点:</strong></p>
+<ul>
+<li><strong>稳定 TD 目标:</strong> 目标网络参数 <strong>w⁻</strong> 在一段时间内保持固定，使得 TD 目标值相对稳定，减少了 Q 值更新的震荡，提高了训练稳定性。在线网络 <strong>w</strong> 的更新不再直接影响当前计算的目标值。</li>
+</ul>
+</section>
+</section>
+<section id="dqn-算法流程-结合-experience-replay-和-target-network" class="level1">
+<h1>DQN 算法流程 (结合 Experience Replay 和 Target Network)</h1>
+<pre><code>Initialize:
+  Replay buffer D with capacity N
+  Online Q-network Q̂(s, a; w) with random weights w
+  Target Q-network Q̂(s, a; w⁻) with weights w⁻ = w
+  α ← learning rate
+  γ ← discount factor
+  ε ← initial exploration rate
+  C ← target network update frequency (for hard update) or τ (for soft update)
+
+Loop for each episode:
+  Initialize S (first state)
+  Loop for each step t = 1, T:
+    # 1. Choose action using behavior policy (ε-greedy on online network)
+    With probability ε select random action A_t
+    Otherwise select A_t = argmax_a Q̂(S_t, a; w)
+
+    # 2. Execute action, observe reward R_{t+1} and next state S_{t+1}
+    Execute A_t, observe R_{t+1}, S_{t+1}, done_flag
+
+    # 3. Store transition in replay buffer D
+    Store (S_t, A_t, R_{t+1}, S_{t+1}, done_flag) in D
+
+    # 4. Sample mini-batch from D (if buffer size &gt; learning_starts)
+    If size of D &gt; learning_starts:
+      Sample random mini-batch of transitions (S_j, A_j, R_{j+1}, S_{j+1}, done_j) from D
+
+      # 5. Calculate TD targets using target network
+      Targets = []
+      for j in mini-batch:
+        If done_j:
+          Target_j = R_{j+1}
+        Else:
+          # Use target network w⁻ to get max Q value for next state
+          # Original DQN: Q_next_target = max_{a'} Q̂(S_{j+1}, a'; w⁻)
+          # Double DQN variation (often used in practice):
+          #   a_max = argmax_{a'} Q̂(S_{j+1}, a'; w) # Action selected by online network
+          #   Q_next_target = Q̂(S_{j+1}, a_max; w⁻) # Value evaluated by target network
+          Q_next_target = max_{a'} Q̂(S_{j+1}, a'; w⁻) # Using original DQN target for simplicity here
+          Target_j = R_{j+1} + γ * Q_next_target
+        Targets.append(Target_j)
+
+      # 6. Perform gradient descent step on online network
+      # Get Q values for the actions taken (A_j) from the online network
+      Q_online_values = Q̂(S_j, A_j; w) for j in mini-batch
+      # Calculate loss: e.g., MSE Loss = (1/batch_size) * Σ_j (Targets[j] - Q_online_values[j])²
+      # Update online network weights w using gradient descent: w ← w - α * ∇ Loss(w)
+
+      # 7. Update target network (periodically or softly)
+      # Hard update:
+      # If t % C == 0:
+      #   w⁻ ← w
+      # Soft update (more common in SB3):
+      # w⁻ ← τ*w + (1-τ)*w⁻
+
+    S_t ← S_{t+1} # Move to next state
+
+    If done_flag, break inner loop (episode ends)
+
+  # (Optional) Decay ε</code></pre>
+<p><em>(注：步骤 5 中提到了 Double DQN 的变体，这是对原始 DQN 的一个常用改进，用于缓解 Q 值过高估计的问题。原始 DQN 直接使用 <code>max_{a'} Q̂(S_{j+1}, a'; w⁻)</code>。SB3 的实现可能包含这类改进。为简化起见，伪代码中仍展示原始 DQN 的目标计算方式。)</em></p>
+</section>
+<section id="lab-6-使用-stable-baselines3-运行-dqn-解决-cartpole" class="level1">
+<h1>Lab 6: 使用 Stable Baselines3 运行 DQN 解决 CartPole</h1>
+<section id="目标" class="level2">
+<h2 class="anchored" data-anchor-id="目标">目标</h2>
+<ol type="1">
+<li>熟悉使用 Stable Baselines3 (SB3) 库的基本流程：创建环境、定义模型、训练、保存、评估。</li>
+<li>使用 SB3 提供的 DQN 实现来解决 CartPole-v1 问题。</li>
+<li>学习如何设置 DQN 的关键超参数。</li>
+<li>学习如何监控训练过程（观察奖励曲线）。</li>
+<li>评估训练好的模型性能。</li>
+</ol>
+</section>
+<section id="stable-baselines3-dqn-超参数简介" class="level2">
+<h2 class="anchored" data-anchor-id="stable-baselines3-dqn-超参数简介">Stable Baselines3 DQN 超参数简介</h2>
+<p>我们在上周的 SB3 示例代码中看到了一些 DQN 的超参数，这里再解释一下关键的几个：</p>
+<ul>
+<li><code>policy="MlpPolicy"</code>: 指定使用多层感知机 (MLP) 作为 Q 网络。对于图像输入，可以使用 “CnnPolicy”。</li>
+<li><code>env</code>: 传入的 Gym/Gymnasium 环境实例（或向量化环境）。</li>
+<li><code>learning_rate</code>: 梯度下降的学习率 α。</li>
+<li><code>buffer_size</code>: 经验回放缓冲区 D 的大小 N。</li>
+<li><code>learning_starts</code>: 收集多少步经验后才开始训练网络（填充缓冲区）。</li>
+<li><code>batch_size</code>: 每次从缓冲区采样多少经验进行训练。</li>
+<li><code>tau</code>: 软更新目标网络的系数 (SB3 DQN 默认使用软更新，<code>tau=1.0</code> 相当于硬更新)。</li>
+<li><code>gamma</code>: 折扣因子 γ。</li>
+<li><code>train_freq</code>: 每收集多少步经验执行一次训练更新。可以是一个整数（步数），也可以是一个元组 <code>(frequency, unit)</code>，如 <code>(1, "episode")</code> 表示每回合结束时训练一次。</li>
+<li><code>gradient_steps</code>: 每次训练更新执行多少次梯度下降步骤。</li>
+<li><code>target_update_interval</code>: （硬更新时）每隔多少步将在线网络权重复制到目标网络。SB3 DQN 默认使用软更新（通过 <code>tau</code> 控制），这个参数可能不直接使用，但理解其概念很重要。</li>
+<li><code>exploration_fraction</code>: 总训练步数中，用于将探索率 ε 从初始值衰减到最终值所占的比例。</li>
+<li><code>exploration_initial_eps</code>: 初始探索率 ε (通常为 1.0)。</li>
+<li><code>exploration_final_eps</code>: 最终探索率 ε (例如 0.05 或 0.1)。</li>
+<li><code>verbose</code>: 控制打印信息的详细程度 (0: 不打印, 1: 打印训练信息, 2: 更详细)。</li>
+</ul>
+</section>
+<section id="示例代码-sb3-dqn-on-cartpole" class="level2">
+<h2 class="anchored" data-anchor-id="示例代码-sb3-dqn-on-cartpole">示例代码 (SB3 DQN on CartPole)</h2>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> gymnasium <span class="im">as</span> gym</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> stable_baselines3 <span class="im">import</span> DQN</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> stable_baselines3.common.env_util <span class="im">import</span> make_vec_env</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> stable_baselines3.common.evaluation <span class="im">import</span> evaluate_policy</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> time</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co"># 创建日志目录</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>log_dir <span class="op">=</span> <span class="st">"/tmp/gym/"</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>os.makedirs(log_dir, exist_ok<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. 创建环境 (使用向量化环境加速)</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="co"># 使用 Monitor wrapper 来记录训练过程中的回合奖励等信息</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> stable_baselines3.common.monitor <span class="im">import</span> Monitor</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>vec_env <span class="op">=</span> make_vec_env(<span class="st">"CartPole-v1"</span>, n_envs<span class="op">=</span><span class="dv">4</span>)</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Monitor wrapper 通常在 make_vec_env 内部自动添加，或者可以手动添加</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="co"># vec_env = Monitor(vec_env, log_dir) # Monitor 通常用于单个环境，VecEnv有自己的日志记录</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. 定义 DQN 模型 (可以调整超参数进行实验)</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> DQN(<span class="st">"MlpPolicy"</span>, vec_env, verbose<span class="op">=</span><span class="dv">1</span>,</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>            learning_rate<span class="op">=</span><span class="fl">1e-4</span>,       <span class="co"># 学习率</span></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>            buffer_size<span class="op">=</span><span class="dv">100000</span>,       <span class="co"># Replay buffer 大小</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>            learning_starts<span class="op">=</span><span class="dv">5000</span>,     <span class="co"># 多少步后开始学习</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>            batch_size<span class="op">=</span><span class="dv">32</span>,            <span class="co"># Mini-batch 大小</span></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>            tau<span class="op">=</span><span class="fl">1.0</span>,                  <span class="co"># Target network 更新系数 (1.0 for hard update)</span></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>            gamma<span class="op">=</span><span class="fl">0.99</span>,               <span class="co"># 折扣因子</span></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>            train_freq<span class="op">=</span><span class="dv">4</span>,             <span class="co"># 每 4 步训练一次</span></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>            gradient_steps<span class="op">=</span><span class="dv">1</span>,         <span class="co"># 每次训练执行 1 次梯度更新</span></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>            target_update_interval<span class="op">=</span><span class="dv">10000</span>, <span class="co"># Target network 更新频率 (硬更新)</span></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>            exploration_fraction<span class="op">=</span><span class="fl">0.1</span>, <span class="co"># 10% 的步数用于探索率衰减</span></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>            exploration_initial_eps<span class="op">=</span><span class="fl">1.0</span>,<span class="co"># 初始探索率</span></span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>            exploration_final_eps<span class="op">=</span><span class="fl">0.05</span>, <span class="co"># 最终探索率</span></span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>            optimize_memory_usage<span class="op">=</span><span class="va">False</span>, <span class="co"># 在内存足够时设为 False 可能更快</span></span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>            tensorboard_log<span class="op">=</span>log_dir   <span class="co"># 指定 TensorBoard 日志目录</span></span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>           )</span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. 训练模型</span></span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Starting training..."</span>)</span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>start_time <span class="op">=</span> time.time()</span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a><span class="co"># 训练更长时间以看到效果</span></span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a><span class="co"># log_interval 控制打印到控制台的频率，TensorBoard 日志默认会记录</span></span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>model.learn(total_timesteps<span class="op">=</span><span class="dv">100000</span>, log_interval<span class="op">=</span><span class="dv">100</span>)</span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>end_time <span class="op">=</span> time.time()</span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Training finished in </span><span class="sc">{</span>end_time <span class="op">-</span> start_time<span class="sc">:.2f}</span><span class="ss"> seconds."</span>)</span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. 保存模型</span></span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>model_path <span class="op">=</span> os.path.join(log_dir, <span class="st">"dqn_cartpole_sb3"</span>)</span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a>model.save(model_path)</span>
+<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Model saved to </span><span class="sc">{</span>model_path<span class="sc">}</span><span class="ss">.zip"</span>)</span>
+<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a><span class="co"># 5. 评估训练好的模型</span></span>
+<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Evaluating trained model..."</span>)</span>
+<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a><span class="co"># 创建一个单独的评估环境</span></span>
+<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a>eval_env <span class="op">=</span> gym.make(<span class="st">"CartPole-v1"</span>)</span>
+<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a><span class="co"># n_eval_episodes: 评估多少个回合</span></span>
+<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a><span class="co"># deterministic=True: 使用贪心策略进行评估</span></span>
+<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a>mean_reward, std_reward <span class="op">=</span> evaluate_policy(model, eval_env, n_eval_episodes<span class="op">=</span><span class="dv">20</span>, deterministic<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Evaluation results: Mean reward = </span><span class="sc">{</span>mean_reward<span class="sc">:.2f}</span><span class="ss"> +/- </span><span class="sc">{</span>std_reward<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
+<span id="cb2-60"><a href="#cb2-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-61"><a href="#cb2-61" aria-hidden="true" tabindex="-1"></a><span class="co"># 6. (可选) 加载模型并可视化</span></span>
+<span id="cb2-62"><a href="#cb2-62" aria-hidden="true" tabindex="-1"></a><span class="co"># del model # 删除现有模型</span></span>
+<span id="cb2-63"><a href="#cb2-63" aria-hidden="true" tabindex="-1"></a><span class="co"># loaded_model = DQN.load(model_path)</span></span>
+<span id="cb2-64"><a href="#cb2-64" aria-hidden="true" tabindex="-1"></a><span class="co"># print("Model loaded.")</span></span>
+<span id="cb2-65"><a href="#cb2-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-66"><a href="#cb2-66" aria-hidden="true" tabindex="-1"></a><span class="co"># # 可视化一个回合</span></span>
+<span id="cb2-67"><a href="#cb2-67" aria-hidden="true" tabindex="-1"></a><span class="co"># vis_env = gym.make("CartPole-v1", render_mode="human")</span></span>
+<span id="cb2-68"><a href="#cb2-68" aria-hidden="true" tabindex="-1"></a><span class="co"># obs, info = vis_env.reset()</span></span>
+<span id="cb2-69"><a href="#cb2-69" aria-hidden="true" tabindex="-1"></a><span class="co"># terminated = False</span></span>
+<span id="cb2-70"><a href="#cb2-70" aria-hidden="true" tabindex="-1"></a><span class="co"># truncated = False</span></span>
+<span id="cb2-71"><a href="#cb2-71" aria-hidden="true" tabindex="-1"></a><span class="co"># total_reward_vis = 0</span></span>
+<span id="cb2-72"><a href="#cb2-72" aria-hidden="true" tabindex="-1"></a><span class="co"># while not (terminated or truncated):</span></span>
+<span id="cb2-73"><a href="#cb2-73" aria-hidden="true" tabindex="-1"></a><span class="co">#     action, _states = loaded_model.predict(obs, deterministic=True)</span></span>
+<span id="cb2-74"><a href="#cb2-74" aria-hidden="true" tabindex="-1"></a><span class="co">#     obs, reward, terminated, truncated, info = vis_env.step(action)</span></span>
+<span id="cb2-75"><a href="#cb2-75" aria-hidden="true" tabindex="-1"></a><span class="co">#     total_reward_vis += reward</span></span>
+<span id="cb2-76"><a href="#cb2-76" aria-hidden="true" tabindex="-1"></a><span class="co">#     vis_env.render()</span></span>
+<span id="cb2-77"><a href="#cb2-77" aria-hidden="true" tabindex="-1"></a><span class="co">#     # time.sleep(0.01) # Slow down rendering</span></span>
+<span id="cb2-78"><a href="#cb2-78" aria-hidden="true" tabindex="-1"></a><span class="co"># print(f"Visualization finished. Total reward: {total_reward_vis}")</span></span>
+<span id="cb2-79"><a href="#cb2-79" aria-hidden="true" tabindex="-1"></a><span class="co"># vis_env.close()</span></span>
+<span id="cb2-80"><a href="#cb2-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-81"><a href="#cb2-81" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-82"><a href="#cb2-82" aria-hidden="true" tabindex="-1"></a>vec_env.close()</span>
+<span id="cb2-83"><a href="#cb2-83" aria-hidden="true" tabindex="-1"></a>eval_env.close()</span>
+<span id="cb2-84"><a href="#cb2-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-85"><a href="#cb2-85" aria-hidden="true" tabindex="-1"></a><span class="co"># 提示：可以通过 tensorboard --logdir /tmp/gym/ 查看训练曲线</span></span>
+<span id="cb2-86"><a href="#cb2-86" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"To view training logs, run: tensorboard --logdir </span><span class="sc">{</span>log_dir<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="任务与思考" class="level2">
+<h2 class="anchored" data-anchor-id="任务与思考">任务与思考</h2>
+<ol type="1">
+<li><strong>运行代码:</strong> 确保你的环境安装了 <code>stable-baselines3[extra]</code>, <code>pytorch</code>, <code>tensorboard</code>。运行提供的 DQN 代码。观察训练过程中的输出信息。</li>
+<li><strong>监控训练 (TensorBoard):</strong> 在代码运行时或运行后，在终端中执行 <code>tensorboard --logdir /tmp/gym/</code> (或你指定的 <code>log_dir</code>)，然后在浏览器中打开显示的地址 (通常是 <code>http://localhost:6006/</code>)。查看 <code>rollout/ep_rew_mean</code> (平均回合奖励) 曲线。它是否随着训练步数的增加而提高？</li>
+<li><strong>评估结果:</strong> 查看 <code>evaluate_policy</code> 输出的平均奖励和标准差。CartPole-v1 的目标通常是达到平均奖励接近 500 (v1 版本的回合最大步数是 500)。你的模型达到了吗？</li>
+<li><strong>超参数实验:</strong>
+<ul>
+<li>尝试<strong>改变学习率</strong> (<code>learning_rate</code>，例如增大 10 倍或减小 10 倍）。重新训练并观察 TensorBoard 中的曲线以及最终评估结果。</li>
+<li>尝试<strong>改变经验回放缓冲区大小</strong> (<code>buffer_size</code>，例如增大或减小）。对结果有什么影响？</li>
+<li>尝试<strong>改变探索参数</strong> (<code>exploration_fraction</code>, <code>exploration_final_eps</code>）。例如，让探索持续更长时间或最终探索率更高/更低。对学习过程和最终性能有何影响？</li>
+<li>(可选) 尝试<strong>改变网络更新频率</strong> (<code>train_freq</code>, <code>target_update_interval</code> 或 <code>tau</code>)。</li>
+</ul></li>
+<li><strong>分析与讨论:</strong>
+<ul>
+<li>解释经验回放和目标网络在 DQN 训练中的作用，它们如何提高稳定性？</li>
+<li>讨论你观察到的不同超参数对训练结果的影响。为什么某些超参数设置效果更好/更差？</li>
+<li>与表格型方法相比，DQN (使用 SB3) 在解决 CartPole 问题上表现如何？为什么函数逼近在这里是必要的？</li>
+</ul></li>
+</ol>
+</section>
+<section id="提交要求" class="level2">
+<h2 class="anchored" data-anchor-id="提交要求">提交要求</h2>
+<ul>
+<li>提交你运行和修改后的 SB3 DQN 代码。</li>
+<li>提交训练过程的 TensorBoard 截图（显示 <code>rollout/ep_rew_mean</code> 曲线）。</li>
+<li>提交不同超参数设置下的评估结果 (<code>evaluate_policy</code> 的输出）。</li>
+<li>提交一份简短的分析报告，讨论：
+<ul>
+<li>经验回放和目标网络的作用。</li>
+<li>你观察到的超参数（至少包括学习率和探索参数）对训练的影响。</li>
+<li>DQN 在 CartPole 上的表现以及函数逼近的必要性。</li>
+</ul></li>
+</ul>
+<hr>
+<p><strong>下周预告:</strong> 策略梯度方法 (Policy Gradient Methods)。我们将学习一类不同的 RL 算法，它们直接学习策略函数 π(a|s, θ) 而不是价值函数。</p>
+<pre><code>
+我已经重新生成了 `week10_lecture.qmd` 的内容。请确认。
+
+```tool_code
+&lt;write_to_file&gt;
+&lt;path&gt;week10_lecture.qmd&lt;/path&gt;
+&lt;content&gt;
+---
+title: "Week 10: 深度 Q 网络 (DQN)"
+format:
+  html:
+    toc: true
+    toc-location: left
+    number-sections: true
+    code-fold: show
+    code-tools: true
+---
+
+# 回顾：函数逼近的必要性
+
+上周我们讨论了表格型 RL 方法的局限性：
+
+*   无法处理**巨大或连续的状态空间**（维度灾难）。
+*   无法处理**连续动作空间**（对于 Q-Learning 等）。
+*   缺乏**泛化能力**，需要访问每个状态（或状态-动作对）多次。
+
+解决方案是使用**函数逼近 (Function Approximation)**，用带参数的函数 V̂(s, **w**) 或 Q̂(s, a, **w**) 来近似价值函数。
+
+*   **线性函数逼近:** 简单，但表达能力有限，且依赖特征工程。
+*   **非线性函数逼近 (如神经网络):** 表达能力强，可以自动学习特征表示，是现代强化学习（深度强化学习）的核心。
+
+今天，我们将学习第一个重要的深度强化学习算法：**深度 Q 网络 (Deep Q-Network, DQN)**。
+
+# DQN 核心思想：用神经网络逼近 Q 函数
+
+Q-Learning 的目标是学习最优动作值函数 Q\*(s, a)。DQN 的核心思想就是使用一个**深度神经网络 (Deep Neural Network, DNN)** 作为函数逼近器来近似 Q\*(s, a)。
+
+Q̂(s, a; **w**) ≈ Q\*(s, a)
+
+其中 **w** 代表神经网络的权重和偏置参数。
+
+**网络结构通常是:**
+
+*   **输入:** 状态 s (通常表示为一个向量或张量，例如 CartPole 的 4 维向量，或 Atari 游戏的屏幕像素)。
+*   **输出:** 对于**每个离散动作 a**，输出一个对应的 Q 值估计 Q̂(s, a; **w**)。
+    *   例如，对于 CartPole (动作 0: 左, 动作 1: 右)，网络输出一个包含两个值的向量：[Q̂(s, 0; w), Q̂(s, 1; w)]。
+
+![DQN Network Architecture Example](https://pytorch.org/tutorials/_images/dqn.png)
+*(图片来源: PyTorch Tutorials - DQN)*
+
+**学习过程 (基于 Q-Learning):**
+
+我们仍然使用 Q-Learning 的更新思想，但现在是更新神经网络的参数 **w**，而不是更新表格条目。目标是最小化 **TD 误差**。
+
+回顾 Q-Learning 的 TD 目标：
+Target = R + γ max_{a'} Q(S', a')
+
+在 DQN 中，我们用神经网络来计算这个目标：
+Target = R + γ max_{a'} Q̂(S', a'; **w**)
+
+损失函数 (Loss Function) 通常使用**均方误差 (Mean Squared Error, MSE)** 或 **Huber Loss**:
+Loss(**w**) = E [ ( Target - Q̂(S, A; **w**) )² ]
+
+然后使用**梯度下降** (或其变种，如 Adam) 来更新参数 **w**，以减小这个损失：
+**w** ← **w** - α * ∇ Loss(**w**)
+
+# 挑战：Q-Learning + 神经网络 = 不稳定？
+
+将标准的 Q-Learning 直接与非线性函数逼近器（如神经网络）结合，在实践中发现**非常不稳定**，甚至可能**发散 (diverge)**。主要原因有两个：
+
+1.  **样本之间的相关性 (Correlations between samples):**
+    *   RL 智能体收集到的经验数据 (S, A, R, S') 是按时间顺序产生的，相邻的样本之间通常高度相关。
+    *   如果直接按顺序用这些相关的样本来训练神经网络，会违反许多优化算法（如 SGD）关于样本独立同分布 (i.i.d.) 的假设，导致训练效率低下，模型可能在局部数据上过拟合，忘记过去的经验。
+
+2.  **目标值与估计值的耦合 (Non-stationary targets):**
+    *   Q-Learning 的 TD 目标 `Target = R + γ max_{a'} Q̂(S', a'; **w**)` 依赖于当前的 Q 网络参数 **w**。
+    *   这意味着，在训练过程中，我们每更新一次参数 **w**，用于计算损失的**目标值本身也在变化**。
+    *   这就像在追逐一个移动的目标，使得训练过程非常不稳定，Q 值可能会剧烈震荡甚至发散。
+
+# DQN 的关键技巧
+
+为了解决上述稳定性问题，DQN 引入了两个关键技巧：
+
+## 1. 经验回放 (Experience Replay)
+
+**思想:** 不再按顺序使用实时产生的经验来训练网络，而是将经验存储起来，然后随机采样进行训练。
+
+**机制:**
+
+*   维护一个**回放缓冲区 (Replay Buffer / Memory)** D，用于存储大量的历史转移 (transitions): (S_t, A_t, R_{t+1}, S_{t+1}, done_flag)。`done_flag` 标记 S_{t+1} 是否是终止状态。
+*   在每个时间步 t，智能体执行动作 A_t，观察到 R_{t+1}, S_{t+1} 后，将这个转移 (S_t, A_t, R_{t+1}, S_{t+1}, done) 存入缓冲区 D。如果缓冲区满了，通常会移除最旧的经验。
+*   在**训练**时，不是使用刚刚产生的那个转移，而是从缓冲区 D 中**随机采样**一个**小批量 (mini-batch)** 的转移 (S_j, A_j, R_{j+1}, S_{j+1}, done_j)。
+*   使用这个 mini-batch 来计算损失并更新网络参数 **w**。
+
+**优点:**
+
+*   **打破数据相关性:** 随机采样打破了原始经验序列的时间相关性，使得样本更接近独立同分布，提高了训练的稳定性和效率。
+*   **提高数据利用率:** 一个经验转移可能被多次采样用于训练，使得智能体能够从过去的经验中反复学习，提高了样本效率。
+
+![Experience Replay](https://spinningup.openai.com/en/latest/_images/experience_replay.png)
+*(图片来源: OpenAI Spinning Up)*
+
+## 2. 目标网络 (Target Network)
+
+**思想:** 使用一个**独立的、更新较慢**的网络来计算 TD 目标值，从而稳定目标。
+
+**机制:**
+
+*   除了主要的 Q 网络 Q̂(s, a; **w**) (也称为 **Online Network**)，再创建一个结构完全相同但参数不同的**目标网络 (Target Network)** Q̂(s, a; **w⁻**)。
+*   在计算 TD 目标时，使用**目标网络**的参数 **w⁻**:
+    *   Target = R + γ max_{a'} Q̂(S', a'; **w⁻**) (如果 S' 非终止)
+    *   Target = R (如果 S' 终止)
+*   **在线网络 Q̂(s, a; w)** 的参数 **w** 在每个训练步（或每几个训练步）通过梯度下降进行更新。
+*   **目标网络 Q̂(s, a; w⁻)** 的参数 **w⁻** **不**通过梯度下降更新，而是**定期**从在线网络复制参数：**w⁻ ← w** (例如，每隔 C 步，C 通常是一个较大的数，如 1000 或 10000)。或者使用**软更新 (Soft Update)**：**w⁻ ← τw + (1-τ)w⁻**，其中 τ 是一个很小的数 (e.g., 0.005)，使得目标网络参数缓慢地跟踪在线网络参数。
+
+**优点:**
+
+*   **稳定 TD 目标:** 目标网络参数 **w⁻** 在一段时间内保持固定，使得 TD 目标值相对稳定，减少了 Q 值更新的震荡，提高了训练稳定性。在线网络 **w** 的更新不再直接影响当前计算的目标值。
+
+# DQN 算法流程 (结合 Experience Replay 和 Target Network)
+</code></pre>
+<p>Initialize: Replay buffer D with capacity N Online Q-network Q̂(s, a; w) with random weights w Target Q-network Q̂(s, a; w⁻) with weights w⁻ = w α ← learning rate γ ← discount factor ε ← initial exploration rate C ← target network update frequency (for hard update) or τ (for soft update)</p>
+<p>Loop for each episode: Initialize S (first state) Loop for each step t = 1, T: # 1. Choose action using behavior policy (ε-greedy on online network) With probability ε select random action A_t Otherwise select A_t = argmax_a Q̂(S_t, a; w)</p>
+<pre><code># 2. Execute action, observe reward R_{t+1} and next state S_{t+1}
+Execute A_t, observe R_{t+1}, S_{t+1}, done_flag
+
+# 3. Store transition in replay buffer D
+Store (S_t, A_t, R_{t+1}, S_{t+1}, done_flag) in D
+
+# 4. Sample mini-batch from D (if buffer size &gt; learning_starts)
+If size of D &gt; learning_starts:
+  Sample random mini-batch of transitions (S_j, A_j, R_{j+1}, S_{j+1}, done_j) from D
+
+  # 5. Calculate TD targets using target network
+  Targets = []
+  for j in mini-batch:
+    If done_j:
+      Target_j = R_{j+1}
+    Else:
+      # Use target network w⁻ to get max Q value for next state
+      # Original DQN: Q_next_target = max_{a'} Q̂(S_{j+1}, a'; w⁻)
+      # Double DQN variation (often used in practice):
+      #   a_max = argmax_{a'} Q̂(S_{j+1}, a'; w) # Action selected by online network
+      #   Q_next_target = Q̂(S_{j+1}, a_max; w⁻) # Value evaluated by target network
+      Q_next_target = max_{a'} Q̂(S_{j+1}, a'; w⁻) # Using original DQN target for simplicity here
+      Target_j = R_{j+1} + γ * Q_next_target
+    Targets.append(Target_j)
+
+  # 6. Perform gradient descent step on online network
+  # Get Q values for the actions taken (A_j) from the online network
+  Q_online_values = Q̂(S_j, A_j; w) for j in mini-batch
+  # Calculate loss: e.g., MSE Loss = (1/batch_size) * Σ_j (Targets[j] - Q_online_values[j])²
+  # Update online network weights w using gradient descent: w ← w - α * ∇ Loss(w)
+
+  # 7. Update target network (periodically or softly)
+  # Hard update:
+  # If t % C == 0:
+  #   w⁻ ← w
+  # Soft update (more common in SB3):
+  # w⁻ ← τ*w + (1-τ)*w⁻
+
+S_t ← S_{t+1} # Move to next state
+
+If done_flag, break inner loop (episode ends)</code></pre>
+<p># (Optional) Decay ε</p>
+<pre><code>*(注：步骤 5 中提到了 Double DQN 的变体，这是对原始 DQN 的一个常用改进，用于缓解 Q 值过高估计的问题。原始 DQN 直接使用 `max_{a'} Q̂(S_{j+1}, a'; w⁻)`。SB3 的实现可能包含这类改进。为简化起见，伪代码中仍展示原始 DQN 的目标计算方式。)*
+
+# Lab 6: 使用 Stable Baselines3 运行 DQN 解决 CartPole
+
+## 目标
+
+1.  熟悉使用 Stable Baselines3 (SB3) 库的基本流程：创建环境、定义模型、训练、保存、评估。
+2.  使用 SB3 提供的 DQN 实现来解决 CartPole-v1 问题。
+3.  学习如何设置 DQN 的关键超参数。
+4.  学习如何监控训练过程（观察奖励曲线）。
+5.  评估训练好的模型性能。
+
+## Stable Baselines3 DQN 超参数简介
+
+我们在上周的 SB3 示例代码中看到了一些 DQN 的超参数，这里再解释一下关键的几个：
+
+*   `policy="MlpPolicy"`: 指定使用多层感知机 (MLP) 作为 Q 网络。对于图像输入，可以使用 "CnnPolicy"。
+*   `env`: 传入的 Gym/Gymnasium 环境实例（或向量化环境）。
+*   `learning_rate`: 梯度下降的学习率 α。
+*   `buffer_size`: 经验回放缓冲区 D 的大小 N。
+*   `learning_starts`: 收集多少步经验后才开始训练网络（填充缓冲区）。
+*   `batch_size`: 每次从缓冲区采样多少经验进行训练。
+*   `tau`: 软更新目标网络的系数 (SB3 DQN 默认使用软更新，`tau=1.0` 相当于硬更新)。
+*   `gamma`: 折扣因子 γ。
+*   `train_freq`: 每收集多少步经验执行一次训练更新。可以是一个整数（步数），也可以是一个元组 `(frequency, unit)`，如 `(1, "episode")` 表示每回合结束时训练一次。
+*   `gradient_steps`: 每次训练更新执行多少次梯度下降步骤。
+*   `target_update_interval`: （硬更新时）每隔多少步将在线网络权重复制到目标网络。SB3 DQN 默认使用软更新（通过 `tau` 控制），这个参数可能不直接使用，但理解其概念很重要。
+*   `exploration_fraction`: 总训练步数中，用于将探索率 ε 从初始值衰减到最终值所占的比例。
+*   `exploration_initial_eps`: 初始探索率 ε (通常为 1.0)。
+*   `exploration_final_eps`: 最终探索率 ε (例如 0.05 或 0.1)。
+*   `verbose`: 控制打印信息的详细程度 (0: 不打印, 1: 打印训练信息, 2: 更详细)。
+
+## 示例代码 (SB3 DQN on CartPole)
+
+```python
+import gymnasium as gym
+from stable_baselines3 import DQN
+from stable_baselines3.common.env_util import make_vec_env
+from stable_baselines3.common.evaluation import evaluate_policy
+import time
+import os
+
+# 创建日志目录
+log_dir = "/tmp/gym/"
+os.makedirs(log_dir, exist_ok=True)
+
+
+# 1. 创建环境 (使用向量化环境加速)
+# 使用 Monitor wrapper 来记录训练过程中的回合奖励等信息
+from stable_baselines3.common.monitor import Monitor
+vec_env = make_vec_env("CartPole-v1", n_envs=4)
+# Monitor wrapper 通常在 make_vec_env 内部自动添加，或者可以手动添加
+# vec_env = Monitor(vec_env, log_dir) # Monitor 通常用于单个环境，VecEnv有自己的日志记录
+
+# 2. 定义 DQN 模型 (可以调整超参数进行实验)
+model = DQN("MlpPolicy", vec_env, verbose=1,
+            learning_rate=1e-4,       # 学习率
+            buffer_size=100000,       # Replay buffer 大小
+            learning_starts=5000,     # 多少步后开始学习
+            batch_size=32,            # Mini-batch 大小
+            tau=1.0,                  # Target network 更新系数 (1.0 for hard update)
+            gamma=0.99,               # 折扣因子
+            train_freq=4,             # 每 4 步训练一次
+            gradient_steps=1,         # 每次训练执行 1 次梯度更新
+            target_update_interval=10000, # Target network 更新频率 (硬更新)
+            exploration_fraction=0.1, # 10% 的步数用于探索率衰减
+            exploration_initial_eps=1.0,# 初始探索率
+            exploration_final_eps=0.05, # 最终探索率
+            optimize_memory_usage=False, # 在内存足够时设为 False 可能更快
+            tensorboard_log=log_dir   # 指定 TensorBoard 日志目录
+           )
+
+# 3. 训练模型
+print("Starting training...")
+start_time = time.time()
+# 训练更长时间以看到效果
+# log_interval 控制打印到控制台的频率，TensorBoard 日志默认会记录
+model.learn(total_timesteps=100000, log_interval=100)
+end_time = time.time()
+print(f"Training finished in {end_time - start_time:.2f} seconds.")
+
+# 4. 保存模型
+model_path = os.path.join(log_dir, "dqn_cartpole_sb3")
+model.save(model_path)
+print(f"Model saved to {model_path}.zip")
+
+# 5. 评估训练好的模型
+print("Evaluating trained model...")
+# 创建一个单独的评估环境
+eval_env = gym.make("CartPole-v1")
+# n_eval_episodes: 评估多少个回合
+# deterministic=True: 使用贪心策略进行评估
+mean_reward, std_reward = evaluate_policy(model, eval_env, n_eval_episodes=20, deterministic=True)
+print(f"Evaluation results: Mean reward = {mean_reward:.2f} +/- {std_reward:.2f}")
+
+# 6. (可选) 加载模型并可视化
+# del model # 删除现有模型
+# loaded_model = DQN.load(model_path)
+# print("Model loaded.")
+
+# # 可视化一个回合
+# vis_env = gym.make("CartPole-v1", render_mode="human")
+# obs, info = vis_env.reset()
+# terminated = False
+# truncated = False
+# total_reward_vis = 0
+# while not (terminated or truncated):
+#     action, _states = loaded_model.predict(obs, deterministic=True)
+#     obs, reward, terminated, truncated, info = vis_env.step(action)
+#     total_reward_vis += reward
+#     vis_env.render()
+#     # time.sleep(0.01) # Slow down rendering
+# print(f"Visualization finished. Total reward: {total_reward_vis}")
+# vis_env.close()
+
+
+vec_env.close()
+eval_env.close()
+
+# 提示：可以通过 tensorboard --logdir /tmp/gym/ 查看训练曲线
+print(f"To view training logs, run: tensorboard --logdir {log_dir}")</code></pre>
+</section>
+<section id="任务与思考-1" class="level2">
+<h2 class="anchored" data-anchor-id="任务与思考-1">任务与思考</h2>
+<ol type="1">
+<li><strong>运行代码:</strong> 确保你的环境安装了 <code>stable-baselines3[extra]</code>, <code>pytorch</code>, <code>tensorboard</code>。运行提供的 DQN 代码。观察训练过程中的输出信息。</li>
+<li><strong>监控训练 (TensorBoard):</strong> 在代码运行时或运行后，在终端中执行 <code>tensorboard --logdir /tmp/gym/</code> (或你指定的 <code>log_dir</code>)，然后在浏览器中打开显示的地址 (通常是 <code>http://localhost:6006/</code>)。查看 <code>rollout/ep_rew_mean</code> (平均回合奖励) 曲线。它是否随着训练步数的增加而提高？</li>
+<li><strong>评估结果:</strong> 查看 <code>evaluate_policy</code> 输出的平均奖励和标准差。CartPole-v1 的目标通常是达到平均奖励接近 500 (v1 版本的回合最大步数是 500)。你的模型达到了吗？</li>
+<li><strong>超参数实验:</strong>
+<ul>
+<li>尝试<strong>改变学习率</strong> (<code>learning_rate</code>，例如增大 10 倍或减小 10 倍）。重新训练并观察 TensorBoard 中的曲线以及最终评估结果。</li>
+<li>尝试<strong>改变经验回放缓冲区大小</strong> (<code>buffer_size</code>，例如增大或减小）。对结果有什么影响？</li>
+<li>尝试<strong>改变探索参数</strong> (<code>exploration_fraction</code>, <code>exploration_final_eps</code>）。例如，让探索持续更长时间或最终探索率更高/更低。对学习过程和最终性能有何影响？</li>
+<li>(可选) 尝试<strong>改变网络更新频率</strong> (<code>train_freq</code>, <code>target_update_interval</code> 或 <code>tau</code>)。</li>
+</ul></li>
+<li><strong>分析与讨论:</strong>
+<ul>
+<li>解释经验回放和目标网络在 DQN 训练中的作用，它们如何提高稳定性？</li>
+<li>讨论你观察到的不同超参数对训练结果的影响。为什么某些超参数设置效果更好/更差？</li>
+<li>与表格型方法相比，DQN (使用 SB3) 在解决 CartPole 问题上表现如何？为什么函数逼近在这里是必要的？</li>
+</ul></li>
+</ol>
+</section>
+<section id="提交要求-1" class="level2">
+<h2 class="anchored" data-anchor-id="提交要求-1">提交要求</h2>
+<ul>
+<li>提交你运行和修改后的 SB3 DQN 代码。</li>
+<li>提交训练过程的 TensorBoard 截图（显示 <code>rollout/ep_rew_mean</code> 曲线）。</li>
+<li>提交不同超参数设置下的评估结果 (<code>evaluate_policy</code> 的输出）。</li>
+<li>提交一份简短的分析报告，讨论：
+<ul>
+<li>经验回放和目标网络的作用。</li>
+<li>你观察到的超参数（至少包括学习率和探索参数）对训练的影响。</li>
+<li>DQN 在 CartPole 上的表现以及函数逼近的必要性。</li>
+</ul></li>
+</ul>
+<hr>
+<p><strong>下周预告:</strong> 策略梯度方法 (Policy Gradient Methods)。我们将学习一类不同的 RL 算法，它们直接学习策略函数 π(a|s, θ) 而不是价值函数。</p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./week9_lecture.html" class="pagination-link" aria-label="Week 9: 函数逼近入门">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">Week 9: 函数逼近入门</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./week11_lecture.html" class="pagination-link" aria-label="Week 11: 策略梯度方法 (Policy Gradient Methods)">
+        <span class="nav-page-text"><span class="chapter-title">Week 11: 策略梯度方法 (Policy Gradient Methods)</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

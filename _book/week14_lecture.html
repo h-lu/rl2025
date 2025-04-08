@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Week 14: 商业案例分析 2 - 个性化推荐与营销 – 智能计算</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./week15_lecture.html" rel="next">
+<link href="./week13_lecture.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xkm/sYwpb+ilR5gUw==" crossorigin="anonymous" referrerpolicy="no-referrer">
+
+
+<link rel="stylesheet" href="styles/custom.css">
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./week1_lecture.html">讲义</a></li><li class="breadcrumb-item"><a href="./week14_lecture.html"><span class="chapter-title">Week 14: 商业案例分析 2 - 个性化推荐与营销</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">智能计算</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">课程介绍</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">讲义</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week1_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 1: 商业决策智能化与强化学习概览</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week2_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 2: 序贯决策建模 - 马尔可夫决策过程 (MDP)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week3_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 3: 最优决策与 Bellman 最优方程</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week4_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 4: 蒙特卡洛方法 - 从完整经验中学习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week5_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 5: 时序差分学习 - 从不完整经验中学习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week6_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 6: 同策略控制 - SARSA</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week7_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 7: 异策略控制 - Q-Learning (重点)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week8_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 8: Q-Learning 应用讨论与中期回顾</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week9_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 9: 函数逼近入门</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week10_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 10: 深度 Q 网络 (DQN)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week11_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 11: 策略梯度方法 (Policy Gradient Methods)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week12_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 12: Actor-Critic 方法</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week13_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 13: 商业案例分析 1 - 动态定价与资源优化</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week14_lecture.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Week 14: 商业案例分析 2 - 个性化推荐与营销</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week15_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 15: 实践挑战、伦理规范与项目指导</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week16_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 16: 课程总结与未来展望</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">练习</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week1_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 1 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week2_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 2 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week3_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 3 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week4_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 4 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week5_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 5 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week6_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 6 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week7_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 7 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week8_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 8 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week9_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 9 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week10_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 10 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week11_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 11 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week12_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 12 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week13_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 13 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week14_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 14 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week15_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 15 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week16_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 16 - 学生练习</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#回顾动态定价与资源优化" id="toc-回顾动态定价与资源优化" class="nav-link active" data-scroll-target="#回顾动态定价与资源优化">回顾：动态定价与资源优化</a></li>
+  <li><a href="#个性化推荐与营销概述" id="toc-个性化推荐与营销概述" class="nav-link" data-scroll-target="#个性化推荐与营销概述">个性化推荐与营销概述</a></li>
+  <li><a href="#深度案例分析电商商品推荐" id="toc-深度案例分析电商商品推荐" class="nav-link" data-scroll-target="#深度案例分析电商商品推荐">深度案例分析：电商商品推荐</a>
+  <ul class="collapse">
+  <li><a href="#mdp-定义" id="toc-mdp-定义" class="nav-link" data-scroll-target="#mdp-定义">1. MDP 定义</a></li>
+  <li><a href="#探索-exploration-vs.-利用-exploitation" id="toc-探索-exploration-vs.-利用-exploitation" class="nav-link" data-scroll-target="#探索-exploration-vs.-利用-exploitation">2. 探索 (Exploration) vs.&nbsp;利用 (Exploitation)</a></li>
+  <li><a href="#可选算法" id="toc-可选算法" class="nav-link" data-scroll-target="#可选算法">3. 可选算法</a></li>
+  </ul></li>
+  <li><a href="#讨论与伦理思辨" id="toc-讨论与伦理思辨" class="nav-link" data-scroll-target="#讨论与伦理思辨">讨论与伦理思辨</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./week1_lecture.html">讲义</a></li><li class="breadcrumb-item"><a href="./week14_lecture.html"><span class="chapter-title">Week 14: 商业案例分析 2 - 个性化推荐与营销</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-title">Week 14: 商业案例分析 2 - 个性化推荐与营销</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="回顾动态定价与资源优化" class="level1">
+<h1>回顾：动态定价与资源优化</h1>
+<p>上周我们深入探讨了如何将强化学习应用于<strong>动态定价</strong>和<strong>资源优化</strong>问题，以网约车平台的 Surge Pricing 为例：</p>
+<ul>
+<li><strong>MDP 定义:</strong> 仔细分析了状态表示、动作空间、奖励函数设计（短期 vs.&nbsp;长期，多目标权衡）以及转移概率的复杂性。</li>
+<li><strong>数据需求:</strong> 强调了大规模、高质量数据的重要性。</li>
+<li><strong>可选算法:</strong> 讨论了 DQN（离散动作）和 Actor-Critic（连续动作）等算法的适用性。</li>
+<li><strong>模拟与挑战:</strong> 强调了模拟环境在开发测试中的作用，并讨论了冷启动、Sim-to-Real Gap、非平稳性、多智能体竞争、评估与安全、可解释性与公平性等实际部署挑战。</li>
+</ul>
+<p>今天，我们将转向另一个 RL 在商业中广泛应用的领域：<strong>个性化推荐 (Personalized Recommendation)</strong> 与 <strong>个性化营销 (Personalized Marketing)</strong>。</p>
+</section>
+<section id="个性化推荐与营销概述" class="level1">
+<h1>个性化推荐与营销概述</h1>
+<p><strong>核心问题:</strong> 如何根据用户的个人特征、历史行为和当前情境，向其推荐最相关的物品（商品、新闻、音乐、视频、广告等），以提升用户体验、参与度、转化率或长期价值？</p>
+<p><strong>典型应用场景:</strong></p>
+<ul>
+<li><strong>电商平台 (如 Amazon, Taobao):</strong>
+<ul>
+<li>首页商品推荐（“猜你喜欢”）。</li>
+<li>购物车相关商品推荐。</li>
+<li>个性化促销邮件/推送。</li>
+</ul></li>
+<li><strong>内容平台 (如 Netflix, YouTube, Spotify, 今日头条):</strong>
+<ul>
+<li>视频/电影/音乐/新闻流推荐。</li>
+<li>相似内容推荐。</li>
+</ul></li>
+<li><strong>在线广告:</strong>
+<ul>
+<li>根据用户画像和浏览行为，展示最可能被点击或转化的广告。</li>
+</ul></li>
+<li><strong>社交媒体:</strong>
+<ul>
+<li>信息流内容排序。</li>
+<li>好友/群组推荐。</li>
+</ul></li>
+</ul>
+<p><strong>为什么使用 RL？</strong></p>
+<p>传统的推荐系统方法（如协同过滤、基于内容的推荐、矩阵分解）通常是<strong>静态</strong>的，它们根据历史数据训练一个模型，然后用这个固定模型进行推荐。这忽略了推荐过程的<strong>序贯性</strong>和<strong>交互性</strong>：</p>
+<ul>
+<li><strong>用户状态是动态变化的:</strong> 用户的兴趣、需求会随时间改变。</li>
+<li><strong>推荐本身会影响用户状态:</strong> 用户点击或忽略某个推荐，会影响系统对该用户的理解，进而影响后续的推荐。</li>
+<li><strong>长期目标:</strong> 推荐系统的目标不仅仅是最大化下一次点击（短期奖励），更重要的是提升用户的长期满意度、参与度和生命周期价值 (LTV)。</li>
+</ul>
+<p>RL 将推荐视为一个<strong>序贯决策过程</strong>，智能体（推荐系统）通过与用户（环境的一部分）的交互来学习最优的推荐策略，以最大化长期累积奖励。</p>
+</section>
+<section id="深度案例分析电商商品推荐" class="level1">
+<h1>深度案例分析：电商商品推荐</h1>
+<p>让我们以电商平台的<strong>首页商品推荐</strong>为例，进行 MDP 定义分析。</p>
+<section id="mdp-定义" class="level2">
+<h2 class="anchored" data-anchor-id="mdp-定义">1. MDP 定义</h2>
+<p><strong>目标:</strong> 系统（智能体）需要学习一个策略，根据用户的状态，从庞大的商品库中选择一个（或一组）商品推荐给用户，以最大化用户的长期价值（如 LTV）或参与度。</p>
+<ul>
+<li><strong>状态 (State, S):</strong> 如何表示用户和当前情境？
+<ul>
+<li><strong>用户静态特征:</strong>
+<ul>
+<li><code>人口统计学信息</code>: 年龄、性别、地理位置等。</li>
+<li><code>注册信息</code>: 账户等级、注册时长等。</li>
+</ul></li>
+<li><strong>用户动态/历史行为特征:</strong>
+<ul>
+<li><code>近期浏览历史</code>: 最近点击/查看过的商品 ID、类别、品牌。</li>
+<li><code>近期购买历史</code>: 最近购买的商品 ID、类别、频率、金额。</li>
+<li><code>近期搜索历史</code>: 搜索过的关键词。</li>
+<li><code>购物车状态</code>: 当前购物车中的商品。</li>
+<li><code>对先前推荐的反馈</code>: 是否点击/购买了之前推荐的商品？</li>
+</ul></li>
+<li><strong>情境特征 (Contextual Features):</strong>
+<ul>
+<li><code>访问时间</code>: 一天中的时段、星期几、季节。</li>
+<li><code>访问设备</code>: PC, Mobile App, H5。</li>
+<li><code>访问来源</code>: 通过搜索、广告还是直接访问？</li>
+<li><code>当前页面</code>: 用户正在浏览哪个页面？</li>
+</ul></li>
+<li><strong>状态表示:</strong>
+<ul>
+<li>通常是一个<strong>高维向量</strong>，结合了上述各类特征。</li>
+<li>需要使用<strong>嵌入 (Embeddings)</strong> 技术来处理高基数的离散特征（如用户 ID, 商品 ID）。可以将用户和商品映射到低维稠密向量空间。</li>
+<li>可以使用 RNN/LSTM/Transformer 等模型来捕捉用户行为序列的动态。</li>
+</ul></li>
+</ul></li>
+<li><strong>动作 (Action, A):</strong> 系统可以推荐哪些商品？
+<ul>
+<li><strong>巨大的离散动作空间:</strong> 商品库通常包含数百万甚至数千万的商品 (SKU)。直接将每个商品视为一个动作是<strong>不可行</strong>的。</li>
+<li><strong>常见的处理方式:</strong>
+<ul>
+<li><strong>候选生成 + 排序 (Candidate Generation + Ranking):</strong>
+<ol type="1">
+<li><strong>候选生成:</strong> 先用其他方法（如协同过滤、内容召回、向量检索）从全量商品库中快速筛选出一个较小的<strong>候选商品集合</strong>（几百到几千个）。</li>
+<li><strong>排序:</strong> RL 模型（或其他排序模型）负责对这个<strong>候选集</strong>进行打分或排序，选择最优的一个或 Top-K 个进行展示。此时，动作空间缩小为对候选集的操作（例如，选择哪个商品排第一）。</li>
+</ol></li>
+<li><strong>基于动作嵌入 (Action Embeddings):</strong> 将动作（商品）也嵌入到向量空间，RL 模型输出一个目标动作向量，然后在商品嵌入空间中找到最相似的商品进行推荐。这可以将离散动作问题转化为连续动作问题（输出向量）。</li>
+</ul></li>
+</ul></li>
+<li><strong>奖励 (Reward, R):</strong> 如何衡量推荐的好坏？这是推荐系统中<strong>最具挑战性</strong>的部分之一。
+<ul>
+<li><strong>显式反馈 (Explicit Feedback):</strong>
+<ul>
+<li><code>评分 (Rating)</code>: 用户对商品的评分（如果有）。</li>
+<li><code>喜欢/不喜欢</code>: 明确的偏好表达。</li>
+</ul></li>
+<li><strong>隐式反馈 (Implicit Feedback) - 更常见:</strong>
+<ul>
+<li><code>点击 (Click)</code>: 用户是否点击了推荐的商品？(最常用，但可能产生 Clickbait 问题)</li>
+<li><code>加入购物车 (Add-to-Cart)</code>: 比点击更强的意向信号。</li>
+<li><code>购买/转化 (Purchase/Conversion)</code>: 最强的信号，但非常稀疏。</li>
+<li><code>观看时长 (Dwell Time)</code>: 用户在商品详情页停留的时间。</li>
+<li><code>分享/收藏 (Share/Favorite)</code>: 社交或留存意向。</li>
+</ul></li>
+<li><strong>长期指标:</strong>
+<ul>
+<li><code>用户满意度 (Satisfaction)</code>: 通过调查问卷等方式获取。</li>
+<li><code>用户活跃度/留存率 (Activity/Retention)</code>: 用户是否持续访问和使用平台？</li>
+<li><code>用户生命周期价值 (LTV)</code>: 用户在整个生命周期内为平台带来的总价值。</li>
+</ul></li>
+<li><strong>奖励设计挑战:</strong>
+<ul>
+<li><strong>稀疏性:</strong> 购买等强信号非常稀疏。</li>
+<li><strong>延迟性:</strong> LTV 等长期指标需要很长时间才能观察到。</li>
+<li><strong>多目标:</strong> 需要平衡点击率、转化率、用户满意度、内容多样性等多个目标。</li>
+<li><strong>潜在偏差:</strong> 过度优化点击率可能导致标题党或低质量内容泛滥。</li>
+</ul></li>
+<li><strong>常用方法:</strong>
+<ul>
+<li>使用点击作为主要奖励信号，并辅以其他信号（如购买、时长）进行加权或作为辅助损失。</li>
+<li>设计能够估计 LTV 的模型作为奖励。</li>
+<li>使用多目标 RL。</li>
+</ul></li>
+</ul></li>
+<li><strong>转移概率 (P):</strong> P(s’ | s, a)
+<ul>
+<li>用户在看到推荐 a (商品) 后的下一个状态 s’ 是什么？</li>
+<li>这取决于用户的反应（点击、购买、忽略）以及他们后续的浏览行为。</li>
+<li>模型未知，需要从交互数据中学习。</li>
+</ul></li>
+<li><strong>折扣因子 (γ):</strong>
+<ul>
+<li>通常选择较大的 γ (接近 1)，因为推荐系统的目标是优化长期用户参与度和价值。</li>
+</ul></li>
+</ul>
+</section>
+<section id="探索-exploration-vs.-利用-exploitation" class="level2">
+<h2 class="anchored" data-anchor-id="探索-exploration-vs.-利用-exploitation">2. 探索 (Exploration) vs.&nbsp;利用 (Exploitation)</h2>
+<p>在推荐系统中，探索与利用的权衡至关重要：</p>
+<ul>
+<li><strong>利用 (Exploitation):</strong> 推荐用户过去喜欢或购买过的同类商品，或者推荐当前最热门的商品。这能保证一定的短期效果（如点击率）。</li>
+<li><strong>探索 (Exploration):</strong>
+<ul>
+<li><strong>推荐新内容/长尾商品:</strong> 向用户推荐他们可能感兴趣但从未接触过的新品类或冷门商品。有助于发现用户的潜在兴趣，增加推荐的多样性，并帮助新商品获得曝光。</li>
+<li><strong>试探用户反馈:</strong> 尝试不同的推荐策略或商品类型，观察用户反应，以更准确地了解用户偏好。</li>
+</ul></li>
+</ul>
+<p><strong>挑战:</strong></p>
+<ul>
+<li>如何有效地探索庞大的商品空间？</li>
+<li>如何平衡探索带来的潜在长期收益和可能造成的短期指标下降？</li>
+</ul>
+<p><strong>常用探索策略:</strong></p>
+<ul>
+<li><strong>ε-greedy:</strong> 简单易行，但可能效率不高。</li>
+<li><strong>置信上界 (Upper Confidence Bound, UCB):</strong> 选择那些具有高预期价值且不确定性也高的动作（推荐）。</li>
+<li><strong>汤普森采样 (Thompson Sampling):</strong> 根据当前对动作价值的后验分布进行采样。</li>
+<li><strong>内在激励 (Intrinsic Motivation):</strong> 奖励智能体的好奇心或探索行为本身。</li>
+</ul>
+</section>
+<section id="可选算法" class="level2">
+<h2 class="anchored" data-anchor-id="可选算法">3. 可选算法</h2>
+<ul>
+<li><strong>DQN 及其变种:</strong> 如果动作空间可以有效缩小（如候选排序），DQN 是一个常用选择。</li>
+<li><strong>Actor-Critic 方法 (DDPG, SAC, PPO):</strong> 如果使用动作嵌入将问题转化为连续动作空间，或者直接优化排序策略，AC 方法更适用。</li>
+<li><strong>Bandit 算法:</strong> 如果将推荐视为一系列独立的推荐决策（忽略状态转移），可以使用多臂老虎机 (Multi-Armed Bandit) 算法及其变种（如 Contextual Bandits）。这可以看作是 RL 的一种简化形式。</li>
+<li><strong>Offline RL:</strong> 推荐系统通常拥有大量的历史交互日志，Offline RL 可以在不与真实用户交互的情况下利用这些数据进行学习，降低了在线实验的风险和成本。</li>
+</ul>
+</section>
+</section>
+<section id="讨论与伦理思辨" class="level1">
+<h1>讨论与伦理思辨</h1>
+<p>RL 驱动的推荐系统在带来便利的同时，也引发了一系列伦理问题：</p>
+<ol type="1">
+<li><strong>过滤气泡 (Filter Bubble) / 信息茧房 (Echo Chamber):</strong>
+<ul>
+<li><strong>问题:</strong> 系统为了最大化用户参与度（如点击率），倾向于持续推荐用户已经喜欢或同意的内容，导致用户视野变窄，接触不到不同观点或新的信息领域。</li>
+<li><strong>RL 的影响:</strong> RL 可能会<strong>加剧</strong>这个问题，因为它会快速学习并强化用户的现有偏好。如果奖励函数只关注短期参与度，系统就没有动力去推荐“探索性”或“多样性”的内容。</li>
+<li><strong>缓解:</strong>
+<ul>
+<li>在奖励函数中加入<strong>多样性</strong>或<strong>新颖性</strong>的考量。</li>
+<li>强制进行一定比例的探索性推荐。</li>
+<li>让用户对推荐结果有更多的控制权。</li>
+</ul></li>
+</ul></li>
+<li><strong>公平性 (Fairness):</strong>
+<ul>
+<li><strong>对用户的公平性:</strong> 推荐系统是否会对不同用户群体（如基于性别、种族、地理位置）产生系统性偏差？例如，某些群体的用户是否总是收到质量较低或价格较高的推荐？</li>
+<li><strong>对物品/内容提供者的公平性:</strong> 推荐系统是否会过度集中流量给少数热门物品或创作者，导致长尾物品或新创作者难以获得曝光机会？</li>
+<li><strong>RL 的影响:</strong> RL 可能会放大训练数据中存在的偏差。如果某个群体的用户数据较少或行为模式不同，模型可能无法很好地为他们服务。优化单一目标（如总收入）可能导致对某些物品或创作者的不公平。</li>
+<li><strong>缓解:</strong>
+<ul>
+<li>进行偏差检测和修正。</li>
+<li>设计考虑公平性的奖励函数或约束（例如，保证不同类别物品的曝光比例）。</li>
+<li>使用联邦学习等技术保护用户群体隐私。</li>
+</ul></li>
+</ul></li>
+<li><strong>数据隐私 (Data Privacy):</strong>
+<ul>
+<li><strong>问题:</strong> 个性化推荐依赖于收集和分析大量的用户行为数据，这引发了对用户隐私泄露的担忧。</li>
+<li><strong>RL 的影响:</strong> RL 模型（尤其是深度学习模型）可能在训练过程中隐式地记住用户的敏感信息。</li>
+<li><strong>缓解:</strong>
+<ul>
+<li>数据匿名化和脱敏处理。</li>
+<li>差分隐私 (Differential Privacy) 技术。</li>
+<li>联邦学习 (Federated Learning)：在用户本地设备上训练模型，只上传聚合后的模型更新，而不是原始数据。</li>
+<li>提供用户透明度和控制权，允许用户管理自己的数据和推荐设置。</li>
+</ul></li>
+</ul></li>
+<li><strong>操纵与成瘾 (Manipulation &amp; Addiction):</strong>
+<ul>
+<li><strong>问题:</strong> 推荐系统（尤其是在社交媒体、短视频等领域）可能被设计成最大化用户停留时间，利用心理学技巧让用户“上瘾”。</li>
+<li><strong>RL 的影响:</strong> RL 擅长优化特定目标，如果目标设定为最大化用户在线时长，RL 可能会找到非常有效（但也可能有害）的策略来实现它。</li>
+<li><strong>缓解:</strong>
+<ul>
+<li>审慎设计奖励函数，避免过度优化单一的参与度指标。</li>
+<li>引入用户福祉 (Well-being) 指标。</li>
+<li>增强透明度，让用户了解推荐机制。</li>
+<li>行业自律和法规监管。</li>
+</ul></li>
+</ul></li>
+</ol>
+<div class="callout callout-style-default callout-warning callout-titled" title="伦理责任">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+伦理责任
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>开发和部署 RL 推荐系统时，必须充分考虑其潜在的社会和伦理影响。技术人员、产品经理、政策制定者需要共同努力，确保技术的应用符合道德规范，促进用户和社会的福祉。仅仅优化技术指标是不够的。</p>
+</div>
+</div>
+<hr>
+<p><strong>下周预告:</strong> 实践挑战、伦理规范与项目指导。我们将总结 RL 在实际落地中面临的共性挑战，讨论负责任 AI 的原则，并为期末项目提供选题指导。</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./week13_lecture.html" class="pagination-link" aria-label="Week 13: 商业案例分析 1 - 动态定价与资源优化">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">Week 13: 商业案例分析 1 - 动态定价与资源优化</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./week15_lecture.html" class="pagination-link" aria-label="Week 15: 实践挑战、伦理规范与项目指导">
+        <span class="nav-page-text"><span class="chapter-title">Week 15: 实践挑战、伦理规范与项目指导</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

@@ -1,0 +1,112 @@
+---
+title: "Week 10 - 教师指导手册"
+subtitle: "深度 Q 网络 (DQN)"
+format:
+  html:
+    toc: true
+    toc-location: left
+---
+
+# 教学目标 (Learning Objectives)
+
+*   **主要目标:**
+    *   学生理解 DQN 的核心思想：使用深度神经网络近似 Q 函数。
+    *   学生理解为何 Q-Learning 与非线性函数逼近结合会导致不稳定（样本相关性、目标耦合）。
+    *   学生掌握 DQN 的两个关键技巧：经验回放 (Experience Replay) 和目标网络 (Target Network) 的原理和作用。
+    *   学生能够理解 DQN 的算法流程（结合经验回放和目标网络）。
+    *   学生能够使用 Stable Baselines3 (SB3) 运行 DQN 算法解决 CartPole 问题。
+    *   学生学习如何设置 DQN 的关键超参数并监控训练过程（使用 TensorBoard）。
+    *   学生能够评估训练好的 DQN 模型性能。
+*   **次要目标:**
+    *   加深对函数逼近和 Q-Learning 的理解。
+    *   培养学生使用 DRL 库进行实验、调参和分析结果的能力。
+    *   为后续学习其他 DRL 算法（如 PG, A2C）做对比基础。
+
+# 重点概念 (Key Concepts)
+
+*   深度 Q 网络 (Deep Q-Network, DQN)
+*   使用神经网络近似 Q 函数: Q̂(s, a; **w**)
+*   Q-Learning + 神经网络的不稳定性:
+    *   样本相关性 (Correlated Samples)
+    *   非平稳目标 (Non-stationary Targets)
+*   经验回放 (Experience Replay): 机制与作用（打破相关性、提高数据利用率）
+*   目标网络 (Target Network): 机制（独立网络、定期/软更新）与作用（稳定 TD 目标）
+*   DQN 算法流程
+*   Stable Baselines3 (SB3) DQN 实现与关键超参数 (`buffer_size`, `learning_starts`, `batch_size`, `tau`/`target_update_interval`, `exploration_fraction`, `exploration_final_eps` 等)
+*   使用 TensorBoard 监控训练 (`ep_rew_mean`)
+*   模型评估 (`evaluate_policy`)
+
+# 时间分配建议 (Suggested Time Allocation - 2 Sessions)
+
+*   **Session 19 (约 90 分钟): DQN 理论**
+    *   回顾函数逼近的必要性 (10 分钟)。
+    *   DQN 核心思想 (15 分钟): 用 DNN 近似 Q 函数，网络输入输出结构。
+    *   Q-Learning + NN 的不稳定性 (20 分钟): **重点讲解**。详细解释样本相关性和非平稳目标这两个核心问题。
+    *   经验回放 (Experience Replay) (20-25 分钟): **重点环节**。讲解其机制（存储、采样）和作用（打破相关性、数据重用）。
+    *   目标网络 (Target Network) (15-20 分钟): **重点环节**。讲解其机制（双网络、参数复制/软更新）和作用（稳定目标）。
+    *   Q&A (5 分钟)
+*   **Session 20 (约 90 分钟): Lab 6 (SB3 DQN on CartPole)**
+    *   回顾 DQN 关键技巧 (5 分钟)。
+    *   DQN 算法流程讲解 (10 分钟): 结合伪代码，串讲整个流程。
+    *   Lab 6 目标与 SB3 DQN 超参数介绍 (15-20 分钟): 明确 Lab 任务，介绍 SB3 中 DQN 的常用超参数及其含义。
+    *   指导运行 Lab 6 代码 (35-40 分钟): **重点环节**。带领学生运行 SB3 DQN 代码，解释代码结构。指导学生使用 TensorBoard 查看奖励曲线。
+    *   结果分析与超参数实验讨论 (10-15 分钟): 引导学生分析评估结果，讨论不同超参数可能带来的影响（基于讲义中的实验建议）。
+    *   Lab 提交要求说明 & Q&A (5 分钟)。
+
+# 教学活动与建议 (Teaching Activities & Suggestions)
+
+## Session 19
+
+*   **不稳定性讲解:**
+    *   **样本相关性类比:** “如果只根据昨天刚吃的菜来决定今天吃什么，很容易陷入单调重复。经验回放就像翻看过去一周甚至一个月的菜单（随机抽取），能更全面地了解自己的口味。”
+    *   **非平稳目标类比:** “想象一下射击一个不断移动的靶子，每次你瞄准调整后，靶子又动了，很难打中。目标网络就像是让靶子在一段时间内固定不动，让你能更好地瞄准。”
+*   **经验回放:**
+    *   **图示:** 可以画一个简单的示意图，表示 Agent 与环境交互产生经验存入 Buffer，训练时从 Buffer 中 Sample Mini-batch。
+    *   **强调随机性:** 突出随机采样打破时间相关性的作用。
+*   **目标网络:**
+    *   **图示:** 画出 Online Network 和 Target Network 两个网络，表示 Target Network 用于计算 TD 目标，Online Network 进行梯度更新，参数定期从 Online 复制到 Target。
+    *   **强调“滞后”:** 目标网络的参数是旧的、相对稳定的，从而稳定了学习目标。
+
+## Session 20 (Lab 6)
+
+*   **SB3 超参数:**
+    *   **分类讲解:** 可以将超参数分为几类：网络结构相关（`policy`）、优化器相关（`learning_rate`）、经验回放相关（`buffer_size`, `learning_starts`, `batch_size`）、目标网络相关（`tau`/`target_update_interval`）、探索相关（`exploration_...`）、训练流程相关（`train_freq`, `gradient_steps`）。
+    *   **重点突出:** 重点讲解与 DQN 核心机制相关的参数，如 `buffer_size`, `target_update_interval`/`tau`, `exploration_...`。
+*   **Lab 代码指导:**
+    *   **SB3 流程:** 强调 SB3 的标准化流程：`make_vec_env` -> `DQN(...)` -> `model.learn()` -> `model.save()` -> `evaluate_policy()`。
+    *   **TensorBoard:** **务必指导学生启动和查看 TensorBoard**。解释 `rollout/ep_rew_mean` 是关键的监控指标，反映了平均每回合奖励的变化趋势。
+*   **结果分析与讨论:**
+    *   **评估指标:** 解释 `evaluate_policy` 返回的 `mean_reward` 和 `std_reward` 的含义。
+    *   **超参数影响 (讨论):**
+        *   学习率：太高不稳定，太低收敛慢。
+        *   Buffer Size：太小可能无法有效打破相关性，太大内存消耗高且可能包含过多旧策略数据。
+        *   探索：衰减太快可能探索不足，衰减太慢或最终值太高可能影响最终性能。
+        *   目标网络更新频率：更新太频繁接近于无目标网络（不稳定），更新太慢可能导致目标过于陈旧，学习信号延迟。
+
+# 潜在学生问题与解答 (Potential Student Questions & Answers)
+
+*   **Q: DQN 和 Q-Learning 有什么关系？**
+    *   A: DQN 本质上是使用深度神经网络作为函数逼近器的 Q-Learning。它沿用了 Q-Learning 的核心更新思想（基于 TD 误差和 `max` 操作），但为了解决 Q-Learning 与神经网络结合时的不稳定性问题，引入了经验回放和目标网络这两个关键技巧。
+*   **Q: 经验回放缓冲区大小设多大合适？**
+    *   A: 没有固定答案，取决于具体问题和可用内存。通常需要足够大以存储多样化的历史经验（例如几十万到一百万步），但过大也可能包含太多陈旧数据。这是一个需要根据实验调整的超参数。
+*   **Q: 目标网络更新频率 (硬更新 C 或软更新 τ) 怎么选？**
+    *   A: 这也是一个超参数。硬更新（如 C=10000 步）更简单直观，但可能导致目标值跳变。软更新（如 τ=0.005）变化更平滑，是目前更常用的方式。τ 越小，目标网络更新越慢，目标越稳定，但可能学习信号延迟；τ 越大，目标网络跟踪越快，学习信号更新及时，但可能牺牲稳定性。通常需要实验选择。
+*   **Q: Lab 代码运行很慢/需要很长时间怎么办？**
+    *   A: 深度强化学习训练通常需要较长时间和计算资源。Lab 代码中的 `total_timesteps=100000` 只是一个示例值，可能需要几分钟到十几分钟（取决于 CPU/GPU 性能）。如果为了快速看到结果，可以适当减少 `total_timesteps`（例如到 10000 或 20000），但可能无法充分训练模型。使用向量化环境 (`make_vec_env`) 和 GPU（如果可用且 PyTorch 配置正确）可以显著加速训练。
+*   **Q: TensorBoard 图里的其他指标是什么意思？**
+    *   A: TensorBoard 会记录很多训练过程中的指标。除了 `rollout/ep_rew_mean` (平均回合奖励)，其他常见的可能包括：`train/loss` (训练损失)、`rollout/ep_len_mean` (平均回合长度)、`exploration_rate` (探索率变化)、`value_loss` / `policy_loss` (在 Actor-Critic 方法中) 等。关注 `ep_rew_mean` 是判断训练效果最直观的方式。
+
+# 与后续课程的联系 (Connections to Future Topics)
+
+*   DQN 是深度强化学习的里程碑，理解它的原理和技巧对于学习后续更复杂的 DRL 算法（如 DDPG, Rainbow DQN 等）非常有帮助。
+*   经验回放和目标网络是许多现代 DRL 算法中常用的技术。
+*   下周学习的策略梯度和 Actor-Critic 方法将提供与 DQN (基于价值) 不同的解决 RL 问题的思路（直接学习策略）。
+
+# 教师准备建议 (Preparation Suggestions)
+
+*   准备好清晰解释 DQN 不稳定性原因的例子或图示。
+*   准备好经验回放和目标网络的机制图示和作用解释。
+*   熟悉 DQN 算法流程伪代码。
+*   确保自己能流畅运行 Lab 6 的 SB3 DQN 代码，并能演示 TensorBoard 的使用。
+*   预先思考不同超参数对 CartPole 任务可能产生的影响，以便引导讨论。
+*   （可选）准备一些 DQN 的成功应用案例（如 Atari 游戏）的图片或视频，增加趣味性。

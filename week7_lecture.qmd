@@ -1,0 +1,295 @@
+---
+title: "Week 7: 异策略控制 - Q-Learning (重点)"
+---
+
+# 回顾：同策略 TD 控制 - SARSA
+
+上周我们学习了 SARSA 算法：
+
+*   **类别:** 同策略 (On-Policy) TD 控制算法。
+*   **核心:** 使用经验五元组 (S, A, R, S', A') 来更新 Q(S, A)。
+*   **更新规则:** Q(S, A) ← Q(S, A) + α [R + γ Q(S', A') - Q(S, A)]
+*   **特点:**
+    *   学习的是遵循当前（包含探索的）策略 π 的动作值函数。
+    *   更新 Q(S, A) 时，使用的下一个动作 A' 是**实际**根据当前策略 π 在 S' 选择的动作。
+    *   在 CliffWalking 例子中，由于 ε-greedy 策略有时会探索到悬崖边并掉下去，SARSA 为了将这种可能性考虑在内（因为 A' 可能是走向悬崖的动作），倾向于学习一条更保守、远离悬崖的“安全”路径。
+
+SARSA 直接学习并改进它正在执行的策略。但有时我们希望将**行为策略 (Behavior Policy)** 与**目标策略 (Target Policy)** 分开。例如，我们可能想：
+
+*   学习最优策略 π\* (目标策略，通常是贪心策略)，但使用一个更具探索性的策略 μ (行为策略，如 ε-greedy) 来收集数据。
+*   利用过去收集的经验数据（可能由旧的或其他策略生成）来学习当前的最优策略。
+
+这就引出了**异策略 (Off-Policy)** 学习。
+
+# 异策略 (Off-Policy) 学习思想
+
+**目标:** 学习目标策略 π 的价值函数 (Vπ 或 Qπ)，但使用的是由**另一个**行为策略 μ 生成的数据。
+
+*   **目标策略 (Target Policy) π:** 我们想要评估和改进的策略。通常是我们最终想要得到的最优策略（例如，相对于当前 Q 值的贪心策略）。
+*   **行为策略 (Behavior Policy) μ:** 用于与环境交互、生成经验数据的策略。通常比目标策略更具探索性（例如，ε-greedy 或完全随机），以确保收集到足够多样化的数据，覆盖所有状态和动作。
+
+**关键要求:** 行为策略 μ 必须能够覆盖目标策略 π 可能选择的所有动作。即，如果 π(a|s) > 0，那么必须有 μ(a|s) > 0 (Coverage / Assumption of Coverage)。对于 ε-greedy 行为策略和贪心目标策略，这个条件通常是满足的。
+
+**优点:**
+
+*   **解耦探索与利用:** 可以大胆探索 (μ)，同时学习最优的利用策略 (π)。
+*   **利用历史/离线数据:** 可以重用过去收集的数据，即使这些数据不是由当前目标策略生成的。这对于数据获取成本高的场景（如真实机器人、昂贵的商业实验）非常有价值。
+*   **学习人类或其他智能体的经验:** 可以观察专家演示并从中学习。
+
+**挑战:**
+
+*   算法通常更复杂。
+*   可能具有更高的方差或收敛更慢（尤其是在 π 和 μ 相差很大的情况下）。需要使用**重要性采样 (Importance Sampling)** 等技术来修正分布不匹配的问题（我们暂时不深入细节）。
+
+# Q-Learning: 异策略 TD 控制
+
+Q-Learning 是最著名和广泛使用的**异策略 TD 控制**算法之一。
+
+**核心思想:**
+
+*   直接学习**最优动作值函数 Q\*(s, a)**，无论遵循何种行为策略 μ 来收集数据。
+*   行为策略 μ (e.g., ε-greedy) 用于选择**实际执行**的动作 A_t 以探索环境。
+*   目标策略 π 是隐式的**贪心策略** (π(s) = argmax_a Q(s, a))，它体现在 Q 值的**更新**过程中。
+
+**Q-Learning 更新规则:**
+
+在时间步 t，智能体处于状态 S_t，根据**行为策略 μ** (e.g., ε-greedy) 选择并执行动作 A_t，观察到奖励 R_{t+1} 和下一个状态 S_{t+1}。
+
+Q-Learning 使用这个四元组 (S_t, A_t, R_{t+1}, S_{t+1}) 来更新 Q(S_t, A_t)：
+
+Q(S_t, A_t) ← Q(S_t, A_t) + α [ R_{t+1} + γ **max_{a'} Q(S_{t+1}, a')** - Q(S_t, A_t) ]
+
+**对比 SARSA 更新规则:**
+Q(S_t, A_t) ← Q(S_t, A_t) + α [ R_{t+1} + γ **Q(S_{t+1}, A_{t+1})** - Q(S_t, A_t) ]
+
+**关键区别:**
+
+*   **TD 目标不同:**
+    *   **SARSA:** 使用 R_{t+1} + γ Q(S_{t+1}, **A_{t+1}**)。这里的 A_{t+1} 是**实际**根据当前行为/目标策略 π (ε-greedy) 在 S_{t+1} 选择的下一个动作。
+    *   **Q-Learning:** 使用 R_{t+1} + γ **max_{a'} Q(S_{t+1}, a')**。这里直接使用了在 S_{t+1} 状态下，当前 Q 值估计中**最优**的动作 a' 对应的 Q 值，**而不管行为策略 μ 实际会选择哪个动作**。
+*   **策略分离:**
+    *   **SARSA:** 行为策略和目标策略是同一个 (e.g., ε-greedy)。更新依赖于实际执行的下一个动作 A'。
+    *   **Q-Learning:** 行为策略 (e.g., ε-greedy) 用于选择动作 A 与环境交互；目标策略 (贪心策略) 隐含在 `max` 操作中，用于更新 Q 值。更新不依赖于实际执行的下一个动作。
+
+::: {.callout-important title="Q-Learning 的 Off-Policy 特性"}
+Q-Learning 的更新不依赖于行为策略 μ 在 S_{t+1} 实际选择的动作 A_{t+1}，而是直接使用了当前估计的最优动作的价值 (`max_{a'} Q(S_{t+1}, a')`)。这使得 Q-Learning 可以学习最优策略 Q\*，即使行为策略 μ 不是最优的（只要 μ 保证了足够的探索）。
+:::
+
+## Q-Learning 算法伪代码
+
+```
+Initialize:
+  Q(s, a) ← arbitrary values (e.g., 0) for all s ∈ S, a ∈ A(s)
+  α ← learning rate (small positive number)
+  γ ← discount factor (0 ≤ γ ≤ 1)
+  ε ← exploration rate (for behavior policy, e.g., 0.1)
+
+Loop for each episode:
+  Initialize S (first state of episode)
+
+  Loop for each step of episode:
+    # Choose action A using behavior policy derived from Q (e.g., ε-greedy)
+    Choose A from S using ε-greedy(Q)
+
+    # Take action A, observe R, S'
+    Take action A, observe R, S'
+
+    # 核心更新步骤 (Q-Learning)
+    # Find the best Q value for the next state S' (max over next actions a')
+    if S' is terminal:
+        Q_next_max = 0 # No future reward if terminal
+    else:
+        Q_next_max = np.max(Q[S', :]) # max_{a'} Q(S', a')
+
+    td_target = R + γ * Q_next_max
+    td_error = td_target - Q(S, A)
+    Q(S, A) ← Q(S, A) + α * td_error
+
+    S ← S' # Move to the next state
+
+    If S is terminal, break inner loop
+```
+
+**解释:**
+
+1.  初始化 Q(s, a)，学习率 α，折扣因子 γ，探索率 ε (用于行为策略)。
+2.  对于每个回合：
+3.  获取起始状态 S。
+4.  对于回合中的每一步：
+5.  根据当前的 Q 值和**行为策略** (ε-greedy) 选择动作 A。
+6.  执行动作 A，观察到奖励 R 和下一个状态 S'。
+7.  **关键:** 计算在下一个状态 S' 下**可能的最大 Q 值**: `Q_next_max = max_{a'} Q(S', a')` (如果 S' 是终止状态，则为 0)。
+8.  **计算 TD 目标:** `target = R + γ * Q_next_max`。
+9.  **计算 TD 误差:** `δ = target - Q(S, A)`。
+10. **更新 Q 值:** `Q(S, A) ← Q(S, A) + α * δ`。
+11. 将当前状态更新为 S'。
+12. 如果 S' 是终止状态，结束当前回合。
+
+# Lab 5: Q-Learning 实践与 SARSA 对比
+
+## 目标
+
+1.  在 CliffWalking 环境中实现或运行 Q-Learning 算法。
+2.  对比 Q-Learning 和 SARSA 在相同环境下的学习过程（奖励曲线）和最终策略。
+3.  理解 Off-Policy 学习的特点和优势。
+
+## 环境：CliffWalking
+
+继续使用上周的 CliffWalking 环境 (`gym.make("CliffWalking-v0")`)。
+
+## 示例代码框架 (CliffWalking - Q-Learning)
+
+```python
+import gymnasium as gym
+import numpy as np
+from collections import defaultdict
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# 创建 CliffWalking 环境
+env = gym.make("CliffWalking-v0")
+
+# 1. 初始化参数 (与 SARSA 相同或相似，便于比较)
+alpha = 0.1       # 学习率
+gamma = 0.99      # 折扣因子
+epsilon = 0.1     # 探索率 (用于行为策略)
+# epsilon_decay = 0.999
+# min_epsilon = 0.01
+num_episodes = 500
+
+# 初始化 Q 表
+Q = np.zeros((env.observation_space.n, env.action_space.n))
+
+# 记录每回合奖励
+episode_rewards = []
+
+# 2. ε-Greedy 策略函数 (与 SARSA 相同，用于选择执行的动作)
+def choose_action_epsilon_greedy(state, current_epsilon):
+    if np.random.rand() < current_epsilon:
+        return env.action_space.sample()
+    else:
+        q_values = Q[state, :]
+        max_q = np.max(q_values)
+        if np.all(q_values == q_values[0]):
+             return env.action_space.sample()
+        best_actions = np.where(q_values == max_q)[0]
+        return np.random.choice(best_actions)
+
+# 3. Q-Learning 主循环
+current_epsilon = epsilon
+for i in range(num_episodes):
+    state, info = env.reset()
+    terminated = False
+    truncated = False
+    total_reward = 0
+
+    while not (terminated or truncated):
+        # 使用行为策略 (ε-greedy) 选择动作 A
+        action = choose_action_epsilon_greedy(state, current_epsilon)
+
+        # 执行动作，观察 S', R
+        next_state, reward, terminated, truncated, info = env.step(action)
+
+        # Q-Learning 更新
+        if terminated or truncated:
+            Q_next_max = 0 # 到达终点或截断，未来价值为 0
+        else:
+            Q_next_max = np.max(Q[next_state, :]) # 核心：取下一个状态的最大 Q 值
+
+        td_target = reward + gamma * Q_next_max
+        td_error = td_target - Q[state, action]
+        Q[state, action] = Q[state, action] + alpha * td_error
+
+        state = next_state
+        total_reward += reward
+
+    episode_rewards.append(total_reward)
+
+    # (可选) Epsilon 衰减
+    # current_epsilon = max(min_epsilon, current_epsilon * epsilon_decay)
+
+    if (i + 1) % 100 == 0:
+        print(f"Episode {i+1}/{num_episodes}, Total Reward: {total_reward}, Epsilon: {current_epsilon:.3f}")
+
+
+# 4. 可视化学习过程 (奖励曲线)
+plt.figure(figsize=(10, 5))
+plt.plot(episode_rewards)
+try:
+    import pandas as pd
+    moving_avg = pd.Series(episode_rewards).rolling(window=50).mean()
+    plt.plot(moving_avg, label='Moving Average (window=50)', color='red')
+    plt.legend()
+except ImportError:
+    print("Pandas not installed, skipping moving average plot.")
+plt.xlabel("Episode")
+plt.ylabel("Total Reward per Episode")
+plt.title(f"Q-Learning Learning Curve (ε={epsilon})")
+plt.grid(True)
+plt.show()
+
+# 5. 可视化最终策略 (与 SARSA 相同)
+def plot_policy(Q_table, env_shape=(4, 12)):
+    policy_grid = np.empty(env_shape, dtype=str)
+    actions_map = {0: '↑', 1: '→', 2: '↓', 3: '←'} # 上右下左
+
+    for r in range(env_shape[0]):
+        for c in range(env_shape[1]):
+            state = r * env_shape[1] + c
+            # Initialize grid cell
+            policy_grid[r, c] = ''
+
+            if 37 <= state <= 46: policy_grid[r, c] = 'X'; continue # Cliff
+            if state == 47: policy_grid[r, c] = 'G'; continue # Goal
+            if state == 36: policy_grid[r, c] = 'S'; # Start, might be overwritten by arrow
+
+            # Determine best action based on Q-values
+            if np.all(Q_table[state, :] == 0):
+                 # Keep 'S' if it's the start state and Q is zero, otherwise mark as '.'
+                 if state != 36 and policy_grid[r, c] == '':
+                     policy_grid[r, c] = '.'
+            else:
+                best_action = np.argmax(Q_table[state, :])
+                # Overwrite '.' or 'S' with the action arrow
+                policy_grid[r, c] = actions_map[best_action]
+
+
+    plt.figure(figsize=(8, 3))
+    dummy_data = np.zeros(env_shape)
+    dummy_data[3, 1:-1] = -1 # Mark cliff row for coloring
+    sns.heatmap(dummy_data, annot=policy_grid, fmt="", cmap="coolwarm",
+                cbar=False, linewidths=.5, linecolor='black', annot_kws={"size": 12})
+    plt.title("Learned Policy (Q-Learning)")
+    plt.xticks([])
+    plt.yticks([])
+    plt.show()
+
+plot_policy(Q)
+
+env.close()
+```
+
+## 任务与思考
+
+1.  **运行 Q-Learning:** 运行上述 CliffWalking Q-Learning 代码。观察奖励曲线和最终策略。
+2.  **对比 SARSA:**
+    *   **奖励曲线:** 将 Q-Learning 的奖励曲线与上周 SARSA 的奖励曲线（使用相同的 α, γ, ε 参数）进行比较。哪个算法的平均每回合奖励更高？哪个更稳定？
+    *   **最终策略:** 比较 Q-Learning 和 SARSA 学到的最终策略（箭头图）。它们有何不同？Q-Learning 学到的路径是“安全”路径还是“危险”路径（贴着悬崖走）？
+    *   **解释差异:** 为什么 Q-Learning 和 SARSA 在 CliffWalking 中会学到不同的策略？（提示：回顾它们的更新规则，特别是 TD 目标的不同，以及它们如何处理探索动作的影响）。
+3.  **Off-Policy 的优势讨论:**
+    *   如果现在有一批由完全随机策略在 CliffWalking 环境中生成的历史数据 (S, A, R, S')，SARSA 能否直接利用这些数据学习最优策略？Q-Learning 能否？为什么？
+    *   在商业场景中（如在线广告投放、动态定价），使用 Off-Policy 学习（如 Q-Learning）可能有哪些优势？（例如，可以一边用现有稳定策略服务用户，一边利用收集到的数据学习和测试新策略）。
+
+## 提交要求
+
+*   提交你的 Q-Learning 实现代码。
+*   提交 Q-Learning 的奖励曲线图和最终策略可视化图。
+*   提交一份对比分析报告，重点比较 Q-Learning 和 SARSA 的：
+    *   学习过程（奖励曲线）。
+    *   最终策略（路径选择）。
+    *   解释策略差异的原因。
+    *   讨论 Off-Policy 学习相对于 On-Policy 学习的潜在优势，尤其是在商业应用背景下。
+
+---
+
+**下周预告:** Q-Learning 应用讨论与中期回顾。我们将模拟一个简单的商业问题，并复习前半学期的核心概念 (MDP, Bellman, MC, TD, SARSA, Q-Learning)。

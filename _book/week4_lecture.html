@@ -1,0 +1,1307 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Week 4: 蒙特卡洛方法 - 从完整经验中学习 – 智能计算</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./week5_lecture.html" rel="next">
+<link href="./week3_lecture.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xkm/sYwpb+ilR5gUw==" crossorigin="anonymous" referrerpolicy="no-referrer">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="styles/custom.css">
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./week1_lecture.html">讲义</a></li><li class="breadcrumb-item"><a href="./week4_lecture.html"><span class="chapter-title">Week 4: 蒙特卡洛方法 - 从完整经验中学习</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">智能计算</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">课程介绍</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">讲义</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week1_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 1: 商业决策智能化与强化学习概览</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week2_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 2: 序贯决策建模 - 马尔可夫决策过程 (MDP)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week3_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 3: 最优决策与 Bellman 最优方程</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week4_lecture.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Week 4: 蒙特卡洛方法 - 从完整经验中学习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week5_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 5: 时序差分学习 - 从不完整经验中学习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week6_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 6: 同策略控制 - SARSA</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week7_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 7: 异策略控制 - Q-Learning (重点)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week8_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 8: Q-Learning 应用讨论与中期回顾</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week9_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 9: 函数逼近入门</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week10_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 10: 深度 Q 网络 (DQN)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week11_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 11: 策略梯度方法 (Policy Gradient Methods)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week12_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 12: Actor-Critic 方法</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week13_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 13: 商业案例分析 1 - 动态定价与资源优化</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week14_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 14: 商业案例分析 2 - 个性化推荐与营销</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week15_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 15: 实践挑战、伦理规范与项目指导</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week16_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 16: 课程总结与未来展望</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">练习</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week1_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 1 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week2_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 2 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week3_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 3 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week4_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 4 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week5_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 5 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week6_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 6 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week7_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 7 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week8_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 8 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week9_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 9 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week10_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 10 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week11_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 11 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week12_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 12 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week13_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 13 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week14_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 14 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week15_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 15 - 学生练习</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./week16_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 16 - 学生练习</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#回顾mdp-与-最优决策" id="toc-回顾mdp-与-最优决策" class="nav-link active" data-scroll-target="#回顾mdp-与-最优决策">回顾：MDP 与 最优决策</a></li>
+  <li><a href="#无模型预测蒙特卡洛评估" id="toc-无模型预测蒙特卡洛评估" class="nav-link" data-scroll-target="#无模型预测蒙特卡洛评估">无模型预测：蒙特卡洛评估</a>
+  <ul class="collapse">
+  <li><a href="#首次访问-first-visit-mc-vs.-每次访问-every-visit-mc" id="toc-首次访问-first-visit-mc-vs.-每次访问-every-visit-mc" class="nav-link" data-scroll-target="#首次访问-first-visit-mc-vs.-每次访问-every-visit-mc">首次访问 (First-Visit) MC vs.&nbsp;每次访问 (Every-Visit) MC</a></li>
+  <li><a href="#mc-评估-v_pi-算法伪代码-首次访问" id="toc-mc-评估-v_pi-算法伪代码-首次访问" class="nav-link" data-scroll-target="#mc-评估-v_pi-算法伪代码-首次访问">MC 评估 <span class="math inline">\(V_{\pi}\)</span> 算法伪代码 (首次访问)</a></li>
+  <li><a href="#mc-评估-q_pi-算法伪代码-首次访问" id="toc-mc-评估-q_pi-算法伪代码-首次访问" class="nav-link" data-scroll-target="#mc-评估-q_pi-算法伪代码-首次访问">MC 评估 <span class="math inline">\(Q_{\pi}\)</span> 算法伪代码 (首次访问)</a></li>
+  </ul></li>
+  <li><a href="#lab-2-mc-预测实践" id="toc-lab-2-mc-预测实践" class="nav-link" data-scroll-target="#lab-2-mc-预测实践">Lab 2: MC 预测实践</a>
+  <ul class="collapse">
+  <li><a href="#目标" id="toc-目标" class="nav-link" data-scroll-target="#目标">目标</a></li>
+  <li><a href="#环境选择" id="toc-环境选择" class="nav-link" data-scroll-target="#环境选择">环境选择</a></li>
+  <li><a href="#示例代码框架-blackjack---vπ-评估" id="toc-示例代码框架-blackjack---vπ-评估" class="nav-link" data-scroll-target="#示例代码框架-blackjack---vπ-评估">示例代码框架 (Blackjack - Vπ 评估)</a></li>
+  <li><a href="#任务与思考" id="toc-任务与思考" class="nav-link" data-scroll-target="#任务与思考">任务与思考</a></li>
+  <li><a href="#mc-方法的优缺点" id="toc-mc-方法的优缺点" class="nav-link" data-scroll-target="#mc-方法的优缺点">MC 方法的优缺点</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./week1_lecture.html">讲义</a></li><li class="breadcrumb-item"><a href="./week4_lecture.html"><span class="chapter-title">Week 4: 蒙特卡洛方法 - 从完整经验中学习</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-title">Week 4: 蒙特卡洛方法 - 从完整经验中学习</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="回顾mdp-与-最优决策" class="level1">
+<h1>回顾：MDP 与 最优决策</h1>
+<p>前三周我们建立了强化学习的基础框架：</p>
+<ul>
+<li><strong>MDP (<span class="math inline">\(S\)</span>, <span class="math inline">\(A\)</span>, <span class="math inline">\(P\)</span>, <span class="math inline">\(R\)</span>, <span class="math inline">\(\gamma\)</span>):</strong> 描述序贯决策问题。</li>
+<li><strong>策略 <span class="math inline">\(\pi\)</span>:</strong> 智能体的行为方式。</li>
+<li><strong>价值函数 (<span class="math inline">\(V_\pi\)</span>, <span class="math inline">\(Q_\pi\)</span>):</strong> 评估策略的好坏。</li>
+<li><strong>最优价值函数 (<span class="math inline">\(V^*\)</span>, <span class="math inline">\(Q^*\)</span>):</strong> 描述最优行为能达到的价值上限。</li>
+<li><strong>Bellman 期望方程:</strong> 用于策略评估。</li>
+<li><strong>Bellman 最优方程:</strong> 描述最优价值函数的性质，理论上解出它就能得到最优策略。</li>
+</ul>
+<p><strong>问题:</strong> Bellman 方程（无论是期望还是最优）都依赖于我们<strong>知道环境的模型 (Model)</strong>，即状态转移概率 <span class="math inline">\(P(s' | s, a)\)</span> 和奖励函数 <span class="math inline">\(R(s, a, s')\)</span>。</p>
+<p><strong>现实挑战:</strong> 在许多实际商业问题中，我们<strong>无法</strong>精确知道环境模型 <span class="math inline">\(P\)</span> 和 <span class="math inline">\(R\)</span>。</p>
+<ul>
+<li>市场如何对价格变动做出反应？(<span class="math inline">\(P\)</span> 未知)</li>
+<li>客户点击广告的具体概率是多少？(<span class="math inline">\(P\)</span> 未知)</li>
+<li>供应链中断的概率和影响？(<span class="math inline">\(P\)</span>, <span class="math inline">\(R\)</span> 未知)</li>
+</ul>
+<p>因此，我们需要<strong>无模型 (Model-Free)</strong> 的强化学习方法。这类方法不依赖于环境模型，而是直接从智能体与环境交互产生的<strong>经验 (Experience)</strong> 中学习。</p>
+<p>本周我们将学习第一类重要的无模型方法：<strong>蒙特卡洛 (Monte Carlo, MC) 方法</strong>。</p>
+<div class="callout callout-style-default callout-important callout-titled" title="有模型情况下的策略评估">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+有模型情况下的策略评估
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>在有模型的情况下，我们可以直接使用 Bellman 期望方程来计算价值函数。以下是一个具体的可计算例子：</p>
+<p><strong>问题描述:</strong> 考虑一个简单的库存管理问题，状态空间为 {0,1,2}（库存量），动作空间为 {0,1}（不补货/补货）。已知状态转移概率和奖励函数如下：</p>
+<ul>
+<li><strong>状态转移概率 <span class="math inline">\(P(s'|s,a)\)</span>:</strong>
+<ul>
+<li>当 <span class="math inline">\(a=0\)</span>（不补货）时：
+<ul>
+<li><span class="math inline">\(P(s'=\max(s-1,0)|s,a=0) = 0.8\)</span></li>
+<li><span class="math inline">\(P(s'=\max(s-2,0)|s,a=0) = 0.2\)</span></li>
+</ul></li>
+<li>当 <span class="math inline">\(a=1\)</span>（补货）时：
+<ul>
+<li><span class="math inline">\(P(s'=\min(s+1,2)|s,a=1) = 0.7\)</span></li>
+<li><span class="math inline">\(P(s'=\min(s+2,2)|s,a=1) = 0.3\)</span></li>
+</ul></li>
+</ul></li>
+<li><strong>奖励函数 <span class="math inline">\(R(s,a,s')\)</span>:</strong>
+<ul>
+<li>持有成本：<span class="math inline">\(-0.1 * s'\)</span></li>
+<li>补货成本：<span class="math inline">\(-0.5 * a\)</span></li>
+<li>销售收益：<span class="math inline">\(+1.0 * (s - s')\)</span></li>
+<li>总奖励：<span class="math inline">\(R(s,a,s') = 1.0*(s-s') - 0.1*s' - 0.5*a\)</span></li>
+</ul></li>
+<li><strong>折扣因子 <span class="math inline">\(\gamma = 0.9\)</span></strong></li>
+</ul>
+<section id="针对库存管理例子的-bellman-期望方程计算" class="level1">
+<h1>针对库存管理例子的 Bellman 期望方程计算</h1>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> inventory_bellman_expectation():</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">    计算库存管理例子的价值函数</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 定义状态和动作空间</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    states <span class="op">=</span> [<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>]</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    actions <span class="op">=</span> [<span class="dv">0</span>, <span class="dv">1</span>]</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 定义状态转移概率</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    P <span class="op">=</span> {</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>        <span class="dv">0</span>: {</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>            <span class="dv">0</span>: {<span class="dv">0</span>: <span class="fl">1.0</span>, <span class="dv">1</span>: <span class="fl">0.0</span>, <span class="dv">2</span>: <span class="fl">0.0</span>},  <span class="co"># 不补货, s'=0 with prob 1.0, s'=1,2 with prob 0.0</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>            <span class="dv">1</span>: {<span class="dv">0</span>: <span class="fl">0.0</span>, <span class="dv">1</span>: <span class="fl">0.7</span>, <span class="dv">2</span>: <span class="fl">0.3</span>}   <span class="co"># 补货, s'=1 with prob 0.7, s'=2 with prob 0.3, s'=0 with prob 0.0</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>        <span class="dv">1</span>: {</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>            <span class="dv">0</span>: {<span class="dv">0</span>: <span class="fl">1.0</span>, <span class="dv">1</span>: <span class="fl">0.0</span>, <span class="dv">2</span>: <span class="fl">0.0</span>},  <span class="co"># 不补货, s'=0 with prob 1.0, s'=1,2 with prob 0.0</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>            <span class="dv">1</span>: {<span class="dv">0</span>: <span class="fl">0.0</span>, <span class="dv">1</span>: <span class="fl">0.0</span>, <span class="dv">2</span>: <span class="fl">1.0</span>}   <span class="co"># 补货, s'=2 with prob 1.0, s'=0,1 with prob 0.0</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>        <span class="dv">2</span>: {</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>            <span class="dv">0</span>: {<span class="dv">0</span>: <span class="fl">0.2</span>, <span class="dv">1</span>: <span class="fl">0.8</span>, <span class="dv">2</span>: <span class="fl">0.0</span>},  <span class="co"># 不补货, s'=0 with prob 0.2, s'=1 with prob 0.8, s'=2 with prob 0.0</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>            <span class="dv">1</span>: {<span class="dv">0</span>: <span class="fl">0.0</span>, <span class="dv">1</span>: <span class="fl">0.0</span>, <span class="dv">2</span>: <span class="fl">1.0</span>}   <span class="co"># 补货, s'=2 with prob 1.0, s'=0,1 with prob 0.0</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 定义奖励函数</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> R(s, a, s_prime):</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="fl">1.0</span> <span class="op">*</span> (s <span class="op">-</span> s_prime) <span class="op">-</span> <span class="fl">0.1</span> <span class="op">*</span> s_prime <span class="op">-</span> <span class="fl">0.5</span> <span class="op">*</span> a</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 定义策略（均匀随机策略）</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>    policy <span class="op">=</span> {</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>        <span class="dv">0</span>: {<span class="dv">0</span>: <span class="fl">0.5</span>, <span class="dv">1</span>: <span class="fl">0.5</span>},</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>        <span class="dv">1</span>: {<span class="dv">0</span>: <span class="fl">0.5</span>, <span class="dv">1</span>: <span class="fl">0.5</span>},</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>        <span class="dv">2</span>: {<span class="dv">0</span>: <span class="fl">0.5</span>, <span class="dv">1</span>: <span class="fl">0.5</span>}</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 初始化价值函数</span></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>    V <span class="op">=</span> {s: <span class="dv">0</span> <span class="cf">for</span> s <span class="kw">in</span> states}</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>    gamma <span class="op">=</span> <span class="fl">0.9</span></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>    theta <span class="op">=</span> <span class="fl">1e-6</span></span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 迭代更新价值函数</span></span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>    <span class="cf">while</span> <span class="va">True</span>:</span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>        delta <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> s <span class="kw">in</span> states:</span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>            v <span class="op">=</span> V[s]</span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>            <span class="co"># 计算新的价值函数</span></span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>            V[s] <span class="op">=</span> <span class="bu">sum</span>(policy[s][a] <span class="op">*</span> <span class="bu">sum</span>(P[s][a][s_prime] <span class="op">*</span> </span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>                    (R(s, a, s_prime) <span class="op">+</span> gamma <span class="op">*</span> V[s_prime])</span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>                    <span class="cf">for</span> s_prime <span class="kw">in</span> states) </span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>                    <span class="cf">for</span> a <span class="kw">in</span> actions)</span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>            <span class="co"># 更新最大变化量</span></span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>            delta <span class="op">=</span> <span class="bu">max</span>(delta, <span class="bu">abs</span>(v <span class="op">-</span> V[s]))</span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 检查是否收敛</span></span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> delta <span class="op">&lt;</span> theta:</span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a>            <span class="cf">break</span></span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> V</span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a><span class="co"># 示例调用</span></span>
+<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a>inventory_bellman_expectation()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>这个例子展示了在有完整环境模型的情况下，如何具体应用 Bellman 期望方程进行价值函数的计算。</p>
+</section>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled" title="有模型情况下使用 Bellman 期望方程的优缺点">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+有模型情况下使用 Bellman 期望方程的优缺点
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><strong>优点:</strong> 1. <strong>精确计算:</strong> 直接使用 Bellman 期望方程可以得到精确的价值函数值，不需要通过采样来估计。 2. <strong>收敛速度快:</strong> 通过迭代更新，通常可以在较少的迭代次数内收敛到真实值。 3. <strong>理论保证:</strong> 在满足条件的情况下，可以保证收敛到唯一解。</p>
+<p><strong>缺点:</strong> 1. <strong>需要完整环境模型:</strong> 必须知道状态转移概率 P 和奖励函数 R，这在很多实际问题中难以获得。 2. <strong>计算复杂度高:</strong> 对于大规模状态空间，计算所有状态的价值函数会非常耗时。 3. <strong>内存需求大:</strong> 需要存储整个状态空间的价值函数，对于高维状态空间可能不现实。 4. <strong>无法处理连续状态空间:</strong> 仅适用于离散且有限的状态空间。</p>
+</div>
+</div>
+</div>
+</section>
+<section id="无模型预测蒙特卡洛评估" class="level1">
+<h1>无模型预测：蒙特卡洛评估</h1>
+<p><strong>目标:</strong> 在<strong>不知道</strong>环境模型 <span class="math inline">\(P\)</span> 和 <span class="math inline">\(R\)</span> 的情况下，给定一个策略 <span class="math inline">\(\pi\)</span>，如何估计其价值函数 <span class="math inline">\(V_\pi(s)\)</span> 或 <span class="math inline">\(Q_\pi(s, a)\)</span>？</p>
+<p><strong>核心思想:</strong> 利用<strong>大数定律 (Law of Large Numbers)</strong>。通过多次模拟（采样），用样本回报的平均值来估计期望回报（即价值函数）。</p>
+<p><strong>蒙特卡洛方法的基本流程:</strong></p>
+<ol type="1">
+<li><strong>遵循策略 <span class="math inline">\(\pi\)</span> 与环境交互，生成大量的完整回合 (Episodes)。</strong>
+<ul>
+<li>一个回合是从某个起始状态开始，直到达到终止状态为止的一系列 <span class="math inline">\((S_0, A_0, R_1, S_1, A_1, R_2, ..., S_T)\)</span>。</li>
+</ul></li>
+<li><strong>对于回合中出现的每个状态 <span class="math inline">\(s\)</span> (或状态-动作对 <span class="math inline">\((s, a)\)</span>)，计算其在该回合中的实际回报 <span class="math inline">\(G_t\)</span>。</strong>
+<ul>
+<li><span class="math inline">\(G_t = R_{t+1} + γ R_{t+2} + ... + γ^{T-t-1} R_T\)</span></li>
+</ul></li>
+<li><strong>将所有回合中状态 <span class="math inline">\(s\)</span> (或状态-动作对 <span class="math inline">\((s, a)\)</span>) 的回报收集起来。</strong></li>
+<li><strong>用这些回报的平均值作为 <span class="math inline">\(V_{\pi}(s)\)</span> (或 <span class="math inline">\(Q_{\pi}(s, a)\)</span>) 的估计值。</strong></li>
+</ol>
+<p><span class="math display">\[
+\begin{aligned}
+V_{\pi}(s) &amp;\approx \text{多次回合中} G_t | S_t = s \text{的平均值} \\
+Q_{\pi}(s, a) &amp;\approx \text{多次回合中} G_t | S_t = s, A_t = a \text{的平均值}
+\end{aligned}
+\]</span></p>
+<section id="首次访问-first-visit-mc-vs.-每次访问-every-visit-mc" class="level2">
+<h2 class="anchored" data-anchor-id="首次访问-first-visit-mc-vs.-每次访问-every-visit-mc">首次访问 (First-Visit) MC vs.&nbsp;每次访问 (Every-Visit) MC</h2>
+<p>在计算状态 <span class="math inline">\(s\)</span> (或状态-动作对 <span class="math inline">\((s, a)\)</span>) 的平均回报时，对于一个回合中 <span class="math inline">\(s\)</span> (或 <span class="math inline">\((s, a)\)</span>) 可能出现多次的情况，有两种处理方式：</p>
+<ul>
+<li><strong>首次访问 MC (First-Visit MC):</strong>
+<ul>
+<li>对于每个回合，只计算状态 <span class="math inline">\(s\)</span> <strong>第一次</strong>出现时的回报 <span class="math inline">\(G_t\)</span>，并将其计入状态 <span class="math inline">\(s\)</span> 的回报列表。</li>
+<li>忽略该回合后续再次访问状态 <span class="math inline">\(s\)</span> 时的回报。</li>
+<li><span class="math inline">\(V_{\pi}(s) \approx \text{多次回合中} G_t | S_t = s \text{的平均值}\)</span></li>
+</ul></li>
+<li><strong>每次访问 MC (Every-Visit MC):</strong>
+<ul>
+<li>对于每个回合，状态 <span class="math inline">\(s\)</span> <strong>每一次</strong>出现时的回报 <span class="math inline">\(G_t\)</span> 都被计入状态 <span class="math inline">\(s\)</span> 的回报列表。</li>
+<li><span class="math inline">\(V_{\pi}(s) \approx \text{多次回合中} G_t | S_t = s \text{的平均值}\)</span> （与首次访问MC公式相同，区别在于计算时是否包含重复访问的回报）</li>
+</ul></li>
+</ul>
+<div class="callout callout-style-default callout-note callout-titled" title="选择">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+选择
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>两者在理论上都能收敛到真实的 <span class="math inline">\(V_{\pi}(s)\)</span> (随着回合数趋于无穷)。</li>
+<li>首次访问 MC 在理论分析上更常用。</li>
+<li>每次访问 MC 更容易实现，并且在某些情况下可能更高效（利用了更多数据点）。</li>
+<li>在实践中，两者的差异通常不大。</li>
+</ul>
+</div>
+</div>
+</section>
+<section id="mc-评估-v_pi-算法伪代码-首次访问" class="level2">
+<h2 class="anchored" data-anchor-id="mc-评估-v_pi-算法伪代码-首次访问">MC 评估 <span class="math inline">\(V_{\pi}\)</span> 算法伪代码 (首次访问)</h2>
+<pre><code>初始化:
+$\pi$ ← 要评估的策略
+$V(s)$ ← 任意状态价值函数（例如，对所有 $s \in S$，$V(s)=0$）
+$Returns(s)$ ← 空列表，对所有 $s \in S$
+
+无限循环（对每个回合）:
+使用 $\pi$ 生成一个回合: $S_0, A_0, R_1, S_1, A_1, R_2, ..., S_{T-1}, A_{T-1}, R_T$
+$G$ ← 0  # 初始化本回合的回报
+Visited_States_In_Episode ← 空集合 # 记录本回合已访问的状态
+对回合的每个时间步循环，$t = T-1, T-2, ..., 0$:
+    $G$ ← $R_{t+1} + \gamma * G$  # 计算从时间步t开始的回报
+    如果 $S_t$ 不在 Visited_States_In_Episode 中:
+    将 $G$ 添加到 $Returns(S_t)$
+    $V(S_t)$ ← $Returns(S_t)$ 的平均值
+    将 $S_t$ 添加到 $Visited_States_In_Episode$</code></pre>
+<p><strong>解释:</strong></p>
+<ol type="1">
+<li>初始化 <span class="math inline">\(V(s)\)</span> 和用于存储回报的列表 <span class="math inline">\(Returns(s)\)</span>。</li>
+<li>无限循环生成回合。</li>
+<li>对每个生成的回合，从后往前计算每个时间步 <span class="math inline">\(t\)</span> 的回报 <span class="math inline">\(G\)</span>。</li>
+<li>对于每个时间步 <span class="math inline">\(t\)</span> 的状态 <span class="math inline">\(S_t\)</span>，检查它是否是本回合<strong>首次</strong>访问。</li>
+<li>如果是首次访问，将计算得到的回报 <span class="math inline">\(G\)</span> 添加到该状态的回报列表 <span class="math inline">\(Returns(S_t)\)</span> 中。</li>
+<li>更新 <span class="math inline">\(V(S_t)\)</span> 为 <span class="math inline">\(Returns(S_t)\)</span> 中所有回报的平均值。</li>
+<li>标记 <span class="math inline">\(S_t\)</span> 在本回合已访问。</li>
+</ol>
+<p><strong>每次访问 MC 的修改:</strong> 只需去掉 <code>Visited_States_In_Episode</code> 的检查和记录即可。</p>
+</section>
+<section id="mc-评估-q_pi-算法伪代码-首次访问" class="level2">
+<h2 class="anchored" data-anchor-id="mc-评估-q_pi-算法伪代码-首次访问">MC 评估 <span class="math inline">\(Q_{\pi}\)</span> 算法伪代码 (首次访问)</h2>
+<p>评估 <span class="math inline">\(Q_{\pi}(s, a)\)</span> 的过程类似，只是我们需要记录和平均状态-动作对 <span class="math inline">\((s, a)\)</span> 的回报。</p>
+<pre><code>初始化:
+π ← 要评估的策略
+Q(s, a) ← 任意的动作价值函数（例如，对所有 s ∈ S, a ∈ A，Q(s,a)=0）
+Returns(s, a) ← 空列表，对所有 s ∈ S, a ∈ A
+
+无限循环（对每个回合）:
+使用 π 生成一个回合: S_0, A_0, R_1, S_1, A_1, R_2, ..., S_{T-1}, A_{T-1}, R_T
+G ← 0
+Visited_StateActions_In_Episode ← 空集合 # 用于首次访问MC
+对回合的每个时间步循环，t = T-1, T-2, ..., 0:
+    G ← R_{t+1} + γ * G
+    StateAction_Pair = (S_t, A_t)
+    如果 StateAction_Pair 不在 Visited_StateActions_In_Episode 中: # 用于首次访问MC
+    将 G 添加到 Returns(S_t, A_t)
+    Q(S_t, A_t) ← Returns(S_t, A_t) 的平均值
+    将 StateAction_Pair 添加到 Visited_StateActions_In_Episode # 用于首次访问MC</code></pre>
+<div class="callout callout-style-default callout-warning callout-titled" title="探索性开端 (Exploring Starts)">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+探索性开端 (Exploring Starts)
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>为了确保 <span class="math inline">\(Q(s, a)\)</span> 对所有的状态-动作对都有估计值，我们需要保证在足够多的回合中，所有的 <span class="math inline">\((s, a)\)</span> 对都被访问到。一种方法是采用<strong>探索性开端 (Exploring Starts)</strong>：每个回合的起始状态 <span class="math inline">\(S_0\)</span> 和起始动作 <span class="math inline">\(A_0\)</span> 是随机选择的，覆盖所有可能的 <span class="math inline">\((s, a)\)</span> 对。这在模拟中可行，但在真实环境中通常不现实。后续的控制算法会使用其他探索机制（如 <span class="math inline">\(\epsilon\)</span>-greedy）。</p>
+</div>
+</div>
+</section>
+</section>
+<section id="lab-2-mc-预测实践" class="level1">
+<h1>Lab 2: MC 预测实践</h1>
+<section id="目标" class="level2">
+<h2 class="anchored" data-anchor-id="目标">目标</h2>
+<ol type="1">
+<li>在一个简单的环境中（如 Gridworld 或 Blackjack）实现或运行 MC 预测算法。</li>
+<li>可视化学习到的价值函数。</li>
+<li>理解 MC 方法的优缺点。</li>
+</ol>
+</section>
+<section id="环境选择" class="level2">
+<h2 class="anchored" data-anchor-id="环境选择">环境选择</h2>
+<ul>
+<li><strong>Gridworld (网格世界):</strong>
+<ul>
+<li>一个经典的 RL 测试平台。智能体在一个二维网格中移动（上、下、左、右）。</li>
+<li>某些格子是目标（正奖励），某些是陷阱（负奖励），撞墙保持原地。</li>
+<li>状态是离散的（格子坐标），动作是离散的。</li>
+<li>通常是回合制任务（到达目标或陷阱结束）。</li>
+<li>Gymnasium 没有内置的标准 Gridworld，但很容易自己实现或找到第三方实现。</li>
+</ul></li>
+<li><strong>Blackjack (二十一点):</strong>
+<ul>
+<li>Gymnasium 内置环境 (<code>gym.make("Blackjack-v1")</code>)。</li>
+<li>目标：通过要牌 (hit) 或停牌 (stick) 使得总点数接近 21 点且不超过 21 点，并大于庄家。</li>
+<li><strong>状态:</strong> (玩家当前总点数, 庄家明牌点数, 玩家是否有可用的 Ace [值为 1 或 11]) (离散)。</li>
+<li><strong>动作:</strong> 0 (停牌 stick), 1 (要牌 hit) (离散)。</li>
+<li><strong>奖励:</strong> +1 (赢), -1 (输), 0 (平局)。</li>
+<li>回合制任务。</li>
+</ul></li>
+</ul>
+<p>我们将以 Blackjack 为例进行说明，因为它更标准且易于运行。</p>
+</section>
+<section id="示例代码框架-blackjack---vπ-评估" class="level2">
+<h2 class="anchored" data-anchor-id="示例代码框架-blackjack---vπ-评估">示例代码框架 (Blackjack - Vπ 评估)</h2>
+<p>假设我们要评估一个简单的固定策略 π：<strong>只要玩家点数小于 20 就一直要牌 (hit)，否则停牌 (stick)。</strong></p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> gymnasium <span class="im">as</span> gym</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> collections <span class="im">import</span> defaultdict</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> mpl_toolkits.mplot3d <span class="im">import</span> Axes3D <span class="co"># 用于 3D 绘图</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 创建 Blackjack 环境</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>env <span class="op">=</span> gym.make(<span class="st">"Blackjack-v1"</span>, sab<span class="op">=</span><span class="va">True</span>) <span class="co"># sab=True 表示状态包含玩家是否有可用 Ace</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. 定义要评估的策略 π</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> simple_policy(observation):</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="co">    只要玩家点数小于 20 就一直要牌 (hit)，否则停牌 (stick)。</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="co">    observation: (player_sum, dealer_showing, usable_ace)</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>    player_sum, _, _ <span class="op">=</span> observation</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">1</span> <span class="cf">if</span> player_sum <span class="op">&lt;</span> <span class="dv">20</span> <span class="cf">else</span> <span class="dv">0</span> <span class="co"># 1: hit, 0: stick</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. 初始化</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>V <span class="op">=</span> defaultdict(<span class="bu">float</span>) <span class="co"># 状态值函数 V(s)，用 defaultdict 初始化为 0</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>Returns <span class="op">=</span> defaultdict(<span class="bu">list</span>) <span class="co"># 存储每个状态的回报列表</span></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>N <span class="op">=</span> defaultdict(<span class="bu">int</span>) <span class="co"># (可选) 记录每个状态被访问的次数，用于增量更新 V</span></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>num_episodes <span class="op">=</span> <span class="dv">500000</span> <span class="co"># 模拟的回合数</span></span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. MC 预测主循环</span></span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(num_episodes):</span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (i <span class="op">+</span> <span class="dv">1</span>) <span class="op">%</span> <span class="dv">50000</span> <span class="op">==</span> <span class="dv">0</span>:</span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"Episode </span><span class="sc">{</span>i<span class="op">+</span><span class="dv">1</span><span class="sc">}</span><span class="ss">/</span><span class="sc">{</span>num_episodes<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 生成一个回合</span></span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>    episode <span class="op">=</span> []</span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>    observation, info <span class="op">=</span> env.reset()</span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a>    terminated <span class="op">=</span> <span class="va">False</span></span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a>    truncated <span class="op">=</span> <span class="va">False</span></span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>    <span class="cf">while</span> <span class="kw">not</span> (terminated <span class="kw">or</span> truncated):</span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a>        action <span class="op">=</span> simple_policy(observation) <span class="co"># 根据策略选择动作</span></span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a>        next_observation, reward, terminated, truncated, info <span class="op">=</span> env.step(action)</span>
+<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a>        episode.append((observation, action, reward)) <span class="co"># 记录 (状态, 动作, 奖励)</span></span>
+<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a>        observation <span class="op">=</span> next_observation</span>
+<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 处理回合数据 (首次访问 MC)</span></span>
+<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a>    G <span class="op">=</span> <span class="fl">0.0</span></span>
+<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a>    visited_states <span class="op">=</span> <span class="bu">set</span>()</span>
+<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 从后往前遍历回合</span></span>
+<span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> t <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(episode) <span class="op">-</span> <span class="dv">1</span>, <span class="op">-</span><span class="dv">1</span>, <span class="op">-</span><span class="dv">1</span>):</span>
+<span id="cb4-47"><a href="#cb4-47" aria-hidden="true" tabindex="-1"></a>        state, action, reward <span class="op">=</span> episode[t]</span>
+<span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a>        G <span class="op">=</span> reward <span class="op">+</span> <span class="dv">1</span> <span class="op">*</span> G <span class="co"># Blackjack 环境 gamma 默认为 1</span></span>
+<span id="cb4-49"><a href="#cb4-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-50"><a href="#cb4-50" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 如果是本回合首次访问该状态</span></span>
+<span id="cb4-51"><a href="#cb4-51" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> state <span class="kw">not</span> <span class="kw">in</span> visited_states:</span>
+<span id="cb4-52"><a href="#cb4-52" aria-hidden="true" tabindex="-1"></a>            Returns[state].append(G)</span>
+<span id="cb4-53"><a href="#cb4-53" aria-hidden="true" tabindex="-1"></a>            <span class="co"># 更新 V(state) 为平均回报</span></span>
+<span id="cb4-54"><a href="#cb4-54" aria-hidden="true" tabindex="-1"></a>            V[state] <span class="op">=</span> np.mean(Returns[state])</span>
+<span id="cb4-55"><a href="#cb4-55" aria-hidden="true" tabindex="-1"></a>            <span class="co"># --- 或者使用增量更新 (更高效) ---</span></span>
+<span id="cb4-56"><a href="#cb4-56" aria-hidden="true" tabindex="-1"></a>            <span class="co"># N[state] += 1</span></span>
+<span id="cb4-57"><a href="#cb4-57" aria-hidden="true" tabindex="-1"></a>            <span class="co"># V[state] = V[state] + (1/N[state]) * (G - V[state])</span></span>
+<span id="cb4-58"><a href="#cb4-58" aria-hidden="true" tabindex="-1"></a>            <span class="co"># ---------------------------------</span></span>
+<span id="cb4-59"><a href="#cb4-59" aria-hidden="true" tabindex="-1"></a>            visited_states.add(state)</span>
+<span id="cb4-60"><a href="#cb4-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-61"><a href="#cb4-61" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. 可视化价值函数 (以 V 为例)</span></span>
+<span id="cb4-62"><a href="#cb4-62" aria-hidden="true" tabindex="-1"></a><span class="co"># Blackjack 状态: (player_sum, dealer_showing, usable_ace)</span></span>
+<span id="cb4-63"><a href="#cb4-63" aria-hidden="true" tabindex="-1"></a><span class="co"># 我们需要将 3D 状态映射到 2D 图上，通常分别绘制 usable_ace=True 和 usable_ace=False 的情况</span></span>
+<span id="cb4-64"><a href="#cb4-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-65"><a href="#cb4-65" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> plot_blackjack_value_function(V, title<span class="op">=</span><span class="st">"Value Function"</span>):</span>
+<span id="cb4-66"><a href="#cb4-66" aria-hidden="true" tabindex="-1"></a>    min_player_sum <span class="op">=</span> <span class="bu">min</span>(k[<span class="dv">0</span>] <span class="cf">for</span> k <span class="kw">in</span> V.keys()) <span class="cf">if</span> V <span class="cf">else</span> <span class="dv">12</span> <span class="co"># Handle empty V</span></span>
+<span id="cb4-67"><a href="#cb4-67" aria-hidden="true" tabindex="-1"></a>    max_player_sum <span class="op">=</span> <span class="bu">max</span>(k[<span class="dv">0</span>] <span class="cf">for</span> k <span class="kw">in</span> V.keys()) <span class="cf">if</span> V <span class="cf">else</span> <span class="dv">21</span></span>
+<span id="cb4-68"><a href="#cb4-68" aria-hidden="true" tabindex="-1"></a>    min_dealer_show <span class="op">=</span> <span class="bu">min</span>(k[<span class="dv">1</span>] <span class="cf">for</span> k <span class="kw">in</span> V.keys()) <span class="cf">if</span> V <span class="cf">else</span> <span class="dv">1</span></span>
+<span id="cb4-69"><a href="#cb4-69" aria-hidden="true" tabindex="-1"></a>    max_dealer_show <span class="op">=</span> <span class="bu">max</span>(k[<span class="dv">1</span>] <span class="cf">for</span> k <span class="kw">in</span> V.keys()) <span class="cf">if</span> V <span class="cf">else</span> <span class="dv">10</span></span>
+<span id="cb4-70"><a href="#cb4-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-71"><a href="#cb4-71" aria-hidden="true" tabindex="-1"></a>    player_range <span class="op">=</span> np.arange(min_player_sum, max_player_sum <span class="op">+</span> <span class="dv">1</span>)</span>
+<span id="cb4-72"><a href="#cb4-72" aria-hidden="true" tabindex="-1"></a>    dealer_range <span class="op">=</span> np.arange(min_dealer_show, max_dealer_show <span class="op">+</span> <span class="dv">1</span>)</span>
+<span id="cb4-73"><a href="#cb4-73" aria-hidden="true" tabindex="-1"></a>    X, Y <span class="op">=</span> np.meshgrid(dealer_range, player_range) <span class="co"># 注意顺序</span></span>
+<span id="cb4-74"><a href="#cb4-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-75"><a href="#cb4-75" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 分别绘制有可用 Ace 和无可用 Ace 的情况</span></span>
+<span id="cb4-76"><a href="#cb4-76" aria-hidden="true" tabindex="-1"></a>    Z_no_ace <span class="op">=</span> np.apply_along_axis(<span class="kw">lambda</span> idx: V.get((idx[<span class="dv">1</span>], idx[<span class="dv">0</span>], <span class="va">False</span>), <span class="dv">0</span>), <span class="dv">2</span>, np.dstack([X, Y]))</span>
+<span id="cb4-77"><a href="#cb4-77" aria-hidden="true" tabindex="-1"></a>    Z_ace <span class="op">=</span> np.apply_along_axis(<span class="kw">lambda</span> idx: V.get((idx[<span class="dv">1</span>], idx[<span class="dv">0</span>], <span class="va">True</span>), <span class="dv">0</span>), <span class="dv">2</span>, np.dstack([X, Y]))</span>
+<span id="cb4-78"><a href="#cb4-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-79"><a href="#cb4-79" aria-hidden="true" tabindex="-1"></a>    fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">5</span>))</span>
+<span id="cb4-80"><a href="#cb4-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-81"><a href="#cb4-81" aria-hidden="true" tabindex="-1"></a>    ax1 <span class="op">=</span> fig.add_subplot(<span class="dv">121</span>, projection<span class="op">=</span><span class="st">'3d'</span>)</span>
+<span id="cb4-82"><a href="#cb4-82" aria-hidden="true" tabindex="-1"></a>    ax1.plot_surface(X, Y, Z_no_ace, cmap<span class="op">=</span><span class="st">'viridis'</span>)</span>
+<span id="cb4-83"><a href="#cb4-83" aria-hidden="true" tabindex="-1"></a>    ax1.set_xlabel(<span class="st">'Dealer Showing'</span>)</span>
+<span id="cb4-84"><a href="#cb4-84" aria-hidden="true" tabindex="-1"></a>    ax1.set_ylabel(<span class="st">'Player Sum'</span>)</span>
+<span id="cb4-85"><a href="#cb4-85" aria-hidden="true" tabindex="-1"></a>    ax1.set_zlabel(<span class="st">'Value'</span>)</span>
+<span id="cb4-86"><a href="#cb4-86" aria-hidden="true" tabindex="-1"></a>    ax1.set_title(<span class="ss">f"</span><span class="sc">{</span>title<span class="sc">}</span><span class="ss"> (No Usable Ace)"</span>)</span>
+<span id="cb4-87"><a href="#cb4-87" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Set viewing angle for better visibility if needed</span></span>
+<span id="cb4-88"><a href="#cb4-88" aria-hidden="true" tabindex="-1"></a>    <span class="co"># ax1.view_init(elev=30, azim=-135)</span></span>
+<span id="cb4-89"><a href="#cb4-89" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-90"><a href="#cb4-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-91"><a href="#cb4-91" aria-hidden="true" tabindex="-1"></a>    ax2 <span class="op">=</span> fig.add_subplot(<span class="dv">122</span>, projection<span class="op">=</span><span class="st">'3d'</span>)</span>
+<span id="cb4-92"><a href="#cb4-92" aria-hidden="true" tabindex="-1"></a>    ax2.plot_surface(X, Y, Z_ace, cmap<span class="op">=</span><span class="st">'viridis'</span>)</span>
+<span id="cb4-93"><a href="#cb4-93" aria-hidden="true" tabindex="-1"></a>    ax2.set_xlabel(<span class="st">'Dealer Showing'</span>)</span>
+<span id="cb4-94"><a href="#cb4-94" aria-hidden="true" tabindex="-1"></a>    ax2.set_ylabel(<span class="st">'Player Sum'</span>)</span>
+<span id="cb4-95"><a href="#cb4-95" aria-hidden="true" tabindex="-1"></a>    ax2.set_zlabel(<span class="st">'Value'</span>)</span>
+<span id="cb4-96"><a href="#cb4-96" aria-hidden="true" tabindex="-1"></a>    ax2.set_title(<span class="ss">f"</span><span class="sc">{</span>title<span class="sc">}</span><span class="ss"> (Usable Ace)"</span>)</span>
+<span id="cb4-97"><a href="#cb4-97" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Set viewing angle</span></span>
+<span id="cb4-98"><a href="#cb4-98" aria-hidden="true" tabindex="-1"></a>    <span class="co"># ax2.view_init(elev=30, azim=-135)</span></span>
+<span id="cb4-99"><a href="#cb4-99" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-100"><a href="#cb4-100" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-101"><a href="#cb4-101" aria-hidden="true" tabindex="-1"></a>    plt.tight_layout()</span>
+<span id="cb4-102"><a href="#cb4-102" aria-hidden="true" tabindex="-1"></a>    plt.show()</span>
+<span id="cb4-103"><a href="#cb4-103" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-104"><a href="#cb4-104" aria-hidden="true" tabindex="-1"></a><span class="co"># Check if V is populated before plotting</span></span>
+<span id="cb4-105"><a href="#cb4-105" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> V:</span>
+<span id="cb4-106"><a href="#cb4-106" aria-hidden="true" tabindex="-1"></a>    plot_blackjack_value_function(V, title<span class="op">=</span><span class="st">"MC Estimated Value Function (Simple Policy)"</span>)</span>
+<span id="cb4-107"><a href="#cb4-107" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
+<span id="cb4-108"><a href="#cb4-108" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Value function V is empty. No plot generated."</span>)</span>
+<span id="cb4-109"><a href="#cb4-109" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-110"><a href="#cb4-110" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-111"><a href="#cb4-111" aria-hidden="true" tabindex="-1"></a>env.close()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="任务与思考" class="level2">
+<h2 class="anchored" data-anchor-id="任务与思考">任务与思考</h2>
+<ol type="1">
+<li><strong>运行代码:</strong> 运行上述 Blackjack MC 预测代码。观察生成的价值函数图像。它是否符合你对这个简单策略的直觉？（例如，点数高时价值是否更高？庄家明牌点数低时价值是否更高？）</li>
+<li><strong>修改策略:</strong> 尝试修改 <code>simple_policy</code>，例如改成点数小于 18 就 hit。重新运行 MC 预测，观察价值函数的变化。</li>
+<li><strong>(可选) 实现 <span class="math inline">\(Q_{\pi}\)</span> 评估:</strong> 修改代码，计算并可视化 <span class="math inline">\(Q_{\pi}(s, a)\)</span> 而不是 <span class="math inline">\(V_{\pi}(s)\)</span>。<span class="math inline">\(Q\)</span> 函数的可视化稍微复杂，可能需要为每个动作 (hit/stick) 单独绘制价值曲面。</li>
+<li><strong>(可选) Gridworld:</strong> 如果你找到了或自己实现了 Gridworld 环境，尝试在 Gridworld 中运行 MC 预测。可视化价值函数（可以用热力图表示每个格子的价值）。</li>
+</ol>
+</section>
+<section id="mc-方法的优缺点" class="level2">
+<h2 class="anchored" data-anchor-id="mc-方法的优缺点">MC 方法的优缺点</h2>
+<ul>
+<li><strong>优点:</strong>
+<ul>
+<li><strong>无模型:</strong> 不需要知道环境的 <span class="math inline">\(P\)</span> 和 <span class="math inline">\(R\)</span>。</li>
+<li><strong>简单直观:</strong> 基于大数定律，易于理解和实现。</li>
+<li><strong>无偏估计 (Unbiased):</strong> 只要回合能完整生成，MC 估计是 <span class="math inline">\(V_{\pi}(s)\)</span> 或 <span class="math inline">\(Q_{\pi}(s, a)\)</span> 的无偏估计。</li>
+<li><strong>适用于非马尔可夫环境:</strong> 即使环境不完全满足马尔可夫性质，MC 仍然可以应用（尽管理论保证可能减弱）。</li>
+</ul></li>
+<li><strong>缺点:</strong>
+<ul>
+<li><strong>需要完整回合:</strong> 必须等到一个回合结束后才能更新价值函数。对于回合非常长的任务（如某些商业模拟可能持续很久）或者持续性任务，效率低下或无法应用。</li>
+<li><strong>高方差 (High Variance):</strong> 回报 <span class="math inline">\(G_t\)</span> 依赖于一个回合中所有的随机转移和奖励，其方差可能很大，导致价值估计收敛慢，需要大量回合才能得到较准确的结果。</li>
+<li><strong>学习效率相对较低:</strong> 相比于后面要学的 TD 方法，MC 没有利用状态之间的关联信息（Bellman 方程隐含的关系），学习效率可能较低。</li>
+<li><strong>只适用于回合制任务 (Episodic Tasks):</strong> 基本的 MC 方法不适用于没有明确终点的持续性任务。</li>
+</ul></li>
+</ul>
+<div class="callout callout-style-default callout-important callout-titled" title="关键限制">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+关键限制
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>MC 方法必须等待回合结束才能学习，这在很多实时决策或长周期商业场景中是不可接受的。</p>
+</div>
+</div>
+<hr>
+<p><strong>下周预告:</strong> 时序差分学习 (Temporal-Difference Learning, TD) - 从不完整经验中学习，克服 MC 的部分缺点。</p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./week3_lecture.html" class="pagination-link" aria-label="Week 3: 最优决策与 Bellman 最优方程">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">Week 3: 最优决策与 Bellman 最优方程</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./week5_lecture.html" class="pagination-link" aria-label="Week 5: 时序差分学习 - 从不完整经验中学习">
+        <span class="nav-page-text"><span class="chapter-title">Week 5: 时序差分学习 - 从不完整经验中学习</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

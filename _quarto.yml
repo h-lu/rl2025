@@ -1,0 +1,57 @@
+project:
+  type: book
+
+book:
+  title: "智能计算"
+  author: "陆海波"
+  date: today
+  chapters:
+    - index.qmd
+    - part: "讲义"
+      chapters:
+        - week1_lecture.qmd
+        - week2_lecture.qmd
+        - week3_lecture.qmd
+        - week4_lecture.qmd
+        - week5_lecture.qmd
+        - week6_lecture.qmd
+        - week7_lecture.qmd
+        - week8_lecture.qmd
+        - week9_lecture.qmd
+        - week10_lecture.qmd
+        - week11_lecture.qmd
+        - week12_lecture.qmd
+        - week13_lecture.qmd
+        - week14_lecture.qmd
+        - week15_lecture.qmd
+        - week16_lecture.qmd
+    - part: "练习"
+      chapters: 
+        - week1_exercise.qmd
+        - week2_exercise.qmd
+        - week3_exercise.qmd
+        - week4_exercise.qmd
+        - week5_exercise.qmd
+        - week6_exercise.qmd
+        - week7_exercise.qmd
+        - week8_exercise.qmd
+        - week9_exercise.qmd
+        - week10_exercise.qmd
+        - week11_exercise.qmd
+        - week12_exercise.qmd
+        - week13_exercise.qmd
+        - week14_exercise.qmd
+        - week15_exercise.qmd
+        - week16_exercise.qmd
+format:
+  html:
+    theme: cosmo
+    css:
+      - styles/custom.css
+    toc: true
+    number-sections: false
+    code-fold: true
+    callout-appearance: "none"
+    include-in-header:
+      - text: |
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xkm/sYwpb+ilR5gUw==" crossorigin="anonymous" referrerpolicy="no-referrer">
