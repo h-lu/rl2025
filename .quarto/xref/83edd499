@@ -1,1 +1,1 @@
-{"entries":[],"headings":["回顾表格型强化学习方法-tabular-rl","为何需要函数逼近-function-approximation","函数逼近的基本思想","线性函数逼近-linear-function-approximation","概念-lab演示表格方法的局限性-cartpole","引入-stable-baselines3-sb3-库"],"options":{"chapters":true}}
+{"options":{"chapters":true},"headings":["回顾表格型强化学习方法-tabular-rl","为何需要函数逼近-function-approximation","函数逼近的基本思想","线性函数逼近-linear-function-approximation","概念-lab演示表格方法的局限性-cartpole","引入-stable-baselines3-sb3-库"],"entries":[]}
