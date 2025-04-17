@@ -97,5 +97,8 @@
   },
   "week16_exercise.qmd": {
     "week16_exercise.html": "e1a33925"
+  },
+  "sarsa_vs_qlearning_comparison.qmd": {
+    "sarsa_vs_qlearning_comparison.html": "95ed723f"
   }
 }

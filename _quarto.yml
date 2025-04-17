@@ -16,6 +16,7 @@ book:
         - week5_lecture.qmd
         - week6_lecture.qmd
         - week7_lecture.qmd
+        - sarsa_vs_qlearning_comparison.qmd 
         - week8_lecture.qmd
         - week9_lecture.qmd
         - week10_lecture.qmd

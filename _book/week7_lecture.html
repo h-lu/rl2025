@@ -64,7 +64,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./week8_lecture.html" rel="next">
+<link href="./sarsa_vs_qlearning_comparison.html" rel="next">
 <link href="./week6_lecture.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -104,6 +104,35 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 }</script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xkm/sYwpb+ilR5gUw==" crossorigin="anonymous" referrerpolicy="no-referrer">
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="styles/custom.css">
 </head>
@@ -189,6 +218,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./week7_lecture.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Week 7: 异策略控制 - Q-Learning (重点)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./sarsa_vs_qlearning_comparison.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">SARSA 与 Q-Learning 算法详解与探索策略对比</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -394,29 +428,29 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </ul>
 <p>SARSA 直接学习并改进它正在执行的策略。但有时我们希望将<strong>行为策略 (Behavior Policy)</strong> 与<strong>目标策略 (Target Policy)</strong> 分开。例如，我们可能想：</p>
 <ul>
-<li>学习最优策略 π* (目标策略，通常是贪心策略)，但使用一个更具探索性的策略 μ (行为策略，如 ε-greedy) 来收集数据。</li>
+<li>学习最优策略 <span class="math inline">\(\pi^*\)</span> (目标策略，通常是贪心策略)，但使用一个更具探索性的策略 <span class="math inline">\(\mu\)</span> (行为策略，如 <span class="math inline">\(\epsilon\)</span>-greedy) 来收集数据。</li>
 <li>利用过去收集的经验数据（可能由旧的或其他策略生成）来学习当前的最优策略。</li>
 </ul>
 <p>这就引出了<strong>异策略 (Off-Policy)</strong> 学习。</p>
 </section>
 <section id="异策略-off-policy-学习思想" class="level1">
 <h1>异策略 (Off-Policy) 学习思想</h1>
-<p><strong>目标:</strong> 学习目标策略 π 的价值函数 (Vπ 或 Qπ)，但使用的是由<strong>另一个</strong>行为策略 μ 生成的数据。</p>
+<p><strong>目标:</strong> 学习目标策略 <span class="math inline">\(\pi\)</span> 的价值函数 (<span class="math inline">\(V_{\pi}\)</span> 或 <span class="math inline">\(Q_{\pi}\)</span>)，但使用的是由<strong>另一个</strong>行为策略 <span class="math inline">\(\mu\)</span> 生成的数据。</p>
 <ul>
-<li><strong>目标策略 (Target Policy) π:</strong> 我们想要评估和改进的策略。通常是我们最终想要得到的最优策略（例如，相对于当前 Q 值的贪心策略）。</li>
-<li><strong>行为策略 (Behavior Policy) μ:</strong> 用于与环境交互、生成经验数据的策略。通常比目标策略更具探索性（例如，ε-greedy 或完全随机），以确保收集到足够多样化的数据，覆盖所有状态和动作。</li>
+<li><strong>目标策略 (Target Policy) <span class="math inline">\(\pi\)</span>:</strong> 我们想要评估和改进的策略。通常是我们最终想要得到的最优策略（例如，相对于当前 Q 值的贪心策略）。</li>
+<li><strong>行为策略 (Behavior Policy) <span class="math inline">\(\mu\)</span>:</strong> 用于与环境交互、生成经验数据的策略。通常比目标策略更具探索性（例如，<span class="math inline">\(\epsilon\)</span>-greedy 或完全随机），以确保收集到足够多样化的数据，覆盖所有状态和动作。</li>
 </ul>
-<p><strong>关键要求:</strong> 行为策略 μ 必须能够覆盖目标策略 π 可能选择的所有动作。即，如果 π(a|s) &gt; 0，那么必须有 μ(a|s) &gt; 0 (Coverage / Assumption of Coverage)。对于 ε-greedy 行为策略和贪心目标策略，这个条件通常是满足的。</p>
+<p><strong>关键要求:</strong> 行为策略 <span class="math inline">\(\mu\)</span> 必须能够覆盖目标策略 <span class="math inline">\(\pi\)</span> 可能选择的所有动作。即，如果 <span class="math inline">\(\pi(a|s) &gt; 0\)</span>，那么必须有 <span class="math inline">\(\mu(a|s) &gt; 0\)</span> (Coverage / Assumption of Coverage)。对于 <span class="math inline">\(\epsilon\)</span>-greedy 行为策略和贪心目标策略，这个条件通常是满足的。</p>
 <p><strong>优点:</strong></p>
 <ul>
-<li><strong>解耦探索与利用:</strong> 可以大胆探索 (μ)，同时学习最优的利用策略 (π)。</li>
+<li><strong>解耦探索与利用:</strong> 可以大胆探索 (<span class="math inline">\(\mu\)</span>)，同时学习最优的利用策略 (<span class="math inline">\(\pi\)</span>)。</li>
 <li><strong>利用历史/离线数据:</strong> 可以重用过去收集的数据，即使这些数据不是由当前目标策略生成的。这对于数据获取成本高的场景（如真实机器人、昂贵的商业实验）非常有价值。</li>
 <li><strong>学习人类或其他智能体的经验:</strong> 可以观察专家演示并从中学习。</li>
 </ul>
 <p><strong>挑战:</strong></p>
 <ul>
 <li>算法通常更复杂。</li>
-<li>可能具有更高的方差或收敛更慢（尤其是在 π 和 μ 相差很大的情况下）。需要使用<strong>重要性采样 (Importance Sampling)</strong> 等技术来修正分布不匹配的问题（我们暂时不深入细节）。</li>
+<li>可能具有更高的方差或收敛更慢（尤其是在 <span class="math inline">\(\pi\)</span> 和 <span class="math inline">\(\mu\)</span> 相差很大的情况下）。需要使用<strong>重要性采样 (Importance Sampling)</strong> 等技术来修正分布不匹配的问题（我们暂时不深入细节）。</li>
 </ul>
 </section>
 <section id="q-learning-异策略-td-控制" class="level1">
@@ -424,26 +458,26 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Q-Learning 是最著名和广泛使用的<strong>异策略 TD 控制</strong>算法之一。</p>
 <p><strong>核心思想:</strong></p>
 <ul>
-<li>直接学习<strong>最优动作值函数 Q*(s, a)</strong>，无论遵循何种行为策略 μ 来收集数据。</li>
-<li>行为策略 μ (e.g., ε-greedy) 用于选择<strong>实际执行</strong>的动作 A_t 以探索环境。</li>
-<li>目标策略 π 是隐式的<strong>贪心策略</strong> (π(s) = argmax_a Q(s, a))，它体现在 Q 值的<strong>更新</strong>过程中。</li>
+<li>直接学习<strong>最优动作值函数 <span class="math inline">\(Q^*(s, a)\)</span></strong>，无论遵循何种行为策略 <span class="math inline">\(\mu\)</span> 来收集数据。</li>
+<li>行为策略 <span class="math inline">\(\mu\)</span> (e.g., <span class="math inline">\(\epsilon\)</span>-greedy) 用于选择<strong>实际执行</strong>的动作 <span class="math inline">\(A_t\)</span> 以探索环境。</li>
+<li>目标策略 <span class="math inline">\(\pi\)</span> 是隐式的<strong>贪心策略</strong> (<span class="math inline">\(\pi(s) = \text{argmax}_a Q(s, a)\)</span>)，它体现在 Q 值的<strong>更新</strong>过程中。</li>
 </ul>
 <p><strong>Q-Learning 更新规则:</strong></p>
-<p>在时间步 t，智能体处于状态 S_t，根据<strong>行为策略 μ</strong> (e.g., ε-greedy) 选择并执行动作 A_t，观察到奖励 R_{t+1} 和下一个状态 S_{t+1}。</p>
-<p>Q-Learning 使用这个四元组 (S_t, A_t, R_{t+1}, S_{t+1}) 来更新 Q(S_t, A_t)：</p>
-<p>Q(S_t, A_t) ← Q(S_t, A_t) + α [ R_{t+1} + γ <strong>max_{a’} Q(S_{t+1}, a’)</strong> - Q(S_t, A_t) ]</p>
-<p><strong>对比 SARSA 更新规则:</strong> Q(S_t, A_t) ← Q(S_t, A_t) + α [ R_{t+1} + γ <strong>Q(S_{t+1}, A_{t+1})</strong> - Q(S_t, A_t) ]</p>
+<p>在时间步 <span class="math inline">\(t\)</span>，智能体处于状态 <span class="math inline">\(S_t\)</span>，根据<strong>行为策略 <span class="math inline">\(\mu\)</span></strong> (e.g., <span class="math inline">\(\epsilon\)</span>-greedy) 选择并执行动作 <span class="math inline">\(A_t\)</span>，观察到奖励 <span class="math inline">\(R_{t+1}\)</span> 和下一个状态 <span class="math inline">\(S_{t+1}\)</span>。</p>
+<p>Q-Learning 使用这个四元组 <span class="math inline">\((S_t, A_t, R_{t+1}, S_{t+1})\)</span> 来更新 <span class="math inline">\(Q(S_t, A_t)\)</span>：</p>
+<p><span class="math inline">\(Q(S_t, A_t) ← Q(S_t, A_t) + \alpha [ R_{t+1} + \gamma \max_{a'} Q(S_{t+1}, a') - Q(S_t, A_t) ]\)</span></p>
+<p><strong>对比 SARSA 更新规则:</strong> <span class="math inline">\(Q(S_t, A_t) ← Q(S_t, A_t) + \alpha [ R_{t+1} + \gamma Q(S_{t+1}, A_{t+1}) - Q(S_t, A_t) ]\)</span></p>
 <p><strong>关键区别:</strong></p>
 <ul>
 <li><strong>TD 目标不同:</strong>
 <ul>
-<li><strong>SARSA:</strong> 使用 R_{t+1} + γ Q(S_{t+1}, <strong>A_{t+1}</strong>)。这里的 A_{t+1} 是<strong>实际</strong>根据当前行为/目标策略 π (ε-greedy) 在 S_{t+1} 选择的下一个动作。</li>
-<li><strong>Q-Learning:</strong> 使用 R_{t+1} + γ <strong>max_{a’} Q(S_{t+1}, a’)</strong>。这里直接使用了在 S_{t+1} 状态下，当前 Q 值估计中<strong>最优</strong>的动作 a’ 对应的 Q 值，<strong>而不管行为策略 μ 实际会选择哪个动作</strong>。</li>
+<li><strong>SARSA:</strong> 使用 <span class="math inline">\(R_{t+1} + \gamma Q(S_{t+1}, A_{t+1})\)</span>。这里的 <span class="math inline">\(A_{t+1}\)</span> 是<strong>实际</strong>根据当前行为/目标策略 <span class="math inline">\(\pi\)</span> (<span class="math inline">\(\epsilon\)</span>-greedy) 在 <span class="math inline">\(S_{t+1}\)</span> 选择的下一个动作。</li>
+<li><strong>Q-Learning:</strong> 使用 <span class="math inline">\(R_{t+1} + \gamma \max_{a'} Q(S_{t+1}, a')\)</span>。这里直接使用了在 <span class="math inline">\(S_{t+1}\)</span> 状态下，当前 Q 值估计中<strong>最优</strong>的动作 <span class="math inline">\(a'\)</span> 对应的 Q 值，<strong>而不管行为策略 <span class="math inline">\(\mu\)</span> 实际会选择哪个动作</strong>。</li>
 </ul></li>
 <li><strong>策略分离:</strong>
 <ul>
-<li><strong>SARSA:</strong> 行为策略和目标策略是同一个 (e.g., ε-greedy)。更新依赖于实际执行的下一个动作 A’。</li>
-<li><strong>Q-Learning:</strong> 行为策略 (e.g., ε-greedy) 用于选择动作 A 与环境交互；目标策略 (贪心策略) 隐含在 <code>max</code> 操作中，用于更新 Q 值。更新不依赖于实际执行的下一个动作。</li>
+<li><strong>SARSA:</strong> 行为策略和目标策略是同一个 (e.g., <span class="math inline">\(\epsilon\)</span>-greedy)。更新依赖于实际执行的下一个动作 <span class="math inline">\(A'\)</span>。</li>
+<li><strong>Q-Learning:</strong> 行为策略 (e.g., <span class="math inline">\(\epsilon\)</span>-greedy) 用于选择动作 <span class="math inline">\(A\)</span> 与环境交互；目标策略 (贪心策略) 隐含在 <code>max</code> 操作中，用于更新 Q 值。更新不依赖于实际执行的下一个动作。</li>
 </ul></li>
 </ul>
 <div class="callout callout-style-default callout-important callout-titled" title="Q-Learning 的 Off-Policy 特性">
@@ -456,7 +490,7 @@ Q-Learning 的 Off-Policy 特性
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Q-Learning 的更新不依赖于行为策略 μ 在 S_{t+1} 实际选择的动作 A_{t+1}，而是直接使用了当前估计的最优动作的价值 (<code>max_{a'} Q(S_{t+1}, a')</code>)。这使得 Q-Learning 可以学习最优策略 Q*，即使行为策略 μ 不是最优的（只要 μ 保证了足够的探索）。</p>
+<p>Q-Learning 的更新不依赖于行为策略 <span class="math inline">\(\mu\)</span> 在 <span class="math inline">\(S_{t+1}\)</span> 实际选择的动作 <span class="math inline">\(A_{t+1}\)</span>，而是直接使用了当前估计的最优动作的价值 (<span class="math inline">\(\max_{a'} Q(S_{t+1}, a')\)</span>)。这使得 Q-Learning 可以学习最优策略 <span class="math inline">\(Q^*\)</span>，即使行为策略 <span class="math inline">\(\mu\)</span> 不是最优的（只要 <span class="math inline">\(\mu\)</span> 保证了足够的探索）。</p>
 </div>
 </div>
 <section id="q-learning-算法伪代码" class="level2">
@@ -493,18 +527,18 @@ Loop for each episode:
     If S is terminal, break inner loop</code></pre>
 <p><strong>解释:</strong></p>
 <ol type="1">
-<li>初始化 Q(s, a)，学习率 α，折扣因子 γ，探索率 ε (用于行为策略)。</li>
+<li>初始化 <span class="math inline">\(Q(s, a)\)</span>，学习率 <span class="math inline">\(\alpha\)</span>，折扣因子 <span class="math inline">\(\gamma\)</span>，探索率 <span class="math inline">\(\epsilon\)</span> (用于行为策略)。</li>
 <li>对于每个回合：</li>
-<li>获取起始状态 S。</li>
+<li>获取起始状态 <span class="math inline">\(S\)</span>。</li>
 <li>对于回合中的每一步：</li>
-<li>根据当前的 Q 值和<strong>行为策略</strong> (ε-greedy) 选择动作 A。</li>
-<li>执行动作 A，观察到奖励 R 和下一个状态 S’。</li>
-<li><strong>关键:</strong> 计算在下一个状态 S’ 下<strong>可能的最大 Q 值</strong>: <code>Q_next_max = max_{a'} Q(S', a')</code> (如果 S’ 是终止状态，则为 0)。</li>
-<li><strong>计算 TD 目标:</strong> <code>target = R + γ * Q_next_max</code>。</li>
-<li><strong>计算 TD 误差:</strong> <code>δ = target - Q(S, A)</code>。</li>
-<li><strong>更新 Q 值:</strong> <code>Q(S, A) ← Q(S, A) + α * δ</code>。</li>
-<li>将当前状态更新为 S’。</li>
-<li>如果 S’ 是终止状态，结束当前回合。</li>
+<li>根据当前的 <span class="math inline">\(Q\)</span> 值和<strong>行为策略</strong> (<span class="math inline">\(\epsilon\)</span>-greedy) 选择动作 A。</li>
+<li>执行动作 <span class="math inline">\(A\)</span>，观察到奖励 <span class="math inline">\(R\)</span> 和下一个状态 <span class="math inline">\(S\)</span>’。</li>
+<li><strong>关键:</strong> 计算在下一个状态 <span class="math inline">\(S'\)</span> 下<strong>可能的最大 <span class="math inline">\(Q\)</span> 值</strong>: <span class="math inline">\(Q_{next_{max}} = \max_{a'} Q(S', a')\)</span> (如果 <span class="math inline">\(S'\)</span> 是终止状态，则为 0)。</li>
+<li><strong>计算 TD 目标:</strong> <span class="math inline">\(target = R + \gamma * Q_{next_{max}}\)</span>。</li>
+<li><strong>计算 TD 误差:</strong> <span class="math inline">\(\delta = target - Q(S, A)\)</span>。</li>
+<li><strong>更新 Q 值:</strong> <span class="math inline">\(Q(S, A) \leftarrow Q(S, A) + \alpha * \delta\)</span>。</li>
+<li>将当前状态更新为 <span class="math inline">\(S'\)</span>。</li>
+<li>如果 <span class="math inline">\(S'\)</span> 是终止状态，结束当前回合。</li>
 </ol>
 </section>
 </section>
@@ -1117,8 +1151,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./week8_lecture.html" class="pagination-link" aria-label="Week 8: Q-Learning 应用讨论与中期回顾">
-        <span class="nav-page-text"><span class="chapter-title">Week 8: Q-Learning 应用讨论与中期回顾</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./sarsa_vs_qlearning_comparison.html" class="pagination-link" aria-label="SARSA 与 Q-Learning 算法详解与探索策略对比">
+        <span class="nav-page-text"><span class="chapter-title">SARSA 与 Q-Learning 算法详解与探索策略对比</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

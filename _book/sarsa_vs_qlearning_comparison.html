@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Week 8: Q-Learning 应用讨论与中期回顾 – 智能计算</title>
+<title>SARSA 与 Q-Learning 算法详解与探索策略对比 – 智能计算</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -30,8 +30,8 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./week9_lecture.html" rel="next">
-<link href="./sarsa_vs_qlearning_comparison.html" rel="prev">
+<link href="./week8_lecture.html" rel="next">
+<link href="./week7_lecture.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -70,6 +70,35 @@ ul.task-list li input[type="checkbox"] {
 }</script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xkm/sYwpb+ilR5gUw==" crossorigin="anonymous" referrerpolicy="no-referrer">
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="styles/custom.css">
 </head>
@@ -83,7 +112,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./week1_lecture.html">讲义</a></li><li class="breadcrumb-item"><a href="./week8_lecture.html"><span class="chapter-title">Week 8: Q-Learning 应用讨论与中期回顾</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./week1_lecture.html">讲义</a></li><li class="breadcrumb-item"><a href="./sarsa_vs_qlearning_comparison.html"><span class="chapter-title">SARSA 与 Q-Learning 算法详解与探索策略对比</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -159,12 +188,12 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./sarsa_vs_qlearning_comparison.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">SARSA 与 Q-Learning 算法详解与探索策略对比</span></a>
+  <a href="./sarsa_vs_qlearning_comparison.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">SARSA 与 Q-Learning 算法详解与探索策略对比</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./week8_lecture.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Week 8: Q-Learning 应用讨论与中期回顾</span></a>
+  <a href="./week8_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 8: Q-Learning 应用讨论与中期回顾</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -302,36 +331,39 @@ ul.task-list li input[type="checkbox"] {
   </li>
     </ul>
     </div>
-</nav>
-<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
-<!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
+    <nav id="TOC" role="doc-toc" class="toc-active">
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#回顾q-learning-与-off-policy-学习" id="toc-回顾q-learning-与-off-policy-学习" class="nav-link active" data-scroll-target="#回顾q-learning-与-off-policy-学习">回顾：Q-Learning 与 Off-Policy 学习</a></li>
-  <li><a href="#案例模拟讨论简单动态定价" id="toc-案例模拟讨论简单动态定价" class="nav-link" data-scroll-target="#案例模拟讨论简单动态定价">案例模拟/讨论：简单动态定价</a>
+  <li><a href="#引言" id="toc-引言" class="nav-link active" data-scroll-target="#引言">引言</a></li>
+  <li><a href="#sarsa-vs.-q-learning-核心对比" id="toc-sarsa-vs.-q-learning-核心对比" class="nav-link" data-scroll-target="#sarsa-vs.-q-learning-核心对比">SARSA vs.&nbsp;Q-Learning: 核心对比</a>
   <ul class="collapse">
-  <li><a href="#mdp-定义" id="toc-mdp-定义" class="nav-link" data-scroll-target="#mdp-定义">MDP 定义</a></li>
-  <li><a href="#q-learning-应用思路" id="toc-q-learning-应用思路" class="nav-link" data-scroll-target="#q-learning-应用思路">Q-Learning 应用思路</a></li>
-  <li><a href="#讨论设计选择的影响" id="toc-讨论设计选择的影响" class="nav-link" data-scroll-target="#讨论设计选择的影响">讨论：设计选择的影响</a></li>
-  <li><a href="#局限性分析" id="toc-局限性分析" class="nav-link" data-scroll-target="#局限性分析">局限性分析</a></li>
+  <li><a href="#更新规则对比" id="toc-更新规则对比" class="nav-link" data-scroll-target="#更新规则对比">更新规则对比</a></li>
+  <li><a href="#关键差异表格" id="toc-关键差异表格" class="nav-link" data-scroll-target="#关键差异表格">关键差异表格</a></li>
+  <li><a href="#实例解释-简单-a-b-c-例子" id="toc-实例解释-简单-a-b-c-例子" class="nav-link" data-scroll-target="#实例解释-简单-a-b-c-例子">实例解释 (简单 A-B-C 例子)</a></li>
   </ul></li>
-  <li><a href="#中期复习-midterm-review" id="toc-中期复习-midterm-review" class="nav-link" data-scroll-target="#中期复习-midterm-review">中期复习 (Midterm Review)</a>
+  <li><a href="#探索策略超越-epsilon-greedy" id="toc-探索策略超越-epsilon-greedy" class="nav-link" data-scroll-target="#探索策略超越-epsilon-greedy">探索策略：超越 Epsilon-Greedy</a>
   <ul class="collapse">
-  <li><a href="#关键区别与联系" id="toc-关键区别与联系" class="nav-link" data-scroll-target="#关键区别与联系">关键区别与联系</a></li>
-  <li><a href="#中期测试准备" id="toc-中期测试准备" class="nav-link" data-scroll-target="#中期测试准备">中期测试准备</a></li>
+  <li><a href="#epsilon-greedy-epsilon-greedy" id="toc-epsilon-greedy-epsilon-greedy" class="nav-link" data-scroll-target="#epsilon-greedy-epsilon-greedy">1. Epsilon-Greedy (<span class="math inline">\(\epsilon\)</span>-greedy)</a></li>
+  <li><a href="#乐观初始值-optimistic-initial-values" id="toc-乐观初始值-optimistic-initial-values" class="nav-link" data-scroll-target="#乐观初始值-optimistic-initial-values">2. 乐观初始值 (Optimistic Initial Values)</a></li>
+  <li><a href="#上置信界-upper-confidence-bound-ucb" id="toc-上置信界-upper-confidence-bound-ucb" class="nav-link" data-scroll-target="#上置信界-upper-confidence-bound-ucb">3. 上置信界 (Upper Confidence Bound, UCB)</a></li>
+  <li><a href="#boltzmann-探索-softmax-exploration" id="toc-boltzmann-探索-softmax-exploration" class="nav-link" data-scroll-target="#boltzmann-探索-softmax-exploration">4. Boltzmann 探索 (Softmax Exploration)</a></li>
+  <li><a href="#thompson-sampling-主要用于-bandit-问题可启发-rl" id="toc-thompson-sampling-主要用于-bandit-问题可启发-rl" class="nav-link" data-scroll-target="#thompson-sampling-主要用于-bandit-问题可启发-rl">5. Thompson Sampling (主要用于 Bandit 问题，可启发 RL)</a></li>
   </ul></li>
+  <li><a href="#结论" id="toc-结论" class="nav-link" data-scroll-target="#结论">结论</a></li>
   </ul>
 </nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./week1_lecture.html">讲义</a></li><li class="breadcrumb-item"><a href="./week8_lecture.html"><span class="chapter-title">Week 8: Q-Learning 应用讨论与中期回顾</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./week1_lecture.html">讲义</a></li><li class="breadcrumb-item"><a href="./sarsa_vs_qlearning_comparison.html"><span class="chapter-title">SARSA 与 Q-Learning 算法详解与探索策略对比</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-title">Week 8: Q-Learning 应用讨论与中期回顾</span></h1>
+<h1 class="title"><span class="chapter-title">SARSA 与 Q-Learning 算法详解与探索策略对比</span></h1>
 </div>
 
 
@@ -348,271 +380,184 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<section id="回顾q-learning-与-off-policy-学习" class="level1">
-<h1>回顾：Q-Learning 与 Off-Policy 学习</h1>
-<p>上周我们重点学习了 Q-Learning：</p>
+<section id="引言" class="level2">
+<h2 class="anchored" data-anchor-id="引言">引言</h2>
+<p>在强化学习中，时序差分 (Temporal Difference, TD) 学习是一类无需环境模型、通过经验进行学习的核心方法。TD 控制算法的目标是学习最优策略，即在每个状态下选择哪个动作可以最大化长期累积奖励。SARSA 和 Q-Learning 是两种最基础且重要的 TD 控制算法，它们在学习方式上有着本质的区别：</p>
 <ul>
-<li><strong>类别:</strong> 异策略 (Off-Policy) TD 控制算法。</li>
-<li><strong>核心:</strong> 直接学习最优动作值函数 Q*(s, a)。</li>
-<li><strong>更新规则:</strong> Q(S, A) ← Q(S, A) + α [R + γ max_{a’} Q(S’, a’) - Q(S, A)]</li>
-<li><strong>特点:</strong>
-<ul>
-<li>行为策略 (μ, e.g., ε-greedy) 用于探索和收集数据。</li>
-<li>目标策略 (π, 贪心策略) 隐含在 <code>max</code> 操作中，用于更新 Q 值。</li>
-<li>能够学习最优策略，即使行为策略不是最优的。</li>
-<li>在 CliffWalking 例子中，Q-Learning 倾向于学习贴近悬崖的“最优”（最短）路径，因为它直接估计最优价值，不受探索性动作的直接影响（只在选择执行动作时受影响）。</li>
-<li>Off-Policy 特性使其能利用历史数据。</li>
-</ul></li>
+<li><strong>SARSA (State-Action-Reward-State-Action):</strong> 一种 <strong>同策略 (On-Policy)</strong> TD 控制算法。它学习的是智能体<strong>当前正在执行</strong>的策略（包含探索）的价值。</li>
+<li><strong>Q-Learning:</strong> 一种 <strong>异策略 (Off-Policy)</strong> TD 控制算法。它可以学习<strong>最优策略</strong>的价值，即使智能体实际执行的是另一个不同的（通常更具探索性的）策略。</li>
 </ul>
-<p>今天我们将讨论如何将 Q-Learning (或类似思想) 应用于简化的商业问题，并进行中期复习。</p>
+<p>本文将详细比较这两种算法的核心差异，并通过实例解释其工作原理，最后探讨除了经典的 <span class="math inline">\(\epsilon\)</span>-greedy 之外的其他探索策略。</p>
 </section>
-<section id="案例模拟讨论简单动态定价" class="level1">
-<h1>案例模拟/讨论：简单动态定价</h1>
-<p>让我们考虑一个非常简化的动态定价问题，并尝试用 Q-Learning 的思路来建模和思考。</p>
-<p><strong>场景:</strong> 假设我们销售一种<strong>单一商品</strong>（例如，一种特定型号的打印机），库存有限。我们需要在<strong>有限的时间段</strong>内（例如，一周，每天可以调整一次价格）决定<strong>每天的售价</strong>，以最大化总销售收入。</p>
-<section id="mdp-定义" class="level2">
-<h2 class="anchored" data-anchor-id="mdp-定义">MDP 定义</h2>
-<ol type="1">
-<li><strong>状态 (State, S):</strong> 如何描述与定价决策相关的环境状况？
+<section id="sarsa-vs.-q-learning-核心对比" class="level2">
+<h2 class="anchored" data-anchor-id="sarsa-vs.-q-learning-核心对比">SARSA vs.&nbsp;Q-Learning: 核心对比</h2>
+<p>理解 SARSA 和 Q-Learning 的关键在于它们的更新规则以及这规则背后所蕴含的策略评估方式。</p>
+<section id="更新规则对比" class="level3">
+<h3 class="anchored" data-anchor-id="更新规则对比">更新规则对比</h3>
+<p>假设在时间步 <span class="math inline">\(t\)</span>，智能体处于状态 <span class="math inline">\(S_t\)</span>，根据其行为策略（通常是 <span class="math inline">\(\epsilon\)</span>-greedy）选择了动作 <span class="math inline">\(A_t\)</span>，执行后观察到奖励 <span class="math inline">\(R_{t+1}\)</span> 和下一个状态 <span class="math inline">\(S_{t+1}\)</span>。</p>
 <ul>
-<li><strong>核心要素:</strong>
-<ul>
-<li><code>剩余时间 (t)</code>: 距离销售结束还有多少天 (e.g., 7, 6, …, 1)。</li>
-<li><code>当前库存 (k)</code>: 还剩多少台打印机 (e.g., 0, 1, …, MaxInventory)。</li>
-</ul></li>
-<li><strong>可能的扩展 (增加状态复杂度):</strong>
-<ul>
-<li><code>近期需求信号</code>: 过去一/两天的销售量？竞争对手的价格（如果可知）？是否有促销活动？</li>
-<li><code>市场状态</code>: 宏观经济指标？季节性因素？</li>
-</ul></li>
-<li><strong>简化:</strong> 为了便于讨论，我们先只考虑 <code>S = (剩余时间 t, 当前库存 k)</code>。这是一个离散的状态空间。</li>
-</ul></li>
-<li><strong>动作 (Action, A):</strong> 我们可以采取哪些定价动作？
-<ul>
-<li><strong>离散化:</strong> 设定几个离散的价格点。
-<ul>
-<li>例如: A = {低价 P_low, 中价 P_mid, 高价 P_high}</li>
-</ul></li>
-<li><strong>连续化:</strong> (更复杂，需要函数逼近，我们后面会讲) 允许价格在一定范围内连续取值。</li>
-<li><strong>简化:</strong> 我们使用离散动作空间 A = {P_low, P_mid, P_high}。</li>
-</ul></li>
-<li><strong>奖励 (Reward, R):</strong> 如何衡量一个定价动作的好坏？
-<ul>
-<li><strong>最直接:</strong> 当天的<strong>销售收入</strong>。
-<ul>
-<li>R(s, a) = 当天售价 * 当天销量</li>
-</ul></li>
-<li><strong>考虑成本:</strong> (销售收入) - (销售成本) - (可能的库存持有成本？)。</li>
-<li><strong>考虑长期影响:</strong> (复杂) 是否需要考虑低价对品牌形象的损害？高价导致客户流失？</li>
-<li><strong>简化:</strong> 我们使用当天的销售收入作为即时奖励 R。</li>
-</ul></li>
-<li><strong>转移概率 (Transition Probability, P):</strong> P(s’ | s, a) = P((t’, k’) | (t, k), p)
-<ul>
-<li><strong>时间转移:</strong> t’ = t - 1 (确定性)。</li>
-<li><strong>库存转移:</strong> k’ = k - 当天销量。这是<strong>不确定</strong>的部分，因为销量取决于价格 p 和随机的市场需求。
-<ul>
-<li><strong>需求模型:</strong> 我们需要一个（简化的）需求模型来表示不同价格下的预期销量（以及销量的随机性）。例如：
-<ul>
-<li><code>Demand(P_low) ~ Poisson(λ_low)</code></li>
-<li><code>Demand(P_mid) ~ Poisson(λ_mid)</code></li>
-<li><code>Demand(P_high) ~ Poisson(λ_high)</code></li>
-<li>其中 λ_low &gt; λ_mid &gt; λ_high。实际销量 = min(模拟出的需求, 当前库存 k)。</li>
-</ul></li>
-</ul></li>
-<li><strong>无模型假设:</strong> 在 Q-Learning 中，我们<strong>不需要知道</strong>这个精确的需求模型 (P)。我们只需要能够与环境（或模拟器）交互，执行动作 a (定价 p)，然后观察到奖励 R (当天收入) 和下一个状态 s’ ((t-1, k - 实际销量))。</li>
-</ul></li>
-<li><strong>折扣因子 (γ):</strong>
-<ul>
-<li>如果只关心本周的总收入，且任务有明确终点（时间结束），可以使用 γ = 1。</li>
-<li>如果考虑稍微长远的影响或希望有更好的数学性质，可以使用 γ 略小于 1 (e.g., 0.99)。</li>
-<li><strong>简化:</strong> 我们使用 γ = 1。</li>
-</ul></li>
-</ol>
-</section>
-<section id="q-learning-应用思路" class="level2">
-<h2 class="anchored" data-anchor-id="q-learning-应用思路">Q-Learning 应用思路</h2>
-<ol type="1">
-<li><strong>初始化 Q 表:</strong> 创建一个 Q 表，维度为 <code>(时间 t, 库存 k, 价格 p)</code>。Q((t, k), p) 表示在剩余 t 天、库存为 k 时，设定价格 p 的预期未来总收入。所有 Q 值初始化为 0。</li>
-<li><strong>模拟回合 (Episode):</strong>
-<ul>
-<li>一个回合代表一个完整的销售周期（例如，从 t=7, k=InitialInventory 开始，直到 t=0 结束）。</li>
-<li>在每个状态 (t, k) 下：
-<ul>
-<li>使用 ε-greedy 策略选择一个价格 p (动作 A)。</li>
-<li>模拟市场需求（根据我们假设的（但算法本身不知道的）需求模型），计算实际销量 <code>sales = min(demand, k)</code>。</li>
-<li>计算奖励 R = p * sales。</li>
-<li>得到下一个状态 s’ = (t-1, k - sales)。</li>
-<li><strong>Q-Learning 更新:</strong>
-<ul>
-<li><code>Q_next_max = max_{p'} Q((t-1, k-sales), p')</code> (如果 t-1=0，则 Q_next_max=0)</li>
-<li><code>Q((t, k), p) ← Q((t, k), p) + α * [R + γ * Q_next_max - Q((t, k), p)]</code></li>
-</ul></li>
-</ul></li>
-</ul></li>
-<li><strong>重复模拟:</strong> 运行大量回合。</li>
-<li><strong>最终策略:</strong> 训练完成后，最优策略就是在每个状态 (t, k) 下，选择使得 Q((t, k), p) 最大的那个价格 p。</li>
-</ol>
-</section>
-<section id="讨论设计选择的影响" class="level2">
-<h2 class="anchored" data-anchor-id="讨论设计选择的影响">讨论：设计选择的影响</h2>
-<ul>
-<li><strong>状态表示 (S):</strong>
-<ul>
-<li>如果状态过于简化（只包含时间和库存），可能无法捕捉重要的市场动态（如竞争对手降价），导致学到的策略次优。</li>
-<li>如果状态过于复杂（包含太多信息），会导致状态空间爆炸，Q 表变得巨大，学习需要非常多的数据和时间（维度灾难 Curse of Dimensionality）。</li>
-</ul></li>
-<li><strong>动作空间 (A):</strong>
-<ul>
-<li>离散价格点太少，可能无法找到真正的最优价格。</li>
-<li>离散价格点太多，也会增大 Q 表，减慢学习。</li>
-</ul></li>
-<li><strong>奖励函数 (R):</strong>
-<ul>
-<li>只关注短期收入可能导致“杀鸡取卵”的行为（例如，最后一天疯狂降价清仓，损害品牌）。</li>
-<li>设计能够反映长期价值（如客户满意度、品牌形象、重复购买率）的奖励函数非常困难，是 RL 应用的关键挑战（Reward Engineering）。</li>
-</ul></li>
-<li><strong>探索率 (ε):</strong>
-<ul>
-<li>需要足够的探索来尝试不同的价格组合，尤其是在早期。</li>
-<li>ε 太大会导致收入损失，太小则可能错过最优价格。ε 衰减通常是必要的。</li>
-</ul></li>
-<li><strong>学习率 (α):</strong>
-<ul>
-<li>控制学习速度和稳定性。</li>
-</ul></li>
+<li><p><strong>SARSA 更新规则:</strong> 还需要知道在 <span class="math inline">\(S_{t+1}\)</span> 状态下，<strong>根据当前策略</strong>选择的<strong>下一个实际动作</strong> <span class="math inline">\(A_{t+1}\)</span>。 使用五元组 <span class="math inline">\((S_t, A_t, R_{t+1}, S_{t+1}, A_{t+1})\)</span> 进行更新： <span class="math display">\[
+Q(S_t, A_t) \leftarrow Q(S_t, A_t) + \alpha \left[ R_{t+1} + \gamma Q(S_{t+1}, A_{t+1}) - Q(S_t, A_t) \right]
+\]</span> 这里的 <span class="math inline">\(A_{t+1}\)</span> 是智能体在 <span class="math inline">\(S_{t+1}\)</span> 状态<strong>实际将要执行</strong>的动作。</p></li>
+<li><p><strong>Q-Learning 更新规则:</strong> 只需要知道 <span class="math inline">\((S_t, A_t, R_{t+1}, S_{t+1})\)</span> 四元组。它在更新时不关心下一个实际执行的动作是什么，而是直接考虑在 <span class="math inline">\(S_{t+1}\)</span> 状态下采取最优动作能带来的价值： <span class="math display">\[
+Q(S_t, A_t) \leftarrow Q(S_t, A_t) + \alpha \left[ R_{t+1} + \gamma \max_{a'} Q(S_{t+1}, a') - Q(S_t, A_t) \right]
+\]</span> 这里的 <span class="math inline">\(\max_{a'} Q(S_{t+1}, a')\)</span> 表示在状态 <span class="math inline">\(S_{t+1}\)</span> 下，所有可能的动作 <span class="math inline">\(a'\)</span> 中能够获得的最大 Q 值。</p></li>
 </ul>
 </section>
-<section id="局限性分析" class="level2">
-<h2 class="anchored" data-anchor-id="局限性分析">局限性分析</h2>
+<section id="关键差异表格" class="level3">
+<h3 class="anchored" data-anchor-id="关键差异表格">关键差异表格</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 26%">
+<col style="width: 27%">
+<col style="width: 36%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">特征/步骤</th>
+<th style="text-align: left;">SARSA (同策略)</th>
+<th style="text-align: left;">Q-Learning (异策略)</th>
+<th style="text-align: left;">关键差异说明</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>目标策略</strong></td>
+<td style="text-align: left;">学习当前行为策略 <span class="math inline">\(\pi\)</span> (例如 <span class="math inline">\(\epsilon\)</span>-greedy) 的价值函数 <span class="math inline">\(Q_{\pi}\)</span></td>
+<td style="text-align: left;">学习最优策略 <span class="math inline">\(\pi^*\)</span> 的价值函数 <span class="math inline">\(Q^*\)</span>，与行为策略 <span class="math inline">\(\mu\)</span> 无关</td>
+<td style="text-align: left;">SARSA 评估正在执行的策略，Q-Learning 直接评估最优策略。</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>行为策略</strong></td>
+<td style="text-align: left;">通常与目标策略相同 (<span class="math inline">\(\pi = \mu\)</span>)</td>
+<td style="text-align: left;">可以与目标策略不同 (<span class="math inline">\(\mu \ne \pi^*\)</span>)，通常更具探索性</td>
+<td style="text-align: left;">SARSA 依赖当前策略产生的完整轨迹；Q-Learning 可以利用任何充分探索数据的策略。</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>策略类型</strong></td>
+<td style="text-align: left;">同策略 (On-Policy)</td>
+<td style="text-align: left;">异策略 (Off-Policy)</td>
+<td style="text-align: left;">SARSA 的学习和行为紧密耦合；Q-Learning 将学习目标（最优）与实际行为（探索）分离。</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>更新所需信息</strong></td>
+<td style="text-align: left;"><span class="math inline">\((S_t, A_t, R_{t+1}, S_{t+1}, A_{t+1})\)</span> (五元组)</td>
+<td style="text-align: left;"><span class="math inline">\((S_t, A_t, R_{t+1}, S_{t+1})\)</span> (四元组)</td>
+<td style="text-align: left;">SARSA 需要知道下一步的实际动作；Q-Learning 不需要。</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>TD 目标计算</strong></td>
+<td style="text-align: left;"><span class="math inline">\(R_{t+1} + \gamma Q(S_{t+1}, A_{t+1})\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(R_{t+1} + \gamma \max_{a'} Q(S_{t+1}, a')\)</span></td>
+<td style="text-align: left;">SARSA 使用实际下一步动作的 Q 值；Q-Learning 使用下一步最优动作的 Q 值。</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>对探索动作的处理</strong></td>
+<td style="text-align: left;">将探索动作的（可能次优的）后果纳入学习过程。</td>
+<td style="text-align: left;">在更新 Q 值时忽略探索动作的实际后果，总是假设采取最优动作。</td>
+<td style="text-align: left;">SARSA 更”保守”，会因探索带来的风险而调整策略；Q-Learning 更”激进”，直接学习最优路径，无视探索风险。</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>典型例子 (CliffWalking)</strong></td>
+<td style="text-align: left;">倾向于学习远离悬崖的”安全”路径。</td>
+<td style="text-align: left;">倾向于学习贴近悬崖的”危险”但理论上最短的路径。</td>
+<td style="text-align: left;">反映了同策略与异策略在处理探索风险上的差异。</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>收敛性</strong></td>
+<td style="text-align: left;">在一定条件下（如 GLIE 策略）收敛到当前策略的最优动作价值函数 <span class="math inline">\(Q_{\pi}\)</span>。</td>
+<td style="text-align: left;">在一定条件下收敛到全局最优动作价值函数 <span class="math inline">\(Q^*\)</span>。</td>
+<td style="text-align: left;">Q-Learning 直接收敛到最优解，而 SARSA 收敛到其执行策略下的最优解。</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="实例解释-简单-a-b-c-例子" class="level3">
+<h3 class="anchored" data-anchor-id="实例解释-简单-a-b-c-例子">实例解释 (简单 A-B-C 例子)</h3>
+<p>回顾之前的例子：状态 A, B, C (终止)，动作 <code>left</code>, <code>right</code>。从 A 执行 <code>right</code> 到 B (R=+1)。更新 <span class="math inline">\(Q(A, \text{`right`})\)</span>。 当前 <span class="math inline">\(Q(B, \text{`left`})=2.0\)</span>, <span class="math inline">\(Q(B, \text{`right`})=5.0\)</span>。<span class="math inline">\(\gamma=0.9\)</span>, <span class="math inline">\(\epsilon=0.1\)</span>。</p>
 <ul>
-<li><strong>简化的需求模型:</strong> 现实世界的需求受多种因素影响，很难用简单的概率分布描述。</li>
-<li><strong>状态空间大小:</strong> 即使只考虑时间和库存，如果时间长、库存量大，状态空间也会很大。对于更复杂的商业问题，表格型 Q-Learning (Tabular Q-Learning) 很快会变得不可行。</li>
-<li><strong>非平稳环境 (Non-Stationary):</strong> 市场需求、竞争对手行为可能随时间变化，这意味着环境的 P 和 R 不是固定的，违反了标准 MDP 的假设。需要更高级的 RL 技术来处理。</li>
-<li><strong>样本效率 (Sample Efficiency):</strong> 表格型 Q-Learning 通常需要大量的交互数据才能学到好的策略，在真实商业环境中可能成本过高。</li>
-<li><strong>多智能体问题 (Multi-Agent):</strong> 如果有竞争对手也在使用智能定价，问题就变成了更复杂的多智能体 RL 问题。</li>
+<li><strong>SARSA:</strong>
+<ul>
+<li>在 B 状态，以 0.95 概率选 <code>right</code> (<span class="math inline">\(A_{t+1}\)</span>=<span class="math inline">\(\text{`right`}\)</span>), TD 目标 = <span class="math inline">\(1 + 0.9 * 5.0 = 5.5\)</span>。</li>
+<li>在 B 状态，以 0.05 概率选 <code>left</code> (<span class="math inline">\(A_{t+1}\)</span>=<span class="math inline">\(\text{`left`}\)</span>), TD 目标 = <span class="math inline">\(1 + 0.9 * 2.0 = 2.8\)</span>。</li>
+<li>SARSA 的更新目标取决于实际选择的 <span class="math inline">\(A_{t+1}\)</span>。</li>
+</ul></li>
+<li><strong>Q-Learning:</strong>
+<ul>
+<li>在 B 状态，找到 <span class="math inline">\(\max(Q(B, \text{`left`}), Q(B, \text{`right`})) = 5.0\)</span>。</li>
+<li>TD 目标 = <span class="math inline">\(1 + 0.9 * 5.0 = 5.5\)</span>。</li>
+<li>Q-Learning 的更新目标始终是基于最优选择，与实际选择的 <span class="math inline">\(A_{t+1}\)</span> 无关。</li>
+</ul></li>
 </ul>
-<div class="callout callout-style-default callout-note callout-titled" title="通往深度强化学习">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-通往深度强化学习
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>当状态空间或动作空间变得巨大或连续时，我们无法再使用表格来存储 Q(s, a)。这时就需要使用<strong>函数逼近 (Function Approximation)</strong>，特别是<strong>深度神经网络</strong>，来近似 Q 函数。这就是<strong>深度 Q 网络 (Deep Q-Network, DQN)</strong> 等深度强化学习方法的基础，我们将在下一部分学习。</p>
-</div>
-</div>
+<p>这个例子清晰地展示了 SARSA 如何受实际行为（包括探索）的影响，而 Q-Learning 如何始终以最优动作为目标进行更新。</p>
 </section>
 </section>
-<section id="中期复习-midterm-review" class="level1">
-<h1>中期复习 (Midterm Review)</h1>
-<p>本学期前半部分，我们围绕着如何让智能体在不确定的环境中做出最优的序贯决策进行了学习。核心概念回顾：</p>
-<ol type="1">
-<li><strong>强化学习问题框架:</strong>
+<section id="探索策略超越-epsilon-greedy" class="level2">
+<h2 class="anchored" data-anchor-id="探索策略超越-epsilon-greedy">探索策略：超越 Epsilon-Greedy</h2>
+<p>为了让 TD 控制算法能够学习到最优策略，智能体需要在<strong>探索 (Exploration)</strong>（尝试新的、未知的动作以发现潜在更好的选择）和<strong>利用 (Exploitation)</strong>（选择当前已知的最佳动作以获取最大奖励）之间取得平衡。 <span class="math inline">\(\epsilon\)</span>-greedy 是最常用的策略之一，但并非唯一选择。</p>
+<section id="epsilon-greedy-epsilon-greedy" class="level3">
+<h3 class="anchored" data-anchor-id="epsilon-greedy-epsilon-greedy">1. Epsilon-Greedy (<span class="math inline">\(\epsilon\)</span>-greedy)</h3>
 <ul>
-<li>智能体 (Agent), 环境 (Environment), 状态 (S), 动作 (A), 奖励 (R)</li>
-<li>策略 (π), 价值函数 (V, Q), 模型 (P, R)</li>
-<li>回报 (Return) G_t, 折扣因子 (γ)</li>
-<li>探索 (Exploration) vs.&nbsp;利用 (Exploitation)</li>
-</ul></li>
-<li><strong>马尔可夫决策过程 (MDP):</strong>
-<ul>
-<li>形式化定义 (S, A, P, R, γ)</li>
-<li>马尔可夫性质 (“未来只取决于现在”)</li>
-<li>商业场景的 MDP 建模 (状态、动作、奖励设计)</li>
-</ul></li>
-<li><strong>Bellman 方程:</strong>
-<ul>
-<li><strong>Bellman 期望方程 (用于策略评估):</strong>
-<ul>
-<li>Vπ(s) = E_π [R_{t+1} + γ Vπ(S_{t+1}) | S_t=s]</li>
-<li>Qπ(s, a) = E_π [R_{t+1} + γ Qπ(S_{t+1}, A_{t+1}) | S_t=s, A_t=a]</li>
-<li>描述了给定策略 π 下价值函数满足的递归关系。</li>
-</ul></li>
-<li><strong>Bellman 最优方程 (用于描述最优价值):</strong>
-<ul>
-<li>V*(s) = max_a E [R_{t+1} + γ V*(S_{t+1}) | S_t=s, A_t=a]</li>
-<li>Q*(s, a) = E [R_{t+1} + γ max_{a’} Q*(S_{t+1}, a’) | S_t=s, A_t=a]</li>
-<li>描述了最优价值函数 V* 和 Q* 满足的条件，隐含了最大化操作。</li>
-</ul></li>
-</ul></li>
-<li><strong>无模型学习 (Model-Free Learning):</strong> 当环境模型 P, R 未知时。
-<ul>
-<li><strong>广义策略迭代 (GPI):</strong> 策略评估 ↔︎ 策略改进。</li>
-</ul></li>
-<li><strong>蒙特卡洛 (MC) 方法:</strong>
-<ul>
-<li><strong>预测 (评估):</strong> 通过大量完整回合，用平均回报 G_t 估计 Vπ 或 Qπ。</li>
-<li>首次访问 vs.&nbsp;每次访问。</li>
-<li><strong>优点:</strong> 无偏。</li>
-<li><strong>缺点:</strong> 高方差，需等待回合结束，仅限回合制任务。</li>
-</ul></li>
-<li><strong>时序差分 (TD) 学习:</strong>
-<ul>
-<li><strong>TD(0) 预测:</strong> 使用 TD 目标 R + γV(S’) 进行自举更新 V(S)。</li>
-<li><strong>核心:</strong> 自举 (Bootstrapping)，在线学习 (每步更新)。</li>
-<li><strong>优点:</strong> 低方差，可用于持续性任务，通常收敛更快。</li>
-<li><strong>缺点:</strong> 有偏 (依赖当前估计)，对初始值敏感。</li>
-<li><strong>TD 误差 δ:</strong> R + γV(S’) - V(S)</li>
-</ul></li>
-<li><strong>无模型控制算法:</strong>
-<ul>
-<li><strong>同策略 (On-Policy):</strong> 学习的策略与行为策略相同。
-<ul>
-<li><strong>SARSA:</strong> 使用 (S, A, R, S’, A’) 更新 Q(S, A)。</li>
-<li>Q(S, A) ← Q(S, A) + α [R + γ Q(S’, A’) - Q(S, A)]</li>
-<li>学习的是包含探索行为（如 ε-greedy）的策略的价值。倾向于“安全”策略。</li>
-</ul></li>
-<li><strong>异策略 (Off-Policy):</strong> 学习的策略与行为策略不同。
-<ul>
-<li><strong>Q-Learning:</strong> 使用 (S, A, R, S’) 更新 Q(S, A)，直接学习最优 Q*。</li>
-<li>Q(S, A) ← Q(S, A) + α [R + γ max_{a’} Q(S’, a’) - Q(S, A)]</li>
-<li>行为策略 (μ, e.g., ε-greedy) 用于探索，目标策略 (π, 贪心) 用于更新。倾向于“最优”（可能冒险）策略。可以利用历史数据。</li>
-</ul></li>
-</ul></li>
-</ol>
-<section id="关键区别与联系" class="level2">
-<h2 class="anchored" data-anchor-id="关键区别与联系">关键区别与联系</h2>
-<ul>
-<li><strong>DP vs.&nbsp;Model-Free:</strong> DP 需要模型，Model-Free 不需要。</li>
-<li><strong>MC vs.&nbsp;TD:</strong> MC 等待完整回报 (无偏, 高方差)，TD 使用自举 (有偏, 低方差)。</li>
-<li><strong>Prediction vs.&nbsp;Control:</strong> Prediction 评估给定策略，Control 寻找最优策略。</li>
-<li><strong>On-Policy vs.&nbsp;Off-Policy:</strong> On-Policy 学习正在执行的策略，Off-Policy 学习目标策略（可能与执行策略不同）。</li>
-<li><strong>SARSA vs.&nbsp;Q-Learning:</strong> 核心区别在于 TD 目标的计算方式 (Q(S’, A’) vs.&nbsp;max_{a’} Q(S’, a’))，导致了同策略与异策略的差异以及学习到的策略偏好（安全 vs.&nbsp;最优）。</li>
+<li><strong>机制:</strong> 以 <span class="math inline">\(1-\epsilon\)</span> 的概率选择当前 Q 值最高的动作（利用），以 <span class="math inline">\(\epsilon\)</span> 的概率从所有可用动作中随机选择一个（探索）。</li>
+<li><strong>优点:</strong> 简单、易于实现。理论上保证在一定条件下（如 <span class="math inline">\(\epsilon\)</span> 随时间衰减）能探索所有状态-动作对。</li>
+<li><strong>缺点:</strong> 探索是完全随机的，不够智能。即使某个探索动作明显很差，它仍有 <span class="math inline">\(\epsilon/|A|\)</span> 的概率被选中。当有多个较优动作时，它只选择 Q 值最高的那一个（在利用时），忽略了其他可能也较好的动作。</li>
+<li><strong>衰减 <span class="math inline">\(\epsilon\)</span>:</strong> 通常会让 <span class="math inline">\(\epsilon\)</span> 随着学习的进行而逐渐减小，使得智能体在早期更多地探索，在后期更多地利用已学到的知识。</li>
 </ul>
 </section>
-<section id="中期测试准备" class="level2">
-<h2 class="anchored" data-anchor-id="中期测试准备">中期测试准备</h2>
+<section id="乐观初始值-optimistic-initial-values" class="level3">
+<h3 class="anchored" data-anchor-id="乐观初始值-optimistic-initial-values">2. 乐观初始值 (Optimistic Initial Values)</h3>
 <ul>
-<li><strong>形式:</strong> 可能包含概念选择/填空/简答题，以及对简单模拟（如 Gridworld, CliffWalking）结果的分析和解释。</li>
-<li><strong>重点:</strong> 理解上述核心概念的定义、区别、联系、优缺点以及它们在算法（MC, TD(0), SARSA, Q-Learning）中的具体体现。能够解释算法的关键更新步骤。能够分析简单场景下的策略差异（如 SARSA vs.&nbsp;Q-Learning）。</li>
+<li><strong>机制:</strong> 在学习开始时，将所有的 Q 值初始化为一个远高于实际可能最大值的数（例如，对于奖励范围在 [-1, 1] 的环境，可以初始化为 5）。</li>
+<li><strong>原理:</strong> 智能体最初会倾向于尝试所有动作，因为它们都被赋予了很高的初始价值。只有当一个动作被尝试多次，其 Q 值因为实际获得的奖励而下降到低于其他动作的初始值时，智能体才会”放弃”对该动作的探索。这鼓励了对未知状态-动作对的系统性探索。</li>
+<li><strong>优点:</strong> 实现简单，有时能非常有效地引导探索，尤其是在早期阶段。</li>
+<li><strong>缺点:</strong> 需要对奖励的可能范围有一个估计来设定合适的初始值。对于非平稳环境（奖励或转移会变化）可能效果不佳。它更像是一种启发式方法。</li>
+<li><strong>适用性:</strong> 可用于 SARSA 和 Q-Learning。</li>
 </ul>
-<div class="callout callout-style-default callout-tip callout-titled" title="学习建议">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-学习建议
-</div>
-</div>
-<div class="callout-body-container callout-body">
+</section>
+<section id="上置信界-upper-confidence-bound-ucb" class="level3">
+<h3 class="anchored" data-anchor-id="上置信界-upper-confidence-bound-ucb">3. 上置信界 (Upper Confidence Bound, UCB)</h3>
 <ul>
-<li>回顾前几周的讲义和 Lab 代码。</li>
-<li>尝试用自己的话解释每个核心概念。</li>
-<li>思考不同算法之间的关键差异，以及为什么这些差异会导致不同的行为。</li>
-<li>理解偏差-方差权衡在 MC 和 TD 中的体现。</li>
-<li>理解同策略和异策略的根本区别及其影响。</li>
+<li><strong>机制:</strong> 选择动作时，不仅考虑其当前的 Q 值估计，还考虑其不确定性。选择能最大化以下表达式的动作 <span class="math inline">\(a\)</span>: [ A_t = ] 其中： * <span class="math inline">\(Q_t(a)\)</span> 是动作 <span class="math inline">\(a\)</span> 在时间 <span class="math inline">\(t\)</span> 的估计价值。 * <span class="math inline">\(\ln t\)</span> 是时间 <span class="math inline">\(t\)</span> 的自然对数，随时间增长。 * <span class="math inline">\(N_t(a)\)</span> 是动作 <span class="math inline">\(a\)</span> 在时间 <span class="math inline">\(t\)</span> 之前被选择的次数。 * <span class="math inline">\(c &gt; 0\)</span> 是一个常数，用于控制探索的程度。</li>
+<li><strong>原理:</strong> 第二项 <span class="math inline">\(c \sqrt{\frac{\ln t}{N_t(a)}}\)</span> 是不确定性或探索奖励。如果一个动作被选择的次数 <span class="math inline">\(N_t(a)\)</span> 很少，或者时间 <span class="math inline">\(t\)</span> 增长得很快，这一项就会变大，增加了该动作被选中的可能性，即使其当前 <span class="math inline">\(Q_t(a)\)</span> 不高。这鼓励探索那些不经常被尝试的动作。</li>
+<li><strong>优点:</strong> 比 <span class="math inline">\(\epsilon\)</span>-greedy 更”智能”，倾向于探索更有潜力的动作。有较好的理论保证（尤其是在多臂老虎机问题中）。</li>
+<li><strong>缺点:</strong> 实现比 <span class="math inline">\(\epsilon\)</span>-greedy 复杂，需要记录每个动作的选择次数。在非平稳环境中可能需要调整。</li>
+<li><strong>适用性:</strong> 主要思想源于多臂老虎机，可以直接应用于 Q-Learning。对于 SARSA，由于其同策略性质，直接应用 UCB 来选择 <span class="math inline">\(A_{t+1}\)</span> 可能稍微复杂，但其核心思想（平衡价值和不确定性）仍然可以借鉴。</li>
 </ul>
-</div>
-</div>
-<hr>
-<p><strong>下周预告:</strong> 进入课程的第三部分：应对复杂性 - 函数逼近与深度强化学习。我们将探讨为什么需要函数逼近，以及如何使用神经网络来处理大规模或连续的状态/动作空间。</p>
+</section>
+<section id="boltzmann-探索-softmax-exploration" class="level3">
+<h3 class="anchored" data-anchor-id="boltzmann-探索-softmax-exploration">4. Boltzmann 探索 (Softmax Exploration)</h3>
+<ul>
+<li><strong>机制:</strong> 根据动作的 Q 值，以概率方式选择动作。Q 值越高的动作被选中的概率越大，但 Q 值较低的动作仍有一定概率被选中。通常使用 Softmax 函数计算选择概率： [ P(a | S_t) = ] 其中 <span class="math inline">\(\tau &gt; 0\)</span> 是”温度”参数： * <span class="math inline">\(\tau \to \infty\)</span>: 概率趋于均匀分布（纯探索）。 * <span class="math inline">\(\tau \to 0^+\)</span>: 概率趋于选择 Q 值最高的动作（纯利用）。</li>
+<li><strong>原理:</strong> 提供了一种平滑的方式来根据动作价值进行探索。相比 <span class="math inline">\(\epsilon\)</span>-greedy，它更倾向于选择价值相对较高的动作，而不是完全随机。</li>
+<li><strong>优点:</strong> 能够根据价值差异调整探索程度。</li>
+<li><strong>缺点:</strong> 需要调整温度参数 <span class="math inline">\(\tau\)</span>。计算概率涉及指数运算，可能比 <span class="math inline">\(\epsilon\)</span>-greedy 稍慢。</li>
+<li><strong>衰减 <span class="math inline">\(\tau\)</span>:</strong> 通常会让 <span class="math inline">\(\tau\)</span> 随时间衰减，从高温（更多探索）到低温（更多利用）。</li>
+<li><strong>适用性:</strong> 可以直接用于 SARSA 和 Q-Learning 的行为策略。</li>
+</ul>
+</section>
+<section id="thompson-sampling-主要用于-bandit-问题可启发-rl" class="level3">
+<h3 class="anchored" data-anchor-id="thompson-sampling-主要用于-bandit-问题可启发-rl">5. Thompson Sampling (主要用于 Bandit 问题，可启发 RL)</h3>
+<ul>
+<li><strong>机制:</strong> 为每个动作的价值维护一个概率分布（例如，Beta 分布用于二元奖励，高斯分布用于连续奖励）。在选择动作时，从每个动作的当前价值分布中采样一个值，然后选择采样值最大的那个动作。根据观察到的奖励更新相应动作的价值分布。</li>
+<li><strong>原理:</strong> 通过贝叶斯方法来估计不确定性。一个动作被尝试的次数越多，其价值分布就越集中；反之则越分散。采样过程自然地平衡了利用（选择分布均值高的动作）和探索（选择分布方差大，即不确定性高的动作）。</li>
+<li><strong>优点:</strong> 在 Bandit 问题中表现通常非常好，是一种非常有效的探索方法。</li>
+<li><strong>缺点:</strong> 将其直接扩展到完整的强化学习（涉及状态）比较复杂，计算成本较高。</li>
+<li><strong>适用性:</strong> 其核心思想（根据后验分布采样）可以启发更高级的 RL 探索策略，但直接应用不如前几种常见。</li>
+</ul>
+</section>
+</section>
+<section id="结论" class="level2">
+<h2 class="anchored" data-anchor-id="结论">结论</h2>
+<p>SARSA 和 Q-Learning 是 TD 控制的基石。</p>
+<ul>
+<li><strong>SARSA (同策略):</strong> 学习正在执行的策略，对探索的风险敏感，可能学习到更保守但安全的策略。</li>
+<li><strong>Q-Learning (异策略):</strong> 学习最优策略，不受实际行为策略探索风险的影响，可能学习到理论上最优但更”危险”的策略。</li>
+</ul>
+<p>选择哪种算法取决于具体应用场景。如果需要考虑实际执行策略（包含探索）的性能和风险，SARSA 可能是更好的选择。如果目标是直接学习最优策略，并且可以容忍行为策略带来的探索风险（或者使用离线数据），Q-Learning 更为常用。</p>
+<p>选择合适的探索策略对于算法的性能至关重要。<span class="math inline">\(\epsilon\)</span>-greedy 是最简单常用的方法，但乐观初始值、UCB 和 Boltzmann 探索等提供了更智能、有时更高效的探索机制。理解这些策略的原理和优缺点，有助于根据具体问题选择或设计更有效的探索方法。</p>
 
 
-</section>
 </section>
 
 </main> <!-- /main -->
@@ -1038,13 +983,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./sarsa_vs_qlearning_comparison.html" class="pagination-link" aria-label="SARSA 与 Q-Learning 算法详解与探索策略对比">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">SARSA 与 Q-Learning 算法详解与探索策略对比</span></span>
+      <a href="./week7_lecture.html" class="pagination-link" aria-label="Week 7: 异策略控制 - Q-Learning (重点)">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">Week 7: 异策略控制 - Q-Learning (重点)</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./week9_lecture.html" class="pagination-link" aria-label="Week 9: 函数逼近入门">
-        <span class="nav-page-text"><span class="chapter-title">Week 9: 函数逼近入门</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./week8_lecture.html" class="pagination-link" aria-label="Week 8: Q-Learning 应用讨论与中期回顾">
+        <span class="nav-page-text"><span class="chapter-title">Week 8: Q-Learning 应用讨论与中期回顾</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

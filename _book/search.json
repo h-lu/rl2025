@@ -586,7 +586,7 @@
     "href": "week7_lecture.html#q-learning-算法伪代码",
     "title": "Week 7: 异策略控制 - Q-Learning (重点)",
     "section": "Q-Learning 算法伪代码",
-    "text": "Q-Learning 算法伪代码\nInitialize:\n  Q(s, a) ← arbitrary values (e.g., 0) for all s ∈ S, a ∈ A(s)\n  α ← learning rate (small positive number)\n  γ ← discount factor (0 ≤ γ ≤ 1)\n  ε ← exploration rate (for behavior policy, e.g., 0.1)\n\nLoop for each episode:\n  Initialize S (first state of episode)\n\n  Loop for each step of episode:\n    # Choose action A using behavior policy derived from Q (e.g., ε-greedy)\n    Choose A from S using ε-greedy(Q)\n\n    # Take action A, observe R, S'\n    Take action A, observe R, S'\n\n    # 核心更新步骤 (Q-Learning)\n    # Find the best Q value for the next state S' (max over next actions a')\n    if S' is terminal:\n        Q_next_max = 0 # No future reward if terminal\n    else:\n        Q_next_max = np.max(Q[S', :]) # max_{a'} Q(S', a')\n\n    td_target = R + γ * Q_next_max\n    td_error = td_target - Q(S, A)\n    Q(S, A) ← Q(S, A) + α * td_error\n\n    S ← S' # Move to the next state\n\n    If S is terminal, break inner loop\n解释:\n\n初始化 Q(s, a)，学习率 α，折扣因子 γ，探索率 ε (用于行为策略)。\n对于每个回合：\n获取起始状态 S。\n对于回合中的每一步：\n根据当前的 Q 值和行为策略 (ε-greedy) 选择动作 A。\n执行动作 A，观察到奖励 R 和下一个状态 S’。\n关键: 计算在下一个状态 S’ 下可能的最大 Q 值: Q_next_max = max_{a'} Q(S', a') (如果 S’ 是终止状态，则为 0)。\n计算 TD 目标: target = R + γ * Q_next_max。\n计算 TD 误差: δ = target - Q(S, A)。\n更新 Q 值: Q(S, A) ← Q(S, A) + α * δ。\n将当前状态更新为 S’。\n如果 S’ 是终止状态，结束当前回合。",
+    "text": "Q-Learning 算法伪代码\nInitialize:\n  Q(s, a) ← arbitrary values (e.g., 0) for all s ∈ S, a ∈ A(s)\n  α ← learning rate (small positive number)\n  γ ← discount factor (0 ≤ γ ≤ 1)\n  ε ← exploration rate (for behavior policy, e.g., 0.1)\n\nLoop for each episode:\n  Initialize S (first state of episode)\n\n  Loop for each step of episode:\n    # Choose action A using behavior policy derived from Q (e.g., ε-greedy)\n    Choose A from S using ε-greedy(Q)\n\n    # Take action A, observe R, S'\n    Take action A, observe R, S'\n\n    # 核心更新步骤 (Q-Learning)\n    # Find the best Q value for the next state S' (max over next actions a')\n    if S' is terminal:\n        Q_next_max = 0 # No future reward if terminal\n    else:\n        Q_next_max = np.max(Q[S', :]) # max_{a'} Q(S', a')\n\n    td_target = R + γ * Q_next_max\n    td_error = td_target - Q(S, A)\n    Q(S, A) ← Q(S, A) + α * td_error\n\n    S ← S' # Move to the next state\n\n    If S is terminal, break inner loop\n解释:\n\n初始化 \\(Q(s, a)\\)，学习率 \\(\\alpha\\)，折扣因子 \\(\\gamma\\)，探索率 \\(\\epsilon\\) (用于行为策略)。\n对于每个回合：\n获取起始状态 \\(S\\)。\n对于回合中的每一步：\n根据当前的 \\(Q\\) 值和行为策略 (\\(\\epsilon\\)-greedy) 选择动作 A。\n执行动作 \\(A\\)，观察到奖励 \\(R\\) 和下一个状态 \\(S\\)’。\n关键: 计算在下一个状态 \\(S'\\) 下可能的最大 \\(Q\\) 值: \\(Q_{next_{max}} = \\max_{a'} Q(S', a')\\) (如果 \\(S'\\) 是终止状态，则为 0)。\n计算 TD 目标: \\(target = R + \\gamma * Q_{next_{max}}\\)。\n计算 TD 误差: \\(\\delta = target - Q(S, A)\\)。\n更新 Q 值: \\(Q(S, A) \\leftarrow Q(S, A) + \\alpha * \\delta\\)。\n将当前状态更新为 \\(S'\\)。\n如果 \\(S'\\) 是终止状态，结束当前回合。",
     "crumbs": [
       "讲义",
       "<span class='chapter-number'>8</span>  <span class='chapter-title'>Week 7: 异策略控制 - Q-Learning (重点)</span>"
@@ -655,7 +655,7 @@
     "text": "回顾：Q-Learning 与 Off-Policy 学习\n上周我们重点学习了 Q-Learning：\n今天我们将讨论如何将 Q-Learning (或类似思想) 应用于简化的商业问题，并进行中期复习。",
     "crumbs": [
       "讲义",
-      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Week 8: Q-Learning 应用讨论与中期回顾</span>"
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Week 8: Q-Learning 应用讨论与中期回顾</span>"
     ]
   },
   {
@@ -666,7 +666,7 @@
     "text": "MDP 定义\n\n状态 (State, S): 如何描述与定价决策相关的环境状况？\n\n核心要素:\n\n剩余时间 (t): 距离销售结束还有多少天 (e.g., 7, 6, …, 1)。\n当前库存 (k): 还剩多少台打印机 (e.g., 0, 1, …, MaxInventory)。\n\n可能的扩展 (增加状态复杂度):\n\n近期需求信号: 过去一/两天的销售量？竞争对手的价格（如果可知）？是否有促销活动？\n市场状态: 宏观经济指标？季节性因素？\n\n简化: 为了便于讨论，我们先只考虑 S = (剩余时间 t, 当前库存 k)。这是一个离散的状态空间。\n\n动作 (Action, A): 我们可以采取哪些定价动作？\n\n离散化: 设定几个离散的价格点。\n\n例如: A = {低价 P_low, 中价 P_mid, 高价 P_high}\n\n连续化: (更复杂，需要函数逼近，我们后面会讲) 允许价格在一定范围内连续取值。\n简化: 我们使用离散动作空间 A = {P_low, P_mid, P_high}。\n\n奖励 (Reward, R): 如何衡量一个定价动作的好坏？\n\n最直接: 当天的销售收入。\n\nR(s, a) = 当天售价 * 当天销量\n\n考虑成本: (销售收入) - (销售成本) - (可能的库存持有成本？)。\n考虑长期影响: (复杂) 是否需要考虑低价对品牌形象的损害？高价导致客户流失？\n简化: 我们使用当天的销售收入作为即时奖励 R。\n\n转移概率 (Transition Probability, P): P(s’ | s, a) = P((t’, k’) | (t, k), p)\n\n时间转移: t’ = t - 1 (确定性)。\n库存转移: k’ = k - 当天销量。这是不确定的部分，因为销量取决于价格 p 和随机的市场需求。\n\n需求模型: 我们需要一个（简化的）需求模型来表示不同价格下的预期销量（以及销量的随机性）。例如：\n\nDemand(P_low) ~ Poisson(λ_low)\nDemand(P_mid) ~ Poisson(λ_mid)\nDemand(P_high) ~ Poisson(λ_high)\n其中 λ_low &gt; λ_mid &gt; λ_high。实际销量 = min(模拟出的需求, 当前库存 k)。\n\n\n无模型假设: 在 Q-Learning 中，我们不需要知道这个精确的需求模型 (P)。我们只需要能够与环境（或模拟器）交互，执行动作 a (定价 p)，然后观察到奖励 R (当天收入) 和下一个状态 s’ ((t-1, k - 实际销量))。\n\n折扣因子 (γ):\n\n如果只关心本周的总收入，且任务有明确终点（时间结束），可以使用 γ = 1。\n如果考虑稍微长远的影响或希望有更好的数学性质，可以使用 γ 略小于 1 (e.g., 0.99)。\n简化: 我们使用 γ = 1。",
     "crumbs": [
       "讲义",
-      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Week 8: Q-Learning 应用讨论与中期回顾</span>"
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Week 8: Q-Learning 应用讨论与中期回顾</span>"
     ]
   },
   {
@@ -677,7 +677,7 @@
     "text": "Q-Learning 应用思路\n\n初始化 Q 表: 创建一个 Q 表，维度为 (时间 t, 库存 k, 价格 p)。Q((t, k), p) 表示在剩余 t 天、库存为 k 时，设定价格 p 的预期未来总收入。所有 Q 值初始化为 0。\n模拟回合 (Episode):\n\n一个回合代表一个完整的销售周期（例如，从 t=7, k=InitialInventory 开始，直到 t=0 结束）。\n在每个状态 (t, k) 下：\n\n使用 ε-greedy 策略选择一个价格 p (动作 A)。\n模拟市场需求（根据我们假设的（但算法本身不知道的）需求模型），计算实际销量 sales = min(demand, k)。\n计算奖励 R = p * sales。\n得到下一个状态 s’ = (t-1, k - sales)。\nQ-Learning 更新:\n\nQ_next_max = max_{p'} Q((t-1, k-sales), p') (如果 t-1=0，则 Q_next_max=0)\nQ((t, k), p) ← Q((t, k), p) + α * [R + γ * Q_next_max - Q((t, k), p)]\n\n\n\n重复模拟: 运行大量回合。\n最终策略: 训练完成后，最优策略就是在每个状态 (t, k) 下，选择使得 Q((t, k), p) 最大的那个价格 p。",
     "crumbs": [
       "讲义",
-      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Week 8: Q-Learning 应用讨论与中期回顾</span>"
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Week 8: Q-Learning 应用讨论与中期回顾</span>"
     ]
   },
   {
@@ -688,7 +688,7 @@
     "text": "讨论：设计选择的影响\n\n状态表示 (S):\n\n如果状态过于简化（只包含时间和库存），可能无法捕捉重要的市场动态（如竞争对手降价），导致学到的策略次优。\n如果状态过于复杂（包含太多信息），会导致状态空间爆炸，Q 表变得巨大，学习需要非常多的数据和时间（维度灾难 Curse of Dimensionality）。\n\n动作空间 (A):\n\n离散价格点太少，可能无法找到真正的最优价格。\n离散价格点太多，也会增大 Q 表，减慢学习。\n\n奖励函数 (R):\n\n只关注短期收入可能导致“杀鸡取卵”的行为（例如，最后一天疯狂降价清仓，损害品牌）。\n设计能够反映长期价值（如客户满意度、品牌形象、重复购买率）的奖励函数非常困难，是 RL 应用的关键挑战（Reward Engineering）。\n\n探索率 (ε):\n\n需要足够的探索来尝试不同的价格组合，尤其是在早期。\nε 太大会导致收入损失，太小则可能错过最优价格。ε 衰减通常是必要的。\n\n学习率 (α):\n\n控制学习速度和稳定性。",
     "crumbs": [
       "讲义",
-      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Week 8: Q-Learning 应用讨论与中期回顾</span>"
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Week 8: Q-Learning 应用讨论与中期回顾</span>"
     ]
   },
   {
@@ -699,7 +699,7 @@
     "text": "局限性分析\n\n简化的需求模型: 现实世界的需求受多种因素影响，很难用简单的概率分布描述。\n状态空间大小: 即使只考虑时间和库存，如果时间长、库存量大，状态空间也会很大。对于更复杂的商业问题，表格型 Q-Learning (Tabular Q-Learning) 很快会变得不可行。\n非平稳环境 (Non-Stationary): 市场需求、竞争对手行为可能随时间变化，这意味着环境的 P 和 R 不是固定的，违反了标准 MDP 的假设。需要更高级的 RL 技术来处理。\n样本效率 (Sample Efficiency): 表格型 Q-Learning 通常需要大量的交互数据才能学到好的策略，在真实商业环境中可能成本过高。\n多智能体问题 (Multi-Agent): 如果有竞争对手也在使用智能定价，问题就变成了更复杂的多智能体 RL 问题。\n\n\n\n\n\n\n\n通往深度强化学习\n\n\n\n当状态空间或动作空间变得巨大或连续时，我们无法再使用表格来存储 Q(s, a)。这时就需要使用函数逼近 (Function Approximation)，特别是深度神经网络，来近似 Q 函数。这就是深度 Q 网络 (Deep Q-Network, DQN) 等深度强化学习方法的基础，我们将在下一部分学习。",
     "crumbs": [
       "讲义",
-      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Week 8: Q-Learning 应用讨论与中期回顾</span>"
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Week 8: Q-Learning 应用讨论与中期回顾</span>"
     ]
   },
   {
@@ -710,7 +710,7 @@
     "text": "关键区别与联系\n\nDP vs. Model-Free: DP 需要模型，Model-Free 不需要。\nMC vs. TD: MC 等待完整回报 (无偏, 高方差)，TD 使用自举 (有偏, 低方差)。\nPrediction vs. Control: Prediction 评估给定策略，Control 寻找最优策略。\nOn-Policy vs. Off-Policy: On-Policy 学习正在执行的策略，Off-Policy 学习目标策略（可能与执行策略不同）。\nSARSA vs. Q-Learning: 核心区别在于 TD 目标的计算方式 (Q(S’, A’) vs. max_{a’} Q(S’, a’))，导致了同策略与异策略的差异以及学习到的策略偏好（安全 vs. 最优）。",
     "crumbs": [
       "讲义",
-      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Week 8: Q-Learning 应用讨论与中期回顾</span>"
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Week 8: Q-Learning 应用讨论与中期回顾</span>"
     ]
   },
   {
@@ -721,7 +721,7 @@
     "text": "中期测试准备\n\n形式: 可能包含概念选择/填空/简答题，以及对简单模拟（如 Gridworld, CliffWalking）结果的分析和解释。\n重点: 理解上述核心概念的定义、区别、联系、优缺点以及它们在算法（MC, TD(0), SARSA, Q-Learning）中的具体体现。能够解释算法的关键更新步骤。能够分析简单场景下的策略差异（如 SARSA vs. Q-Learning）。\n\n\n\n\n\n\n\n学习建议\n\n\n\n\n回顾前几周的讲义和 Lab 代码。\n尝试用自己的话解释每个核心概念。\n思考不同算法之间的关键差异，以及为什么这些差异会导致不同的行为。\n理解偏差-方差权衡在 MC 和 TD 中的体现。\n理解同策略和异策略的根本区别及其影响。\n\n\n\n\n下周预告: 进入课程的第三部分：应对复杂性 - 函数逼近与深度强化学习。我们将探讨为什么需要函数逼近，以及如何使用神经网络来处理大规模或连续的状态/动作空间。",
     "crumbs": [
       "讲义",
-      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Week 8: Q-Learning 应用讨论与中期回顾</span>"
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Week 8: Q-Learning 应用讨论与中期回顾</span>"
     ]
   },
   {
@@ -1436,7 +1436,7 @@
     "text": "练习目标",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>23</span>  <span class='chapter-title'>Week 6 - 学生练习</span>"
+      "<span class='chapter-number'>24</span>  <span class='chapter-title'>Week 6 - 学生练习</span>"
     ]
   },
   {
@@ -1444,10 +1444,10 @@
     "href": "week6_exercise.html#练习-1-gpi-与-onoff-policy-理解",
     "title": "Week 6 - 学生练习",
     "section": "练习 1: GPI 与 On/Off-Policy 理解",
-    "text": "练习 1: GPI 与 On/Off-Policy 理解\n\nGPI 循环: 广义策略迭代 (GPI) 包含哪两个交替进行的过程？这两个过程的目标分别是什么？\n为何学 Q: 在无模型强化学习控制问题中，为什么我们通常选择学习动作值函数 Q(s, a) 而不是状态值函数 V(s)？\nOn-Policy vs. Off-Policy:\n\n请用你自己的话解释同策略 (On-Policy) 学习和异策略 (Off-Policy) 学习的主要区别。\nSARSA 属于哪一类？为什么？",
+    "text": "练习 1: GPI 与 On/Off-Policy 理解\n\nGPI 循环: 广义策略迭代 (GPI) 包含哪两个交替进行的过程？这两个过程的目标分别是什么？\n为何学 Q: 在无模型强化学习控制问题中，为什么我们通常选择学习动作值函数 \\(Q(s, a)\\) 而不是状态值函数 \\(V(s)\\)？\nOn-Policy vs. Off-Policy:\n\n请用你自己的话解释同策略 (On-Policy) 学习和异策略 (Off-Policy) 学习的主要区别。\nSARSA 属于哪一类？为什么？",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>23</span>  <span class='chapter-title'>Week 6 - 学生练习</span>"
+      "<span class='chapter-number'>24</span>  <span class='chapter-title'>Week 6 - 学生练习</span>"
     ]
   },
   {
@@ -1455,10 +1455,10 @@
     "href": "week6_exercise.html#练习-2-sarsa-更新计算",
     "title": "Week 6 - 学生练习",
     "section": "练习 2: SARSA 更新计算",
-    "text": "练习 2: SARSA 更新计算\n假设我们正在使用 SARSA 算法。当前状态 S，根据 ε-greedy 策略选择了动作 A。执行动作 A 后，获得奖励 R = -1，并转移到下一个状态 S’。在状态 S’，再次根据 ε-greedy 策略选择了下一个动作 A’。\n当前的 Q 值估计如下： * Q(S, A) = 5.0 * Q(S’, A’) = 6.0\n假设学习率 α = 0.1，折扣因子 γ = 0.9。\n请根据 SARSA 更新规则计算更新后的 Q(S, A) 的值： Q(S, A) ← Q(S, A) + α [R + γ Q(S’, A’) - Q(S, A)] = ?\n（请写出计算步骤和最终结果）",
+    "text": "练习 2: SARSA 更新计算\n假设我们正在使用 SARSA 算法。当前状态 \\(S\\)，根据 \\(\\epsilon\\)-greedy 策略选择了动作 \\(A\\)。执行动作 \\(A\\) 后，获得奖励 \\(R = -1\\)，并转移到下一个状态 \\(S'\\)。在状态 \\(S'\\)，再次根据 \\(\\epsilon\\)-greedy 策略选择了下一个动作 \\(A'\\)。\n当前的 \\(Q\\) 值估计如下：\n\n\\(Q(S, A) = 5.0\\)\n\\(Q(S', A') = 6.0\\)\n\n假设学习率 \\(\\alpha = 0.1\\)，折扣因子 \\(\\gamma = 0.9\\)。\n请根据 SARSA 更新规则计算更新后的 \\(Q(S, A)\\) 的值： \\[\nQ(S, A) \\leftarrow Q(S, A) + \\alpha [R + \\gamma Q(S', A') - Q(S, A)] = ?\n\\]",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>23</span>  <span class='chapter-title'>Week 6 - 学生练习</span>"
+      "<span class='chapter-number'>24</span>  <span class='chapter-title'>Week 6 - 学生练习</span>"
     ]
   },
   {
@@ -1469,7 +1469,7 @@
     "text": "练习 3: ε-Greedy 策略\n假设在一个状态 s，有 3 个可选动作 a₁, a₂, a₃。当前的 Q 值估计为： * Q(s, a₁) = 10 * Q(s, a₂) = 8 * Q(s, a₃) = 8\n如果使用 ε-greedy 策略，且探索率 ε = 0.1：\n\n选择动作 a₁ (当前最优动作) 的概率是多少？\n选择动作 a₂ 的概率是多少？（注意：a₂ 和 a₃ 的 Q 值相同）\n选择动作 a₃ 的概率是多少？\n如果 ε = 0，选择每个动作的概率分别是多少？这对应什么策略？\n如果 ε = 1，选择每个动作的概率分别是多少？这对应什么策略？",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>23</span>  <span class='chapter-title'>Week 6 - 学生练习</span>"
+      "<span class='chapter-number'>24</span>  <span class='chapter-title'>Week 6 - 学生练习</span>"
     ]
   },
   {
@@ -1480,7 +1480,7 @@
     "text": "练习 4: SARSA Lab 代码与结果分析 (基于 Lab 4)\n本练习基于讲义/Lab 4 中提供的 CliffWalking 环境和 SARSA 实现代码。\n\n代码理解:\n\n请指出 SARSA 代码中，选择当前动作 A (action) 和选择下一个动作 A’ (next_action) 的代码行。它们都使用了哪个策略函数？\n请指出计算 SARSA 的 TD 目标 (td_target) 的代码行。它依赖于哪个动作，A 还是 A’？\n\nε 的影响分析:\n\n回顾你在 Lab 4 中尝试不同 ε 值（或预期）的结果。当 ε 值很小（接近 0）时，SARSA 的学习过程（奖励曲线）和最终策略可能有什么特点？为什么？\n当 ε 值很大（接近 1）时，SARSA 的学习过程和最终策略又可能有什么特点？为什么？\n\n路径选择思考: 为什么 SARSA 在 CliffWalking 环境中倾向于学习一条远离悬崖的“安全”路径，而不是理论上最短的路径？请结合 SARSA 的更新规则和 ε-greedy 策略进行解释。",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>23</span>  <span class='chapter-title'>Week 6 - 学生练习</span>"
+      "<span class='chapter-number'>24</span>  <span class='chapter-title'>Week 6 - 学生练习</span>"
     ]
   },
   {
@@ -1491,7 +1491,7 @@
     "text": "练习目标",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>24</span>  <span class='chapter-title'>Week 7 - 学生练习</span>"
+      "<span class='chapter-number'>25</span>  <span class='chapter-title'>Week 7 - 学生练习</span>"
     ]
   },
   {
@@ -1502,7 +1502,7 @@
     "text": "练习 1: Off-Policy 与 Q-Learning 概念\n\nOff-Policy 定义: 请用你自己的话解释什么是异策略 (Off-Policy) 学习。它与同策略 (On-Policy) 学习的主要区别在哪里？\n行为策略 vs. 目标策略: 在 Q-Learning 中，行为策略 (μ) 和目标策略 (π) 通常分别是什么？哪个策略用于与环境交互？哪个策略体现在 Q 值的更新中？\n核心区别 (Q-Learning vs. SARSA): Q-Learning 和 SARSA 的 TD 目标计算方式有何关键不同？这个不同如何体现了它们分别是 Off-Policy 和 On-Policy 的？\n学习最优策略: 为什么 Q-Learning 能够学习到最优动作值函数 Q*，即使它的行为策略（如 ε-greedy）不是最优的？（提示：思考其更新规则中的 max 操作）",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>24</span>  <span class='chapter-title'>Week 7 - 学生练习</span>"
+      "<span class='chapter-number'>25</span>  <span class='chapter-title'>Week 7 - 学生练习</span>"
     ]
   },
   {
@@ -1513,7 +1513,7 @@
     "text": "练习 2: Q-Learning 更新计算\n假设我们正在使用 Q-Learning 算法。当前状态 S，根据 ε-greedy 行为策略选择了动作 A。执行动作 A 后，获得奖励 R = 5，并转移到下一个状态 S’。\n当前的 Q 值估计如下： * Q(S, A) = 10.0 * 对于下一个状态 S’，所有可能的下一个动作 a’ 对应的 Q 值估计为：Q(S’, a’₁) = 8.0, Q(S’, a’₂) = 9.0, Q(S’, a’₃) = 7.0。\n假设学习率 α = 0.1，折扣因子 γ = 0.9。\n请根据 Q-Learning 更新规则计算更新后的 Q(S, A) 的值： Q(S, A) ← Q(S, A) + α [R + γ max_{a’} Q(S’, a’) - Q(S, A)] = ?\n（请写出计算步骤和最终结果）",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>24</span>  <span class='chapter-title'>Week 7 - 学生练习</span>"
+      "<span class='chapter-number'>25</span>  <span class='chapter-title'>Week 7 - 学生练习</span>"
     ]
   },
   {
@@ -1524,7 +1524,7 @@
     "text": "练习 3: Q-Learning Lab 代码与结果分析 (基于 Lab 5)\n本练习基于讲义/Lab 5 中提供的 CliffWalking 环境和 Q-Learning 实现代码。\n\n代码理解:\n\n请指出 Q-Learning 代码中，计算 TD 目标 (td_target) 的关键代码行。它与 SARSA 代码中计算 TD 目标的主要区别在哪里？\n在 Q-Learning 的主循环中，选择实际执行的动作 action 时，使用的是哪个策略？（是贪心策略还是 ε-greedy 策略？）\n\n策略对比思考 (结合 Lab 结果):\n\n回顾你在 Lab 5 中观察到的 Q-Learning 和 SARSA 在 CliffWalking 环境中学习到的最终策略路径。哪一个更倾向于走贴近悬崖的“最优”路径？哪一个更倾向于走远离悬崖的“安全”路径？\n请再次尝试解释造成这种策略差异的根本原因是什么？（提示：与 TD 目标的计算方式有关）\n\n奖励曲线对比思考 (结合 Lab 结果):\n\n回顾 Q-Learning 和 SARSA 的奖励曲线。哪个算法的平均每回合奖励在训练过程中可能波动更大？为什么？（提示：考虑最优路径的风险和探索的影响）\n哪个算法学习到的最优策略（如果去掉探索，按贪心执行）理论上能获得更高的累积奖励？",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>24</span>  <span class='chapter-title'>Week 7 - 学生练习</span>"
+      "<span class='chapter-number'>25</span>  <span class='chapter-title'>Week 7 - 学生练习</span>"
     ]
   },
   {
@@ -1535,7 +1535,7 @@
     "text": "练习 4: Off-Policy 优势讨论\n\n利用历史数据: 假设你有一批很久以前由一个完全随机的策略在某个环境中收集的交互数据 (s, a, r, s’)。你认为 Q-Learning 能否利用这批数据来学习当前环境下的最优策略？SARSA 能否？请说明理由。\n商业应用: 结合上一点的思考，请举例说明在哪些商业场景下，Off-Policy 学习（能够利用历史/他人数据）的特性可能特别有用？",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>24</span>  <span class='chapter-title'>Week 7 - 学生练习</span>"
+      "<span class='chapter-number'>25</span>  <span class='chapter-title'>Week 7 - 学生练习</span>"
     ]
   },
   {
@@ -1965,6 +1965,83 @@
     "crumbs": [
       "练习",
       "<span class='chapter-number'>33</span>  <span class='chapter-title'>Week 16 - 学生练习</span>"
+    ]
+  },
+  {
+    "objectID": "sarsa_vs_qlearning_comparison.html",
+    "href": "sarsa_vs_qlearning_comparison.html",
+    "title": "SARSA 与 Q-Learning 算法详解与探索策略对比",
+    "section": "",
+    "text": "引言\n在强化学习中，时序差分 (Temporal Difference, TD) 学习是一类无需环境模型、通过经验进行学习的核心方法。TD 控制算法的目标是学习最优策略，即在每个状态下选择哪个动作可以最大化长期累积奖励。SARSA 和 Q-Learning 是两种最基础且重要的 TD 控制算法，它们在学习方式上有着本质的区别：\n本文将详细比较这两种算法的核心差异，并通过实例解释其工作原理，最后探讨除了经典的 \\(\\epsilon\\)-greedy 之外的其他探索策略。",
+    "crumbs": [
+      "讲义",
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>SARSA 与 Q-Learning 算法详解与探索策略对比</span>"
+    ]
+  },
+  {
+    "objectID": "sarsa_vs_qlearning_comparison.html#引言",
+    "href": "sarsa_vs_qlearning_comparison.html#引言",
+    "title": "SARSA 与 Q-Learning 算法详解与探索策略对比",
+    "section": "",
+    "text": "SARSA (State-Action-Reward-State-Action): 一种 同策略 (On-Policy) TD 控制算法。它学习的是智能体当前正在执行的策略（包含探索）的价值。\nQ-Learning: 一种 异策略 (Off-Policy) TD 控制算法。它可以学习最优策略的价值，即使智能体实际执行的是另一个不同的（通常更具探索性的）策略。",
+    "crumbs": [
+      "讲义",
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>SARSA 与 Q-Learning 算法详解与探索策略对比</span>"
+    ]
+  },
+  {
+    "objectID": "sarsa_vs_qlearning_comparison.html#sarsa-vs.-q-learning-核心对比",
+    "href": "sarsa_vs_qlearning_comparison.html#sarsa-vs.-q-learning-核心对比",
+    "title": "SARSA 与 Q-Learning 算法详解与探索策略对比",
+    "section": "SARSA vs. Q-Learning: 核心对比",
+    "text": "SARSA vs. Q-Learning: 核心对比\n理解 SARSA 和 Q-Learning 的关键在于它们的更新规则以及这规则背后所蕴含的策略评估方式。\n\n更新规则对比\n假设在时间步 \\(t\\)，智能体处于状态 \\(S_t\\)，根据其行为策略（通常是 \\(\\epsilon\\)-greedy）选择了动作 \\(A_t\\)，执行后观察到奖励 \\(R_{t+1}\\) 和下一个状态 \\(S_{t+1}\\)。\n\nSARSA 更新规则: 还需要知道在 \\(S_{t+1}\\) 状态下，根据当前策略选择的下一个实际动作 \\(A_{t+1}\\)。 使用五元组 \\((S_t, A_t, R_{t+1}, S_{t+1}, A_{t+1})\\) 进行更新： \\[\nQ(S_t, A_t) \\leftarrow Q(S_t, A_t) + \\alpha \\left[ R_{t+1} + \\gamma Q(S_{t+1}, A_{t+1}) - Q(S_t, A_t) \\right]\n\\] 这里的 \\(A_{t+1}\\) 是智能体在 \\(S_{t+1}\\) 状态实际将要执行的动作。\nQ-Learning 更新规则: 只需要知道 \\((S_t, A_t, R_{t+1}, S_{t+1})\\) 四元组。它在更新时不关心下一个实际执行的动作是什么，而是直接考虑在 \\(S_{t+1}\\) 状态下采取最优动作能带来的价值： \\[\nQ(S_t, A_t) \\leftarrow Q(S_t, A_t) + \\alpha \\left[ R_{t+1} + \\gamma \\max_{a'} Q(S_{t+1}, a') - Q(S_t, A_t) \\right]\n\\] 这里的 \\(\\max_{a'} Q(S_{t+1}, a')\\) 表示在状态 \\(S_{t+1}\\) 下，所有可能的动作 \\(a'\\) 中能够获得的最大 Q 值。\n\n\n\n关键差异表格\n\n\n\n\n\n\n\n\n\n特征/步骤\nSARSA (同策略)\nQ-Learning (异策略)\n关键差异说明\n\n\n\n\n目标策略\n学习当前行为策略 \\(\\pi\\) (例如 \\(\\epsilon\\)-greedy) 的价值函数 \\(Q_{\\pi}\\)\n学习最优策略 \\(\\pi^*\\) 的价值函数 \\(Q^*\\)，与行为策略 \\(\\mu\\) 无关\nSARSA 评估正在执行的策略，Q-Learning 直接评估最优策略。\n\n\n行为策略\n通常与目标策略相同 (\\(\\pi = \\mu\\))\n可以与目标策略不同 (\\(\\mu \\ne \\pi^*\\))，通常更具探索性\nSARSA 依赖当前策略产生的完整轨迹；Q-Learning 可以利用任何充分探索数据的策略。\n\n\n策略类型\n同策略 (On-Policy)\n异策略 (Off-Policy)\nSARSA 的学习和行为紧密耦合；Q-Learning 将学习目标（最优）与实际行为（探索）分离。\n\n\n更新所需信息\n\\((S_t, A_t, R_{t+1}, S_{t+1}, A_{t+1})\\) (五元组)\n\\((S_t, A_t, R_{t+1}, S_{t+1})\\) (四元组)\nSARSA 需要知道下一步的实际动作；Q-Learning 不需要。\n\n\nTD 目标计算\n\\(R_{t+1} + \\gamma Q(S_{t+1}, A_{t+1})\\)\n\\(R_{t+1} + \\gamma \\max_{a'} Q(S_{t+1}, a')\\)\nSARSA 使用实际下一步动作的 Q 值；Q-Learning 使用下一步最优动作的 Q 值。\n\n\n对探索动作的处理\n将探索动作的（可能次优的）后果纳入学习过程。\n在更新 Q 值时忽略探索动作的实际后果，总是假设采取最优动作。\nSARSA 更”保守”，会因探索带来的风险而调整策略；Q-Learning 更”激进”，直接学习最优路径，无视探索风险。\n\n\n典型例子 (CliffWalking)\n倾向于学习远离悬崖的”安全”路径。\n倾向于学习贴近悬崖的”危险”但理论上最短的路径。\n反映了同策略与异策略在处理探索风险上的差异。\n\n\n收敛性\n在一定条件下（如 GLIE 策略）收敛到当前策略的最优动作价值函数 \\(Q_{\\pi}\\)。\n在一定条件下收敛到全局最优动作价值函数 \\(Q^*\\)。\nQ-Learning 直接收敛到最优解，而 SARSA 收敛到其执行策略下的最优解。\n\n\n\n\n\n实例解释 (简单 A-B-C 例子)\n回顾之前的例子：状态 A, B, C (终止)，动作 left, right。从 A 执行 right 到 B (R=+1)。更新 \\(Q(A, \\text{`right`})\\)。 当前 \\(Q(B, \\text{`left`})=2.0\\), \\(Q(B, \\text{`right`})=5.0\\)。\\(\\gamma=0.9\\), \\(\\epsilon=0.1\\)。\n\nSARSA:\n\n在 B 状态，以 0.95 概率选 right (\\(A_{t+1}\\)=\\(\\text{`right`}\\)), TD 目标 = \\(1 + 0.9 * 5.0 = 5.5\\)。\n在 B 状态，以 0.05 概率选 left (\\(A_{t+1}\\)=\\(\\text{`left`}\\)), TD 目标 = \\(1 + 0.9 * 2.0 = 2.8\\)。\nSARSA 的更新目标取决于实际选择的 \\(A_{t+1}\\)。\n\nQ-Learning:\n\n在 B 状态，找到 \\(\\max(Q(B, \\text{`left`}), Q(B, \\text{`right`})) = 5.0\\)。\nTD 目标 = \\(1 + 0.9 * 5.0 = 5.5\\)。\nQ-Learning 的更新目标始终是基于最优选择，与实际选择的 \\(A_{t+1}\\) 无关。\n\n\n这个例子清晰地展示了 SARSA 如何受实际行为（包括探索）的影响，而 Q-Learning 如何始终以最优动作为目标进行更新。",
+    "crumbs": [
+      "讲义",
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>SARSA 与 Q-Learning 算法详解与探索策略对比</span>"
+    ]
+  },
+  {
+    "objectID": "sarsa_vs_qlearning_comparison.html#探索策略超越-epsilon-greedy",
+    "href": "sarsa_vs_qlearning_comparison.html#探索策略超越-epsilon-greedy",
+    "title": "SARSA 与 Q-Learning 算法详解与探索策略对比",
+    "section": "探索策略：超越 Epsilon-Greedy",
+    "text": "探索策略：超越 Epsilon-Greedy\n为了让 TD 控制算法能够学习到最优策略，智能体需要在探索 (Exploration)（尝试新的、未知的动作以发现潜在更好的选择）和利用 (Exploitation)（选择当前已知的最佳动作以获取最大奖励）之间取得平衡。 \\(\\epsilon\\)-greedy 是最常用的策略之一，但并非唯一选择。\n\n1. Epsilon-Greedy (\\(\\epsilon\\)-greedy)\n\n机制: 以 \\(1-\\epsilon\\) 的概率选择当前 Q 值最高的动作（利用），以 \\(\\epsilon\\) 的概率从所有可用动作中随机选择一个（探索）。\n优点: 简单、易于实现。理论上保证在一定条件下（如 \\(\\epsilon\\) 随时间衰减）能探索所有状态-动作对。\n缺点: 探索是完全随机的，不够智能。即使某个探索动作明显很差，它仍有 \\(\\epsilon/|A|\\) 的概率被选中。当有多个较优动作时，它只选择 Q 值最高的那一个（在利用时），忽略了其他可能也较好的动作。\n衰减 \\(\\epsilon\\): 通常会让 \\(\\epsilon\\) 随着学习的进行而逐渐减小，使得智能体在早期更多地探索，在后期更多地利用已学到的知识。\n\n\n\n2. 乐观初始值 (Optimistic Initial Values)\n\n机制: 在学习开始时，将所有的 Q 值初始化为一个远高于实际可能最大值的数（例如，对于奖励范围在 [-1, 1] 的环境，可以初始化为 5）。\n原理: 智能体最初会倾向于尝试所有动作，因为它们都被赋予了很高的初始价值。只有当一个动作被尝试多次，其 Q 值因为实际获得的奖励而下降到低于其他动作的初始值时，智能体才会”放弃”对该动作的探索。这鼓励了对未知状态-动作对的系统性探索。\n优点: 实现简单，有时能非常有效地引导探索，尤其是在早期阶段。\n缺点: 需要对奖励的可能范围有一个估计来设定合适的初始值。对于非平稳环境（奖励或转移会变化）可能效果不佳。它更像是一种启发式方法。\n适用性: 可用于 SARSA 和 Q-Learning。\n\n\n\n3. 上置信界 (Upper Confidence Bound, UCB)\n\n机制: 选择动作时，不仅考虑其当前的 Q 值估计，还考虑其不确定性。选择能最大化以下表达式的动作 \\(a\\): [ A_t = ] 其中： * \\(Q_t(a)\\) 是动作 \\(a\\) 在时间 \\(t\\) 的估计价值。 * \\(\\ln t\\) 是时间 \\(t\\) 的自然对数，随时间增长。 * \\(N_t(a)\\) 是动作 \\(a\\) 在时间 \\(t\\) 之前被选择的次数。 * \\(c &gt; 0\\) 是一个常数，用于控制探索的程度。\n原理: 第二项 \\(c \\sqrt{\\frac{\\ln t}{N_t(a)}}\\) 是不确定性或探索奖励。如果一个动作被选择的次数 \\(N_t(a)\\) 很少，或者时间 \\(t\\) 增长得很快，这一项就会变大，增加了该动作被选中的可能性，即使其当前 \\(Q_t(a)\\) 不高。这鼓励探索那些不经常被尝试的动作。\n优点: 比 \\(\\epsilon\\)-greedy 更”智能”，倾向于探索更有潜力的动作。有较好的理论保证（尤其是在多臂老虎机问题中）。\n缺点: 实现比 \\(\\epsilon\\)-greedy 复杂，需要记录每个动作的选择次数。在非平稳环境中可能需要调整。\n适用性: 主要思想源于多臂老虎机，可以直接应用于 Q-Learning。对于 SARSA，由于其同策略性质，直接应用 UCB 来选择 \\(A_{t+1}\\) 可能稍微复杂，但其核心思想（平衡价值和不确定性）仍然可以借鉴。\n\n\n\n4. Boltzmann 探索 (Softmax Exploration)\n\n机制: 根据动作的 Q 值，以概率方式选择动作。Q 值越高的动作被选中的概率越大，但 Q 值较低的动作仍有一定概率被选中。通常使用 Softmax 函数计算选择概率： [ P(a | S_t) = ] 其中 \\(\\tau &gt; 0\\) 是”温度”参数： * \\(\\tau \\to \\infty\\): 概率趋于均匀分布（纯探索）。 * \\(\\tau \\to 0^+\\): 概率趋于选择 Q 值最高的动作（纯利用）。\n原理: 提供了一种平滑的方式来根据动作价值进行探索。相比 \\(\\epsilon\\)-greedy，它更倾向于选择价值相对较高的动作，而不是完全随机。\n优点: 能够根据价值差异调整探索程度。\n缺点: 需要调整温度参数 \\(\\tau\\)。计算概率涉及指数运算，可能比 \\(\\epsilon\\)-greedy 稍慢。\n衰减 \\(\\tau\\): 通常会让 \\(\\tau\\) 随时间衰减，从高温（更多探索）到低温（更多利用）。\n适用性: 可以直接用于 SARSA 和 Q-Learning 的行为策略。\n\n\n\n5. Thompson Sampling (主要用于 Bandit 问题，可启发 RL)\n\n机制: 为每个动作的价值维护一个概率分布（例如，Beta 分布用于二元奖励，高斯分布用于连续奖励）。在选择动作时，从每个动作的当前价值分布中采样一个值，然后选择采样值最大的那个动作。根据观察到的奖励更新相应动作的价值分布。\n原理: 通过贝叶斯方法来估计不确定性。一个动作被尝试的次数越多，其价值分布就越集中；反之则越分散。采样过程自然地平衡了利用（选择分布均值高的动作）和探索（选择分布方差大，即不确定性高的动作）。\n优点: 在 Bandit 问题中表现通常非常好，是一种非常有效的探索方法。\n缺点: 将其直接扩展到完整的强化学习（涉及状态）比较复杂，计算成本较高。\n适用性: 其核心思想（根据后验分布采样）可以启发更高级的 RL 探索策略，但直接应用不如前几种常见。",
+    "crumbs": [
+      "讲义",
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>SARSA 与 Q-Learning 算法详解与探索策略对比</span>"
+    ]
+  },
+  {
+    "objectID": "sarsa_vs_qlearning_comparison.html#结论",
+    "href": "sarsa_vs_qlearning_comparison.html#结论",
+    "title": "SARSA 与 Q-Learning 算法详解与探索策略对比",
+    "section": "结论",
+    "text": "结论\nSARSA 和 Q-Learning 是 TD 控制的基石。\n\nSARSA (同策略): 学习正在执行的策略，对探索的风险敏感，可能学习到更保守但安全的策略。\nQ-Learning (异策略): 学习最优策略，不受实际行为策略探索风险的影响，可能学习到理论上最优但更”危险”的策略。\n\n选择哪种算法取决于具体应用场景。如果需要考虑实际执行策略（包含探索）的性能和风险，SARSA 可能是更好的选择。如果目标是直接学习最优策略，并且可以容忍行为策略带来的探索风险（或者使用离线数据），Q-Learning 更为常用。\n选择合适的探索策略对于算法的性能至关重要。\\(\\epsilon\\)-greedy 是最简单常用的方法，但乐观初始值、UCB 和 Boltzmann 探索等提供了更智能、有时更高效的探索机制。理解这些策略的原理和优缺点，有助于根据具体问题选择或设计更有效的探索方法。",
+    "crumbs": [
+      "讲义",
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>SARSA 与 Q-Learning 算法详解与探索策略对比</span>"
+    ]
+  },
+  {
+    "objectID": "week6_exercise.html#练习-3-epsilon-greedy-策略",
+    "href": "week6_exercise.html#练习-3-epsilon-greedy-策略",
+    "title": "Week 6 - 学生练习",
+    "section": "练习 3: \\(\\epsilon\\)-Greedy 策略",
+    "text": "练习 3: \\(\\epsilon\\)-Greedy 策略\n假设在一个状态 \\(s\\)，有 3 个可选动作 \\(a_1, a_2, a_3\\)。当前的 \\(Q\\) 值估计为： * \\(Q(s, a_1) = 10\\) * \\(Q(s, a_2) = 8\\) * \\(Q(s, a_3) = 8\\)\n（请写出计算步骤和最终结果）",
+    "crumbs": [
+      "练习",
+      "<span class='chapter-number'>24</span>  <span class='chapter-title'>Week 6 - 学生练习</span>"
+    ]
+  },
+  {
+    "objectID": "week6_exercise.html#练习-3-epsilon-greedy-策略-1",
+    "href": "week6_exercise.html#练习-3-epsilon-greedy-策略-1",
+    "title": "Week 6 - 学生练习",
+    "section": "练习 3: \\(\\epsilon\\)-Greedy 策略",
+    "text": "练习 3: \\(\\epsilon\\)-Greedy 策略\n假设在一个状态 \\(s\\)，有 3 个可选动作 \\(a_1, a_2, a_3\\)。当前的 \\(Q\\) 值估计为： * \\(Q(s, a_1) = 10\\) * \\(Q(s, a_2) = 8\\) * \\(Q(s, a_3) = 8\\)\n如果使用 \\(\\epsilon\\)-greedy 策略，且探索率 \\(\\epsilon = 0.1\\)：\n\n选择动作 \\(a_1\\) (当前最优动作) 的概率是多少？\n选择动作 \\(a_2\\) 的概率是多少？（注意：\\(a_2\\) 和 \\(a_3\\) 的 \\(Q\\) 值相同）\n选择动作 \\(a_3\\) 的概率是多少？\n如果 \\(\\epsilon = 0\\)，选择每个动作的概率分别是多少？这对应什么策略？\n如果 \\(\\epsilon = 1\\)，选择每个动作的概率分别是多少？这对应什么策略？",
+    "crumbs": [
+      "练习",
+      "<span class='chapter-number'>24</span>  <span class='chapter-title'>Week 6 - 学生练习</span>"
     ]
   }
 ]

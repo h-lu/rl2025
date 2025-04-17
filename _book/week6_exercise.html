@@ -70,6 +70,35 @@ ul.task-list li input[type="checkbox"] {
 }</script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xkm/sYwpb+ilR5gUw==" crossorigin="anonymous" referrerpolicy="no-referrer">
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="styles/custom.css">
 </head>
@@ -155,6 +184,11 @@ ul.task-list li input[type="checkbox"] {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./week7_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 7: 异策略控制 - Q-Learning (重点)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./sarsa_vs_qlearning_comparison.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">SARSA 与 Q-Learning 算法详解与探索策略对比</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -306,7 +340,8 @@ ul.task-list li input[type="checkbox"] {
   <ul class="collapse">
   <li><a href="#练习-1-gpi-与-onoff-policy-理解" id="toc-练习-1-gpi-与-onoff-policy-理解" class="nav-link" data-scroll-target="#练习-1-gpi-与-onoff-policy-理解">练习 1: GPI 与 On/Off-Policy 理解</a></li>
   <li><a href="#练习-2-sarsa-更新计算" id="toc-练习-2-sarsa-更新计算" class="nav-link" data-scroll-target="#练习-2-sarsa-更新计算">练习 2: SARSA 更新计算</a></li>
-  <li><a href="#练习-3-ε-greedy-策略" id="toc-练习-3-ε-greedy-策略" class="nav-link" data-scroll-target="#练习-3-ε-greedy-策略">练习 3: ε-Greedy 策略</a></li>
+  <li><a href="#练习-3-epsilon-greedy-策略" id="toc-练习-3-epsilon-greedy-策略" class="nav-link" data-scroll-target="#练习-3-epsilon-greedy-策略">练习 3: <span class="math inline">\(\epsilon\)</span>-Greedy 策略</a></li>
+  <li><a href="#练习-3-epsilon-greedy-策略-1" id="toc-练习-3-epsilon-greedy-策略-1" class="nav-link" data-scroll-target="#练习-3-epsilon-greedy-策略-1">练习 3: <span class="math inline">\(\epsilon\)</span>-Greedy 策略</a></li>
   <li><a href="#练习-4-sarsa-lab-代码与结果分析-基于-lab-4" id="toc-练习-4-sarsa-lab-代码与结果分析-基于-lab-4" class="nav-link" data-scroll-target="#练习-4-sarsa-lab-代码与结果分析-基于-lab-4">练习 4: SARSA Lab 代码与结果分析 (基于 Lab 4)</a></li>
   </ul></li>
   <li><a href="#提交要求" id="toc-提交要求" class="nav-link" data-scroll-target="#提交要求">提交要求</a></li>
@@ -346,7 +381,7 @@ ul.task-list li input[type="checkbox"] {
 <li>理解广义策略迭代 (GPI) 的评估-改进循环。</li>
 <li>区分同策略 (On-Policy) 和异策略 (Off-Policy) 学习。</li>
 <li>掌握 SARSA 算法的更新规则和同策略特性。</li>
-<li>理解 ε-greedy 策略及其在控制算法中的作用。</li>
+<li>理解 <span class="math inline">\(\epsilon\)</span>-greedy 策略及其在控制算法中的作用。</li>
 <li>通过分析 Lab 4 代码和结果，加深对 SARSA 算法和参数影响的理解。</li>
 </ul>
 </section>
@@ -356,7 +391,7 @@ ul.task-list li input[type="checkbox"] {
 <h2 class="anchored" data-anchor-id="练习-1-gpi-与-onoff-policy-理解">练习 1: GPI 与 On/Off-Policy 理解</h2>
 <ol type="1">
 <li><strong>GPI 循环:</strong> 广义策略迭代 (GPI) 包含哪两个交替进行的过程？这两个过程的目标分别是什么？</li>
-<li><strong>为何学 Q:</strong> 在无模型强化学习<strong>控制</strong>问题中，为什么我们通常选择学习动作值函数 Q(s, a) 而不是状态值函数 V(s)？</li>
+<li><strong>为何学 Q:</strong> 在无模型强化学习<strong>控制</strong>问题中，为什么我们通常选择学习动作值函数 <span class="math inline">\(Q(s, a)\)</span> 而不是状态值函数 <span class="math inline">\(V(s)\)</span>？</li>
 <li><strong>On-Policy vs.&nbsp;Off-Policy:</strong>
 <ul>
 <li>请用你自己的话解释同策略 (On-Policy) 学习和异策略 (Off-Policy) 学习的主要区别。</li>
@@ -366,22 +401,32 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="练习-2-sarsa-更新计算" class="level2">
 <h2 class="anchored" data-anchor-id="练习-2-sarsa-更新计算">练习 2: SARSA 更新计算</h2>
-<p>假设我们正在使用 SARSA 算法。当前状态 S，根据 ε-greedy 策略选择了动作 A。执行动作 A 后，获得奖励 R = -1，并转移到下一个状态 S’。在状态 S’，再次根据 ε-greedy 策略选择了下一个动作 A’。</p>
-<p>当前的 Q 值估计如下： * Q(S, A) = 5.0 * Q(S’, A’) = 6.0</p>
-<p>假设学习率 α = 0.1，折扣因子 γ = 0.9。</p>
-<p>请根据 SARSA 更新规则计算更新后的 Q(S, A) 的值： Q(S, A) ← Q(S, A) + α [R + γ Q(S’, A’) - Q(S, A)] = ?</p>
+<p>假设我们正在使用 SARSA 算法。当前状态 <span class="math inline">\(S\)</span>，根据 <span class="math inline">\(\epsilon\)</span>-greedy 策略选择了动作 <span class="math inline">\(A\)</span>。执行动作 <span class="math inline">\(A\)</span> 后，获得奖励 <span class="math inline">\(R = -1\)</span>，并转移到下一个状态 <span class="math inline">\(S'\)</span>。在状态 <span class="math inline">\(S'\)</span>，再次根据 <span class="math inline">\(\epsilon\)</span>-greedy 策略选择了下一个动作 <span class="math inline">\(A'\)</span>。</p>
+<p>当前的 <span class="math inline">\(Q\)</span> 值估计如下：</p>
+<ul>
+<li><span class="math inline">\(Q(S, A) = 5.0\)</span></li>
+<li><span class="math inline">\(Q(S', A') = 6.0\)</span></li>
+</ul>
+<p>假设学习率 <span class="math inline">\(\alpha = 0.1\)</span>，折扣因子 <span class="math inline">\(\gamma = 0.9\)</span>。</p>
+<p>请根据 SARSA 更新规则计算更新后的 <span class="math inline">\(Q(S, A)\)</span> 的值： <span class="math display">\[
+Q(S, A) \leftarrow Q(S, A) + \alpha [R + \gamma Q(S', A') - Q(S, A)] = ?
+\]</span></p>
+</section>
+<section id="练习-3-epsilon-greedy-策略" class="level2">
+<h2 class="anchored" data-anchor-id="练习-3-epsilon-greedy-策略">练习 3: <span class="math inline">\(\epsilon\)</span>-Greedy 策略</h2>
+<p>假设在一个状态 <span class="math inline">\(s\)</span>，有 3 个可选动作 <span class="math inline">\(a_1, a_2, a_3\)</span>。当前的 <span class="math inline">\(Q\)</span> 值估计为： * <span class="math inline">\(Q(s, a_1) = 10\)</span> * <span class="math inline">\(Q(s, a_2) = 8\)</span> * <span class="math inline">\(Q(s, a_3) = 8\)</span></p>
 <p>（请写出计算步骤和最终结果）</p>
 </section>
-<section id="练习-3-ε-greedy-策略" class="level2">
-<h2 class="anchored" data-anchor-id="练习-3-ε-greedy-策略">练习 3: ε-Greedy 策略</h2>
-<p>假设在一个状态 s，有 3 个可选动作 a₁, a₂, a₃。当前的 Q 值估计为： * Q(s, a₁) = 10 * Q(s, a₂) = 8 * Q(s, a₃) = 8</p>
-<p>如果使用 ε-greedy 策略，且探索率 ε = 0.1：</p>
+<section id="练习-3-epsilon-greedy-策略-1" class="level2">
+<h2 class="anchored" data-anchor-id="练习-3-epsilon-greedy-策略-1">练习 3: <span class="math inline">\(\epsilon\)</span>-Greedy 策略</h2>
+<p>假设在一个状态 <span class="math inline">\(s\)</span>，有 3 个可选动作 <span class="math inline">\(a_1, a_2, a_3\)</span>。当前的 <span class="math inline">\(Q\)</span> 值估计为： * <span class="math inline">\(Q(s, a_1) = 10\)</span> * <span class="math inline">\(Q(s, a_2) = 8\)</span> * <span class="math inline">\(Q(s, a_3) = 8\)</span></p>
+<p>如果使用 <span class="math inline">\(\epsilon\)</span>-greedy 策略，且探索率 <span class="math inline">\(\epsilon = 0.1\)</span>：</p>
 <ol type="1">
-<li>选择动作 a₁ (当前最优动作) 的概率是多少？</li>
-<li>选择动作 a₂ 的概率是多少？（注意：a₂ 和 a₃ 的 Q 值相同）</li>
-<li>选择动作 a₃ 的概率是多少？</li>
-<li>如果 ε = 0，选择每个动作的概率分别是多少？这对应什么策略？</li>
-<li>如果 ε = 1，选择每个动作的概率分别是多少？这对应什么策略？</li>
+<li>选择动作 <span class="math inline">\(a_1\)</span> (当前最优动作) 的概率是多少？</li>
+<li>选择动作 <span class="math inline">\(a_2\)</span> 的概率是多少？（注意：<span class="math inline">\(a_2\)</span> 和 <span class="math inline">\(a_3\)</span> 的 <span class="math inline">\(Q\)</span> 值相同）</li>
+<li>选择动作 <span class="math inline">\(a_3\)</span> 的概率是多少？</li>
+<li>如果 <span class="math inline">\(\epsilon = 0\)</span>，选择每个动作的概率分别是多少？这对应什么策略？</li>
+<li>如果 <span class="math inline">\(\epsilon = 1\)</span>，选择每个动作的概率分别是多少？这对应什么策略？</li>
 </ol>
 </section>
 <section id="练习-4-sarsa-lab-代码与结果分析-基于-lab-4" class="level2">
