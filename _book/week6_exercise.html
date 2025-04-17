@@ -342,8 +342,9 @@ window.Quarto = {
   <li><a href="#练习-2-sarsa-更新计算" id="toc-练习-2-sarsa-更新计算" class="nav-link" data-scroll-target="#练习-2-sarsa-更新计算">练习 2: SARSA 更新计算</a></li>
   <li><a href="#练习-3-epsilon-greedy-策略" id="toc-练习-3-epsilon-greedy-策略" class="nav-link" data-scroll-target="#练习-3-epsilon-greedy-策略">练习 3: <span class="math inline">\(\epsilon\)</span>-Greedy 策略</a></li>
   <li><a href="#练习-4-sarsa-lab-代码与结果分析-基于-lab-4" id="toc-练习-4-sarsa-lab-代码与结果分析-基于-lab-4" class="nav-link" data-scroll-target="#练习-4-sarsa-lab-代码与结果分析-基于-lab-4">练习 4: SARSA Lab 代码与结果分析 (基于 Lab 4)</a></li>
+  <li><a href="#练习-5-参数理解" id="toc-练习-5-参数理解" class="nav-link" data-scroll-target="#练习-5-参数理解">练习 5: 参数理解</a></li>
+  <li><a href="#练习-6-epsilon-衰减-epsilon-decay" id="toc-练习-6-epsilon-衰减-epsilon-decay" class="nav-link" data-scroll-target="#练习-6-epsilon-衰减-epsilon-decay">练习 6: Epsilon 衰减 (<span class="math inline">\(\epsilon\)</span>-Decay)</a></li>
   </ul></li>
-  <li><a href="#提交要求" id="toc-提交要求" class="nav-link" data-scroll-target="#提交要求">提交要求</a></li>
   </ul>
 </nav>
 </nav>
@@ -382,6 +383,7 @@ window.Quarto = {
 <li>掌握 SARSA 算法的更新规则和同策略特性。</li>
 <li>理解 <span class="math inline">\(\epsilon\)</span>-greedy 策略及其在控制算法中的作用。</li>
 <li>通过分析 Lab 4 代码和结果，加深对 SARSA 算法和参数影响的理解。</li>
+<li>理解学习率、折扣因子和探索率衰减在 SARSA 中的作用。</li>
 </ul>
 </section>
 <section id="练习内容" class="level1">
@@ -394,8 +396,9 @@ window.Quarto = {
 <li><strong>On-Policy vs.&nbsp;Off-Policy:</strong>
 <ul>
 <li>请用你自己的话解释同策略 (On-Policy) 学习和异策略 (Off-Policy) 学习的主要区别。</li>
-<li>SARSA 属于哪一类？为什么？</li>
+<li>SARSA 属于哪一类？</li>
 </ul></li>
+<li><strong>SARSA 的同策略性:</strong> 结合 SARSA 的更新规则 <span class="math inline">\(Q(S, A) \leftarrow Q(S, A) + \alpha [R + \gamma Q(S', A') - Q(S, A)]\)</span>，解释为什么选择下一个动作 <span class="math inline">\(A'\)</span> 的方式使得 SARSA 成为一种<strong>同策略</strong>算法？</li>
 </ol>
 </section>
 <section id="练习-2-sarsa-更新计算" class="level2">
@@ -407,9 +410,12 @@ window.Quarto = {
 <li><span class="math inline">\(Q(S', A') = 6.0\)</span></li>
 </ul>
 <p>假设学习率 <span class="math inline">\(\alpha = 0.1\)</span>，折扣因子 <span class="math inline">\(\gamma = 0.9\)</span>。</p>
-<p>请根据 SARSA 更新规则计算更新后的 <span class="math inline">\(Q(S, A)\)</span> 的值： <span class="math display">\[
+<ol type="1">
+<li>请根据 SARSA 更新规则计算更新后的 <span class="math inline">\(Q(S, A)\)</span> 的值： <span class="math display">\[
 Q(S, A) \leftarrow Q(S, A) + \alpha [R + \gamma Q(S', A') - Q(S, A)] = ?
-\]</span></p>
+\]</span></li>
+<li><strong>终止状态处理:</strong> 如果在上述场景中，<span class="math inline">\(S'\)</span> 是一个<strong>终止状态</strong> (例如，到达了目标或者掉下了悬崖)，那么 SARSA 更新规则中的 TD 目标 <span class="math inline">\(R + \gamma Q(S', A')\)</span> 应该如何计算？更新后的 <span class="math inline">\(Q(S, A)\)</span> 又是多少？（假设到达终止状态的奖励 R 仍然是 -1）</li>
+</ol>
 </section>
 <section id="练习-3-epsilon-greedy-策略" class="level2">
 <h2 class="anchored" data-anchor-id="练习-3-epsilon-greedy-策略">练习 3: <span class="math inline">\(\epsilon\)</span>-Greedy 策略</h2>
@@ -435,28 +441,41 @@ Q(S, A) \leftarrow Q(S, A) + \alpha [R + \gamma Q(S', A') - Q(S, A)] = ?
 <li><strong>代码理解:</strong>
 <ul>
 <li>请指出 SARSA 代码中，选择<strong>当前</strong>动作 A (<code>action</code>) 和选择<strong>下一个</strong>动作 A’ (<code>next_action</code>) 的代码行。它们都使用了哪个策略函数？</li>
-<li>请指出计算 SARSA 的 TD 目标 (<code>td_target</code>) 的代码行。它依赖于哪个动作，A 还是 A’？</li>
+<li>请指出计算 SARSA 的 TD 目标 (<code>td_target</code>) 的代码行。它依赖于哪个动作，A 还是 A’？(这与练习 1.4 相关)</li>
 </ul></li>
 <li><strong>ε 的影响分析:</strong>
 <ul>
 <li>回顾你在 Lab 4 中尝试不同 ε 值（或预期）的结果。当 ε 值<strong>很小</strong>（接近 0）时，SARSA 的学习过程（奖励曲线）和最终策略可能有什么特点？为什么？</li>
 <li>当 ε 值<strong>很大</strong>（接近 1）时，SARSA 的学习过程和最终策略又可能有什么特点？为什么？</li>
 </ul></li>
-<li><strong>路径选择思考:</strong> 为什么 SARSA 在 CliffWalking 环境中倾向于学习一条远离悬崖的“安全”路径，而不是理论上最短的路径？请结合 SARSA 的更新规则和 ε-greedy 策略进行解释。</li>
+<li><strong>路径选择思考:</strong> 为什么 SARSA 在 CliffWalking 环境中倾向于学习一条远离悬崖的”安全”路径，而不是理论上最短的路径？请结合 SARSA 的更新规则和 ε-greedy 策略进行解释。</li>
 </ol>
 </section>
-</section>
-<section id="提交要求" class="level1">
-<h1>提交要求</h1>
+<section id="练习-5-参数理解" class="level2">
+<h2 class="anchored" data-anchor-id="练习-5-参数理解">练习 5: 参数理解</h2>
+<ol type="1">
+<li><strong>折扣因子 <span class="math inline">\(\gamma\)</span> 的影响:</strong> 在 CliffWalking 环境中，折扣因子 <span class="math inline">\(\gamma\)</span> 控制了未来奖励相对于即时奖励的重要性。
 <ul>
-<li>请将你的答案整理成一个文档（如 Word, PDF, 或 Markdown 文件）。</li>
-<li>对于练习 1, 3, 4，请清晰地回答问题并阐述理由。</li>
-<li>对于练习 2，请写出计算步骤和结果。</li>
-<li>文件命名格式：<code>姓名_学号_Week6_Exercise.xxx</code>。</li>
-<li>通过教学平台提交。</li>
-</ul>
+<li>如果我们将 <span class="math inline">\(\gamma\)</span> 设置得<strong>非常接近 0</strong> (例如 0.1)，SARSA 学到的策略可能会更关注什么？其路径选择可能会有什么特点？</li>
+<li>如果将 <span class="math inline">\(\gamma\)</span> 设置得<strong>非常接近 1</strong> (例如 0.999)，SARSA 学到的策略又会更关注什么？这与 <span class="math inline">\(\gamma\)</span> 接近 0 的情况相比，路径选择可能会有什么不同？请解释原因。</li>
+</ul></li>
+<li><strong>学习率 <span class="math inline">\(\alpha\)</span> 的作用:</strong> 简要说明学习率 <span class="math inline">\(\alpha\)</span> 在 SARSA 更新规则 <span class="math inline">\(Q(S, A) \leftarrow Q(S, A) + \alpha [\text{TD 目标} - Q(S, A)]\)</span> 中的作用。
+<ul>
+<li>过大的 <span class="math inline">\(\alpha\)</span> (例如接近 1) 可能导致什么问题？</li>
+<li>过小的 <span class="math inline">\(\alpha\)</span> (例如接近 0) 可能导致什么问题？</li>
+</ul></li>
+</ol>
+</section>
+<section id="练习-6-epsilon-衰减-epsilon-decay" class="level2">
+<h2 class="anchored" data-anchor-id="练习-6-epsilon-衰减-epsilon-decay">练习 6: Epsilon 衰减 (<span class="math inline">\(\epsilon\)</span>-Decay)</h2>
+<p>在 Lab 4 的 SARSA 代码示例中，探索率 <span class="math inline">\(\epsilon\)</span> 是一个固定的值。但在实践中，我们通常希望 <span class="math inline">\(\epsilon\)</span> 能够随着训练的进行而逐渐减小。</p>
+<ol type="1">
+<li><strong>为何需要 <span class="math inline">\(\epsilon\)</span>-衰减?</strong> 为什么在 SARSA 的训练过程中，逐渐减小探索率 <span class="math inline">\(\epsilon\)</span> 通常是一个好主意？这样做有什么好处（或者说，保持固定的 <span class="math inline">\(\epsilon\)</span> 可能有什么坏处）？</li>
+<li><strong>如何实现 <span class="math inline">\(\epsilon\)</span>-衰减?</strong> 请描述至少一种实现 <span class="math inline">\(\epsilon\)</span> 衰减的方法（例如，线性衰减或指数衰减）。只需要描述其更新逻辑即可，不需要编写完整的 Python 代码。（提示：衰减通常在每个回合结束时进行）</li>
+</ol>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->

@@ -1444,7 +1444,7 @@
     "href": "week6_exercise.html#练习-1-gpi-与-onoff-policy-理解",
     "title": "Week 6 - 学生练习",
     "section": "练习 1: GPI 与 On/Off-Policy 理解",
-    "text": "练习 1: GPI 与 On/Off-Policy 理解\n\nGPI 循环: 广义策略迭代 (GPI) 包含哪两个交替进行的过程？这两个过程的目标分别是什么？\n为何学 Q: 在无模型强化学习控制问题中，为什么我们通常选择学习动作值函数 \\(Q(s, a)\\) 而不是状态值函数 \\(V(s)\\)？\nOn-Policy vs. Off-Policy:\n\n请用你自己的话解释同策略 (On-Policy) 学习和异策略 (Off-Policy) 学习的主要区别。\nSARSA 属于哪一类？为什么？",
+    "text": "练习 1: GPI 与 On/Off-Policy 理解\n\nGPI 循环: 广义策略迭代 (GPI) 包含哪两个交替进行的过程？这两个过程的目标分别是什么？\n为何学 Q: 在无模型强化学习控制问题中，为什么我们通常选择学习动作值函数 \\(Q(s, a)\\) 而不是状态值函数 \\(V(s)\\)？\nOn-Policy vs. Off-Policy:\n\n请用你自己的话解释同策略 (On-Policy) 学习和异策略 (Off-Policy) 学习的主要区别。\nSARSA 属于哪一类？\n\nSARSA 的同策略性: 结合 SARSA 的更新规则 \\(Q(S, A) \\leftarrow Q(S, A) + \\alpha [R + \\gamma Q(S', A') - Q(S, A)]\\)，解释为什么选择下一个动作 \\(A'\\) 的方式使得 SARSA 成为一种同策略算法？",
     "crumbs": [
       "练习",
       "<span class='chapter-number'>24</span>  <span class='chapter-title'>Week 6 - 学生练习</span>"
@@ -1455,7 +1455,7 @@
     "href": "week6_exercise.html#练习-2-sarsa-更新计算",
     "title": "Week 6 - 学生练习",
     "section": "练习 2: SARSA 更新计算",
-    "text": "练习 2: SARSA 更新计算\n假设我们正在使用 SARSA 算法。当前状态 \\(S\\)，根据 \\(\\epsilon\\)-greedy 策略选择了动作 \\(A\\)。执行动作 \\(A\\) 后，获得奖励 \\(R = -1\\)，并转移到下一个状态 \\(S'\\)。在状态 \\(S'\\)，再次根据 \\(\\epsilon\\)-greedy 策略选择了下一个动作 \\(A'\\)。\n当前的 \\(Q\\) 值估计如下：\n\n\\(Q(S, A) = 5.0\\)\n\\(Q(S', A') = 6.0\\)\n\n假设学习率 \\(\\alpha = 0.1\\)，折扣因子 \\(\\gamma = 0.9\\)。\n请根据 SARSA 更新规则计算更新后的 \\(Q(S, A)\\) 的值： \\[\nQ(S, A) \\leftarrow Q(S, A) + \\alpha [R + \\gamma Q(S', A') - Q(S, A)] = ?\n\\]",
+    "text": "练习 2: SARSA 更新计算\n假设我们正在使用 SARSA 算法。当前状态 \\(S\\)，根据 \\(\\epsilon\\)-greedy 策略选择了动作 \\(A\\)。执行动作 \\(A\\) 后，获得奖励 \\(R = -1\\)，并转移到下一个状态 \\(S'\\)。在状态 \\(S'\\)，再次根据 \\(\\epsilon\\)-greedy 策略选择了下一个动作 \\(A'\\)。\n当前的 \\(Q\\) 值估计如下：\n\n\\(Q(S, A) = 5.0\\)\n\\(Q(S', A') = 6.0\\)\n\n假设学习率 \\(\\alpha = 0.1\\)，折扣因子 \\(\\gamma = 0.9\\)。\n\n请根据 SARSA 更新规则计算更新后的 \\(Q(S, A)\\) 的值： \\[\nQ(S, A) \\leftarrow Q(S, A) + \\alpha [R + \\gamma Q(S', A') - Q(S, A)] = ?\n\\]\n终止状态处理: 如果在上述场景中，\\(S'\\) 是一个终止状态 (例如，到达了目标或者掉下了悬崖)，那么 SARSA 更新规则中的 TD 目标 \\(R + \\gamma Q(S', A')\\) 应该如何计算？更新后的 \\(Q(S, A)\\) 又是多少？（假设到达终止状态的奖励 R 仍然是 -1）",
     "crumbs": [
       "练习",
       "<span class='chapter-number'>24</span>  <span class='chapter-title'>Week 6 - 学生练习</span>"
@@ -1477,7 +1477,7 @@
     "href": "week6_exercise.html#练习-4-sarsa-lab-代码与结果分析-基于-lab-4",
     "title": "Week 6 - 学生练习",
     "section": "练习 4: SARSA Lab 代码与结果分析 (基于 Lab 4)",
-    "text": "练习 4: SARSA Lab 代码与结果分析 (基于 Lab 4)\n本练习基于讲义/Lab 4 中提供的 CliffWalking 环境和 SARSA 实现代码。\n\n代码理解:\n\n请指出 SARSA 代码中，选择当前动作 A (action) 和选择下一个动作 A’ (next_action) 的代码行。它们都使用了哪个策略函数？\n请指出计算 SARSA 的 TD 目标 (td_target) 的代码行。它依赖于哪个动作，A 还是 A’？\n\nε 的影响分析:\n\n回顾你在 Lab 4 中尝试不同 ε 值（或预期）的结果。当 ε 值很小（接近 0）时，SARSA 的学习过程（奖励曲线）和最终策略可能有什么特点？为什么？\n当 ε 值很大（接近 1）时，SARSA 的学习过程和最终策略又可能有什么特点？为什么？\n\n路径选择思考: 为什么 SARSA 在 CliffWalking 环境中倾向于学习一条远离悬崖的“安全”路径，而不是理论上最短的路径？请结合 SARSA 的更新规则和 ε-greedy 策略进行解释。",
+    "text": "练习 4: SARSA Lab 代码与结果分析 (基于 Lab 4)\n本练习基于讲义/Lab 4 中提供的 CliffWalking 环境和 SARSA 实现代码。\n\n代码理解:\n\n请指出 SARSA 代码中，选择当前动作 A (action) 和选择下一个动作 A’ (next_action) 的代码行。它们都使用了哪个策略函数？\n请指出计算 SARSA 的 TD 目标 (td_target) 的代码行。它依赖于哪个动作，A 还是 A’？(这与练习 1.4 相关)\n\nε 的影响分析:\n\n回顾你在 Lab 4 中尝试不同 ε 值（或预期）的结果。当 ε 值很小（接近 0）时，SARSA 的学习过程（奖励曲线）和最终策略可能有什么特点？为什么？\n当 ε 值很大（接近 1）时，SARSA 的学习过程和最终策略又可能有什么特点？为什么？\n\n路径选择思考: 为什么 SARSA 在 CliffWalking 环境中倾向于学习一条远离悬崖的”安全”路径，而不是理论上最短的路径？请结合 SARSA 的更新规则和 ε-greedy 策略进行解释。",
     "crumbs": [
       "练习",
       "<span class='chapter-number'>24</span>  <span class='chapter-title'>Week 6 - 学生练习</span>"
@@ -2039,6 +2039,28 @@
     "title": "Week 6 - 学生练习",
     "section": "练习 3: \\(\\epsilon\\)-Greedy 策略",
     "text": "练习 3: \\(\\epsilon\\)-Greedy 策略\n假设在一个状态 \\(s\\)，有 3 个可选动作 \\(a_1, a_2, a_3\\)。当前的 \\(Q\\) 值估计为： * \\(Q(s, a_1) = 10\\) * \\(Q(s, a_2) = 8\\) * \\(Q(s, a_3) = 8\\)\n如果使用 \\(\\epsilon\\)-greedy 策略，且探索率 \\(\\epsilon = 0.1\\)：\n\n选择动作 \\(a_1\\) (当前最优动作) 的概率是多少？\n选择动作 \\(a_2\\) 的概率是多少？（注意：\\(a_2\\) 和 \\(a_3\\) 的 \\(Q\\) 值相同）\n选择动作 \\(a_3\\) 的概率是多少？\n如果 \\(\\epsilon = 0\\)，选择每个动作的概率分别是多少？这对应什么策略？\n如果 \\(\\epsilon = 1\\)，选择每个动作的概率分别是多少？这对应什么策略？",
+    "crumbs": [
+      "练习",
+      "<span class='chapter-number'>24</span>  <span class='chapter-title'>Week 6 - 学生练习</span>"
+    ]
+  },
+  {
+    "objectID": "week6_exercise.html#练习-5-参数理解",
+    "href": "week6_exercise.html#练习-5-参数理解",
+    "title": "Week 6 - 学生练习",
+    "section": "练习 5: 参数理解",
+    "text": "练习 5: 参数理解\n\n折扣因子 \\(\\gamma\\) 的影响: 在 CliffWalking 环境中，折扣因子 \\(\\gamma\\) 控制了未来奖励相对于即时奖励的重要性。\n\n如果我们将 \\(\\gamma\\) 设置得非常接近 0 (例如 0.1)，SARSA 学到的策略可能会更关注什么？其路径选择可能会有什么特点？\n如果将 \\(\\gamma\\) 设置得非常接近 1 (例如 0.999)，SARSA 学到的策略又会更关注什么？这与 \\(\\gamma\\) 接近 0 的情况相比，路径选择可能会有什么不同？请解释原因。\n\n学习率 \\(\\alpha\\) 的作用: 简要说明学习率 \\(\\alpha\\) 在 SARSA 更新规则 \\(Q(S, A) \\leftarrow Q(S, A) + \\alpha [\\text{TD 目标} - Q(S, A)]\\) 中的作用。\n\n过大的 \\(\\alpha\\) (例如接近 1) 可能导致什么问题？\n过小的 \\(\\alpha\\) (例如接近 0) 可能导致什么问题？",
+    "crumbs": [
+      "练习",
+      "<span class='chapter-number'>24</span>  <span class='chapter-title'>Week 6 - 学生练习</span>"
+    ]
+  },
+  {
+    "objectID": "week6_exercise.html#练习-6-epsilon-衰减-epsilon-decay",
+    "href": "week6_exercise.html#练习-6-epsilon-衰减-epsilon-decay",
+    "title": "Week 6 - 学生练习",
+    "section": "练习 6: Epsilon 衰减 (\\(\\epsilon\\)-Decay)",
+    "text": "练习 6: Epsilon 衰减 (\\(\\epsilon\\)-Decay)\n在 Lab 4 的 SARSA 代码示例中，探索率 \\(\\epsilon\\) 是一个固定的值。但在实践中，我们通常希望 \\(\\epsilon\\) 能够随着训练的进行而逐渐减小。\n\n为何需要 \\(\\epsilon\\)-衰减? 为什么在 SARSA 的训练过程中，逐渐减小探索率 \\(\\epsilon\\) 通常是一个好主意？这样做有什么好处（或者说，保持固定的 \\(\\epsilon\\) 可能有什么坏处）？\n如何实现 \\(\\epsilon\\)-衰减? 请描述至少一种实现 \\(\\epsilon\\) 衰减的方法（例如，线性衰减或指数衰减）。只需要描述其更新逻辑即可，不需要编写完整的 Python 代码。（提示：衰减通常在每个回合结束时进行）",
     "crumbs": [
       "练习",
       "<span class='chapter-number'>24</span>  <span class='chapter-title'>Week 6 - 学生练习</span>"
