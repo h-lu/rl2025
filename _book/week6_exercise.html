@@ -341,7 +341,6 @@ window.Quarto = {
   <li><a href="#练习-1-gpi-与-onoff-policy-理解" id="toc-练习-1-gpi-与-onoff-policy-理解" class="nav-link" data-scroll-target="#练习-1-gpi-与-onoff-policy-理解">练习 1: GPI 与 On/Off-Policy 理解</a></li>
   <li><a href="#练习-2-sarsa-更新计算" id="toc-练习-2-sarsa-更新计算" class="nav-link" data-scroll-target="#练习-2-sarsa-更新计算">练习 2: SARSA 更新计算</a></li>
   <li><a href="#练习-3-epsilon-greedy-策略" id="toc-练习-3-epsilon-greedy-策略" class="nav-link" data-scroll-target="#练习-3-epsilon-greedy-策略">练习 3: <span class="math inline">\(\epsilon\)</span>-Greedy 策略</a></li>
-  <li><a href="#练习-3-epsilon-greedy-策略-1" id="toc-练习-3-epsilon-greedy-策略-1" class="nav-link" data-scroll-target="#练习-3-epsilon-greedy-策略-1">练习 3: <span class="math inline">\(\epsilon\)</span>-Greedy 策略</a></li>
   <li><a href="#练习-4-sarsa-lab-代码与结果分析-基于-lab-4" id="toc-练习-4-sarsa-lab-代码与结果分析-基于-lab-4" class="nav-link" data-scroll-target="#练习-4-sarsa-lab-代码与结果分析-基于-lab-4">练习 4: SARSA Lab 代码与结果分析 (基于 Lab 4)</a></li>
   </ul></li>
   <li><a href="#提交要求" id="toc-提交要求" class="nav-link" data-scroll-target="#提交要求">提交要求</a></li>
@@ -414,12 +413,12 @@ Q(S, A) \leftarrow Q(S, A) + \alpha [R + \gamma Q(S', A') - Q(S, A)] = ?
 </section>
 <section id="练习-3-epsilon-greedy-策略" class="level2">
 <h2 class="anchored" data-anchor-id="练习-3-epsilon-greedy-策略">练习 3: <span class="math inline">\(\epsilon\)</span>-Greedy 策略</h2>
-<p>假设在一个状态 <span class="math inline">\(s\)</span>，有 3 个可选动作 <span class="math inline">\(a_1, a_2, a_3\)</span>。当前的 <span class="math inline">\(Q\)</span> 值估计为： * <span class="math inline">\(Q(s, a_1) = 10\)</span> * <span class="math inline">\(Q(s, a_2) = 8\)</span> * <span class="math inline">\(Q(s, a_3) = 8\)</span></p>
-<p>（请写出计算步骤和最终结果）</p>
-</section>
-<section id="练习-3-epsilon-greedy-策略-1" class="level2">
-<h2 class="anchored" data-anchor-id="练习-3-epsilon-greedy-策略-1">练习 3: <span class="math inline">\(\epsilon\)</span>-Greedy 策略</h2>
-<p>假设在一个状态 <span class="math inline">\(s\)</span>，有 3 个可选动作 <span class="math inline">\(a_1, a_2, a_3\)</span>。当前的 <span class="math inline">\(Q\)</span> 值估计为： * <span class="math inline">\(Q(s, a_1) = 10\)</span> * <span class="math inline">\(Q(s, a_2) = 8\)</span> * <span class="math inline">\(Q(s, a_3) = 8\)</span></p>
+<p>假设在一个状态 <span class="math inline">\(s\)</span>，有 3 个可选动作 <span class="math inline">\(a_1, a_2, a_3\)</span>。当前的 <span class="math inline">\(Q\)</span> 值估计为：</p>
+<ul>
+<li><span class="math inline">\(Q(s, a_1) = 10\)</span></li>
+<li><span class="math inline">\(Q(s, a_2) = 8\)</span></li>
+<li><span class="math inline">\(Q(s, a_3) = 8\)</span></li>
+</ul>
 <p>如果使用 <span class="math inline">\(\epsilon\)</span>-greedy 策略，且探索率 <span class="math inline">\(\epsilon = 0.1\)</span>：</p>
 <ol type="1">
 <li>选择动作 <span class="math inline">\(a_1\)</span> (当前最优动作) 的概率是多少？</li>
