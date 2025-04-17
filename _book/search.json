@@ -1444,7 +1444,7 @@
     "href": "week6_exercise.html#练习-1-gpi-与-onoff-policy-理解",
     "title": "Week 6 - 学生练习",
     "section": "练习 1: GPI 与 On/Off-Policy 理解",
-    "text": "练习 1: GPI 与 On/Off-Policy 理解\n\nGPI 循环: 广义策略迭代 (GPI) 包含哪两个交替进行的过程？这两个过程的目标分别是什么？\n为何学 Q: 在无模型强化学习控制问题中，为什么我们通常选择学习动作值函数 \\(Q(s, a)\\) 而不是状态值函数 \\(V(s)\\)？\nOn-Policy vs. Off-Policy:\n\n请用你自己的话解释同策略 (On-Policy) 学习和异策略 (Off-Policy) 学习的主要区别。\nSARSA 属于哪一类？\n\nSARSA 的同策略性: 结合 SARSA 的更新规则 \\(Q(S, A) \\leftarrow Q(S, A) + \\alpha [R + \\gamma Q(S', A') - Q(S, A)]\\)，解释为什么选择下一个动作 \\(A'\\) 的方式使得 SARSA 成为一种同策略算法？",
+    "text": "练习 1: GPI 与 On/Off-Policy 理解\n\nGPI 循环: 广义策略迭代 (GPI) 包含哪两个交替进行的过程？这两个过程的目标分别是什么？\n为何学 Q: 在无模型强化学习控制问题中，为什么我们通常选择学习动作值函数 \\(Q(s, a)\\) 而不是状态值函数 \\(V(s)\\)？\nOn-Policy vs. Off-Policy:\n\n请用你自己的话解释同策略 (On-Policy) 学习和异策略 (Off-Policy) 学习的主要区别。\nSARSA 属于哪一类？为什么？",
     "crumbs": [
       "练习",
       "<span class='chapter-number'>24</span>  <span class='chapter-title'>Week 6 - 学生练习</span>"
@@ -1455,7 +1455,7 @@
     "href": "week6_exercise.html#练习-2-sarsa-更新计算",
     "title": "Week 6 - 学生练习",
     "section": "练习 2: SARSA 更新计算",
-    "text": "练习 2: SARSA 更新计算\n假设我们正在使用 SARSA 算法。当前状态 \\(S\\)，根据 \\(\\epsilon\\)-greedy 策略选择了动作 \\(A\\)。执行动作 \\(A\\) 后，获得奖励 \\(R = -1\\)，并转移到下一个状态 \\(S'\\)。在状态 \\(S'\\)，再次根据 \\(\\epsilon\\)-greedy 策略选择了下一个动作 \\(A'\\)。\n当前的 \\(Q\\) 值估计如下：\n\n\\(Q(S, A) = 5.0\\)\n\\(Q(S', A') = 6.0\\)\n\n假设学习率 \\(\\alpha = 0.1\\)，折扣因子 \\(\\gamma = 0.9\\)。\n\n请根据 SARSA 更新规则计算更新后的 \\(Q(S, A)\\) 的值： \\[\nQ(S, A) \\leftarrow Q(S, A) + \\alpha [R + \\gamma Q(S', A') - Q(S, A)] = ?\n\\]\n终止状态处理: 如果在上述场景中，\\(S'\\) 是一个终止状态 (例如，到达了目标或者掉下了悬崖)，那么 SARSA 更新规则中的 TD 目标 \\(R + \\gamma Q(S', A')\\) 应该如何计算？更新后的 \\(Q(S, A)\\) 又是多少？（假设到达终止状态的奖励 R 仍然是 -1）",
+    "text": "练习 2: SARSA 更新计算\n假设我们正在使用 SARSA 算法。当前状态 \\(S\\)，根据 \\(\\epsilon\\)-greedy 策略选择了动作 \\(A\\)。执行动作 \\(A\\) 后，获得奖励 \\(R = -1\\)，并转移到下一个状态 \\(S'\\)。在状态 \\(S'\\)，再次根据 \\(\\epsilon\\)-greedy 策略选择了下一个动作 \\(A'\\)。\n当前的 \\(Q\\) 值估计如下：\n\n\\(Q(S, A) = 5.0\\)\n\\(Q(S', A') = 6.0\\)\n\n假设学习率 \\(\\alpha = 0.1\\)，折扣因子 \\(\\gamma = 0.9\\)。\n请根据 SARSA 更新规则计算更新后的 \\(Q(S, A)\\) 的值： \\[\nQ(S, A) \\leftarrow Q(S, A) + \\alpha [R + \\gamma Q(S', A') - Q(S, A)] = ?\n\\]",
     "crumbs": [
       "练习",
       "<span class='chapter-number'>24</span>  <span class='chapter-title'>Week 6 - 学生练习</span>"
@@ -1477,7 +1477,7 @@
     "href": "week6_exercise.html#练习-4-sarsa-lab-代码与结果分析-基于-lab-4",
     "title": "Week 6 - 学生练习",
     "section": "练习 4: SARSA Lab 代码与结果分析 (基于 Lab 4)",
-    "text": "练习 4: SARSA Lab 代码与结果分析 (基于 Lab 4)\n本练习基于讲义/Lab 4 中提供的 CliffWalking 环境和 SARSA 实现代码。\n\n代码理解:\n\n请指出 SARSA 代码中，选择当前动作 A (action) 和选择下一个动作 A’ (next_action) 的代码行。它们都使用了哪个策略函数？\n请指出计算 SARSA 的 TD 目标 (td_target) 的代码行。它依赖于哪个动作，A 还是 A’？(这与练习 1.4 相关)\n\nε 的影响分析:\n\n回顾你在 Lab 4 中尝试不同 ε 值（或预期）的结果。当 ε 值很小（接近 0）时，SARSA 的学习过程（奖励曲线）和最终策略可能有什么特点？为什么？\n当 ε 值很大（接近 1）时，SARSA 的学习过程和最终策略又可能有什么特点？为什么？\n\n路径选择思考: 为什么 SARSA 在 CliffWalking 环境中倾向于学习一条远离悬崖的”安全”路径，而不是理论上最短的路径？请结合 SARSA 的更新规则和 ε-greedy 策略进行解释。",
+    "text": "练习 4: SARSA Lab 代码与结果分析 (基于 Lab 4)\n本练习基于讲义/Lab 4 中提供的 CliffWalking 环境和 SARSA 实现代码。\n\n代码理解:\n\n请指出 SARSA 代码中，选择当前动作 A (action) 和选择下一个动作 A’ (next_action) 的代码行。它们都使用了哪个策略函数？\n请指出计算 SARSA 的 TD 目标 (td_target) 的代码行。它依赖于哪个动作，A 还是 A’？\n\nε 的影响分析:\n\n回顾你在 Lab 4 中尝试不同 ε 值（或预期）的结果。当 ε 值很小（接近 0）时，SARSA 的学习过程（奖励曲线）和最终策略可能有什么特点？为什么？\n当 ε 值很大（接近 1）时，SARSA 的学习过程和最终策略又可能有什么特点？为什么？\n\n路径选择思考: 为什么 SARSA 在 CliffWalking 环境中倾向于学习一条远离悬崖的“安全”路径，而不是理论上最短的路径？请结合 SARSA 的更新规则和 ε-greedy 策略进行解释。",
     "crumbs": [
       "练习",
       "<span class='chapter-number'>24</span>  <span class='chapter-title'>Week 6 - 学生练习</span>"
@@ -1510,7 +1510,7 @@
     "href": "week7_exercise.html#练习-2-q-learning-更新计算",
     "title": "Week 7 - 学生练习",
     "section": "练习 2: Q-Learning 更新计算",
-    "text": "练习 2: Q-Learning 更新计算\n假设我们正在使用 Q-Learning 算法。当前状态 S，根据 ε-greedy 行为策略选择了动作 A。执行动作 A 后，获得奖励 R = 5，并转移到下一个状态 S’。\n当前的 Q 值估计如下： * Q(S, A) = 10.0 * 对于下一个状态 S’，所有可能的下一个动作 a’ 对应的 Q 值估计为：Q(S’, a’₁) = 8.0, Q(S’, a’₂) = 9.0, Q(S’, a’₃) = 7.0。\n假设学习率 α = 0.1，折扣因子 γ = 0.9。\n请根据 Q-Learning 更新规则计算更新后的 Q(S, A) 的值： Q(S, A) ← Q(S, A) + α [R + γ max_{a’} Q(S’, a’) - Q(S, A)] = ?\n（请写出计算步骤和最终结果）",
+    "text": "练习 2: Q-Learning 更新计算\n假设我们正在使用 Q-Learning 算法。当前状态 S，根据 \\(\\epsilon\\)-greedy 行为策略选择了动作 \\(A\\)。执行动作 \\(A\\) 后，获得奖励 \\(R = 5\\)，并转移到下一个状态 \\(S'\\)。\n当前的 Q 值估计如下：\n\n\\(Q(S, A) = 10.0\\)\n对于下一个状态 \\(S'\\)，所有可能的下一个动作 \\(a'\\) 对应的 \\(Q\\) 值估计为：\\(Q(S', a'_1) = 8.0, Q(S', a'_2) = 9.0, Q(S', a'_3) = 7.0\\)。\n\n假设学习率 \\(\\alpha = 0.1\\)，折扣因子 \\(\\gamma = 0.9\\)。\n请根据 Q-Learning 更新规则计算更新后的 \\(Q(S, A)\\) 的值： \\(Q(S, A) \\leftarrow Q(S, A) + \\alpha [R + \\gamma \\max_{a'} Q(S', a') - Q(S, A)]\\)\n（请写出计算步骤和最终结果）",
     "crumbs": [
       "练习",
       "<span class='chapter-number'>25</span>  <span class='chapter-title'>Week 7 - 学生练习</span>"
@@ -1521,7 +1521,7 @@
     "href": "week7_exercise.html#练习-3-q-learning-lab-代码与结果分析-基于-lab-5",
     "title": "Week 7 - 学生练习",
     "section": "练习 3: Q-Learning Lab 代码与结果分析 (基于 Lab 5)",
-    "text": "练习 3: Q-Learning Lab 代码与结果分析 (基于 Lab 5)\n本练习基于讲义/Lab 5 中提供的 CliffWalking 环境和 Q-Learning 实现代码。\n\n代码理解:\n\n请指出 Q-Learning 代码中，计算 TD 目标 (td_target) 的关键代码行。它与 SARSA 代码中计算 TD 目标的主要区别在哪里？\n在 Q-Learning 的主循环中，选择实际执行的动作 action 时，使用的是哪个策略？（是贪心策略还是 ε-greedy 策略？）\n\n策略对比思考 (结合 Lab 结果):\n\n回顾你在 Lab 5 中观察到的 Q-Learning 和 SARSA 在 CliffWalking 环境中学习到的最终策略路径。哪一个更倾向于走贴近悬崖的“最优”路径？哪一个更倾向于走远离悬崖的“安全”路径？\n请再次尝试解释造成这种策略差异的根本原因是什么？（提示：与 TD 目标的计算方式有关）\n\n奖励曲线对比思考 (结合 Lab 结果):\n\n回顾 Q-Learning 和 SARSA 的奖励曲线。哪个算法的平均每回合奖励在训练过程中可能波动更大？为什么？（提示：考虑最优路径的风险和探索的影响）\n哪个算法学习到的最优策略（如果去掉探索，按贪心执行）理论上能获得更高的累积奖励？",
+    "text": "练习 3: Q-Learning Lab 代码与结果分析 (基于 Lab 5)\n本练习基于讲义/Lab 5 中提供的 CliffWalking 环境和 Q-Learning 实现代码。\n\n代码理解:\n\n请指出 Q-Learning 代码中，计算 TD 目标 (td_target) 的关键代码行。它与 SARSA 代码中计算 TD 目标的主要区别在哪里？\n在 Q-Learning 的主循环中，选择实际执行的动作 action 时，使用的是哪个策略？（是贪心策略还是 \\(\\epsilon\\)-greedy 策略？）\n\n策略对比思考 (结合 Lab 结果):\n\n回顾你在 Lab 5 中观察到的 Q-Learning 和 SARSA 在 CliffWalking 环境中学习到的最终策略路径。哪一个更倾向于走贴近悬崖的“最优”路径？哪一个更倾向于走远离悬崖的“安全”路径？\n请再次尝试解释造成这种策略差异的根本原因是什么？（提示：与 TD 目标的计算方式有关）\n\n奖励曲线对比思考 (结合 Lab 结果):\n\n回顾 Q-Learning 和 SARSA 的奖励曲线。哪个算法的平均每回合奖励在训练过程中可能波动更大？为什么？（提示：考虑最优路径的风险和探索的影响）\n哪个算法学习到的最优策略（如果去掉探索，按贪心执行）理论上能获得更高的累积奖励？",
     "crumbs": [
       "练习",
       "<span class='chapter-number'>25</span>  <span class='chapter-title'>Week 7 - 学生练习</span>"
@@ -2061,6 +2061,61 @@
     "title": "Week 6 - 学生练习",
     "section": "练习 6: Epsilon 衰减 (\\(\\epsilon\\)-Decay)",
     "text": "练习 6: Epsilon 衰减 (\\(\\epsilon\\)-Decay)\n在 Lab 4 的 SARSA 代码示例中，探索率 \\(\\epsilon\\) 是一个固定的值。但在实践中，我们通常希望 \\(\\epsilon\\) 能够随着训练的进行而逐渐减小。\n\n为何需要 \\(\\epsilon\\)-衰减? 为什么在 SARSA 的训练过程中，逐渐减小探索率 \\(\\epsilon\\) 通常是一个好主意？这样做有什么好处（或者说，保持固定的 \\(\\epsilon\\) 可能有什么坏处）？\n如何实现 \\(\\epsilon\\)-衰减? 请描述至少一种实现 \\(\\epsilon\\) 衰减的方法（例如，线性衰减或指数衰减）。只需要描述其更新逻辑即可，不需要编写完整的 Python 代码。（提示：衰减通常在每个回合结束时进行）",
+    "crumbs": [
+      "练习",
+      "<span class='chapter-number'>24</span>  <span class='chapter-title'>Week 6 - 学生练习</span>"
+    ]
+  },
+  {
+    "objectID": "week7_exercise.html#练习-5-q-learning-细节与变体",
+    "href": "week7_exercise.html#练习-5-q-learning-细节与变体",
+    "title": "Week 7 - 学生练习",
+    "section": "练习 5: Q-Learning 细节与变体",
+    "text": "练习 5: Q-Learning 细节与变体\n\n终止状态处理：\n在 Q-Learning 算法中，如果 \\(S'\\) 是终止状态（如 CliffWalking 到达终点或掉下悬崖），Q-Learning 的 TD 目标 \\(R + \\gamma \\max_{a'} Q(S', a')\\) 应该如何计算？请说明原因。\nQ-Learning 的贪心策略：\nQ-Learning 通常使用 \\(\\epsilon\\)-greedy 行为策略进行探索。请简述如果 \\(\\epsilon\\) 逐渐衰减到 0，最终学到的策略会有什么特点？如果 \\(\\epsilon\\) 一直保持较大，最终学到的策略又会有什么特点？\nDouble Q-Learning：\n简要说明 Double Q-Learning 与标准 Q-Learning 的主要区别。Double Q-Learning 主要解决了 Q-Learning 的什么问题？",
+    "crumbs": [
+      "练习",
+      "<span class='chapter-number'>25</span>  <span class='chapter-title'>Week 7 - 学生练习</span>"
+    ]
+  },
+  {
+    "objectID": "week7_exercise.html#练习-6-参数与收敛性思考",
+    "href": "week7_exercise.html#练习-6-参数与收敛性思考",
+    "title": "Week 7 - 学生练习",
+    "section": "练习 6: 参数与收敛性思考",
+    "text": "练习 6: 参数与收敛性思考\n\n学习率 \\(\\alpha\\) 的影响：\n在 Q-Learning 中，学习率 \\(\\alpha\\) 过大或过小会分别带来什么影响？如何选择合适的 \\(\\alpha\\)？\n折扣因子 \\(\\gamma\\) 的作用：\n如果将 \\(\\gamma\\) 设为 0，Q-Learning 学到的策略会有什么特点？如果 \\(\\gamma\\) 非常接近 1，又会怎样？\n收敛性条件：\nQ-Learning 能否保证一定收敛到最优策略？需要满足哪些条件？（如探索、学习率等方面）",
+    "crumbs": [
+      "练习",
+      "<span class='chapter-number'>25</span>  <span class='chapter-title'>Week 7 - 学生练习</span>"
+    ]
+  },
+  {
+    "objectID": "week7_exercise.html#练习-7-代码与实际应用拓展",
+    "href": "week7_exercise.html#练习-7-代码与实际应用拓展",
+    "title": "Week 7 - 学生练习",
+    "section": "练习 7: 代码与实际应用拓展",
+    "text": "练习 7: 代码与实际应用拓展\n\n伪代码补全：\n请根据你对 Q-Learning 的理解，补全如下伪代码的空白部分（用自然语言或伪代码均可）：\n初始化 Q(s, a)\n对每一回合:\n    初始化 S\n    重复:\n        根据 ε-greedy 策略选择 A\n        执行动作 A，观察 R, S'\n        ___________  # 填写 Q-Learning 的核心更新\n        S ← S'\n    直到 S 为终止状态\n实际场景分析：\n除了强化学习中的游戏和机器人控制，请举出一个现实生活中可以用 Q-Learning 或 Off-Policy 学习解决的问题，并简要说明 Q-Learning 如何应用于该场景。",
+    "crumbs": [
+      "练习",
+      "<span class='chapter-number'>25</span>  <span class='chapter-title'>Week 7 - 学生练习</span>"
+    ]
+  },
+  {
+    "objectID": "week6_exercise.html#练习-5-策略改进与收敛性-policy-improvement-convergence",
+    "href": "week6_exercise.html#练习-5-策略改进与收敛性-policy-improvement-convergence",
+    "title": "Week 6 - 学生练习",
+    "section": "练习 5: 策略改进与收敛性 (Policy Improvement & Convergence)",
+    "text": "练习 5: 策略改进与收敛性 (Policy Improvement & Convergence)\n\n策略改进定理: 请简述策略改进定理的核心思想。为什么基于 \\(Q_\\pi(s, a)\\) 的贪心选择能够保证得到不差于原策略 \\(\\pi\\) 的新策略 \\(\\pi'\\)？\nSARSA 收敛:\n\n为了保证 SARSA 算法收敛，学习率 \\(\\alpha\\) 和探索率 \\(\\epsilon\\) 通常需要满足什么条件？（提示：回顾讲义中的 Robbins-Monro 条件和对 \\(\\epsilon\\) 的要求）\n如果 \\(\\epsilon\\) 在训练过程中保持一个固定的正值（例如 \\(\\epsilon=0.1\\)）而不衰减到 0，SARSA 最终会收敛到什么样的策略？这与最优策略 \\(\\pi^*\\) 有何不同？",
+    "crumbs": [
+      "练习",
+      "<span class='chapter-number'>24</span>  <span class='chapter-title'>Week 6 - 学生练习</span>"
+    ]
+  },
+  {
+    "objectID": "week6_exercise.html#练习-6-sarsa-代码细节探讨-code-implementation-details",
+    "href": "week6_exercise.html#练习-6-sarsa-代码细节探讨-code-implementation-details",
+    "title": "Week 6 - 学生练习",
+    "section": "练习 6: SARSA 代码细节探讨 (Code Implementation Details)",
+    "text": "练习 6: SARSA 代码细节探讨 (Code Implementation Details)\n(基于 Lab 4 提供的 SARSA 代码)\n\nQ 表初始化: 代码中 Q 表是如何初始化的 (Q = np.zeros(...))？如果将 Q 表初始化为其他值（例如，全部初始化为 -1，或者随机初始化），可能会对学习过程产生什么影响？（提示：考虑乐观初始值对早期探索行为的影响）\n终止状态处理: 在计算 td_target = reward + gamma * Q[next_state, next_action] * (1 - terminated) 时，乘以 (1 - terminated) 的作用是什么？为什么在状态 S’ 是终止状态时，其后续价值应视为 0？\n(可选) \\(\\epsilon\\) 衰减实现: 请描述一种简单的 \\(\\epsilon\\) 衰减策略（例如线性衰减或指数衰减），并说明为什么在训练过程中逐渐减小 \\(\\epsilon\\) 通常是有益的。",
     "crumbs": [
       "练习",
       "<span class='chapter-number'>24</span>  <span class='chapter-title'>Week 6 - 学生练习</span>"
