@@ -70,6 +70,35 @@ ul.task-list li input[type="checkbox"] {
 }</script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xkm/sYwpb+ilR5gUw==" crossorigin="anonymous" referrerpolicy="no-referrer">
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="styles/custom.css">
 </head>
@@ -155,6 +184,11 @@ ul.task-list li input[type="checkbox"] {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./week7_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 7: 异策略控制 - Q-Learning (重点)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./sarsa_vs_qlearning_comparison.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">SARSA 与 Q-Learning 算法详解与探索策略对比</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -356,7 +390,7 @@ ul.task-list li input[type="checkbox"] {
 <h2 class="anchored" data-anchor-id="练习-1-函数逼近概念">练习 1: 函数逼近概念</h2>
 <ol type="1">
 <li><strong>为何需要函数逼近？</strong> 请列举至少三个表格型强化学习方法难以处理的情况，并解释为什么函数逼近能够帮助解决这些问题。</li>
-<li><strong>核心思想:</strong> 函数逼近的基本思想是什么？它与表格型方法存储价值的方式有何不同？（提示：参数化函数 V̂(s, w) 或 Q̂(s, a, w)）</li>
+<li><strong>核心思想:</strong> 函数逼近的基本思想是什么？它与表格型方法存储价值的方式有何不同？（提示：参数化函数 <span class="math inline">\(\hat{V}(s, w)\)</span> 或 <span class="math inline">\(\hat{Q}(s, a, w)\)</span>）</li>
 <li><strong>泛化:</strong> 什么是函数逼近带来的“泛化 (Generalization)”能力？为什么这在大型状态空间中很重要？</li>
 <li><strong>学习过程类比:</strong> 函数逼近的学习过程如何借鉴监督学习？请说明 RL 中的“目标值 (Target)”和“预测值”分别对应什么，以及通常使用什么方法来更新参数 <strong>w</strong>？</li>
 <li><strong>半梯度:</strong> 为什么 TD 学习与函数逼近结合时，更新规则被称为“半梯度 (Semi-gradient)”？（简述即可）</li>
@@ -364,15 +398,15 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="练习-2-线性函数逼近" class="level2">
 <h2 class="anchored" data-anchor-id="练习-2-线性函数逼近">练习 2: 线性函数逼近</h2>
-<p>假设我们使用线性函数逼近状态值函数 V̂(s, w) = wᵀφ(s)。</p>
+<p>假设我们使用线性函数逼近状态值函数 <span class="math inline">\(\hat{V}(s, w) = w^\top \phi(s)\)</span>。</p>
 <ol type="1">
 <li><strong>特征向量:</strong>
 <ul>
-<li>在一个简单的 Gridworld 环境中，状态 s 是格子的坐标 (row, col)。请你设计一个简单的特征向量 φ(s)。（提示：可以包含原始坐标、坐标的组合、或者表示格子类型的指示变量等，至少包含 3 个特征）。</li>
+<li>在一个简单的 Gridworld 环境中，状态 <span class="math inline">\(s\)</span> 是格子的坐标 <span class="math inline">\((row, col)\)</span>。请你设计一个简单的特征向量 <span class="math inline">\(\phi(s)\)</span>。（提示：可以包含原始坐标、坐标的组合、或者表示格子类型的指示变量等，至少包含 3 个特征）。</li>
 <li>你设计的特征向量维度是多少？</li>
 </ul></li>
-<li><strong>权重向量:</strong> 对应你设计的特征向量，权重向量 <strong>w</strong> 的维度是多少？</li>
-<li><strong>价值计算:</strong> 假设你的特征向量是 φ(s) = (1, row, col, row*col)，权重向量是 w = (0.5, -0.1, 0.2, 0.05)ᵀ。请计算状态 s=(2, 3) 的近似价值 V̂(s, w)。</li>
+<li><strong>权重向量:</strong> 对应你设计的特征向量，权重向量 <span class="math inline">\(w\)</span> 的维度是多少？</li>
+<li><strong>价值计算:</strong> 假设你的特征向量是 <span class="math inline">\(\phi(s) = (1, row, col, row*col)\)</span>，权重向量是 <span class="math inline">\(w = (0.5, -0.1, 0.2, 0.05)^\top\)</span>。请计算状态 <span class="math inline">\(s=(2, 3)\)</span> 的近似价值 <span class="math inline">\(\hat{V}(s, w)\)</span>。</li>
 <li><strong>局限性:</strong> 线性函数逼近的主要局限性是什么？为什么对于复杂问题，我们通常需要更强大的函数逼近器（如神经网络）？</li>
 </ol>
 </section>

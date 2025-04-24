@@ -70,6 +70,35 @@ ul.task-list li input[type="checkbox"] {
 }</script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xkm/sYwpb+ilR5gUw==" crossorigin="anonymous" referrerpolicy="no-referrer">
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="styles/custom.css">
 </head>
@@ -155,6 +184,11 @@ ul.task-list li input[type="checkbox"] {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./week7_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 7: 异策略控制 - Q-Learning (重点)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./sarsa_vs_qlearning_comparison.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">SARSA 与 Q-Learning 算法详解与探索策略对比</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -297,7 +331,11 @@ ul.task-list li input[type="checkbox"] {
   </li>
     </ul>
     </div>
-    <nav id="TOC" role="doc-toc" class="toc-active">
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
@@ -311,10 +349,6 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#提交要求" id="toc-提交要求" class="nav-link" data-scroll-target="#提交要求">提交要求</a></li>
   </ul>
 </nav>
-</nav>
-<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
-<!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -367,7 +401,7 @@ ul.task-list li input[type="checkbox"] {
 <li>目标网络机制是如何工作的？（简述双网络和参数更新方式）</li>
 <li>它主要解决了 Q-Learning + NN 不稳定性中的哪个问题？如何解决的？</li>
 </ul></li>
-<li><strong>DQN 更新:</strong> 在 DQN 的更新步骤中，计算 TD 目标 <code>Target = R + γ * max_a' Q̂(S', a'; w⁻)</code> 时，使用的是哪个网络的参数（<code>w</code> 还是 <code>w⁻</code>）？计算损失 <code>Loss = (Target - Q̂(S, A; w))²</code> 时，计算 <code>Q̂(S, A; w)</code> 使用的是哪个网络的参数？</li>
+<li><strong>DQN 更新:</strong> 在 DQN 的更新步骤中，计算 TD 目标 <span class="math inline">\(Target = R + \gamma * \max_{a'} \hat{Q}(S', a'; w^{-})\)</span> 时，使用的是哪个网络的参数（<span class="math inline">\(w\)</span> 还是 <span class="math inline">\(w^{-}\)</span>）？计算损失 <span class="math inline">\(Loss = (Target - \hat{Q}(S, A; w))^2\)</span> 时，计算 <span class="math inline">\(\hat{Q}(S, A; w)\)</span> 使用的是哪个网络的参数？</li>
 </ol>
 </section>
 <section id="练习-2-sb3-dqn-代码理解-基于-lab-6" class="level2">
@@ -418,8 +452,8 @@ ul.task-list li input[type="checkbox"] {
 <li>对于你进行的<strong>每一组</strong>实验：
 <ul>
 <li>记录你修改的超参数及其值。</li>
-<li>记录使用 <code>evaluate_policy</code> 得到的最终评估结果 (<code>mean_reward</code> 和 <code>std_reward</code>)。</li>
-<li><strong>(可选但推荐)</strong> 截取 TensorBoard 中对应的 <code>rollout/ep_rew_mean</code> 曲线图。</li>
+<li>记录使用 <code>evaluate_policy</code> 函数评估模型得到的最终性能指标（包括平均奖励 <code>mean_reward</code> 和奖励标准差 <code>std_reward</code>）。</li>
+<li><strong>(可选但推荐)</strong> 使用截图工具截取 TensorBoard 中 <code>rollout/ep_rew_mean</code> 曲线图，该曲线反映了训练过程中平均回合奖励的变化趋势。</li>
 </ul></li>
 <li><strong>对比分析:</strong> 对比不同超参数设置下的训练曲线和评估结果，与基础代码的结果进行比较。
 <ul>

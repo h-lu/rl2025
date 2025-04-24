@@ -1,1 +1,1 @@
-{"options":{"chapters":true},"entries":[],"headings":["回顾无模型预测-mc-td","从预测到控制广义策略迭代-gpi","基于动作值函数-q-的控制","同策略-on-policy-vs.-异策略-off-policy","sarsa-同策略-td-控制","ε-greedy-探索策略","sarsa-算法伪代码","lab-4-sarsa-实践","目标","环境选择","示例代码框架-cliffwalking---sarsa","任务与思考","提交要求"]}
+{"headings":["回顾无模型预测-mc-td","从预测到控制广义策略迭代-gpi","基于动作值函数-q-的控制","同策略-on-policy-vs.-异策略-off-policy","sarsa-同策略-td-控制","ε-greedy-探索策略","sarsa-算法伪代码","lab-4-sarsa-实践","目标","环境选择","示例代码框架-cliffwalking---sarsa","任务与思考","提交要求"],"entries":[],"options":{"chapters":true}}

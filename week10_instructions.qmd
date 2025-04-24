@@ -1,10 +1,6 @@
 ---
 title: "Week 10 - 教师指导手册"
 subtitle: "深度 Q 网络 (DQN)"
-format:
-  html:
-    toc: true
-    toc-location: left
 ---
 
 # 教学目标 (Learning Objectives)

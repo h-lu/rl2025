@@ -104,6 +104,35 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 }</script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xkm/sYwpb+ilR5gUw==" crossorigin="anonymous" referrerpolicy="no-referrer">
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="styles/custom.css">
 </head>
@@ -189,6 +218,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./week7_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 7: 异策略控制 - Q-Learning (重点)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./sarsa_vs_qlearning_comparison.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">SARSA 与 Q-Learning 算法详解与探索策略对比</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -374,11 +408,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h1>回顾：表格型强化学习方法 (Tabular RL)</h1>
 <p>到目前为止，我们学习的 MC, TD, SARSA, Q-Learning 都属于<strong>表格型 (Tabular)</strong> 强化学习方法。</p>
 <ul>
-<li><strong>核心:</strong> 使用<strong>表格</strong>来存储和更新每个状态 (V(s)) 或每个状态-动作对 (Q(s, a)) 的价值。
+<li><strong>核心:</strong> 使用<strong>表格</strong>来存储和更新每个状态 (<span class="math inline">\(V(s)\)</span>) 或每个状态-动作对 (<span class="math inline">\(Q(s, a)\)</span>) 的价值。
 <ul>
-<li>例如，Q 表是一个 |S| x |A| 大小的矩阵（或字典）。</li>
+<li>例如，<span class="math inline">\(Q\)</span> 表是一个 <span class="math inline">\(|S| \times |A|\)</span> 大小的矩阵（或字典）。</li>
 </ul></li>
-<li><strong>适用性:</strong> 对于状态空间 S 和动作空间 A 都比较<strong>小</strong>且<strong>离散</strong>的问题效果很好（如 Gridworld, Blackjack, CliffWalking）。</li>
+<li><strong>适用性:</strong> 对于状态空间 <span class="math inline">\(S\)</span> 和动作空间 <span class="math inline">\(A\)</span> 都比较<strong>小</strong>且<strong>离散</strong>的问题效果很好（如 Gridworld, Blackjack, CliffWalking）。</li>
 </ul>
 <p><strong>局限性:</strong> 当状态或动作空间变得庞大甚至连续时，表格型方法面临巨大挑战。</p>
 </section>
@@ -390,13 +424,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <ul>
 <li>许多现实世界的商业问题具有非常大的状态空间。
 <ul>
-<li><strong>库存管理:</strong> 如果管理数千种商品，每种商品有多个库存水平，状态组合数量将是天文数字。<code>S = (inv_1, inv_2, ..., inv_1000)</code></li>
+<li><strong>库存管理:</strong> 如果管理数千种商品，每种商品有多个库存水平，状态组合数量将是天文数字。<span class="math inline">\(S = (inv_1, inv_2, ..., inv_{1000})\)</span></li>
 <li><strong>动态定价:</strong> 如果状态包含历史价格、竞争对手价格、多种客户分群信息，状态空间会急剧膨胀。</li>
-<li><strong>游戏:</strong> 棋盘游戏（如围棋 10¹⁷⁰ 状态）、视频游戏（像素级输入，状态近乎无限）。</li>
+<li><strong>游戏:</strong> 棋盘游戏（如围棋 <span class="math inline">\(10^{170}\)</span> 状态）、视频游戏（像素级输入，状态近乎无限）。</li>
 </ul></li>
 <li>使用表格存储所有状态（或状态-动作对）的价值变得<strong>不可行</strong>：
 <ul>
-<li><strong>内存需求:</strong> 需要巨大的内存来存储 Q 表。</li>
+<li><strong>内存需求:</strong> 需要巨大的内存来存储 <span class="math inline">\(Q\)</span> 表。</li>
 <li><strong>计算需求:</strong> 访问和更新这个巨大的表格非常耗时。</li>
 <li><strong>样本效率:</strong> 需要访问每个状态（或状态-动作对）很多次才能得到准确的价值估计，这在巨大状态空间中需要天文数字般的经验数据。</li>
 </ul></li>
@@ -419,7 +453,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><strong>自动驾驶:</strong> 方向盘转角、油门/刹车力度。</li>
 <li><strong>资源分配:</strong> 分配给不同项目的预算比例。</li>
 </ul></li>
-<li>表格型方法（特别是基于 <code>max_a Q(s, a)</code> 的方法如 Q-Learning）难以直接处理无限多的连续动作。</li>
+<li>表格型方法（特别是基于 <span class="math inline">\(\max_a Q(s, a)\)</span> 的方法如 Q-Learning）难以直接处理无限多的连续动作。</li>
 </ul></li>
 </ol>
 <p><strong>核心问题:</strong> 我们无法为每一个可能的状态（或状态-动作对）单独学习和存储一个值。</p>
@@ -427,15 +461,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="函数逼近的基本思想" class="level1">
 <h1>函数逼近的基本思想</h1>
-<p>不再为每个 s 或 (s, a) 存储独立的价值，而是用一个<strong>带参数的函数</strong>来近似价值函数：</p>
+<p>不再为每个 <span class="math inline">\(s\)</span> 或 <span class="math inline">\((s, a)\)</span> 存储独立的价值，而是用一个<strong>带参数的函数</strong>来近似价值函数：</p>
 <ul>
-<li>近似状态值函数: V̂(s, <strong>w</strong>) ≈ Vπ(s) 或 V*(s)</li>
-<li>近似动作值函数: Q̂(s, a, <strong>w</strong>) ≈ Qπ(s, a) 或 Q*(s, a)</li>
+<li>近似状态值函数: <span class="math inline">\(\hat{V}(s, w) \approx V_{\pi}(s)\)</span> 或 <span class="math inline">\(V^{*}(s)\)</span></li>
+<li>近似动作值函数: <span class="math inline">\(\hat{Q}(s, a, w) \approx Q_{\pi}(s, a)\)</span> 或 <span class="math inline">\(Q^{*}(s, a)\)</span></li>
 </ul>
 <p>其中：</p>
 <ul>
-<li><strong>V̂ / Q̂:</strong> 表示价值函数的<strong>近似值 (Approximation)</strong>。</li>
-<li><strong>w:</strong> 函数的<strong>参数 (Parameters / Weights)</strong>。这是一个维度远小于 |S| 或 |S|x|A| 的向量。</li>
+<li><strong><span class="math inline">\(\hat{V} / \hat{Q}\)</span>:</strong> 表示价值函数的<strong>近似值 (Approximation)</strong>。</li>
+<li><strong><span class="math inline">\(w\)</span>:</strong> 函数的<strong>参数 (Parameters / Weights)</strong>。这是一个维度远小于 <span class="math inline">\(|S| 或 |S| \times |A|\)</span> 的向量。</li>
 <li><strong>函数形式:</strong> 可以是各种函数，例如：
 <ul>
 <li>线性函数 (Linear Function)</li>
@@ -444,7 +478,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>…</li>
 </ul></li>
 </ul>
-<p><strong>学习目标:</strong> 调整参数 <strong>w</strong>，使得近似函数 V̂(s, w) 或 Q̂(s, a, w) 尽可能地接近真实的价值函数 Vπ(s) / V<em>(s) 或 Qπ(s, a) / Q</em>(s, a)。</p>
+<p><strong>学习目标:</strong> 调整参数 <span class="math inline">\(w\)</span>，使得近似函数 <span class="math inline">\(\hat{V}(s, w)\)</span> 或 <span class="math inline">\(\hat{Q}(s, a, w)\)</span> 尽可能地接近真实的价值函数 <span class="math inline">\(V_{\pi}(s)\)</span> / <span class="math inline">\(V^{*}(s)\)</span> 或 <span class="math inline">\(Q_{\pi}(s, a)\)</span> / <span class="math inline">\(Q^{*}(s, a)\)</span>。</p>
 <p><strong>优势:</strong></p>
 <ol type="1">
 <li><strong>泛化 (Generalization):</strong>
@@ -455,18 +489,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </ul></li>
 <li><strong>处理大规模/连续空间:</strong>
 <ul>
-<li>参数 <strong>w</strong> 的数量远少于状态（或状态-动作对）的数量，大大减少了内存和计算需求。</li>
+<li>参数 <span class="math inline">\(w\)</span> 的数量远少于状态（或状态-动作对）的数量，大大减少了内存和计算需求。</li>
 <li>可以直接处理连续的状态输入（例如，神经网络可以直接接收连续值的向量作为输入）。</li>
 </ul></li>
 </ol>
 <p><strong>学习过程:</strong></p>
-<p>函数逼近下的强化学习通常借鉴<strong>监督学习</strong>的思想。我们将 RL 算法产生的<strong>目标值 (Target)</strong>（例如，MC 回报 G_t 或 TD 目标 R + γV̂(S’, w)）视为“标签”，将当前的价值估计 V̂(S, w) 或 Q̂(S, A, w) 视为模型的“预测”。然后，我们定义一个<strong>损失函数 (Loss Function)</strong> 来衡量预测与目标之间的误差，并通过<strong>梯度下降 (Gradient Descent)</strong> 等优化算法来调整参数 <strong>w</strong> 以最小化这个损失。</p>
-<p>例如，对于 TD(0) 预测 Vπ，更新参数 <strong>w</strong> 的一种常见方式是<strong>半梯度 TD(0) (Semi-gradient TD(0))</strong>:</p>
+<p>函数逼近下的强化学习通常借鉴<strong>监督学习</strong>的思想。我们将 RL 算法产生的<strong>目标值 (Target)</strong>（例如，MC 回报 <span class="math inline">\(G_t\)</span> 或 TD 目标 <span class="math inline">\(R + \gamma \hat{V}(S', w)\)</span>）视为“标签”，将当前的价值估计 <span class="math inline">\(\hat{V}(S, w)\)</span> 或 <span class="math inline">\(\hat{Q}(S, A, w)\)</span> 视为模型的“预测”。然后，我们定义一个<strong>损失函数 (Loss Function)</strong> 来衡量预测与目标之间的误差，并通过<strong>梯度下降 (Gradient Descent)</strong> 等优化算法来调整参数 <span class="math inline">\(w\)</span> 以最小化这个损失。</p>
+<p>例如，对于 TD(0) 预测 <span class="math inline">\(V_{\pi}\)</span>，更新参数 <span class="math inline">\(w\)</span> 的一种常见方式是<strong>半梯度 TD(0) (Semi-gradient TD(0))</strong>:</p>
 <ul>
-<li><strong>TD 误差:</strong> δ_t = R_{t+1} + γ V̂(S_{t+1}, <strong>w</strong>) - V̂(S_t, <strong>w</strong>)</li>
-<li><strong>参数更新:</strong> <strong>w</strong> ← <strong>w</strong> + α * δ_t * ∇ V̂(S_t, <strong>w</strong>)</li>
+<li><strong>TD 误差:</strong> <span class="math inline">\(\delta_t = R_{t+1} + \gamma \hat{V}(S_{t+1}, w) - \hat{V}(S_t, w)\)</span></li>
+<li><strong>参数更新:</strong> <span class="math inline">\(w \leftarrow w + \alpha * \delta_t * \nabla \hat{V}(S_t, w)\)</span></li>
 </ul>
-<p>其中 ∇ V̂(S_t, <strong>w</strong>) 是近似函数 V̂ 对参数 <strong>w</strong> 在状态 S_t 处的<strong>梯度</strong>。这个更新规则试图将 V̂(S_t, w) 朝着 TD 目标移动。</p>
+<p>其中 <span class="math inline">\(\nabla \hat{V}(S_t, w)\)</span> 是近似函数 <span class="math inline">\(\hat{V}\)</span> 对参数 <span class="math inline">\(w\)</span> 在状态 <span class="math inline">\(S_t\)</span> 处的<strong>梯度</strong>。这个更新规则试图将 <span class="math inline">\(\hat{V}(S_t, w)\)</span> 朝着 TD 目标移动。</p>
 <div class="callout callout-style-default callout-warning callout-titled" title="半梯度 (Semi-gradient)">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -477,24 +511,25 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>称为“半梯度”是因为 TD 目标 R + γV̂(S’, w) 本身也依赖于参数 w，但在计算梯度时我们通常<strong>忽略</strong>目标值对 w 的依赖（即不对目标求梯度），只对当前预测 V̂(S_t, w) 求梯度。这简化了计算，并且在实践中通常有效，但可能导致理论上的一些不稳定问题（尤其是在 Off-Policy + Bootstrapping + Function Approximation 结合时，被称为“死亡三角 Deadly Triad”）。</p>
+<p>之所以称为”半梯度”，是因为虽然TD目标值<span class="math inline">\(R + \gamma \hat{V}(S', w)\)</span>本身也依赖于参数<span class="math inline">\(w\)</span>，但在梯度计算时我们通常<strong>只考虑</strong>当前预测值<span class="math inline">\(\hat{V}(S_t, w)\)</span>对<span class="math inline">\(w\)</span>的梯度，而<strong>忽略</strong>目标值对<span class="math inline">\(w\)</span>的梯度依赖。这种做法虽然简化了计算且在实际应用中通常有效，但可能导致理论上的收敛性问题。特别是在Off-Policy(异策略)、Bootstrapping(自举)和Function Approximation(函数逼近)三者同时存在的情况下，这种不稳定性尤为明显，这种情况被称为强化学习中的”死亡三角”(Deadly Triad)。</p>
 </div>
 </div>
 </section>
 <section id="线性函数逼近-linear-function-approximation" class="level1">
 <h1>线性函数逼近 (Linear Function Approximation)</h1>
 <p>最简单的函数逼近形式之一是线性函数。</p>
-<p><strong>思想:</strong> 将状态 s 表示为一个<strong>特征向量 (Feature Vector)</strong> φ(s)。 φ(s) = (φ₁(s), φ₂(s), …, φ_d(s))ᵀ</p>
-<p>其中 d 是特征的数量，通常远小于状态总数 |S|。特征可以是：</p>
+<p><strong>思想:</strong> 将状态 <span class="math inline">\(s\)</span> 表示为一个<strong>特征向量 (Feature Vector)</strong> <span class="math inline">\(\phi(s)\)</span>。 <span class="math inline">\(\phi(s) = (\phi_1(s), \phi_2(s), ..., \phi_d(s))^\top\)</span></p>
+<p>其中 <span class="math inline">\(d\)</span> 是特征的数量，通常远小于状态总数 <span class="math inline">\(|S|\)</span>。特征可以是：</p>
 <ul>
 <li>状态变量的原始值（如果状态是向量）。</li>
 <li>状态变量的多项式组合。</li>
 <li>基于状态的某种编码（如 Tile Coding, Radial Basis Functions）。</li>
 <li>领域知识提取的关键指标。</li>
 </ul>
-<p><strong>线性价值函数近似:</strong> V̂(s, <strong>w</strong>) = <strong>w</strong>ᵀ φ(s) = Σ_{i=1}^d w_i φ_i(s)</p>
-<p>参数 <strong>w</strong> = (w₁, w₂, …, w_d)ᵀ 是与特征对应的权重向量。价值被近似为特征的加权和。</p>
-<p><strong>参数更新 (半梯度 TD(0)):</strong> ∇ V̂(s, <strong>w</strong>) = φ(s) (线性函数对参数的梯度就是其特征向量) <strong>w</strong> ← <strong>w</strong> + α * [R + γ <strong>w</strong>ᵀ φ(S’) - <strong>w</strong>ᵀ φ(s)] * φ(s)</p>
+<p><strong>线性价值函数近似:</strong> <span class="math inline">\(\hat{V}(s, w) = w^\top \phi(s) = \sum_{i=1}^d w_i \phi_i(s)\)</span></p>
+<p>参数 <span class="math inline">\(w = (w_1, w_2, ..., w_d)^\top\)</span> 是与特征对应的权重向量。价值被近似为特征的加权和。</p>
+<p><strong>参数更新 (半梯度 TD(0)):</strong></p>
+<p><span class="math inline">\(\nabla \hat{V}(s, w) = \phi(s)\)</span> (线性函数对参数的梯度就是其特征向量) <span class="math inline">\(w \leftarrow w + \alpha * [R + \gamma w^\top \phi(S') - w^\top \phi(s)] * \phi(s)\)</span></p>
 <p><strong>优点:</strong></p>
 <ul>
 <li>简单，计算高效。</li>
@@ -502,10 +537,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </ul>
 <p><strong>缺点:</strong></p>
 <ul>
-<li><strong>特征工程 (Feature Engineering):</strong> 效果<strong>高度依赖</strong>于特征 φ(s) 的好坏。设计好的特征需要大量的领域知识和尝试。</li>
+<li><strong>特征工程 (Feature Engineering):</strong> 效果<strong>高度依赖</strong>于特征 <span class="math inline">\(\phi(s)\)</span> 的好坏。设计好的特征需要大量的领域知识和尝试。</li>
 <li><strong>表达能力有限:</strong> 线性模型只能表示状态特征和价值之间的线性关系，可能无法捕捉复杂的非线性价值函数。</li>
 </ul>
-<p>对于动作值函数 Q̂(s, a, w)，线性逼近可以表示为： Q̂(s, a, <strong>w</strong>) = <strong>w</strong>ᵀ φ(s, a) 其中 φ(s, a) 是状态-动作对的特征向量。</p>
+<p>对于动作值函数 <span class="math inline">\(\hat{Q}(s, a, w)\)</span>，线性逼近可以表示为： <span class="math inline">\(\hat{Q}(s, a, w) = w^\top \phi(s, a)\)</span> 其中 <span class="math inline">\(\phi(s, a)\)</span> 是状态-动作对的特征向量。</p>
 </section>
 <section id="概念-lab演示表格方法的局限性-cartpole" class="level1">
 <h1>概念 Lab/演示：表格方法的局限性 (CartPole)</h1>

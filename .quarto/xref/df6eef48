@@ -1,1 +1,1 @@
-{"options":{"chapters":true},"headings":["回顾蒙特卡洛-mc-方法","时序差分-td-学习核心思想","td0-预测-最简单的-td-方法","自举-bootstrapping","td0-预测算法伪代码","blackjack环境下的td0预测实现","td0-vs.-monte-carlo-mc","lab-3-td0-预测实践","目标","环境gridworld","任务","可视化","提交要求"],"entries":[]}
+{"entries":[],"headings":["回顾蒙特卡洛-mc-方法","时序差分-td-学习核心思想","td0-预测-最简单的-td-方法","自举-bootstrapping","td0-预测算法伪代码","blackjack环境下的td0预测实现","td0-vs.-monte-carlo-mc","lab-3-td0-预测实践","目标","环境gridworld","任务","可视化","提交要求"],"options":{"chapters":true}}

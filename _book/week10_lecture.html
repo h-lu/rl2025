@@ -104,6 +104,35 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 }</script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xkm/sYwpb+ilR5gUw==" crossorigin="anonymous" referrerpolicy="no-referrer">
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="styles/custom.css">
 </head>
@@ -189,6 +218,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./week7_lecture.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 7: 异策略控制 - Q-Learning (重点)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./sarsa_vs_qlearning_comparison.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">SARSA 与 Q-Learning 算法详解与探索策略对比</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -391,7 +425,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>无法处理<strong>连续动作空间</strong>（对于 Q-Learning 等）。</li>
 <li>缺乏<strong>泛化能力</strong>，需要访问每个状态（或状态-动作对）多次。</li>
 </ul>
-<p>解决方案是使用<strong>函数逼近 (Function Approximation)</strong>，用带参数的函数 V̂(s, <strong>w</strong>) 或 Q̂(s, a, <strong>w</strong>) 来近似价值函数。</p>
+<p>解决方案是使用<strong>函数逼近 (Function Approximation)</strong>，用带参数的函数 <span class="math inline">\(\hat{V}(s, w)\)</span> 或 <span class="math inline">\(\hat{Q}(s, a, w)\)</span> 来近似价值函数。</p>
 <ul>
 <li><strong>线性函数逼近:</strong> 简单，但表达能力有限，且依赖特征工程。</li>
 <li><strong>非线性函数逼近 (如神经网络):</strong> 表达能力强，可以自动学习特征表示，是现代强化学习（深度强化学习）的核心。</li>
@@ -400,24 +434,29 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="dqn-核心思想用神经网络逼近-q-函数" class="level1">
 <h1>DQN 核心思想：用神经网络逼近 Q 函数</h1>
-<p>Q-Learning 的目标是学习最优动作值函数 Q*(s, a)。DQN 的核心思想就是使用一个<strong>深度神经网络 (Deep Neural Network, DNN)</strong> 作为函数逼近器来近似 Q*(s, a)。</p>
-<p>Q̂(s, a; <strong>w</strong>) ≈ Q*(s, a)</p>
-<p>其中 <strong>w</strong> 代表神经网络的权重和偏置参数。</p>
+<p>Q-Learning 的目标是学习最优动作值函数 <span class="math inline">\(Q^*(s, a)\)</span>。DQN 的核心思想就是使用一个<strong>深度神经网络 (Deep Neural Network, DNN)</strong> 作为函数逼近器来近似 <span class="math inline">\(Q^*(s, a)\)</span>。</p>
+<p><span class="math inline">\(\hat{Q}(s, a; w) \approx Q^*(s, a)\)</span></p>
+<p>其中 <span class="math inline">\(w\)</span> 代表神经网络的权重和偏置参数。</p>
 <p><strong>网络结构通常是:</strong></p>
 <ul>
-<li><strong>输入:</strong> 状态 s (通常表示为一个向量或张量，例如 CartPole 的 4 维向量，或 Atari 游戏的屏幕像素)。</li>
-<li><strong>输出:</strong> 对于<strong>每个离散动作 a</strong>，输出一个对应的 Q 值估计 Q̂(s, a; <strong>w</strong>)。
+<li><strong>输入:</strong> 状态 <span class="math inline">\(s\)</span> (通常表示为一个向量或张量，例如 CartPole 的 4 维向量，或 Atari 游戏的屏幕像素)。</li>
+<li><strong>输出:</strong> 对于<strong>每个离散动作 <span class="math inline">\(a\)</span></strong>，输出一个对应的 Q 值估计 <span class="math inline">\(\hat{Q}(s, a; w)\)</span>。
 <ul>
-<li>例如，对于 CartPole (动作 0: 左, 动作 1: 右)，网络输出一个包含两个值的向量：[Q̂(s, 0; w), Q̂(s, 1; w)]。</li>
+<li>例如，对于 CartPole (动作 0: 左, 动作 1: 右)，网络输出一个包含两个值的向量：[<span class="math inline">\(\hat{Q}(s, 0; w)\)</span>, <span class="math inline">\(\hat{Q}(s, 1; w)\)</span>]。</li>
 </ul></li>
 </ul>
-<p><img src="https://pytorch.org/tutorials/_images/dqn.png" class="img-fluid" alt="DQN Network Architecture Example"> <em>(图片来源: PyTorch Tutorials - DQN)</em></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://dilithjay.com/assets/images/dqn-arch.webp" class="img-fluid figure-img"></p>
+<figcaption>DQN网络架构示例</figcaption>
+</figure>
+</div>
 <p><strong>学习过程 (基于 Q-Learning):</strong></p>
-<p>我们仍然使用 Q-Learning 的更新思想，但现在是更新神经网络的参数 <strong>w</strong>，而不是更新表格条目。目标是最小化 <strong>TD 误差</strong>。</p>
-<p>回顾 Q-Learning 的 TD 目标： Target = R + γ max_{a’} Q(S’, a’)</p>
-<p>在 DQN 中，我们用神经网络来计算这个目标： Target = R + γ max_{a’} Q̂(S’, a’; <strong>w</strong>)</p>
-<p>损失函数 (Loss Function) 通常使用<strong>均方误差 (Mean Squared Error, MSE)</strong> 或 <strong>Huber Loss</strong>: Loss(<strong>w</strong>) = E [ ( Target - Q̂(S, A; <strong>w</strong>) )² ]</p>
-<p>然后使用<strong>梯度下降</strong> (或其变种，如 Adam) 来更新参数 <strong>w</strong>，以减小这个损失： <strong>w</strong> ← <strong>w</strong> - α * ∇ Loss(<strong>w</strong>)</p>
+<p>我们仍然使用 Q-Learning 的更新思想，但现在是更新神经网络的参数 <span class="math inline">\(w\)</span>，而不是更新表格条目。目标是最小化 <strong>TD 误差</strong>。</p>
+<p>回顾 Q-Learning 的 TD 目标： <span class="math inline">\(Target = R + \gamma \max_{a'} Q(S', a')\)</span></p>
+<p>在 DQN 中，我们用神经网络来计算这个目标： <span class="math inline">\(Target = R + \gamma \max_{a'} \hat{Q}(S', a'; w)\)</span></p>
+<p>损失函数 (Loss Function) 通常使用<strong>均方误差 (Mean Squared Error, MSE)</strong> 或 <strong>Huber Loss</strong>: <span class="math inline">\(Loss(w) = E [ ( Target - \hat{Q}(S, A; w) )² ]\)</span></p>
+<p>然后使用<strong>梯度下降</strong> (或其变种，如 Adam) 来更新参数 <span class="math inline">\(w\)</span>，以减小这个损失： <span class="math inline">\(w \leftarrow w - \alpha \nabla Loss(w)\)</span></p>
 </section>
 <section id="挑战q-learning-神经网络-不稳定" class="level1">
 <h1>挑战：Q-Learning + 神经网络 = 不稳定？</h1>
@@ -425,14 +464,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <ol type="1">
 <li><strong>样本之间的相关性 (Correlations between samples):</strong>
 <ul>
-<li>RL 智能体收集到的经验数据 (S, A, R, S’) 是按时间顺序产生的，相邻的样本之间通常高度相关。</li>
+<li>RL 智能体收集到的经验数据 <span class="math inline">\((S, A, R, S')\)</span> 是按时间顺序产生的，相邻的样本之间通常高度相关。</li>
 <li>如果直接按顺序用这些相关的样本来训练神经网络，会违反许多优化算法（如 SGD）关于样本独立同分布 (i.i.d.) 的假设，导致训练效率低下，模型可能在局部数据上过拟合，忘记过去的经验。</li>
 </ul></li>
 <li><strong>目标值与估计值的耦合 (Non-stationary targets):</strong>
 <ul>
-<li>Q-Learning 的 TD 目标 <code>Target = R + γ max_{a'} Q̂(S', a'; **w**)</code> 依赖于当前的 Q 网络参数 <strong>w</strong>。</li>
-<li>这意味着，在训练过程中，我们每更新一次参数 <strong>w</strong>，用于计算损失的<strong>目标值本身也在变化</strong>。</li>
-<li>这就像在追逐一个移动的目标，使得训练过程非常不稳定，Q 值可能会剧烈震荡甚至发散。</li>
+<li>Q-Learning 的 TD 目标 <span class="math inline">\(Target = R + \gamma \max_{a'} \hat{Q}(S', a'; w)\)</span> 依赖于当前的 <span class="math inline">\(Q\)</span> 网络参数 <span class="math inline">\(w\)</span>。</li>
+<li>这意味着，在训练过程中，我们每更新一次参数 <span class="math inline">\(w\)</span>，用于计算损失的<strong>目标值本身也在变化</strong>。</li>
+<li>这就像在追逐一个移动的目标，使得训练过程非常不稳定，<span class="math inline">\(Q\)</span> 值可能会剧烈震荡甚至发散。</li>
 </ul></li>
 </ol>
 </section>
@@ -444,99 +483,104 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><strong>思想:</strong> 不再按顺序使用实时产生的经验来训练网络，而是将经验存储起来，然后随机采样进行训练。</p>
 <p><strong>机制:</strong></p>
 <ul>
-<li>维护一个<strong>回放缓冲区 (Replay Buffer / Memory)</strong> D，用于存储大量的历史转移 (transitions): (S_t, A_t, R_{t+1}, S_{t+1}, done_flag)。<code>done_flag</code> 标记 S_{t+1} 是否是终止状态。</li>
-<li>在每个时间步 t，智能体执行动作 A_t，观察到 R_{t+1}, S_{t+1} 后，将这个转移 (S_t, A_t, R_{t+1}, S_{t+1}, done) 存入缓冲区 D。如果缓冲区满了，通常会移除最旧的经验。</li>
-<li>在<strong>训练</strong>时，不是使用刚刚产生的那个转移，而是从缓冲区 D 中<strong>随机采样</strong>一个<strong>小批量 (mini-batch)</strong> 的转移 (S_j, A_j, R_{j+1}, S_{j+1}, done_j)。</li>
-<li>使用这个 mini-batch 来计算损失并更新网络参数 <strong>w</strong>。</li>
+<li>维护一个<strong>回放缓冲区 (Replay Buffer / Memory)</strong> D，用于存储大量的历史转移 (transitions): <span class="math inline">\((S_t, A_t, R_{t+1}, S_{t+1}, done_{flag})\)</span>。done_{flag} 标记 <span class="math inline">\(S_{t+1}\)</span> 是否是终止状态。</li>
+<li>在每个时间步 <span class="math inline">\(t\)</span>，智能体执行动作 <span class="math inline">\(A_t\)</span>，观察到 <span class="math inline">\(R_{t+1}, S_{t+1}\)</span> 后，将这个转移 <span class="math inline">\((S_t, A_t, R_{t+1}, S_{t+1}, done_{flag})\)</span> 存入缓冲区 D。如果缓冲区满了，通常会移除最旧的经验。</li>
+<li>在<strong>训练</strong>时，不是使用刚刚产生的那个转移，而是从缓冲区 D 中<strong>随机采样</strong>一个<strong>小批量 (mini-batch)</strong> 的转移 <span class="math inline">\((S_j, A_j, R_{j+1}, S_{j+1}, done_j)\)</span>。</li>
+<li>使用这个 mini-batch 来计算损失并更新网络参数 <span class="math inline">\(w\)</span>。</li>
 </ul>
 <p><strong>优点:</strong></p>
 <ul>
 <li><strong>打破数据相关性:</strong> 随机采样打破了原始经验序列的时间相关性，使得样本更接近独立同分布，提高了训练的稳定性和效率。</li>
 <li><strong>提高数据利用率:</strong> 一个经验转移可能被多次采样用于训练，使得智能体能够从过去的经验中反复学习，提高了样本效率。</li>
 </ul>
-<p><img src="https://spinningup.openai.com/en/latest/_images/experience_replay.png" class="img-fluid" alt="Experience Replay"> <em>(图片来源: OpenAI Spinning Up)</em></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT-BbacNFj_3G2GoSM0r9KSWdMsQwNNh51N7w&amp;s.png" class="img-fluid figure-img"></p>
+<figcaption>Experience Replay</figcaption>
+</figure>
+</div>
 </section>
 <section id="目标网络-target-network" class="level2">
 <h2 class="anchored" data-anchor-id="目标网络-target-network">2. 目标网络 (Target Network)</h2>
 <p><strong>思想:</strong> 使用一个<strong>独立的、更新较慢</strong>的网络来计算 TD 目标值，从而稳定目标。</p>
 <p><strong>机制:</strong></p>
 <ul>
-<li>除了主要的 Q 网络 Q̂(s, a; <strong>w</strong>) (也称为 <strong>Online Network</strong>)，再创建一个结构完全相同但参数不同的<strong>目标网络 (Target Network)</strong> Q̂(s, a; <strong>w⁻</strong>)。</li>
-<li>在计算 TD 目标时，使用<strong>目标网络</strong>的参数 <strong>w⁻</strong>:
+<li>除了主要的 <span class="math inline">\(Q\)</span> 网络 <span class="math inline">\(\hat{Q}(s, a; w)\)</span> (也称为 <strong>Online Network</strong>)，再创建一个结构完全相同但参数不同的<strong>目标网络 (Target Network)</strong> <span class="math inline">\(\hat{Q}(s, a; w^{-})\)</span>。</li>
+<li>在计算 TD 目标时，使用<strong>目标网络</strong>的参数 <span class="math inline">\(w^{-}\)</span>:
 <ul>
-<li>Target = R + γ max_{a’} Q̂(S’, a’; <strong>w⁻</strong>) (如果 S’ 非终止)</li>
-<li>Target = R (如果 S’ 终止)</li>
+<li><span class="math inline">\(Target = R + \gamma \max_{a'} \hat{Q}(S', a'; w^{-})\)</span> (如果 <span class="math inline">\(S'\)</span> 非终止)</li>
+<li><span class="math inline">\(Target = R\)</span> (如果 <span class="math inline">\(S'\)</span> 终止)</li>
 </ul></li>
-<li><strong>在线网络 Q̂(s, a; w)</strong> 的参数 <strong>w</strong> 在每个训练步（或每几个训练步）通过梯度下降进行更新。</li>
-<li><strong>目标网络 Q̂(s, a; w⁻)</strong> 的参数 <strong>w⁻</strong> <strong>不</strong>通过梯度下降更新，而是<strong>定期</strong>从在线网络复制参数：<strong>w⁻ ← w</strong> (例如，每隔 C 步，C 通常是一个较大的数，如 1000 或 10000)。或者使用<strong>软更新 (Soft Update)</strong>：<strong>w⁻ ← τw + (1-τ)w⁻</strong>，其中 τ 是一个很小的数 (e.g., 0.005)，使得目标网络参数缓慢地跟踪在线网络参数。</li>
+<li><strong>在线网络 <span class="math inline">\(\hat{Q}(s, a; w)\)</span></strong> 的参数 <span class="math inline">\(w\)</span> 在每个训练步（或每几个训练步）通过梯度下降进行更新。</li>
+<li><strong>目标网络 <span class="math inline">\(\hat{Q}(s, a; w^{-})\)</span></strong> 的参数 <span class="math inline">\(w^{-}\)</span> <strong>不</strong>通过梯度下降更新，而是<strong>定期</strong>从在线网络复制参数：<span class="math inline">\(w^{-} \leftarrow w\)</span> (例如，每隔 C 步，C 通常是一个较大的数，如 1000 或 10000)。或者使用<strong>软更新 (Soft Update)</strong>：<span class="math inline">\(w^{-} \leftarrow \tau w + (1-\tau)w^{-}\)</span>，其中 <span class="math inline">\(\tau\)</span> 是一个很小的数 (e.g., 0.005)，使得目标网络参数缓慢地跟踪在线网络参数。</li>
 </ul>
 <p><strong>优点:</strong></p>
 <ul>
-<li><strong>稳定 TD 目标:</strong> 目标网络参数 <strong>w⁻</strong> 在一段时间内保持固定，使得 TD 目标值相对稳定，减少了 Q 值更新的震荡，提高了训练稳定性。在线网络 <strong>w</strong> 的更新不再直接影响当前计算的目标值。</li>
+<li><strong>稳定 TD 目标:</strong> 目标网络参数 <span class="math inline">\(w^{-}\)</span> 在一段时间内保持固定，使得 TD 目标值相对稳定，减少了 <span class="math inline">\(Q\)</span> 值更新的震荡，提高了训练稳定性。在线网络 <span class="math inline">\(w\)</span> 的更新不再直接影响当前计算的目标值。</li>
 </ul>
 </section>
 </section>
 <section id="dqn-算法流程-结合-experience-replay-和-target-network" class="level1">
 <h1>DQN 算法流程 (结合 Experience Replay 和 Target Network)</h1>
-<pre><code>Initialize:
-  Replay buffer D with capacity N
-  Online Q-network Q̂(s, a; w) with random weights w
-  Target Q-network Q̂(s, a; w⁻) with weights w⁻ = w
-  α ← learning rate
-  γ ← discount factor
-  ε ← initial exploration rate
-  C ← target network update frequency (for hard update) or τ (for soft update)
+<pre><code>初始化:
+  经验回放缓冲区 D，容量为 N
+  在线 Q 网络 Q̂(s, a; w)，权重 w 随机初始化
+  目标 Q 网络 Q̂(s, a; w⁻)，初始权重 w⁻ = w
+  α ← 学习率
+  γ ← 折扣因子
+  ε ← 初始探索率
+  C ← 目标网络更新频率（硬更新）或 τ（软更新）
 
-Loop for each episode:
-  Initialize S (first state)
-  Loop for each step t = 1, T:
-    # 1. Choose action using behavior policy (ε-greedy on online network)
-    With probability ε select random action A_t
-    Otherwise select A_t = argmax_a Q̂(S_t, a; w)
+对每个回合循环:
+  初始化状态 S
+  对每个时间步 t = 1, T 循环:
+    # 1. 使用行为策略选择动作（基于在线网络的 ε-贪心）
+    以概率 ε 随机选择动作 A_t
+    否则选择 A_t = argmax_a Q̂(S_t, a; w)
 
-    # 2. Execute action, observe reward R_{t+1} and next state S_{t+1}
-    Execute A_t, observe R_{t+1}, S_{t+1}, done_flag
+    # 2. 执行动作，观察奖励 R_{t+1} 和下一状态 S_{t+1}
+    执行 A_t，观察 R_{t+1}, S_{t+1}, done_flag
 
-    # 3. Store transition in replay buffer D
-    Store (S_t, A_t, R_{t+1}, S_{t+1}, done_flag) in D
+    # 3. 将转移存储到回放缓冲区 D
+    存储 (S_t, A_t, R_{t+1}, S_{t+1}, done_flag) 到 D
 
-    # 4. Sample mini-batch from D (if buffer size &gt; learning_starts)
-    If size of D &gt; learning_starts:
-      Sample random mini-batch of transitions (S_j, A_j, R_{j+1}, S_{j+1}, done_j) from D
+    # 4. 从 D 中采样小批量（如果缓冲区大小 &gt; learning_starts）
+    如果 D 的大小 &gt; learning_starts:
+      从 D 中随机采样小批量转移 (S_j, A_j, R_{j+1}, S_{j+1}, done_j)
 
-      # 5. Calculate TD targets using target network
+      # 5. 使用目标网络计算 TD 目标
       Targets = []
-      for j in mini-batch:
-        If done_j:
+      对于小批量中的每个 j:
+        如果 done_j:
           Target_j = R_{j+1}
-        Else:
-          # Use target network w⁻ to get max Q value for next state
-          # Original DQN: Q_next_target = max_{a'} Q̂(S_{j+1}, a'; w⁻)
-          # Double DQN variation (often used in practice):
-          #   a_max = argmax_{a'} Q̂(S_{j+1}, a'; w) # Action selected by online network
-          #   Q_next_target = Q̂(S_{j+1}, a_max; w⁻) # Value evaluated by target network
-          Q_next_target = max_{a'} Q̂(S_{j+1}, a'; w⁻) # Using original DQN target for simplicity here
+        否则:
+          # 使用目标网络 w⁻ 计算下一状态的最大 Q 值
+          # 原始 DQN: Q_next_target = max_{a'} Q̂(S_{j+1}, a'; w⁻)
+          # Double DQN 变体（实践中常用）:
+          #   a_max = argmax_{a'} Q̂(S_{j+1}, a'; w) # 由在线网络选择动作
+          #   Q_next_target = Q̂(S_{j+1}, a_max; w⁻) # 由目标网络评估值
+          Q_next_target = max_{a'} Q̂(S_{j+1}, a'; w⁻) # 这里使用原始 DQN 目标简化表示
           Target_j = R_{j+1} + γ * Q_next_target
         Targets.append(Target_j)
 
-      # 6. Perform gradient descent step on online network
-      # Get Q values for the actions taken (A_j) from the online network
-      Q_online_values = Q̂(S_j, A_j; w) for j in mini-batch
-      # Calculate loss: e.g., MSE Loss = (1/batch_size) * Σ_j (Targets[j] - Q_online_values[j])²
-      # Update online network weights w using gradient descent: w ← w - α * ∇ Loss(w)
+      # 6. 对在线网络执行梯度下降步骤
+      # 从在线网络获取采取动作 (A_j) 的 Q 值
+      Q_online_values = Q̂(S_j, A_j; w) 对于小批量中的 j
+      # 计算损失: 例如 MSE 损失 = (1/batch_size) * Σ_j (Targets[j] - Q_online_values[j])²
+      # 使用梯度下降更新在线网络权重: w ← w - α * ∇ Loss(w)
 
-      # 7. Update target network (periodically or softly)
-      # Hard update:
-      # If t % C == 0:
+      # 7. 更新目标网络（定期或软更新）
+      # 硬更新:
+      # 如果 t % C == 0:
       #   w⁻ ← w
-      # Soft update (more common in SB3):
+      # 软更新（SB3 中更常用）:
       # w⁻ ← τ*w + (1-τ)*w⁻
 
-    S_t ← S_{t+1} # Move to next state
+    S_t ← S_{t+1} # 转移到下一状态
 
-    If done_flag, break inner loop (episode ends)
+    如果 done_flag，退出内层循环（回合结束）
 
-  # (Optional) Decay ε</code></pre>
+  # （可选）衰减 ε</code></pre>
 <p><em>(注：步骤 5 中提到了 Double DQN 的变体，这是对原始 DQN 的一个常用改进，用于缓解 Q 值过高估计的问题。原始 DQN 直接使用 <code>max_{a'} Q̂(S_{j+1}, a'; w⁻)</code>。SB3 的实现可能包含这类改进。为简化起见，伪代码中仍展示原始 DQN 的目标计算方式。)</em></p>
 </section>
 <section id="lab-6-使用-stable-baselines3-运行-dqn-解决-cartpole" class="level1">

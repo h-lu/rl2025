@@ -1,11 +1,6 @@
 ---
 title: "Week 10 - 学生练习"
 subtitle: "深度 Q 网络 (DQN)"
-format:
-  html:
-    toc: true
-    toc-location: left
-    code-fold: show
 ---
 
 # 练习目标
@@ -29,7 +24,7 @@ format:
 4.  **目标网络:**
     *   目标网络机制是如何工作的？（简述双网络和参数更新方式）
     *   它主要解决了 Q-Learning + NN 不稳定性中的哪个问题？如何解决的？
-5.  **DQN 更新:** 在 DQN 的更新步骤中，计算 TD 目标 `Target = R + γ * max_a' Q̂(S', a'; w⁻)` 时，使用的是哪个网络的参数（`w` 还是 `w⁻`）？计算损失 `Loss = (Target - Q̂(S, A; w))²` 时，计算 `Q̂(S, A; w)` 使用的是哪个网络的参数？
+5.  **DQN 更新:** 在 DQN 的更新步骤中，计算 TD 目标 $Target = R + \gamma * \max_{a'} \hat{Q}(S', a'; w^{-})$ 时，使用的是哪个网络的参数（$w$ 还是 $w^{-}$）？计算损失 $Loss = (Target - \hat{Q}(S, A; w))^2$ 时，计算 $\hat{Q}(S, A; w)$ 使用的是哪个网络的参数？
 
 ## 练习 2: SB3 DQN 代码理解 (基于 Lab 6)
 
@@ -69,8 +64,8 @@ format:
 
 1.  对于你进行的**每一组**实验：
     *   记录你修改的超参数及其值。
-    *   记录使用 `evaluate_policy` 得到的最终评估结果 (`mean_reward` 和 `std_reward`)。
-    *   **(可选但推荐)** 截取 TensorBoard 中对应的 `rollout/ep_rew_mean` 曲线图。
+    *   记录使用 `evaluate_policy` 函数评估模型得到的最终性能指标（包括平均奖励 `mean_reward` 和奖励标准差 `std_reward`）。
+    *   **(可选但推荐)** 使用截图工具截取 TensorBoard 中 `rollout/ep_rew_mean` 曲线图，该曲线反映了训练过程中平均回合奖励的变化趋势。
 2.  **对比分析:** 对比不同超参数设置下的训练曲线和评估结果，与基础代码的结果进行比较。
     *   你观察到了哪些显著的差异？（例如，收敛速度变快/变慢？最终性能变好/变差？训练过程更稳定/更震荡？）
     *   尝试解释为什么修改这些超参数会导致观察到的结果变化？（结合这些超参数在 DQN 算法中的作用来分析）。
