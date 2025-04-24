@@ -1,0 +1,105 @@
+---
+title: "Week 10 综合实验：DQN 强化学习综合实践"
+subtitle: "Stable Baselines3 多环境与多方法探索"
+---
+
+# 实验说明
+
+本实验为课后综合性实验，建议用时：**1 周**。你可以根据兴趣和硬件条件，自由选择不同的环境、网络结构和 DQN 改进方法，深入探索深度强化学习的实际应用与性能对比。支持个人或小组合作。
+
+# 实验目标
+
+- 熟练掌握 Stable Baselines3 (SB3) 框架下 DQN 及其改进方法的使用。
+- 能够在多个不同环境（如 LunarLander-v2、CartPole-v1、Atari、MountainCar-v0 等）中训练和评估智能体。
+- 探索并对比不同网络结构（如 MLP、CNN）和 DQN 变体（Double DQN、Dueling DQN、Noisy DQN、PER、Rainbow DQN 等）的效果。
+- 设计并完成有针对性的超参数实验。
+- 培养自主实验设计、结果分析和创新能力。
+
+# 实验建议与选题方向
+
+## 1. 环境选择（任选1-2个）
+- **LunarLander-v2**（推荐，适合MLP）
+- **CartPole-v1**（入门，适合MLP）
+- **MountainCar-v0**（适合MLP，难度适中）
+- **Atari 环境**（如 BreakoutNoFrameskip-v4，需用CNN，训练时间较长，建议小组合作或只做部分训练）
+- 其他 Gymnasium 支持的离散动作环境
+
+## 2. 网络结构探索
+- MLP（多层感知机，适合向量型输入）
+- CNN（卷积神经网络，适合图像型输入，如 Atari）
+- 自定义网络深度与宽度
+
+## 3. DQN 改进方法（任选1-2项，或组合）
+- Double DQN（SB3 默认支持）
+- Dueling DQN
+- Noisy DQN（需自定义 policy 或查阅 sb3-contrib）
+- Prioritized Experience Replay（PER，需 sb3-contrib 或第三方实现）
+- Rainbow DQN（集成多种改进，需 sb3-contrib）
+- 其他你感兴趣的改进方法
+
+## 4. 超参数与对比实验
+- 设计对比实验：如不同网络结构、不同 DQN 变体、不同环境、不同超参数（learning_rate、buffer_size、batch_size、exploration_final_eps、gamma 等）
+- 记录每组实验的训练曲线、平均奖励、收敛速度等
+- 分析不同设置对性能的影响
+
+# 实验流程建议
+
+1. **环境与依赖准备**
+   - 安装依赖：
+     ```bash
+     pip install "stable-baselines3[extra]" gymnasium[box2d,atari] matplotlib numpy torch tensorboard
+     ```
+   - 选择并测试你要用的环境
+
+2. **基础 DQN 训练与评估**
+   - 以 LunarLander-v2 或 CartPole-v1 为例，完成基础 DQN 训练、评估与可视化
+   - 记录训练过程与结果
+
+3. **改进方法与网络结构实验**
+   - 选择至少一种 DQN 改进方法（如 Dueling DQN、Noisy DQN、PER、Rainbow DQN 等）
+   - 尝试不同网络结构（如 MLP、CNN）
+   - 可在 Atari 环境上尝试 CNN+DQN 或 Rainbow DQN
+
+4. **超参数与对比实验**
+   - 设计并完成至少两组对比实验（如不同网络结构、不同 DQN 变体、不同环境、不同超参数）
+   - 记录并分析结果
+
+5. **结果可视化与分析**
+   - 使用 TensorBoard 监控训练过程
+   - 绘制奖励曲线、对比柱状图等
+   - 分析不同实验的优劣与适用场景
+
+6. **创新与扩展（可选）**
+   - 尝试自定义奖励函数、环境修改、迁移学习等
+   - 或查阅文献，简要介绍某一前沿方法并尝试实现
+
+# 实验报告要求
+
+- 报告内容建议包括：
+  - 实验设计与选题说明
+  - 主要实验步骤与关键代码（可用 Jupyter Notebook 展示）
+  - 主要实验结果（奖励、曲线、对比图等）
+  - 结果分析与对比
+  - 主要收获与不足
+  - 创新点或扩展内容（如有）
+- 支持个人或小组合作（请注明分工）
+- 报告格式不限（Markdown、Word、PDF、Notebook均可）
+
+# 附录：常见问题与资源
+
+- **Atari 环境训练慢？**
+  - 可减少训练步数、只做部分训练或用预训练模型分析
+- **Noisy DQN、PER、Rainbow DQN 如何用？**
+  - 参考 [sb3-contrib 文档](https://sb3-contrib.readthedocs.io/en/master/) 或官方示例
+- **TensorBoard 无法显示？**
+  - 检查日志目录路径，确保已安装 tensorboard
+- **环境无法运行？**
+  - 检查依赖安装，特别是 box2d、atari
+- **更多资料**：
+  - [Stable Baselines3 官方文档](https://stable-baselines3.readthedocs.io/zh_CN/latest/)
+  - [SB3-Contrib 扩展库](https://sb3-contrib.readthedocs.io/en/master/)
+  - [OpenAI Gymnasium 文档](https://gymnasium.farama.org/)
+
+---
+
+祝你探索愉快，欢迎在报告中展示你的发现与创新！ 

@@ -17,7 +17,12 @@ vec_env = make_vec_env("CartPole-v1", n_envs=1) # 创建向量化环境，可以
 
 # 2. 定义模型 (选择算法，指定策略网络类型，传入环境)
 # "MlpPolicy": 使用多层感知机 (MLP) 作为 Q 网络
+policy_kwargs = dict(
+    net_arch=[64, 128, 64]  # 两层，每层64个神经元
+)
+
 model = DQN("MlpPolicy", vec_env, verbose=1, # verbose=1 打印训练信息
+            policy_kwargs=policy_kwargs,
             learning_rate=1e-4,
             buffer_size=100000, # 经验回放缓冲区大小
             learning_starts=1000, # 多少步后开始学习
@@ -36,7 +41,7 @@ model = DQN("MlpPolicy", vec_env, verbose=1, # verbose=1 打印训练信息
 print("开始训练模型...")
 start_time = time.time()
 # total_timesteps: 总的训练步数
-model.learn(total_timesteps=100000, log_interval=10) # log_interval 控制打印频率
+model.learn(total_timesteps=1000000, log_interval=100) # log_interval 控制打印频率
 end_time = time.time()
 print(f"训练完成，耗时 {end_time - start_time:.2f} 秒")
 

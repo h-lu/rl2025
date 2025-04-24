@@ -100,5 +100,8 @@
   },
   "sarsa_vs_qlearning_comparison.qmd": {
     "sarsa_vs_qlearning_comparison.html": "95ed723f"
+  },
+  "week10_lab_dqn_experiment.qmd": {
+    "week10_lab_dqn_experiment.html": "9fdd974d"
   }
 }

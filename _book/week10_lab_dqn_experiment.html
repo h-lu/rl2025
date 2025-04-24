@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Week 8 - 学生练习 – 智能计算</title>
+<title>Week 10 综合实验：DQN 强化学习综合实践 – 智能计算</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -30,8 +64,8 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./week9_exercise.html" rel="next">
-<link href="./week7_exercise.html" rel="prev">
+<link href="./week11_lecture.html" rel="next">
+<link href="./week10_lecture.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -83,7 +117,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./week1_exercise.html">练习</a></li><li class="breadcrumb-item"><a href="./week8_exercise.html"><span class="chapter-title">Week 8 - 学生练习</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./week1_lecture.html">讲义</a></li><li class="breadcrumb-item"><a href="./week10_lab_dqn_experiment.html"><span class="chapter-title">Week 10 综合实验：DQN 强化学习综合实践</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -179,7 +213,7 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./week10_lab_dqn_experiment.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 10 综合实验：DQN 强化学习综合实践</span></a>
+  <a href="./week10_lab_dqn_experiment.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Week 10 综合实验：DQN 强化学习综合实践</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -260,7 +294,7 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./week8_exercise.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Week 8 - 学生练习</span></a>
+  <a href="./week8_exercise.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Week 8 - 学生练习</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -307,32 +341,36 @@ ul.task-list li input[type="checkbox"] {
   </li>
     </ul>
     </div>
-    <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">Table of contents</h2>
-   
-  <ul>
-  <li><a href="#练习目标" id="toc-练习目标" class="nav-link active" data-scroll-target="#练习目标">练习目标</a></li>
-  <li><a href="#练习内容" id="toc-练习内容" class="nav-link" data-scroll-target="#练习内容">练习内容</a>
-  <ul class="collapse">
-  <li><a href="#练习-1-动态定价-mdp-定义深化" id="toc-练习-1-动态定价-mdp-定义深化" class="nav-link" data-scroll-target="#练习-1-动态定价-mdp-定义深化">练习 1: 动态定价 MDP 定义深化</a></li>
-  <li><a href="#练习-2-表格型-q-learning-的局限性思考" id="toc-练习-2-表格型-q-learning-的局限性思考" class="nav-link" data-scroll-target="#练习-2-表格型-q-learning-的局限性思考">练习 2: 表格型 Q-Learning 的局限性思考</a></li>
-  <li><a href="#练习-3-中期核心概念回顾" id="toc-练习-3-中期核心概念回顾" class="nav-link" data-scroll-target="#练习-3-中期核心概念回顾">练习 3: 中期核心概念回顾</a></li>
-  </ul></li>
-  <li><a href="#提交要求" id="toc-提交要求" class="nav-link" data-scroll-target="#提交要求">提交要求</a></li>
-  </ul>
-</nav>
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#实验说明" id="toc-实验说明" class="nav-link active" data-scroll-target="#实验说明">实验说明</a></li>
+  <li><a href="#实验目标" id="toc-实验目标" class="nav-link" data-scroll-target="#实验目标">实验目标</a></li>
+  <li><a href="#实验建议与选题方向" id="toc-实验建议与选题方向" class="nav-link" data-scroll-target="#实验建议与选题方向">实验建议与选题方向</a>
+  <ul class="collapse">
+  <li><a href="#环境选择任选1-2个" id="toc-环境选择任选1-2个" class="nav-link" data-scroll-target="#环境选择任选1-2个">1. 环境选择（任选1-2个）</a></li>
+  <li><a href="#网络结构探索" id="toc-网络结构探索" class="nav-link" data-scroll-target="#网络结构探索">2. 网络结构探索</a></li>
+  <li><a href="#dqn-改进方法任选1-2项或组合" id="toc-dqn-改进方法任选1-2项或组合" class="nav-link" data-scroll-target="#dqn-改进方法任选1-2项或组合">3. DQN 改进方法（任选1-2项，或组合）</a></li>
+  <li><a href="#超参数与对比实验" id="toc-超参数与对比实验" class="nav-link" data-scroll-target="#超参数与对比实验">4. 超参数与对比实验</a></li>
+  </ul></li>
+  <li><a href="#实验流程建议" id="toc-实验流程建议" class="nav-link" data-scroll-target="#实验流程建议">实验流程建议</a></li>
+  <li><a href="#实验报告要求" id="toc-实验报告要求" class="nav-link" data-scroll-target="#实验报告要求">实验报告要求</a></li>
+  <li><a href="#附录常见问题与资源" id="toc-附录常见问题与资源" class="nav-link" data-scroll-target="#附录常见问题与资源">附录：常见问题与资源</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./week1_exercise.html">练习</a></li><li class="breadcrumb-item"><a href="./week8_exercise.html"><span class="chapter-title">Week 8 - 学生练习</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./week1_lecture.html">讲义</a></li><li class="breadcrumb-item"><a href="./week10_lab_dqn_experiment.html"><span class="chapter-title">Week 10 综合实验：DQN 强化学习综合实践</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-title">Week 8 - 学生练习</span></h1>
-<p class="subtitle lead">Q-Learning 应用讨论与中期回顾</p>
+<h1 class="title"><span class="chapter-title">Week 10 综合实验：DQN 强化学习综合实践</span></h1>
+<p class="subtitle lead">Stable Baselines3 多环境与多方法探索</p>
 </div>
 
 
@@ -349,67 +387,142 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<section id="练习目标" class="level1">
-<h1>练习目标</h1>
+<section id="实验说明" class="level1">
+<h1>实验说明</h1>
+<p>本实验为课后综合性实验，建议用时：<strong>1 周</strong>。你可以根据兴趣和硬件条件，自由选择不同的环境、网络结构和 DQN 改进方法，深入探索深度强化学习的实际应用与性能对比。支持个人或小组合作。</p>
+</section>
+<section id="实验目标" class="level1">
+<h1>实验目标</h1>
 <ul>
-<li>练习将 Q-Learning 思想应用于分析商业问题（动态定价）。</li>
-<li>深入思考 MDP 定义中状态、动作、奖励设计的挑战与权衡。</li>
-<li>理解表格型 Q-Learning 在复杂问题中的局限性。</li>
-<li>复习并检验对前半学期核心概念的掌握程度。</li>
+<li>熟练掌握 Stable Baselines3 (SB3) 框架下 DQN 及其改进方法的使用。</li>
+<li>能够在多个不同环境（如 LunarLander-v2、CartPole-v1、Atari、MountainCar-v0 等）中训练和评估智能体。</li>
+<li>探索并对比不同网络结构（如 MLP、CNN）和 DQN 变体（Double DQN、Dueling DQN、Noisy DQN、PER、Rainbow DQN 等）的效果。</li>
+<li>设计并完成有针对性的超参数实验。</li>
+<li>培养自主实验设计、结果分析和创新能力。</li>
 </ul>
 </section>
-<section id="练习内容" class="level1">
-<h1>练习内容</h1>
-<section id="练习-1-动态定价-mdp-定义深化" class="level2">
-<h2 class="anchored" data-anchor-id="练习-1-动态定价-mdp-定义深化">练习 1: 动态定价 MDP 定义深化</h2>
-<p>回顾本周讲义中讨论的<strong>简单动态定价</strong>案例（单一商品，有限时间，目标是最大化总收入）。</p>
-<ol type="1">
-<li><strong>状态表示 S = (剩余时间 t, 当前库存 k):</strong>
+<section id="实验建议与选题方向" class="level1">
+<h1>实验建议与选题方向</h1>
+<section id="环境选择任选1-2个" class="level2">
+<h2 class="anchored" data-anchor-id="环境选择任选1-2个">1. 环境选择（任选1-2个）</h2>
 <ul>
-<li>你认为这个状态表示足够捕捉做出最优定价决策所需的所有关键信息吗？还缺少哪些可能重要的信息？（至少列举 2 项）</li>
-<li>如果加入了“上一个时间段的销售量”作为状态的一部分，你认为这有助于更好地近似马尔可夫性质吗？为什么？</li>
-</ul></li>
-<li><strong>奖励函数 R = 当天销售收入:</strong>
-<ul>
-<li>如果商店的目标不仅仅是最大化本周收入，还包括<strong>维持良好的品牌形象</strong>（避免被认为价格波动过大或宰客），你会如何修改奖励函数 R 来反映这个目标？（描述性说明即可，思考可能加入哪些正/负奖励项）</li>
-<li>如果目标是<strong>最大化总利润</strong>而不是总收入，假设商品的单位成本是 C，奖励函数 R 应该如何修改？</li>
-</ul></li>
-<li><strong>动作空间 A = {P_low, P_mid, P_high}:</strong>
-<ul>
-<li>如果我们将动作空间定义为更细的价格档位（例如 10 个价格点），这会对 Q 表的大小和学习效率产生什么影响？</li>
-<li>如果允许价格连续变化（例如，在某个范围内任意定价），表格型 Q-Learning 还能直接应用吗？为什么？</li>
-</ul></li>
-</ol>
-</section>
-<section id="练习-2-表格型-q-learning-的局限性思考" class="level2">
-<h2 class="anchored" data-anchor-id="练习-2-表格型-q-learning-的局限性思考">练习 2: 表格型 Q-Learning 的局限性思考</h2>
-<p>继续考虑动态定价案例。</p>
-<ol type="1">
-<li><strong>状态空间大小:</strong> 假设销售周期是 30 天 (T=30)，最大库存量是 500 件 (K=500)，有 5 个离散的价格点可选 (A=5)。那么存储这个问题的 Q 表需要多少个条目？（写出计算方式和结果）</li>
-<li><strong>维度灾难:</strong> 如果我们往状态 S 中再加入一个维度，例如“竞争对手的价格”（假设有 10 种可能的价格水平），那么 Q 表的大小会变成多少？这说明了什么问题？</li>
-<li><strong>泛化能力:</strong> 假设智能体通过学习，知道了在状态 (t=5, k=100) 时，选择 P_mid 是个好动作。对于一个从未遇到过的状态 (t=5, k=101)，表格型 Q-Learning 能否利用之前学到的知识来判断 P_mid 在这个新状态下的价值？为什么？这体现了表格型方法的什么局限性？</li>
-</ol>
-</section>
-<section id="练习-3-中期核心概念回顾" class="level2">
-<h2 class="anchored" data-anchor-id="练习-3-中期核心概念回顾">练习 3: 中期核心概念回顾</h2>
-<p>请简要回答以下问题，检验你对前半学期核心概念的理解：</p>
-<ol type="1">
-<li><strong>MDP 五元组:</strong> 写出马尔可夫决策过程 (MDP) 的五个组成要素，并简述每个要素的含义。</li>
-<li><strong>Bellman 期望 vs.&nbsp;最优:</strong> Bellman 期望方程和 Bellman 最优方程的主要区别是什么？哪个用于评估给定策略？哪个用于描述最优策略的价值？</li>
-<li><strong>MC vs.&nbsp;TD(0):</strong> 蒙特卡洛 (MC) 预测和时序差分 (TD(0)) 预测在更新价值函数时，使用的“目标值”分别是什么？哪个方法存在偏差？哪个方法方差更大？</li>
-<li><strong>On-Policy vs.&nbsp;Off-Policy:</strong> 请用一句话概括同策略 (On-Policy) 和异策略 (Off-Policy) 的核心区别。SARSA 和 Q-Learning 分别属于哪一类？</li>
-<li><strong>SARSA vs.&nbsp;Q-Learning 更新:</strong> 写出 SARSA 和 Q-Learning 的核心更新规则（Q 值更新部分即可），并指出它们的关键差异点。</li>
-</ol>
-</section>
-</section>
-<section id="提交要求" class="level1">
-<h1>提交要求</h1>
-<ul>
-<li>请将你的答案整理成一个文档（如 Word, PDF, 或 Markdown 文件）。</li>
-<li>对于练习 1, 2, 3，请清晰地回答问题并阐述理由或计算过程。</li>
-<li>文件命名格式：<code>姓名_学号_Week8_Exercise.xxx</code>。</li>
-<li>通过教学平台提交。</li>
+<li><strong>LunarLander-v2</strong>（推荐，适合MLP）</li>
+<li><strong>CartPole-v1</strong>（入门，适合MLP）</li>
+<li><strong>MountainCar-v0</strong>（适合MLP，难度适中）</li>
+<li><strong>Atari 环境</strong>（如 BreakoutNoFrameskip-v4，需用CNN，训练时间较长，建议小组合作或只做部分训练）</li>
+<li>其他 Gymnasium 支持的离散动作环境</li>
 </ul>
+</section>
+<section id="网络结构探索" class="level2">
+<h2 class="anchored" data-anchor-id="网络结构探索">2. 网络结构探索</h2>
+<ul>
+<li>MLP（多层感知机，适合向量型输入）</li>
+<li>CNN（卷积神经网络，适合图像型输入，如 Atari）</li>
+<li>自定义网络深度与宽度</li>
+</ul>
+</section>
+<section id="dqn-改进方法任选1-2项或组合" class="level2">
+<h2 class="anchored" data-anchor-id="dqn-改进方法任选1-2项或组合">3. DQN 改进方法（任选1-2项，或组合）</h2>
+<ul>
+<li>Double DQN（SB3 默认支持）</li>
+<li>Dueling DQN</li>
+<li>Noisy DQN（需自定义 policy 或查阅 sb3-contrib）</li>
+<li>Prioritized Experience Replay（PER，需 sb3-contrib 或第三方实现）</li>
+<li>Rainbow DQN（集成多种改进，需 sb3-contrib）</li>
+<li>其他你感兴趣的改进方法</li>
+</ul>
+</section>
+<section id="超参数与对比实验" class="level2">
+<h2 class="anchored" data-anchor-id="超参数与对比实验">4. 超参数与对比实验</h2>
+<ul>
+<li>设计对比实验：如不同网络结构、不同 DQN 变体、不同环境、不同超参数（learning_rate、buffer_size、batch_size、exploration_final_eps、gamma 等）</li>
+<li>记录每组实验的训练曲线、平均奖励、收敛速度等</li>
+<li>分析不同设置对性能的影响</li>
+</ul>
+</section>
+</section>
+<section id="实验流程建议" class="level1">
+<h1>实验流程建议</h1>
+<ol type="1">
+<li><strong>环境与依赖准备</strong>
+<ul>
+<li><p>安装依赖：</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install <span class="st">"stable-baselines3[extra]"</span> gymnasium<span class="pp">[</span><span class="ss">box2d,atari</span><span class="pp">]</span> matplotlib numpy torch tensorboard</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<li><p>选择并测试你要用的环境</p></li>
+</ul></li>
+<li><strong>基础 DQN 训练与评估</strong>
+<ul>
+<li>以 LunarLander-v2 或 CartPole-v1 为例，完成基础 DQN 训练、评估与可视化</li>
+<li>记录训练过程与结果</li>
+</ul></li>
+<li><strong>改进方法与网络结构实验</strong>
+<ul>
+<li>选择至少一种 DQN 改进方法（如 Dueling DQN、Noisy DQN、PER、Rainbow DQN 等）</li>
+<li>尝试不同网络结构（如 MLP、CNN）</li>
+<li>可在 Atari 环境上尝试 CNN+DQN 或 Rainbow DQN</li>
+</ul></li>
+<li><strong>超参数与对比实验</strong>
+<ul>
+<li>设计并完成至少两组对比实验（如不同网络结构、不同 DQN 变体、不同环境、不同超参数）</li>
+<li>记录并分析结果</li>
+</ul></li>
+<li><strong>结果可视化与分析</strong>
+<ul>
+<li>使用 TensorBoard 监控训练过程</li>
+<li>绘制奖励曲线、对比柱状图等</li>
+<li>分析不同实验的优劣与适用场景</li>
+</ul></li>
+<li><strong>创新与扩展（可选）</strong>
+<ul>
+<li>尝试自定义奖励函数、环境修改、迁移学习等</li>
+<li>或查阅文献，简要介绍某一前沿方法并尝试实现</li>
+</ul></li>
+</ol>
+</section>
+<section id="实验报告要求" class="level1">
+<h1>实验报告要求</h1>
+<ul>
+<li>报告内容建议包括：
+<ul>
+<li>实验设计与选题说明</li>
+<li>主要实验步骤与关键代码（可用 Jupyter Notebook 展示）</li>
+<li>主要实验结果（奖励、曲线、对比图等）</li>
+<li>结果分析与对比</li>
+<li>主要收获与不足</li>
+<li>创新点或扩展内容（如有）</li>
+</ul></li>
+<li>支持个人或小组合作（请注明分工）</li>
+<li>报告格式不限（Markdown、Word、PDF、Notebook均可）</li>
+</ul>
+</section>
+<section id="附录常见问题与资源" class="level1">
+<h1>附录：常见问题与资源</h1>
+<ul>
+<li><strong>Atari 环境训练慢？</strong>
+<ul>
+<li>可减少训练步数、只做部分训练或用预训练模型分析</li>
+</ul></li>
+<li><strong>Noisy DQN、PER、Rainbow DQN 如何用？</strong>
+<ul>
+<li>参考 <a href="https://sb3-contrib.readthedocs.io/en/master/">sb3-contrib 文档</a> 或官方示例</li>
+</ul></li>
+<li><strong>TensorBoard 无法显示？</strong>
+<ul>
+<li>检查日志目录路径，确保已安装 tensorboard</li>
+</ul></li>
+<li><strong>环境无法运行？</strong>
+<ul>
+<li>检查依赖安装，特别是 box2d、atari</li>
+</ul></li>
+<li><strong>更多资料</strong>：
+<ul>
+<li><a href="https://stable-baselines3.readthedocs.io/zh_CN/latest/">Stable Baselines3 官方文档</a></li>
+<li><a href="https://sb3-contrib.readthedocs.io/en/master/">SB3-Contrib 扩展库</a></li>
+<li><a href="https://gymnasium.farama.org/">OpenAI Gymnasium 文档</a></li>
+</ul></li>
+</ul>
+<hr>
+<p>祝你探索愉快，欢迎在报告中展示你的发现与创新！</p>
 
 
 </section>
@@ -837,13 +950,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./week7_exercise.html" class="pagination-link" aria-label="Week 7 - 学生练习">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">Week 7 - 学生练习</span></span>
+      <a href="./week10_lecture.html" class="pagination-link" aria-label="Week 10: 深度 Q 网络 (DQN)">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">Week 10: 深度 Q 网络 (DQN)</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./week9_exercise.html" class="pagination-link" aria-label="Week 9 - 学生练习">
-        <span class="nav-page-text"><span class="chapter-title">Week 9 - 学生练习</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./week11_lecture.html" class="pagination-link" aria-label="Week 11: 策略梯度方法 (Policy Gradient Methods)">
+        <span class="nav-page-text"><span class="chapter-title">Week 11: 策略梯度方法 (Policy Gradient Methods)</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

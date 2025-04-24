@@ -20,6 +20,7 @@ book:
         - week8_lecture.qmd
         - week9_lecture.qmd
         - week10_lecture.qmd
+        - week10_lab_dqn_experiment.qmd
         - week11_lecture.qmd
         - week12_lecture.qmd
         - week13_lecture.qmd

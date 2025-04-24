@@ -901,6 +901,61 @@
     ]
   },
   {
+    "objectID": "week10_lab_dqn_experiment.html",
+    "href": "week10_lab_dqn_experiment.html",
+    "title": "Week 10 综合实验：DQN 强化学习综合实践",
+    "section": "",
+    "text": "实验说明\n本实验为课后综合性实验，建议用时：1 周。你可以根据兴趣和硬件条件，自由选择不同的环境、网络结构和 DQN 改进方法，深入探索深度强化学习的实际应用与性能对比。支持个人或小组合作。",
+    "crumbs": [
+      "讲义",
+      "<span class='chapter-number'>13</span>  <span class='chapter-title'>Week 10 综合实验：DQN 强化学习综合实践</span>"
+    ]
+  },
+  {
+    "objectID": "week10_lab_dqn_experiment.html#环境选择任选1-2个",
+    "href": "week10_lab_dqn_experiment.html#环境选择任选1-2个",
+    "title": "Week 10 综合实验：DQN 强化学习综合实践",
+    "section": "1. 环境选择（任选1-2个）",
+    "text": "1. 环境选择（任选1-2个）\n\nLunarLander-v2（推荐，适合MLP）\nCartPole-v1（入门，适合MLP）\nMountainCar-v0（适合MLP，难度适中）\nAtari 环境（如 BreakoutNoFrameskip-v4，需用CNN，训练时间较长，建议小组合作或只做部分训练）\n其他 Gymnasium 支持的离散动作环境",
+    "crumbs": [
+      "讲义",
+      "<span class='chapter-number'>13</span>  <span class='chapter-title'>Week 10 综合实验：DQN 强化学习综合实践</span>"
+    ]
+  },
+  {
+    "objectID": "week10_lab_dqn_experiment.html#网络结构探索",
+    "href": "week10_lab_dqn_experiment.html#网络结构探索",
+    "title": "Week 10 综合实验：DQN 强化学习综合实践",
+    "section": "2. 网络结构探索",
+    "text": "2. 网络结构探索\n\nMLP（多层感知机，适合向量型输入）\nCNN（卷积神经网络，适合图像型输入，如 Atari）\n自定义网络深度与宽度",
+    "crumbs": [
+      "讲义",
+      "<span class='chapter-number'>13</span>  <span class='chapter-title'>Week 10 综合实验：DQN 强化学习综合实践</span>"
+    ]
+  },
+  {
+    "objectID": "week10_lab_dqn_experiment.html#dqn-改进方法任选1-2项或组合",
+    "href": "week10_lab_dqn_experiment.html#dqn-改进方法任选1-2项或组合",
+    "title": "Week 10 综合实验：DQN 强化学习综合实践",
+    "section": "3. DQN 改进方法（任选1-2项，或组合）",
+    "text": "3. DQN 改进方法（任选1-2项，或组合）\n\nDouble DQN（SB3 默认支持）\nDueling DQN\nNoisy DQN（需自定义 policy 或查阅 sb3-contrib）\nPrioritized Experience Replay（PER，需 sb3-contrib 或第三方实现）\nRainbow DQN（集成多种改进，需 sb3-contrib）\n其他你感兴趣的改进方法",
+    "crumbs": [
+      "讲义",
+      "<span class='chapter-number'>13</span>  <span class='chapter-title'>Week 10 综合实验：DQN 强化学习综合实践</span>"
+    ]
+  },
+  {
+    "objectID": "week10_lab_dqn_experiment.html#超参数与对比实验",
+    "href": "week10_lab_dqn_experiment.html#超参数与对比实验",
+    "title": "Week 10 综合实验：DQN 强化学习综合实践",
+    "section": "4. 超参数与对比实验",
+    "text": "4. 超参数与对比实验\n\n设计对比实验：如不同网络结构、不同 DQN 变体、不同环境、不同超参数（learning_rate、buffer_size、batch_size、exploration_final_eps、gamma 等）\n记录每组实验的训练曲线、平均奖励、收敛速度等\n分析不同设置对性能的影响",
+    "crumbs": [
+      "讲义",
+      "<span class='chapter-number'>13</span>  <span class='chapter-title'>Week 10 综合实验：DQN 强化学习综合实践</span>"
+    ]
+  },
+  {
     "objectID": "week11_lecture.html",
     "href": "week11_lecture.html",
     "title": "Week 11: 策略梯度方法 (Policy Gradient Methods)",
@@ -908,7 +963,7 @@
     "text": "回顾：基于价值的强化学习 (Value-Based RL)\n到目前为止，我们学习的方法（SARSA, Q-Learning, DQN）都属于基于价值 (Value-Based) 的强化学习方法。\n为了克服这些局限性，我们需要另一类强化学习方法：策略梯度方法 (Policy Gradient Methods)。",
     "crumbs": [
       "讲义",
-      "<span class='chapter-number'>13</span>  <span class='chapter-title'>Week 11: 策略梯度方法 (Policy Gradient Methods)</span>"
+      "<span class='chapter-number'>14</span>  <span class='chapter-title'>Week 11: 策略梯度方法 (Policy Gradient Methods)</span>"
     ]
   },
   {
@@ -919,7 +974,7 @@
     "text": "优势\n\n处理连续动作空间: 策略网络可以直接输出连续动作的参数（例如，高斯分布的均值和标准差），这是基于价值的方法难以做到的。\n学习随机策略: 策略网络可以自然地表示随机策略 π(a|s, θ)，这在某些问题中是必要的。\n更好的收敛性质 (某些情况下): 尽管方差可能大，但策略梯度方法有时比基于价值的方法具有更好的收敛保证（尤其是在函数逼近下）。\n可以学习更简单的策略: 有时最优策略可能比最优价值函数简单得多，直接学习策略可能更容易。",
     "crumbs": [
       "讲义",
-      "<span class='chapter-number'>13</span>  <span class='chapter-title'>Week 11: 策略梯度方法 (Policy Gradient Methods)</span>"
+      "<span class='chapter-number'>14</span>  <span class='chapter-title'>Week 11: 策略梯度方法 (Policy Gradient Methods)</span>"
     ]
   },
   {
@@ -930,7 +985,7 @@
     "text": "劣势\n\n高方差: 基本的策略梯度方法（如 REINFORCE）梯度估计方差很大，导致收敛慢、不稳定。需要使用基线、Actor-Critic 等技术来缓解。\n样本效率通常较低: 相对于 Off-Policy 的 DQN 等方法，On-Policy 的策略梯度方法通常需要更多的样本才能学习。\n容易收敛到局部最优: 梯度上升可能会陷入局部最优的策略参数。\n对超参数敏感: 学习率、基线的设计等对性能影响较大。",
     "crumbs": [
       "讲义",
-      "<span class='chapter-number'>13</span>  <span class='chapter-title'>Week 11: 策略梯度方法 (Policy Gradient Methods)</span>"
+      "<span class='chapter-number'>14</span>  <span class='chapter-title'>Week 11: 策略梯度方法 (Policy Gradient Methods)</span>"
     ]
   },
   {
@@ -941,7 +996,7 @@
     "text": "引出 Actor-Critic\n基本的 REINFORCE 算法使用蒙特卡洛方法估计回报 G_t (或 Qπ)，导致高方差。引入基线 Vπ 可以减小方差，但我们又需要估计 Vπ。\nActor-Critic 方法 正是为了解决这个问题而提出的：\n\nActor (行动者): 负责选择动作。它就是我们上面讨论的策略网络 π(a|s, θ)，参数为 θ。\nCritic (评论家): 负责评估动作的好坏。它学习一个价值函数（通常是状态值函数 V(s, w) 或动作值函数 Q(s, a, w)），参数为 w。Critic 的输出用于指导 Actor 的更新（例如，作为基线或计算优势函数）。\n\nActor 和 Critic 同时学习和更新：\n\nActor 根据当前策略 π(·|·, θ) 选择动作 A_t。\n执行动作，观察 R_{t+1}, S_{t+1}。\nCritic 使用 TD 误差等方法更新其价值函数参数 w (学习如何更好地评估)。\nActor 使用 Critic 提供的信息（如 TD 误差或优势函数估计）来更新其策略参数 θ (学习如何选择更好的动作)。\n\n这种结构结合了策略梯度（Actor 更新）和 TD 学习（Critic 更新）的优点，通常比纯粹的 REINFORCE 或纯粹的价值学习方法更稳定和高效。我们将在下周详细学习 Actor-Critic 方法。\n\n下周预告: Actor-Critic 方法。我们将学习 Actor-Critic 框架，以及具体的 A2C/A3C 算法概念，并使用 Stable Baselines3 运行 A2C 算法。",
     "crumbs": [
       "讲义",
-      "<span class='chapter-number'>13</span>  <span class='chapter-title'>Week 11: 策略梯度方法 (Policy Gradient Methods)</span>"
+      "<span class='chapter-number'>14</span>  <span class='chapter-title'>Week 11: 策略梯度方法 (Policy Gradient Methods)</span>"
     ]
   },
   {
@@ -952,7 +1007,7 @@
     "text": "回顾：策略梯度 (Policy Gradient) 与 REINFORCE\n上周我们学习了策略梯度 (PG) 方法：\n问题: 如何在不知道 Qπ 和 Vπ 的情况下，有效地估计优势函数 Aπ 并进行策略更新？",
     "crumbs": [
       "讲义",
-      "<span class='chapter-number'>14</span>  <span class='chapter-title'>Week 12: Actor-Critic 方法</span>"
+      "<span class='chapter-number'>15</span>  <span class='chapter-title'>Week 12: Actor-Critic 方法</span>"
     ]
   },
   {
@@ -963,7 +1018,7 @@
     "text": "目标\n\n使用 Stable Baselines3 (SB3) 运行 A2C 算法。\n在 CartPole (离散动作) 或 Pendulum (连续动作) 环境上进行实验。\n对比 A2C 和 DQN (在 CartPole 上) 的训练过程和结果。\n理解 Actor-Critic 方法相对于 DQN 的优势（尤其是在处理连续动作空间方面）。",
     "crumbs": [
       "讲义",
-      "<span class='chapter-number'>14</span>  <span class='chapter-title'>Week 12: Actor-Critic 方法</span>"
+      "<span class='chapter-number'>15</span>  <span class='chapter-title'>Week 12: Actor-Critic 方法</span>"
     ]
   },
   {
@@ -974,7 +1029,7 @@
     "text": "环境选择\n\nCartPole-v1: 离散动作空间。可以与上周的 DQN 进行直接比较。\nPendulum-v1: 连续动作空间。\n\n目标: 通过施加力矩，将倒立摆摆动到最高点并保持稳定。\n状态: [cos(杆角度), sin(杆角度), 杆角速度] (连续)。\n动作: 施加的力矩 (连续值，通常在 [-2.0, 2.0] 之间)。\n奖励: 与杆子角度和角速度有关，目标是最大化奖励（最小化“成本”）。\n注意: DQN 无法直接处理 Pendulum 的连续动作空间，而 A2C 可以。",
     "crumbs": [
       "讲义",
-      "<span class='chapter-number'>14</span>  <span class='chapter-title'>Week 12: Actor-Critic 方法</span>"
+      "<span class='chapter-number'>15</span>  <span class='chapter-title'>Week 12: Actor-Critic 方法</span>"
     ]
   },
   {
@@ -985,7 +1040,7 @@
     "text": "示例代码 (SB3 A2C on CartPole)\nimport gymnasium as gym\nfrom stable_baselines3 import A2C\nfrom stable_baselines3.common.env_util import make_vec_env\nfrom stable_baselines3.common.evaluation import evaluate_policy\nimport time\nimport os\n\n# 创建日志目录\nlog_dir = \"/tmp/gym_a2c/\"\nos.makedirs(log_dir, exist_ok=True)\n\n# 1. 创建环境 (A2C 通常需要向量化环境)\nvec_env = make_vec_env(\"CartPole-v1\", n_envs=8) # A2C 通常使用更多并行环境\n\n# 2. 定义 A2C 模型\n# A2C 使用 \"MlpPolicy\" 或 \"CnnPolicy\"\n# 关键超参数:\n# n_steps: 每个环境在更新前运行多少步 (影响 TD 估计的长度)\n# vf_coef: 值函数损失的系数 (Critic loss weight)\n# ent_coef: 熵正则化系数 (鼓励探索)\nmodel = A2C(\"MlpPolicy\", vec_env, verbose=1,\n            gamma=0.99,             # 折扣因子\n            n_steps=5,              # 每个环境更新前运行 5 步\n            vf_coef=0.5,            # 值函数损失系数\n            ent_coef=0.0,           # 熵正则化系数 (CartPole 通常不需要太多探索)\n            learning_rate=7e-4,     # 学习率 (A2C 通常用稍高一点的学习率)\n            tensorboard_log=log_dir\n           )\n\n# 3. 训练模型\nprint(\"Starting A2C training on CartPole...\")\nstart_time = time.time()\nmodel.learn(total_timesteps=100000, log_interval=50) # 训练步数与 DQN 保持一致\nend_time = time.time()\nprint(f\"Training finished in {end_time - start_time:.2f} seconds.\")\n\n# 4. 保存模型\nmodel_path = os.path.join(log_dir, \"a2c_cartpole_sb3\")\nmodel.save(model_path)\nprint(f\"Model saved to {model_path}.zip\")\n\n# 5. 评估训练好的模型\nprint(\"Evaluating trained A2C model...\")\neval_env = gym.make(\"CartPole-v1\")\nmean_reward, std_reward = evaluate_policy(model, eval_env, n_eval_episodes=20, deterministic=True)\nprint(f\"Evaluation results (A2C): Mean reward = {mean_reward:.2f} +/- {std_reward:.2f}\")\n\nvec_env.close()\neval_env.close()\n\nprint(f\"To view training logs, run: tensorboard --logdir {log_dir}\")\n\n# --- (可选) 运行 A2C on Pendulum-v1 ---\n# print(\"\\nStarting A2C training on Pendulum...\")\n# log_dir_pendulum = \"/tmp/gym_a2c_pendulum/\"\n# os.makedirs(log_dir_pendulum, exist_ok=True)\n# vec_env_pendulum = make_vec_env(\"Pendulum-v1\", n_envs=8)\n# model_pendulum = A2C(\"MlpPolicy\", vec_env_pendulum, verbose=1,\n#                      gamma=0.99,\n#                      n_steps=5,\n#                      vf_coef=0.5,\n#                      ent_coef=0.0, # Pendulum 可能需要一点熵正则化\n#                      learning_rate=7e-4,\n#                      tensorboard_log=log_dir_pendulum\n#                     )\n# start_time = time.time()\n# model_pendulum.learn(total_timesteps=200000, log_interval=50) # Pendulum 可能需要更多步数\n# end_time = time.time()\n# print(f\"Pendulum training finished in {end_time - start_time:.2f} seconds.\")\n# model_path_pendulum = os.path.join(log_dir_pendulum, \"a2c_pendulum_sb3\")\n# model_pendulum.save(model_path_pendulum)\n# print(f\"Pendulum model saved to {model_path_pendulum}.zip\")\n\n# print(\"Evaluating trained A2C model on Pendulum...\")\n# eval_env_pendulum = gym.make(\"Pendulum-v1\")\n# mean_reward_p, std_reward_p = evaluate_policy(model_pendulum, eval_env_pendulum, n_eval_episodes=10, deterministic=True)\n# print(f\"Evaluation results (A2C on Pendulum): Mean reward = {mean_reward_p:.2f} +/- {std_reward_p:.2f}\")\n# vec_env_pendulum.close()\n# eval_env_pendulum.close()\n# print(f\"To view Pendulum training logs, run: tensorboard --logdir {log_dir_pendulum}\")",
     "crumbs": [
       "讲义",
-      "<span class='chapter-number'>14</span>  <span class='chapter-title'>Week 12: Actor-Critic 方法</span>"
+      "<span class='chapter-number'>15</span>  <span class='chapter-title'>Week 12: Actor-Critic 方法</span>"
     ]
   },
   {
@@ -996,7 +1051,7 @@
     "text": "任务与思考\n\n运行 A2C on CartPole: 运行代码的前半部分（CartPole）。使用 TensorBoard 观察训练曲线 (rollout/ep_rew_mean)。查看最终的评估结果。\n对比 A2C 与 DQN (CartPole):\n\n比较 A2C 和上周 DQN 在 CartPole 上的收敛速度（达到相似性能所需的步数）和最终性能（评估奖励）。哪个表现更好或更快？（注意：超参数可能需要调整才能公平比较）。\n考虑两种算法的样本效率。哪个算法似乎需要更少的交互步数来学习？（提示：DQN 使用经验回放，A2C 通常是 On-Policy）。\n\n(可选) 运行 A2C on Pendulum: 取消注释代码的后半部分，运行 A2C 解决 Pendulum-v1 问题。观察训练曲线和评估结果。思考为什么 DQN 无法直接用于此任务，而 A2C 可以？\n分析 Actor-Critic:\n\n解释 Actor-Critic 框架如何结合策略学习和价值学习。\nCritic 在 Actor-Critic 中扮演什么角色？它如何帮助 Actor 学习？\n什么是优势函数？为什么在策略梯度更新中使用优势函数估计（如 TD 误差）通常比使用原始回报更好？",
     "crumbs": [
       "讲义",
-      "<span class='chapter-number'>14</span>  <span class='chapter-title'>Week 12: Actor-Critic 方法</span>"
+      "<span class='chapter-number'>15</span>  <span class='chapter-title'>Week 12: Actor-Critic 方法</span>"
     ]
   },
   {
@@ -1007,7 +1062,7 @@
     "text": "提交要求\n\n提交你运行和修改后的 SB3 A2C 代码 (至少包含 CartPole 部分)。\n提交 A2C 在 CartPole 上的 TensorBoard 训练曲线截图。\n提交 A2C 在 CartPole 上的评估结果。\n提交一份简短的分析报告，讨论：\n\nA2C 与 DQN 在 CartPole 上的性能对比（收敛速度、最终性能、可能的样本效率差异）。\n(如果运行了 Pendulum) 解释为什么 A2C 适用于连续动作空间而 DQN 不适用。\nActor-Critic 框架的基本原理以及 Critic 的作用。\n优势函数及其在降低方差方面的作用。\n\n\n\n下周预告: 商业案例分析 1 - 动态定价/资源优化。我们将深入探讨如何将前面学到的 RL 概念（MDP 定义、价值函数、Q-Learning、DQN、A2C 等）应用于更具体的商业场景，并讨论其中的挑战。",
     "crumbs": [
       "讲义",
-      "<span class='chapter-number'>14</span>  <span class='chapter-title'>Week 12: Actor-Critic 方法</span>"
+      "<span class='chapter-number'>15</span>  <span class='chapter-title'>Week 12: Actor-Critic 方法</span>"
     ]
   },
   {
@@ -1018,7 +1073,7 @@
     "text": "回顾：从表格到函数逼近\n前几周我们学习了：\n本周开始，我们将进入课程的第四部分，将前面学到的 RL 概念和算法应用于具体的商业案例分析。我们将探讨如何将商业问题形式化为 MDP，讨论其中的设计选择和挑战。\n今天我们聚焦于第一个重要应用领域：动态定价 (Dynamic Pricing) 与 资源优化 (Resource Optimization)。",
     "crumbs": [
       "讲义",
-      "<span class='chapter-number'>15</span>  <span class='chapter-title'>Week 13: 商业案例分析 1 - 动态定价与资源优化</span>"
+      "<span class='chapter-number'>16</span>  <span class='chapter-title'>Week 13: 商业案例分析 1 - 动态定价与资源优化</span>"
     ]
   },
   {
@@ -1029,7 +1084,7 @@
     "text": "1. MDP 定义\n目标: 平台希望通过调整价格系数（Surge Multiplier），在特定区域和时间段内平衡乘客需求和司机供给，最大化平台的长期收益（或订单完成率、用户满意度等）。\n\n状态 (State, S): 需要捕捉哪些关键信息来做定价决策？\n\n时空信息:\n\n区域 (Region): 哪个地理区域？(离散)\n时间 (Time): 一天中的哪个时间段？星期几？是否节假日？(离散/周期性特征)\n\n供需信息:\n\n附近可用司机数量 (Supply): 该区域及周边有多少空闲司机？\n近期乘客请求数量 (Demand): 过去 5/15/30 分钟内该区域的打车请求数？\n供需比 (Supply/Demand Ratio): 一个关键的聚合指标。\n\n历史/上下文信息:\n\n近期价格系数: 过去一段时间的价格调整情况？\n天气状况: 是否下雨、高温、恶劣天气？\n特殊事件: 附近是否有大型活动（演唱会、体育比赛）？\n\n状态表示的挑战:\n\n高维性: 包含所有这些信息会导致状态向量维度很高。\n连续与离散混合: 时间、数量是连续或高基数离散，区域是离散。\n特征工程: 如何有效地组合和表示这些信息？（例如，将时间编码为周期性特征 sin/cos，对数量进行归一化或分箱）。\n近似马尔可夫性: 需要包含足够的信息来预测短期内的供需变化。\n\n\n动作 (Action, A): 平台可以采取的定价动作。\n\n离散价格系数: 设定一组固定的价格倍数，例如 A = {1.0x, 1.2x, 1.5x, 1.8x, 2.0x, 2.5x}。这是最常见的做法，也适用于 DQN 等算法。\n连续价格系数: (更灵活但更复杂) 允许价格系数在一定范围内连续取值，例如 [1.0, 3.0]。这需要使用 Actor-Critic 等能处理连续动作的算法。\n\n奖励 (Reward, R): 如何衡量定价决策的好坏？这是最关键也最具挑战性的部分。\n\n短期指标:\n\n平台收入 (Platform Revenue): = 完成订单金额 * 平台抽成比例。\n订单完成率 (Order Completion Rate): = 完成的订单数 / 总请求数。\n司机收入 (Driver Earnings): 高价格可能增加司机收入，吸引更多司机。\n\n长期指标 (更难衡量和优化):\n\n乘客满意度/留存率: 过高的价格或过长的等待时间可能导致乘客流失。\n司机满意度/留存率: 不合理的价格或收入波动可能导致司机流失。\n市场份额: 与竞争对手的相对表现。\n平台声誉: 定价策略是否被认为是公平的？\n\n奖励设计的权衡:\n\n收入 vs. 完成率: 过高价格可能增加单笔收入，但降低完成率。\n短期 vs. 长期: 只优化短期收入可能损害长期用户/司机关系。\n多目标优化: 通常需要平衡多个目标，可以将它们加权组合成一个标量奖励，或者使用多目标 RL 技术。\n\n奖励塑形 (Reward Shaping): 有时会设计一些中间奖励来引导学习，但这需要小心，避免引入不期望的偏差。\n\n转移概率 (P): P(s’ | s, a)\n\n在状态 s（特定时间、区域、供需状况）下，采取价格系数 a 后，下一个状态 s’（下一时间段的供需状况）是如何变化的？\n这取决于复杂的市场动态：\n\n价格如何影响乘客需求？（价格弹性）\n价格如何影响司机供给？（司机是否会被高价吸引而来？）\n随机事件（交通拥堵、天气变化）。\n\n模型未知: 平台通常无法精确知道 P，因此需要使用无模型 RL 方法。\n\n折扣因子 (γ):\n\n通常选择接近 1 的值 (e.g., 0.95, 0.99)，因为平台关心的是长期的累积收益和生态健康，而不仅仅是下一个时间段的收入。",
     "crumbs": [
       "讲义",
-      "<span class='chapter-number'>15</span>  <span class='chapter-title'>Week 13: 商业案例分析 1 - 动态定价与资源优化</span>"
+      "<span class='chapter-number'>16</span>  <span class='chapter-title'>Week 13: 商业案例分析 1 - 动态定价与资源优化</span>"
     ]
   },
   {
@@ -1040,7 +1095,7 @@
     "text": "2. 数据需求\n训练一个有效的动态定价 RL 模型需要大量的数据：\n\n历史订单数据: 时间、地点、起点、终点、价格系数、是否成交、等待时间、行程时间、费用等。\n司机数据: 实时位置、在线状态、接单记录、收入等。\n乘客请求数据: 时间、地点、起点、终点。\n上下文数据: 天气、交通状况、节假日、大型活动信息。\n(可选) 竞争对手数据: 竞争对手的价格、司机/乘客数量（如果能获取）。\n\n数据质量和挑战:\n\n数据量: 需要海量数据覆盖各种时空和供需场景。\n噪声: 数据可能包含噪声或异常值。\n稀疏性: 某些特定区域或时间段的数据可能很少。\n因果推断: 从观察数据中推断价格对供需的真实因果影响很困难（存在混淆变量）。",
     "crumbs": [
       "讲义",
-      "<span class='chapter-number'>15</span>  <span class='chapter-title'>Week 13: 商业案例分析 1 - 动态定价与资源优化</span>"
+      "<span class='chapter-number'>16</span>  <span class='chapter-title'>Week 13: 商业案例分析 1 - 动态定价与资源优化</span>"
     ]
   },
   {
@@ -1051,7 +1106,7 @@
     "text": "3. 可选算法\n根据 MDP 的具体定义选择合适的算法：\n\n离散动作空间 (固定价格系数):\n\nDQN 及其变种 (Double DQN, Dueling DQN): 常用且有效。需要处理高维状态输入（可能需要特征工程或使用 CNN 处理地图类输入）。经验回放可以利用历史数据。\n\n连续动作空间 (连续价格系数):\n\nActor-Critic 方法 (A2C, PPO, DDPG, SAC): PPO 和 SAC 是目前在连续控制领域表现较好的算法。可以直接输出连续的价格系数。\n\n其他考虑:\n\nOffline RL: 如果主要依赖历史数据进行训练，需要使用 Offline RL 算法，这些算法专门设计用于处理固定数据集的学习，避免分布偏移问题。\nMulti-Agent RL: 如果需要考虑与竞争对手的互动，可能需要使用多智能体强化学习。",
     "crumbs": [
       "讲义",
-      "<span class='chapter-number'>15</span>  <span class='chapter-title'>Week 13: 商业案例分析 1 - 动态定价与资源优化</span>"
+      "<span class='chapter-number'>16</span>  <span class='chapter-title'>Week 13: 商业案例分析 1 - 动态定价与资源优化</span>"
     ]
   },
   {
@@ -1062,7 +1117,7 @@
     "text": "简化模拟框架\n我们可以构建一个简化的模拟器来模拟市场动态：\n\n初始化: 设置模拟时长、区域、初始库存/司机分布、需求模型参数、定价策略（RL Agent 或基线策略）。\n模拟循环 (按时间步):\n\n获取当前状态 (s): 时间、区域供需状况等。\n定价决策 (a): RL Agent 根据状态 s 和策略 π 输出价格系数 a。\n模拟市场响应:\n\n根据价格 a 和需求模型，生成乘客请求数量。\n根据价格 a 和供给模型，确定可用司机数量。\n模拟订单匹配过程，计算成交量、平台收入、等待时间等。\n\n计算奖励 (R): 根据预设的奖励函数计算即时奖励。\n更新状态 (s’): 更新到下一个时间步，更新供需状况。\n(RL 训练): 将 (s, a, R, s’) 存入经验回放缓冲区（如果使用 DQN），或直接用于更新（如果使用 A2C 等 On-Policy 方法）。\n重复循环。",
     "crumbs": [
       "讲义",
-      "<span class='chapter-number'>15</span>  <span class='chapter-title'>Week 13: 商业案例分析 1 - 动态定价与资源优化</span>"
+      "<span class='chapter-number'>16</span>  <span class='chapter-title'>Week 13: 商业案例分析 1 - 动态定价与资源优化</span>"
     ]
   },
   {
@@ -1073,7 +1128,7 @@
     "text": "讨论：参数调整与影响\n在模拟环境中训练和测试 RL 定价策略时，需要关注关键参数的影响：\n\n探索率 (ε / 熵系数 ent_coef):\n\n作用: 鼓励智能体尝试不同的价格，以发现价格与需求/供给之间的关系，避免过早锁定次优价格。\n影响:\n\n探索不足：可能学不到最优定价策略。\n过度探索：在训练早期可能导致收入损失或市场波动。\n\n调整: 通常需要 ε 衰减或调整熵系数，在训练后期减少探索。\n\n学习率 (α):\n\n作用: 控制模型参数更新的幅度。\n影响:\n\n学习率过高：训练不稳定，Q 值或策略可能震荡或发散。\n学习率过低：收敛速度慢。\n\n调整: 需要根据算法和问题进行调整，可能需要学习率调度（逐渐降低学习率）。\n\n折扣因子 (γ):\n\n作用: 平衡短期收益和长期目标。\n影响:\n\nγ 接近 1：更关注长期累积收入/平台健康度。\nγ 接近 0：更关注眼前的即时收入。\n\n选择: 取决于商业目标。对于需要考虑长期影响的平台生态问题，通常选择较大的 γ。",
     "crumbs": [
       "讲义",
-      "<span class='chapter-number'>15</span>  <span class='chapter-title'>Week 13: 商业案例分析 1 - 动态定价与资源优化</span>"
+      "<span class='chapter-number'>16</span>  <span class='chapter-title'>Week 13: 商业案例分析 1 - 动态定价与资源优化</span>"
     ]
   },
   {
@@ -1084,7 +1139,7 @@
     "text": "讨论：实施挑战\n将 RL 动态定价策略从模拟环境部署到现实世界面临诸多挑战：\n\n冷启动问题 (Cold Start):\n\n新平台、新区域或新产品缺乏历史数据，如何初始化 RL 模型？\n应对:\n\n使用简单的基线策略（如固定价格、基于规则的定价）开始收集数据。\n迁移学习：利用其他相似区域或产品的模型参数进行初始化。\n加强早期探索。\n\n\n模拟环境的准确性 (Sim-to-Real Gap):\n\n模拟器能否准确反映真实世界的复杂动态（用户行为、竞争反应）？\n应对:\n\n不断用真实数据校准和改进模拟器。\n在模拟器中加入噪声和不确定性。\n采用能在模拟和真实环境之间迁移的技术 (Domain Randomization)。\n部署时进行 A/B 测试和逐步推广。\n\n\n非平稳性 (Non-Stationarity):\n\n市场条件、用户偏好、竞争格局是不断变化的，环境不是静态的 MDP。\n应对:\n\n定期重新训练模型。\n使用能够适应变化的在线学习算法。\n将变化因素纳入状态表示（如果可能）。\n\n\n多智能体竞争 (Multi-Agent Competition):\n\n竞争对手也在调整价格，简单的单智能体 RL 可能无法应对。\n应对:\n\n将竞争对手的行为纳入状态表示（如果可观察）。\n使用多智能体强化学习 (MARL) 方法（更复杂）。\n\n\n评估与安全性:\n\n如何在不干扰真实业务的情况下安全地评估新策略？\n如何避免 RL 策略产生极端或不合理的定价？\n应对:\n\n离线评估 (Offline Evaluation): 使用历史数据评估策略（需要 Off-Policy Evaluation 技术）。\nA/B 测试。\n设置价格上下限和安全约束。\n监控关键业务指标。\n\n\n可解释性与公平性:\n\n深度学习模型通常是黑箱，难以解释为什么做出某个定价决策。\n动态定价是否会对某些用户群体产生歧视？\n应对:\n\n使用可解释性 AI 技术。\n进行公平性审计。\n设计考虑公平性的奖励函数或约束。\n\n\n\n\n\n\n\n\n\n关键要点\n\n\n\n将 RL 应用于商业问题，不仅仅是选择和运行算法，更重要的是准确地定义问题 (MDP)、设计有效的奖励函数、获取高质量数据、构建可靠的模拟环境，并审慎地处理部署中的各种挑战。\n\n\n\n下周预告: 商业案例分析 2 - 个性化推荐/营销。我们将探讨 RL 如何用于优化推荐系统和营销活动，并讨论其中的伦理问题。",
     "crumbs": [
       "讲义",
-      "<span class='chapter-number'>15</span>  <span class='chapter-title'>Week 13: 商业案例分析 1 - 动态定价与资源优化</span>"
+      "<span class='chapter-number'>16</span>  <span class='chapter-title'>Week 13: 商业案例分析 1 - 动态定价与资源优化</span>"
     ]
   },
   {
@@ -1095,7 +1150,7 @@
     "text": "回顾：动态定价与资源优化\n上周我们深入探讨了如何将强化学习应用于动态定价和资源优化问题，以网约车平台的 Surge Pricing 为例：\n今天，我们将转向另一个 RL 在商业中广泛应用的领域：个性化推荐 (Personalized Recommendation) 与 个性化营销 (Personalized Marketing)。",
     "crumbs": [
       "讲义",
-      "<span class='chapter-number'>16</span>  <span class='chapter-title'>Week 14: 商业案例分析 2 - 个性化推荐与营销</span>"
+      "<span class='chapter-number'>17</span>  <span class='chapter-title'>Week 14: 商业案例分析 2 - 个性化推荐与营销</span>"
     ]
   },
   {
@@ -1106,7 +1161,7 @@
     "text": "1. MDP 定义\n目标: 系统（智能体）需要学习一个策略，根据用户的状态，从庞大的商品库中选择一个（或一组）商品推荐给用户，以最大化用户的长期价值（如 LTV）或参与度。\n\n状态 (State, S): 如何表示用户和当前情境？\n\n用户静态特征:\n\n人口统计学信息: 年龄、性别、地理位置等。\n注册信息: 账户等级、注册时长等。\n\n用户动态/历史行为特征:\n\n近期浏览历史: 最近点击/查看过的商品 ID、类别、品牌。\n近期购买历史: 最近购买的商品 ID、类别、频率、金额。\n近期搜索历史: 搜索过的关键词。\n购物车状态: 当前购物车中的商品。\n对先前推荐的反馈: 是否点击/购买了之前推荐的商品？\n\n情境特征 (Contextual Features):\n\n访问时间: 一天中的时段、星期几、季节。\n访问设备: PC, Mobile App, H5。\n访问来源: 通过搜索、广告还是直接访问？\n当前页面: 用户正在浏览哪个页面？\n\n状态表示:\n\n通常是一个高维向量，结合了上述各类特征。\n需要使用嵌入 (Embeddings) 技术来处理高基数的离散特征（如用户 ID, 商品 ID）。可以将用户和商品映射到低维稠密向量空间。\n可以使用 RNN/LSTM/Transformer 等模型来捕捉用户行为序列的动态。\n\n\n动作 (Action, A): 系统可以推荐哪些商品？\n\n巨大的离散动作空间: 商品库通常包含数百万甚至数千万的商品 (SKU)。直接将每个商品视为一个动作是不可行的。\n常见的处理方式:\n\n候选生成 + 排序 (Candidate Generation + Ranking):\n\n候选生成: 先用其他方法（如协同过滤、内容召回、向量检索）从全量商品库中快速筛选出一个较小的候选商品集合（几百到几千个）。\n排序: RL 模型（或其他排序模型）负责对这个候选集进行打分或排序，选择最优的一个或 Top-K 个进行展示。此时，动作空间缩小为对候选集的操作（例如，选择哪个商品排第一）。\n\n基于动作嵌入 (Action Embeddings): 将动作（商品）也嵌入到向量空间，RL 模型输出一个目标动作向量，然后在商品嵌入空间中找到最相似的商品进行推荐。这可以将离散动作问题转化为连续动作问题（输出向量）。\n\n\n奖励 (Reward, R): 如何衡量推荐的好坏？这是推荐系统中最具挑战性的部分之一。\n\n显式反馈 (Explicit Feedback):\n\n评分 (Rating): 用户对商品的评分（如果有）。\n喜欢/不喜欢: 明确的偏好表达。\n\n隐式反馈 (Implicit Feedback) - 更常见:\n\n点击 (Click): 用户是否点击了推荐的商品？(最常用，但可能产生 Clickbait 问题)\n加入购物车 (Add-to-Cart): 比点击更强的意向信号。\n购买/转化 (Purchase/Conversion): 最强的信号，但非常稀疏。\n观看时长 (Dwell Time): 用户在商品详情页停留的时间。\n分享/收藏 (Share/Favorite): 社交或留存意向。\n\n长期指标:\n\n用户满意度 (Satisfaction): 通过调查问卷等方式获取。\n用户活跃度/留存率 (Activity/Retention): 用户是否持续访问和使用平台？\n用户生命周期价值 (LTV): 用户在整个生命周期内为平台带来的总价值。\n\n奖励设计挑战:\n\n稀疏性: 购买等强信号非常稀疏。\n延迟性: LTV 等长期指标需要很长时间才能观察到。\n多目标: 需要平衡点击率、转化率、用户满意度、内容多样性等多个目标。\n潜在偏差: 过度优化点击率可能导致标题党或低质量内容泛滥。\n\n常用方法:\n\n使用点击作为主要奖励信号，并辅以其他信号（如购买、时长）进行加权或作为辅助损失。\n设计能够估计 LTV 的模型作为奖励。\n使用多目标 RL。\n\n\n转移概率 (P): P(s’ | s, a)\n\n用户在看到推荐 a (商品) 后的下一个状态 s’ 是什么？\n这取决于用户的反应（点击、购买、忽略）以及他们后续的浏览行为。\n模型未知，需要从交互数据中学习。\n\n折扣因子 (γ):\n\n通常选择较大的 γ (接近 1)，因为推荐系统的目标是优化长期用户参与度和价值。",
     "crumbs": [
       "讲义",
-      "<span class='chapter-number'>16</span>  <span class='chapter-title'>Week 14: 商业案例分析 2 - 个性化推荐与营销</span>"
+      "<span class='chapter-number'>17</span>  <span class='chapter-title'>Week 14: 商业案例分析 2 - 个性化推荐与营销</span>"
     ]
   },
   {
@@ -1117,7 +1172,7 @@
     "text": "2. 探索 (Exploration) vs. 利用 (Exploitation)\n在推荐系统中，探索与利用的权衡至关重要：\n\n利用 (Exploitation): 推荐用户过去喜欢或购买过的同类商品，或者推荐当前最热门的商品。这能保证一定的短期效果（如点击率）。\n探索 (Exploration):\n\n推荐新内容/长尾商品: 向用户推荐他们可能感兴趣但从未接触过的新品类或冷门商品。有助于发现用户的潜在兴趣，增加推荐的多样性，并帮助新商品获得曝光。\n试探用户反馈: 尝试不同的推荐策略或商品类型，观察用户反应，以更准确地了解用户偏好。\n\n\n挑战:\n\n如何有效地探索庞大的商品空间？\n如何平衡探索带来的潜在长期收益和可能造成的短期指标下降？\n\n常用探索策略:\n\nε-greedy: 简单易行，但可能效率不高。\n置信上界 (Upper Confidence Bound, UCB): 选择那些具有高预期价值且不确定性也高的动作（推荐）。\n汤普森采样 (Thompson Sampling): 根据当前对动作价值的后验分布进行采样。\n内在激励 (Intrinsic Motivation): 奖励智能体的好奇心或探索行为本身。",
     "crumbs": [
       "讲义",
-      "<span class='chapter-number'>16</span>  <span class='chapter-title'>Week 14: 商业案例分析 2 - 个性化推荐与营销</span>"
+      "<span class='chapter-number'>17</span>  <span class='chapter-title'>Week 14: 商业案例分析 2 - 个性化推荐与营销</span>"
     ]
   },
   {
@@ -1128,7 +1183,7 @@
     "text": "3. 可选算法\n\nDQN 及其变种: 如果动作空间可以有效缩小（如候选排序），DQN 是一个常用选择。\nActor-Critic 方法 (DDPG, SAC, PPO): 如果使用动作嵌入将问题转化为连续动作空间，或者直接优化排序策略，AC 方法更适用。\nBandit 算法: 如果将推荐视为一系列独立的推荐决策（忽略状态转移），可以使用多臂老虎机 (Multi-Armed Bandit) 算法及其变种（如 Contextual Bandits）。这可以看作是 RL 的一种简化形式。\nOffline RL: 推荐系统通常拥有大量的历史交互日志，Offline RL 可以在不与真实用户交互的情况下利用这些数据进行学习，降低了在线实验的风险和成本。",
     "crumbs": [
       "讲义",
-      "<span class='chapter-number'>16</span>  <span class='chapter-title'>Week 14: 商业案例分析 2 - 个性化推荐与营销</span>"
+      "<span class='chapter-number'>17</span>  <span class='chapter-title'>Week 14: 商业案例分析 2 - 个性化推荐与营销</span>"
     ]
   },
   {
@@ -1139,7 +1194,7 @@
     "text": "回顾：RL 商业案例分析\n前两周我们探讨了 RL 在两个重要商业领域的应用：\n这些案例分析突显了将 RL 从理论和模拟环境成功落地到实际商业场景中所面临的共性挑战。本周我们将系统性地总结这些挑战，并讨论负责任 AI 的原则和伦理规范，最后为期末项目提供指导。",
     "crumbs": [
       "讲义",
-      "<span class='chapter-number'>17</span>  <span class='chapter-title'>Week 15: 实践挑战、伦理规范与项目指导</span>"
+      "<span class='chapter-number'>18</span>  <span class='chapter-title'>Week 15: 实践挑战、伦理规范与项目指导</span>"
     ]
   },
   {
@@ -1150,7 +1205,7 @@
     "text": "1. 数据获取与质量 (Data Acquisition & Quality)\n\n数据需求量大: RL（尤其是 DRL）通常需要大量的交互数据来学习有效的策略。对于需要与真实环境交互的应用（如推荐、定价），收集足够数据的成本可能很高。\n数据质量:\n\n噪声与缺失: 真实世界的数据往往包含噪声、错误和缺失值，需要仔细清洗和预处理。\n偏差 (Bias): 历史数据可能反映了过去的次优策略或市场偏差，直接用于训练可能导致 RL 模型学到这些偏差。例如，历史推荐数据可能偏向热门商品，导致 RL 难以发现长尾商品的价值。\n日志策略 (Logging Policy): 记录的数据是由哪个策略生成的？这对于 Off-Policy 学习和评估至关重要。\n\n探索成本与风险: 在线收集数据需要进行探索，但这可能导致短期性能下降或用户体验变差（例如，推荐不相关的商品、设定不合理的价格）。如何在探索和实际业务指标之间取得平衡是一个难题。\n\n\n\n\n\n\n\n应对思路\n\n\n\n\n利用 Offline RL 技术充分挖掘历史数据价值。\n设计更有效的探索策略（如结合领域知识）。\n构建高质量的模拟环境以减少对真实交互的依赖。\n进行 A/B 测试以小范围验证策略效果。",
     "crumbs": [
       "讲义",
-      "<span class='chapter-number'>17</span>  <span class='chapter-title'>Week 15: 实践挑战、伦理规范与项目指导</span>"
+      "<span class='chapter-number'>18</span>  <span class='chapter-title'>Week 15: 实践挑战、伦理规范与项目指导</span>"
     ]
   },
   {
@@ -1161,7 +1216,7 @@
     "text": "2. 模拟环境构建与 Sim-to-Real Gap\n\n模拟器是关键: 由于在线实验成本高、风险大，构建一个能够准确反映真实世界动态的模拟环境对于 RL 模型的开发、训练和测试至关重要。\n构建挑战:\n\n复杂性: 真实商业环境（如市场、用户行为）非常复杂，包含许多未知或难以建模的因素。\n保真度: 模拟器需要足够逼真，才能保证在模拟器中训练好的策略在真实环境中也能有效（减小 Sim-to-Real Gap）。\n校准与验证: 需要用真实数据不断校准和验证模拟器的准确性。\n\nSim-to-Real Gap: 模拟环境与真实环境之间的差异。即使模拟器做得很好，也可能存在差距，导致在模拟中表现优异的策略在现实中效果不佳。\n\n原因: 未建模的动态、噪声、延迟、用户行为的不可预测性等。\n\n\n\n\n\n\n\n\n应对思路\n\n\n\n\n迭代式开发：从简单模型开始，逐步增加模拟器的复杂度。\n数据驱动建模：利用历史数据构建用户行为模型、市场响应模型等。\n领域随机化 (Domain Randomization)：在模拟器中引入各种随机性（参数、噪声），使 RL 策略对环境变化更鲁棒。\n部署时进行微调 (Fine-tuning) 或在线学习。",
     "crumbs": [
       "讲义",
-      "<span class='chapter-number'>17</span>  <span class='chapter-title'>Week 15: 实践挑战、伦理规范与项目指导</span>"
+      "<span class='chapter-number'>18</span>  <span class='chapter-title'>Week 15: 实践挑战、伦理规范与项目指导</span>"
     ]
   },
   {
@@ -1172,7 +1227,7 @@
     "text": "3. 奖励函数设计的艺术与陷阱 (Reward Engineering)\n\n奖励函数定义目标: RL 智能体只会优化你明确定义的奖励函数。奖励函数的设计直接决定了智能体的最终行为。\n挑战:\n\n对齐商业目标: 设计的奖励函数是否真正反映了长期的商业目标？（例如，优化点击率 vs. 优化用户 LTV）。\n奖励稀疏性 (Sparse Rewards): 很多商业目标（如最终购买、用户流失）是稀疏且延迟的，智能体很难从中学习。\n奖励塑形 (Reward Shaping): 设计一些中间奖励来引导学习是常见的做法，但如果设计不当，可能导致智能体“钻空子”，学会利用中间奖励而忽略最终目标（例如，推荐系统只优化点击而不关心转化）。\n多目标冲突: 商业目标通常是多个且可能冲突的（收入 vs. 用户满意度，效率 vs. 公平性）。如何平衡这些目标？\n\n“奖励函数就是规约” (Reward is the Specification): 你得到的（智能体行为）就是你指定的（奖励函数），即使它不是你真正想要的。\n\n\n\n\n\n\n\n奖励设计的陷阱\n\n\n\n\n指标博弈 (Goodhart’s Law): 当一个指标成为目标时，它就不再是一个好的指标。过度优化某个代理指标（如点击率）可能损害真正的目标（如用户满意度）。\n负面副作用 (Negative Side Effects): 智能体为了最大化奖励可能采取意想不到的、有害的方式。\n\n\n\n\n\n\n\n\n\n应对思路\n\n\n\n\n仔细思考并明确长期的商业目标。\n尽可能使用与最终目标更相关的奖励信号。\n谨慎使用奖励塑形，并进行充分测试。\n考虑多目标优化方法或基于约束的 RL。\n迭代式设计和测试奖励函数。",
     "crumbs": [
       "讲义",
-      "<span class='chapter-number'>17</span>  <span class='chapter-title'>Week 15: 实践挑战、伦理规范与项目指导</span>"
+      "<span class='chapter-number'>18</span>  <span class='chapter-title'>Week 15: 实践挑战、伦理规范与项目指导</span>"
     ]
   },
   {
@@ -1183,7 +1238,7 @@
     "text": "4. 安全性与鲁棒性测试 (Safety & Robustness)\n\n高风险应用: 在金融、自动驾驶、医疗等高风险领域，RL 策略的错误可能导致严重后果。即使在商业应用中（如定价、库存），错误的决策也可能导致巨大损失。\n安全性: 如何确保 RL 策略不会采取危险或破坏性的行为？\n鲁棒性: RL 策略在面对未曾见过的状态、噪声干扰或环境变化时，表现是否稳定？深度学习模型可能对输入的微小扰动非常敏感（对抗性攻击）。\n探索的风险: 探索过程本身可能导致不安全的行为。\n\n\n\n\n\n\n\n应对思路\n\n\n\n\n在模拟环境中进行广泛的压力测试和边缘案例测试。\n设置安全约束：限制动作空间、设定保护性规则。\n使用鲁棒性优化技术训练模型。\n部署时进行 A/B 测试和灰度发布。\n建立实时的监控和报警系统。\n必要时加入人工监督或干预机制。",
     "crumbs": [
       "讲义",
-      "<span class='chapter-number'>17</span>  <span class='chapter-title'>Week 15: 实践挑战、伦理规范与项目指导</span>"
+      "<span class='chapter-number'>18</span>  <span class='chapter-title'>Week 15: 实践挑战、伦理规范与项目指导</span>"
     ]
   },
   {
@@ -1194,7 +1249,7 @@
     "text": "5. 部署与维护 (Deployment & Maintenance)\n\n技术栈整合: 如何将训练好的 RL 模型集成到现有的业务系统和技术架构中？\n实时决策需求: 许多应用（如 RTB 广告竞价）需要在毫秒级内做出决策，对模型的推理速度有很高要求。\n模型更新: 市场环境是变化的，需要定期重新训练或在线更新 RL 模型。如何管理模型的版本和更新过程？\n监控与调试: 如何监控线上 RL 策略的表现？出现问题时如何快速定位和调试？（RL 模型的调试通常比监督学习更困难）。\n计算资源: 训练复杂的 DRL 模型需要大量的计算资源 (GPU/TPU)。\n\n\n\n\n\n\n\n应对思路\n\n\n\n\n设计清晰的部署架构和 MLOps 流程。\n模型压缩和优化以满足实时推理需求。\n建立完善的监控指标体系（业务指标 + 模型内部指标）。\n制定模型更新策略和回滚计划。\n投入足够的计算资源和工程支持。",
     "crumbs": [
       "讲义",
-      "<span class='chapter-number'>17</span>  <span class='chapter-title'>Week 15: 实践挑战、伦理规范与项目指导</span>"
+      "<span class='chapter-number'>18</span>  <span class='chapter-title'>Week 15: 实践挑战、伦理规范与项目指导</span>"
     ]
   },
   {
@@ -1205,7 +1260,7 @@
     "text": "课程回顾：从基础到应用\n欢迎来到我们课程的最后一周！在过去的十五周里，我们一起探索了强化学习 (RL) 这个激动人心的领域，特别是它在商业决策智能化方面的应用潜力。我们的旅程涵盖了从基本概念到前沿算法，再到实际应用中的挑战与考量。\n我们的学习路径：\n\n基础奠基 (Weeks 1-3):\n\n理解商业决策的复杂性以及 RL 的价值。\n掌握 RL 核心要素 (S, A, R, π, V, Q)。\n学习使用马尔可夫决策过程 (MDP) 对序贯决策问题进行建模。\n理解 Bellman 方程（期望与最优）作为价值函数分析的核心工具。\n熟悉 Gym/Gymnasium 实验环境。\n\n核心无模型算法 (Weeks 4-8):\n\n学习在模型未知情况下进行策略评估：\n\n蒙特卡洛 (MC) 方法：基于完整回合回报，无偏但高方差。\n时序差分 (TD) 学习：基于单步经验和自举，低方差但有偏，可在线学习。\n\n学习在模型未知情况下进行策略控制（寻找最优策略）：\n\nSARSA (同策略 TD 控制)：学习包含探索的行为策略价值。\nQ-Learning (异策略 TD 控制)：直接学习最优动作值函数，可利用历史数据。\n\n理解同策略与异策略的区别及其影响。\n\n应对复杂性 - 函数逼近与 DRL (Weeks 9-12):\n\n认识到表格型方法的局限性（维度灾难、连续空间）。\n引入函数逼近思想：用带参数的函数（特别是神经网络）近似价值函数或策略。\n学习深度 Q 网络 (DQN): 结合 Q-Learning 与神经网络，利用经验回放和目标网络提高稳定性（处理离散动作）。\n学习策略梯度 (PG) 方法: 直接优化参数化策略 π(a|s, θ)。\n理解策略梯度定理和 REINFORCE 算法（高方差问题）。\n学习Actor-Critic 方法 (A2C): 结合策略学习 (Actor) 和价值学习 (Critic)，降低方差，提高稳定性，可处理连续动作。\n掌握使用 Stable Baselines3 库运行 DQN 和 A2C 实验。\n\n商业应用、挑战与伦理 (Weeks 13-15):\n\n深入分析 RL 在动态定价/资源优化和个性化推荐/营销中的应用。\n探讨 MDP 定义、奖励设计、数据需求、算法选择等关键环节。\n总结 RL 落地实践中的共性挑战：数据、模拟、奖励、安全、部署、维护等。\n强调负责任 AI 的重要性，讨论公平性、透明度、隐私等伦理规范。\n进行期末项目选题指导。\n\n\n\n\n核心概念再梳理\n让我们再次巩固一些贯穿始终的核心概念：\n\nMDP: 描述问题的框架，理解 S, A, R, P, γ 至关重要。商业问题的关键在于如何定义这些元素。\n价值函数 (V/Q): 衡量“好坏”的标准，是许多算法的核心。理解 Vπ, Qπ, V*, Q* 的区别。\nBellman 方程: 连接当前价值与未来价值的桥梁，是理解 TD 学习和动态规划的基础。\n无模型学习: 现实中模型往往未知，MC 和 TD 是两大基石。\n偏差-方差权衡: MC (无偏, 高方差) vs. TD (有偏, 低方差)。\n预测 vs. 控制: 评估现有策略 vs. 寻找最优策略。\n同策略 vs. 异策略: 学习的策略是否与收集数据的策略相同？(SARSA vs. Q-Learning)。\n函数逼近: 应对大规模/连续问题的关键，泛化能力是核心优势。\nDRL 技巧: 经验回放、目标网络 (DQN)，Actor-Critic 结构 (A2C) 是为了解决函数逼近带来的稳定性问题。\n奖励工程: 设计能够准确反映长期商业目标的奖励函数是 RL 应用成功的关键，也是最具挑战性的环节之一。\n探索与利用: RL 永恒的主题，需要在收集信息和最大化当前回报之间取得平衡。\n\n\n\nRL 与其他 AI/数据科学技术的结合\n强化学习并非孤立存在，它经常与其他 AI 和数据科学技术结合使用，以发挥更大威力：\n\n结合监督学习 (Supervised Learning, SL):\n\n特征提取: 使用 SL 模型（如 CNN 处理图像，RNN 处理序列）从原始输入（如用户评论、市场新闻、传感器读数）中提取有意义的状态特征，供 RL 智能体使用。\n模型构建 (Model-Based RL): 使用 SL 学习环境模型（预测 P(s’|s, a) 和 R(s, a, s’)），然后基于学习到的模型进行规划或生成模拟数据供 Model-Free RL 使用。\n行为克隆 (Behavioral Cloning): 使用 SL 模仿专家演示数据，为 RL 提供一个良好的初始策略（预训练）。\n奖励函数学习 (Inverse Reinforcement Learning, IRL): 从专家演示中反向推断奖励函数，然后用 RL 优化该奖励函数。\n\n结合优化 (Optimization):\n\nRL 作为优化器: RL 本身可以看作是一种优化方法，用于寻找最大化累积回报的策略（参数）。\n传统优化方法辅助 RL:\n\n超参数优化: 使用贝叶斯优化、网格搜索等方法寻找 RL 算法的最佳超参数。\n约束优化: 在 RL 框架中加入约束条件（如预算约束、安全约束），使用约束优化技术求解。\n\n\n结合因果推断 (Causal Inference):\n\n理解策略效果: 在商业场景中，理解 RL 策略改变对业务指标的因果影响至关重要（而不仅仅是相关性）。\nOff-Policy Evaluation: 使用因果推断的技术（如重要性采样、双重机器学习）更准确地评估一个新策略在历史数据上的表现。\n处理混淆变量: 识别和处理影响决策和结果的混淆变量。\n\n结合其他数据科学技术:\n\n数据挖掘/分析: 用于理解数据、发现模式、进行特征工程。\nA/B 测试: 用于在线评估和比较不同 RL 策略的效果。\n\n\n\n\n\n\n\n\n融合是趋势\n\n\n\n未来的智能决策系统很可能是多种 AI 和数据科学技术的融合体，RL 在其中扮演着处理序贯决策和长期优化的关键角色。\n\n\n\n\n前沿方向与商业潜力展望\n强化学习仍然是一个快速发展的领域，一些前沿方向在商业应用中展现出巨大潜力：\n\n离线强化学习 (Offline RL / Batch RL):\n\n背景: 许多商业场景拥有大量的历史日志数据，但在线交互成本高或风险大。\n目标: 仅使用固定的历史数据集来学习最优策略，而无需与环境进行新的交互。\n挑战: 分布偏移 (Distribution Shift) - 历史数据的策略与正在学习的策略不同，可能导致价值估计不准或策略表现糟糕。\n技术: 通过引入保守主义（如限制策略学习范围、悲观价值估计）来缓解分布偏移问题。\n商业潜力: 在推荐、广告、医疗、金融等拥有大量历史数据的领域应用前景广阔，可以更安全、低成本地利用数据进行策略优化。\n\n多智能体强化学习 (Multi-Agent RL, MARL):\n\n背景: 许多商业环境涉及多个相互影响的决策主体（智能体），如市场中的多个竞争公司、共享出行平台上的司机和乘客、协作机器人团队。\n目标: 学习能够在这种多智能体环境中有效协作或竞争的策略。\n挑战: 环境非平稳性（其他智能体的策略在变）、信用分配（奖励如何在团队中分配）、智能体之间的协调与沟通。\n商业潜力: 优化竞争策略、设计协作机制（如供应链协同、车队管理）、理解复杂市场动态。\n\n基于模型的强化学习 (Model-Based RL):\n\n思路: 学习一个环境模型，然后利用这个模型进行规划（如 MCTS）或生成模拟数据训练无模型策略。\n优点: 理论上可以提高样本效率（如果模型学得准）。\n挑战: 学习准确的环境模型本身就很难，模型误差可能导致策略表现不佳。\n商业潜力: 在需要规划能力或样本效率要求极高的场景（如机器人、复杂供应链优化）中有应用价值。\n\n表示学习与 RL (Representation Learning):\n\n目标: 从高维原始输入（如图像、文本）中自动学习有效的低维状态表示，供 RL 算法使用。\n技术: 结合自编码器、对比学习、Transformer 等深度学习表示技术。\n商业潜力: 使 RL 能够应用于更广泛的、具有非结构化输入的商业问题。\n\n可解释性、安全性与公平性:\n\n随着 RL 应用日益广泛，如何确保其决策过程透明、结果可信、行为安全、影响公平，是越来越重要的研究方向，也是商业落地必须解决的问题。\n\n\n\n\nSession 32: 期末项目展示 / 期末考试\n根据课程安排，下一次课（Session 32）将用于：\n\n期末项目展示 (Final Project Presentations): 选择做项目的同学将进行简短展示，分享你们的研究成果、方案设计或文献分析。请准备好 PPT 或演示文稿。\n或 期末考试 (Final Exam): 如果采用考试形式，将考察整个学期所学的核心概念、算法原理、优缺点比较以及对商业应用的理解。\n\n具体形式和要求将另行通知。\n感谢大家一学期的投入与参与！希望这门课程能够帮助大家打开一扇通往智能决策优化的大门，并为你们未来的学习和职业生涯提供有价值的知识和技能。",
     "crumbs": [
       "讲义",
-      "<span class='chapter-number'>18</span>  <span class='chapter-title'>Week 16: 课程总结与未来展望</span>"
+      "<span class='chapter-number'>19</span>  <span class='chapter-title'>Week 16: 课程总结与未来展望</span>"
     ]
   },
   {
@@ -1216,7 +1271,7 @@
     "text": "练习目标",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>19</span>  <span class='chapter-title'>Week 1 - 学生练习</span>"
+      "<span class='chapter-number'>20</span>  <span class='chapter-title'>Week 1 - 学生练习</span>"
     ]
   },
   {
@@ -1227,7 +1282,7 @@
     "text": "练习 1: 分解商业场景 (强化版)\n请选择至少两个以下你感兴趣的商业场景（或自选一个你熟悉的场景），并尝试详细定义其 RL 要素。思考越具体越好。\n场景选项:\n\n在线广告投放优化: 目标是决定向哪个用户展示哪个广告，以最大化平台的长期收入或广告主的 ROI。\n客户流失预警与干预: 目标是识别有流失风险的客户，并采取合适的干预措施（如发送优惠券、主动联系）以挽留客户，最大化客户长期价值。\n供应链库存补货: 管理多个仓库、多种商品的库存水平，决定何时以及从哪个供应商订购多少货物，以最小化总成本（缺货成本 + 库存持有成本 + 订购成本）。\n个性化学习路径推荐: 为在线学习平台的用户推荐下一步应该学习的课程或练习，以最大化用户的学习效率或知识掌握程度。\n自选场景: (请先简要描述场景)\n\n对于你选择的每个场景，请回答以下问题:\n\n智能体 (Agent) 是谁？ (e.g., 定价系统, 推荐引擎, 库存管理算法)\n环境 (Environment) 包含哪些要素？ (e.g., 市场, 用户群体, 竞争对手, 供应链)\n状态 (State, \\(S\\)) 可能包含哪些关键信息？ (请列出至少 3-5 个具体的状态变量，并思考它们是离散的还是连续的？)\n动作 (Action, \\(A\\)) 有哪些可能的选项？ (请列出具体的动作，并思考是离散的还是连续的？动作空间大概有多大？)\n奖励 (Reward, \\(R\\)) 如何定义才能最好地对齐商业目标？ (思考短期 vs. 长期奖励，单一 vs. 多个目标。尝试给出一个具体的奖励函数表达式或描述。)\n策略 (Policy, \\(\\pi\\)) 可能是什么样的？ (尝试用自然语言描述一个简单的基于规则的策略，或者描述 RL 学习到的策略可能的样子。)\n(思考) 这个场景的马尔可夫性质容易满足吗？如果不容易，状态 S 还需要补充哪些信息？",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>19</span>  <span class='chapter-title'>Week 1 - 学生练习</span>"
+      "<span class='chapter-number'>20</span>  <span class='chapter-title'>Week 1 - 学生练习</span>"
     ]
   },
   {
@@ -1238,7 +1293,7 @@
     "text": "练习 2: 探索与利用的思考\n对于你在练习 1 中选择的一个场景：\n\n请具体描述在该场景下，“利用 (Exploitation)”可能代表哪些行为？\n请具体描述在该场景下，“探索 (Exploration)”可能代表哪些行为？\n过度“利用”可能带来什么风险？\n过度“探索”可能带来什么风险？\n你认为在这个场景下，探索和利用哪个更重要？或者说，在什么阶段探索更重要，什么阶段利用更重要？",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>19</span>  <span class='chapter-title'>Week 1 - 学生练习</span>"
+      "<span class='chapter-number'>20</span>  <span class='chapter-title'>Week 1 - 学生练习</span>"
     ]
   },
   {
@@ -1249,7 +1304,7 @@
     "text": "练习 3: RL vs. 监督学习\n思考以下问题，并简述你的理由：\n\n为什么用监督学习预测“明天是否下雨”比较合适，而用 RL 决定“今天是否带伞”更合适？\n为什么用监督学习预测“某个用户是否会点击某个广告”是可能的，但用 RL 决定“应该向这个用户展示哪个广告以最大化长期收益”可能更优？",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>19</span>  <span class='chapter-title'>Week 1 - 学生练习</span>"
+      "<span class='chapter-number'>20</span>  <span class='chapter-title'>Week 1 - 学生练习</span>"
     ]
   },
   {
@@ -1260,7 +1315,7 @@
     "text": "练习目标",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>20</span>  <span class='chapter-title'>Week 2 - 学生练习</span>"
+      "<span class='chapter-number'>21</span>  <span class='chapter-title'>Week 2 - 学生练习</span>"
     ]
   },
   {
@@ -1271,7 +1326,7 @@
     "text": "练习 1: 马尔可夫性质思考\n\n场景分析: 回顾上周练习中你选择的一个商业场景。你认为你当时定义的状态 \\(S\\) 严格满足马尔可夫性质吗？为什么？如果需要改进状态 \\(S\\) 以更好地近似马尔可夫性质，你会添加哪些信息？（简要说明即可）\n信息与状态: 假设你在玩一个简单的纸牌游戏（如 Blackjack）。如果状态 \\(S\\) 只包含你当前手牌的点数，这满足马尔可夫性质吗？为什么？为了更好地满足马尔可夫性质，状态 \\(S\\) 至少还需要包含哪些信息？",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>20</span>  <span class='chapter-title'>Week 2 - 学生练习</span>"
+      "<span class='chapter-number'>21</span>  <span class='chapter-title'>Week 2 - 学生练习</span>"
     ]
   },
   {
@@ -1282,7 +1337,7 @@
     "text": "练习 2: MDP 形式化练习 - 简单资源分配\n假设你管理一个计算资源池（例如，一定数量的 GPU）。每天你需要决定将多少比例的资源分配给两个任务：任务 A（可能带来高收益，但不确定性大）和任务 B（收益稳定但较低）。你的目标是最大化未来 7 天的总预期收益。\n请尝试定义这个问题的 MDP 要素：\n\n状态 (\\(S\\)): 你认为需要哪些信息来做决策？（例如，剩余天数？当前资源分配比例？过去任务的收益情况？）请至少列出 2-3 个状态变量，并说明是离散还是连续。\n动作 (\\(A\\)): 你可以采取哪些分配动作？（例如，离散的分配比例 [100% A, 50% A/50% B, 100% B]？还是连续的比例？）\n奖励 (\\(R\\)): 如何定义单日的奖励？（例如，当天两个任务的总收益？）\n转移概率 (\\(P\\)): 下一个状态如何依赖于当前状态和动作？（描述性说明即可，例如，天数减一，任务收益可能有随机性，这会如何影响下一天的状态？）\n折扣因子 (\\(\\gamma\\)): 你会选择什么样的折扣因子？为什么？",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>20</span>  <span class='chapter-title'>Week 2 - 学生练习</span>"
+      "<span class='chapter-number'>21</span>  <span class='chapter-title'>Week 2 - 学生练习</span>"
     ]
   },
   {
@@ -1293,7 +1348,7 @@
     "text": "练习 3: 计算回报 (Return)\n假设一个智能体在一个回合制任务中经历了一个序列，获得的奖励如下： \\(R_0 = -1, R_1 = -1, R_2 = -1, R_3 = 10\\) (回合结束)\n请计算在不同折扣因子 \\(\\gamma\\) 下，以下时间步的回报 \\(G_t\\)：\n\n当 \\(\\gamma = 1\\) 时，计算 \\(G_0, G_1, G_2, G_3\\)。\n当 \\(\\gamma = 0.9\\) 时，计算 \\(G_0, G_1, G_2, G_3\\)。（保留两位小数）\n比较 \\(\\gamma=1\\) 和 \\(\\gamma=0.9\\) 时 \\(G_0\\) 的值。哪个更大？这反映了折扣因子的什么作用？",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>20</span>  <span class='chapter-title'>Week 2 - 学生练习</span>"
+      "<span class='chapter-number'>21</span>  <span class='chapter-title'>Week 2 - 学生练习</span>"
     ]
   },
   {
@@ -1304,7 +1359,7 @@
     "text": "练习 4: 理解 Bellman 期望方程\n\\[V_{\\pi}(s) = \\sum_{a \\in A} \\pi(a|s) \\sum_{s' \\in S} P(s'|s,a) [R(s,a,s') + \\gamma V_{\\pi}(s')]\\]\n请用你自己的话解释这个方程的含义，特别是以下部分：\n\n\\(\\pi(a|s)\\) 代表什么？\n\\(P(s'|s,a)\\) 代表什么？\n\\(R(s,a,s')\\) 代表什么？\n\\(\\gamma V_{\\pi}(s')\\) 代表什么？\n整个方程如何体现了“当前状态的价值 = 即时奖励的期望 + 未来状态价值的折扣期望”？",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>20</span>  <span class='chapter-title'>Week 2 - 学生练习</span>"
+      "<span class='chapter-number'>21</span>  <span class='chapter-title'>Week 2 - 学生练习</span>"
     ]
   },
   {
@@ -1315,7 +1370,7 @@
     "text": "练习 5: Gym/Gymnasium 环境检查\n\n请确认你已经按照讲义指导，在你的 Python 环境（推荐使用虚拟环境）中成功安装了 gymnasium 库。\n请运行以下 Python 代码片段，并将输出结果（包括你的环境信息和输出）粘贴到你的答案中。\n\nimport gymnasium as gym\nimport platform\nimport sys\n\nprint(f\"Python Version: {sys.version}\")\nprint(f\"Operating System: {platform.system()} {platform.release()}\")\nprint(f\"Gymnasium Version: {gym.__version__}\")\n\ntry:\n    env = gym.make(\"CartPole-v1\")\n    print(\"\\nSuccessfully created CartPole-v1 environment.\")\n    print(f\"Observation Space: {env.observation_space}\")\n    print(f\"Action Space: {env.action_space}\")\n    env.close()\nexcept Exception as e:\n    print(f\"\\nError creating environment: {e}\")\n    print(\"Please ensure gymnasium and necessary dependencies are installed correctly.\")",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>20</span>  <span class='chapter-title'>Week 2 - 学生练习</span>"
+      "<span class='chapter-number'>21</span>  <span class='chapter-title'>Week 2 - 学生练习</span>"
     ]
   },
   {
@@ -1326,7 +1381,7 @@
     "text": "练习目标",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>21</span>  <span class='chapter-title'>Week 3 - 学生练习</span>"
+      "<span class='chapter-number'>22</span>  <span class='chapter-title'>Week 3 - 学生练习</span>"
     ]
   },
   {
@@ -1337,7 +1392,7 @@
     "text": "练习 1: 最优价值函数与策略\n假设在一个简单的 Gridworld 中，我们已经通过某种方法得到了最优动作值函数 \\(Q^*(s, a)\\)，如下表所示（\\(s\\) 代表格子坐标，\\(a\\) 代表动作：0上, 1右, 2下, 3左）：\n\n\n\n\n\n\n\n\n\n\n状态 \\(s\\) (r,c)\n\\(Q^*(s, 0)\\)\n\\(Q^*(s, 1)\\)\n\\(Q^*(s, 2)\\)\n\\(Q^*(s, 3)\\)\n\n\n\n\n(0,0)\n-1.5\n0.5\n-0.8\n-1.2\n\n\n(0,1)\n-0.2\n1.0\n0.3\n-0.5\n\n\n(1,0)\n0.8\n-0.1\n-1.0\n-0.6\n\n\n(1,1)\n0.2\n0.5\n0.9\n0.1\n\n\n\n\n请根据上表，确定在每个状态下的最优策略 \\(\\pi^*(s)\\) (即应该选择哪个动作？)。\n请计算每个状态的最优状态值函数 \\(V^*(s)\\)。",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>21</span>  <span class='chapter-title'>Week 3 - 学生练习</span>"
+      "<span class='chapter-number'>22</span>  <span class='chapter-title'>Week 3 - 学生练习</span>"
     ]
   },
   {
@@ -1348,7 +1403,7 @@
     "text": "练习 2: Bellman 方程辨析\n请判断以下描述是关于 Bellman 期望方程还是 Bellman 最优方程，并简述理由：\n\n这个方程描述了在遵循某个特定策略 \\(\\pi\\) 时，一个状态的价值与其后继状态价值之间的关系。\n这个方程中包含了 max 操作，体现了在每个状态选择最优动作的思想。\n求解这个方程（如果模型已知）可以得到某个给定策略 \\(\\pi\\) 的价值函数 \\(V_\\pi\\) 或 \\(Q_\\pi\\)。\n求解这个方程（如果模型已知）可以直接得到最优价值函数 \\(V^*\\) 或 \\(Q^*\\)，进而得到最优策略 \\(\\pi^*\\)。\nQ-Learning 算法的更新规则是基于这个方程的采样近似。\nSARSA 算法的更新规则是基于这个方程的采样近似。",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>21</span>  <span class='chapter-title'>Week 3 - 学生练习</span>"
+      "<span class='chapter-number'>22</span>  <span class='chapter-title'>Week 3 - 学生练习</span>"
     ]
   },
   {
@@ -1359,7 +1414,7 @@
     "text": "练习 3: Gym 环境交互练习\n本练习旨在让你熟悉 Gym/Gymnasium 的基本交互循环。请完成以下步骤：\n\n选择环境: 选择一个你感兴趣的、离散动作空间的经典控制环境，例如：\n\n\"CartPole-v1\" (小车杆)\n\"Acrobot-v1\" (双连杆)\n\"MountainCar-v0\" (小车爬山)\n\"Blackjack-v1\" (二十一点)\n或者上周 Lab 1 中你尝试过的其他环境。\n\n编写代码: 编写一个 Python 脚本，完成以下操作：\n\n导入 gymnasium 库。\n使用 gym.make() 创建你选择的环境实例，并设置 render_mode=\"human\" 以便可视化。\n重置 (reset) 环境，获取初始状态 observation。\n循环执行 100 步:\n\n在每一步，随机选择一个合法的动作 (env.action_space.sample())。\n执行 (step) 这个动作，获取 observation, reward, terminated, truncated, info。\n打印 当前步数、选择的动作、获得的奖励、是否终止 (terminated)、是否截断 (truncated)。\n渲染 (render) 环境。\n检查 如果 terminated 或 truncated 为 True，则重置环境，并跳出当前循环（或者你可以选择继续执行完 100 步，但在结束后重置）。\n\n循环结束后，关闭 (close) 环境。\n\n运行代码并观察: 运行你的脚本，观察环境的可视化窗口以及打印输出的信息。确保你理解每一步发生了什么。\n粘贴代码: 将你编写的 Python 脚本代码粘贴到你的答案中。",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>21</span>  <span class='chapter-title'>Week 3 - 学生练习</span>"
+      "<span class='chapter-number'>22</span>  <span class='chapter-title'>Week 3 - 学生练习</span>"
     ]
   },
   {
@@ -1370,7 +1425,7 @@
     "text": "练习 4: 商业场景 Gym 环境要素定义 (深化)\n回顾你在 Week 1 或 Week 2 练习中定义的一个商业场景（如库存管理、资源分配、广告投放等）。现在，请更具体地思考如何将其映射到 Gym 环境的要素，特别是状态和动作空间：\n\n状态空间 (Observation Space):\n\n如果状态包含连续变量（如库存量、剩余时间），你会如何处理？是直接使用连续值（需要函数逼近），还是进行离散化/分箱？如果离散化，你打算如何划分区间？\n如果状态包含多个变量，你会如何将它们组合成一个状态表示？（例如，一个 NumPy 数组或字典？）\n使用 gymnasium.spaces 中的哪种空间类型（如 spaces.Discrete, spaces.Box, spaces.Dict）来定义你的状态空间比较合适？请写出你选择的空间定义代码（例如 spaces.Discrete(10) 或 spaces.Box(low=0, high=100, shape=(1,), dtype=np.int32)）。\n\n动作空间 (Action Space):\n\n你的动作是离散的还是连续的？\n使用 gymnasium.spaces 中的哪种空间类型来定义你的动作空间比较合适？请写出你选择的空间定义代码。\n\n(思考) 相比于简单的概念定义，将问题具体化为 Gym 的空间定义，会遇到哪些新的挑战或需要做的决策？",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>21</span>  <span class='chapter-title'>Week 3 - 学生练习</span>"
+      "<span class='chapter-number'>22</span>  <span class='chapter-title'>Week 3 - 学生练习</span>"
     ]
   },
   {
@@ -1381,7 +1436,7 @@
     "text": "练习目标",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>22</span>  <span class='chapter-title'>Week 4 - 学生练习</span>"
+      "<span class='chapter-number'>23</span>  <span class='chapter-title'>Week 4 - 学生练习</span>"
     ]
   },
   {
@@ -1392,7 +1447,7 @@
     "text": "练习 1: MC 概念理解\n\n无模型: 为什么蒙特卡洛 (MC) 方法被称为“无模型”方法？它与需要模型的动态规划 (DP) 方法（如值迭代）的主要区别是什么？\n核心思想: 请用你自己的话简述蒙特卡洛预测的核心思想。（提示：与大数定律和样本均值有关）\n首次 vs. 每次: 假设在一个回合中，状态 \\(S_3\\) 按以下顺序出现：\\(S_1 \\rightarrow S_2 \\rightarrow S_3 \\rightarrow S_4 \\rightarrow S_3 \\rightarrow S_5\\) (结束)。\n\n如果使用首次访问 MC 评估 \\(V_{\\pi}(S_3)\\)，你会使用哪个时刻的回报 \\(G_t\\) 来更新 \\(V(S_3)\\)？\n如果使用每次访问 MC 评估 \\(V_{\\pi}(S_3)\\)，你会使用哪些时刻的回报 \\(G_t\\) 来更新 \\(V(S_3)\\)？",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>22</span>  <span class='chapter-title'>Week 4 - 学生练习</span>"
+      "<span class='chapter-number'>23</span>  <span class='chapter-title'>Week 4 - 学生练习</span>"
     ]
   },
   {
@@ -1403,7 +1458,7 @@
     "text": "练习 2: 计算蒙特卡洛回报\n沿用上周练习 3 的奖励序列：\\(R_1 = -1, R_2 = -1, R_3 = -1, R_4 = 10\\) (回合结束)。假设折扣因子 \\(\\gamma = 0.9\\)。\n请计算以下蒙特卡洛回报：\n\n\\(G_0 = R_1 + \\gamma R_2 + \\gamma^2 R_3 + \\gamma^3 R_4 = ?\\)\n\\(G_1 = R_2 + \\gamma R_3 + \\gamma^2 R_4 = ?\\)\n\\(G_2 = R_3 + \\gamma R_4 = ?\\)\n\\(G_3 = R_4 = ?\\)\n\n（请写出计算过程和结果，保留两位小数）",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>22</span>  <span class='chapter-title'>Week 4 - 学生练习</span>"
+      "<span class='chapter-number'>23</span>  <span class='chapter-title'>Week 4 - 学生练习</span>"
     ]
   },
   {
@@ -1414,7 +1469,7 @@
     "text": "练习 3: Blackjack MC 预测代码理解与修改\n本练习基于讲义/Lab 2 中提供的 Blackjack 环境 MC 预测代码 (评估 \\(V_{\\pi}\\))。\n\n代码定位:\n\n请指出代码中哪部分是用于生成一个完整回合的？\n请指出代码中哪部分是用于计算回报 \\(G_t\\) 的？（提示：循环是从后往前的）\n请指出代码中首次访问 MC 的判断逻辑在哪里？\n请指出代码中更新状态价值 \\(V(s)\\) 的那一行？\n\n策略修改与运行:\n\n将代码中的 simple_policy 修改为一个更保守的策略，例如：“只要玩家点数小于 15 就一直要牌 (hit)，否则停牌 (stick)”。\n重新运行修改后的代码（回合数 num_episodes 可以适当减少，例如设为 100000 或 50000，以便更快看到结果）。\n粘贴结果: 将修改后的 simple_policy 函数代码和你运行代码后生成的价值函数可视化图粘贴到你的答案中。\n\n结果对比思考: 对比你运行得到的价值函数图与讲义中原始策略（小于 20 hit）的价值函数图（或者你上次实验的结果），你观察到哪些主要差异？为什么策略变得更保守会导致价值函数发生这样的变化？",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>22</span>  <span class='chapter-title'>Week 4 - 学生练习</span>"
+      "<span class='chapter-number'>23</span>  <span class='chapter-title'>Week 4 - 学生练习</span>"
     ]
   },
   {
@@ -1425,7 +1480,7 @@
     "text": "练习 4: MC 方法优缺点讨论\n根据本周所学和你的实验体会，请简述蒙特卡洛 (MC) 预测方法的主要优点和缺点各至少两点，并思考：对于一个需要实时做出决策的商业应用（例如，根据当前市场波动调整股票交易策略），MC 方法是否适用？为什么？",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>22</span>  <span class='chapter-title'>Week 4 - 学生练习</span>"
+      "<span class='chapter-number'>23</span>  <span class='chapter-title'>Week 4 - 学生练习</span>"
     ]
   },
   {
@@ -1436,7 +1491,7 @@
     "text": "练习目标",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>23</span>  <span class='chapter-title'>Week 5 - 学生练习</span>"
+      "<span class='chapter-number'>24</span>  <span class='chapter-title'>Week 5 - 学生练习</span>"
     ]
   },
   {
@@ -1447,7 +1502,7 @@
     "text": "练习 1: TD 概念理解\n\n自举 (Bootstrapping): 请用你自己的话解释什么是 TD 学习中的“自举 (Bootstrapping)”。它与 MC 方法不使用自举有何不同？自举带来了哪些优点和缺点？\nTD 目标 vs. MC 目标:\n\nTD(0) 预测的更新目标 (TD Target) 是什么？（写出表达式）\nMC 预测的更新目标是什么？（写出表达式或名称）\n两者计算的主要区别是什么？哪个依赖于未来的完整奖励序列？哪个依赖于对未来价值的当前估计？\n\nTD 误差: TD 误差 \\(\\delta_t = R_{t+1} + \\gamma V(S_{t+1}) - V(S_t)\\) 的直观含义是什么？它衡量了什么？",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>23</span>  <span class='chapter-title'>Week 5 - 学生练习</span>"
+      "<span class='chapter-number'>24</span>  <span class='chapter-title'>Week 5 - 学生练习</span>"
     ]
   },
   {
@@ -1458,7 +1513,7 @@
     "text": "练习 2: TD(0) 更新计算\n假设我们正在使用 TD(0) 评估一个策略 \\(\\pi\\)。当前状态 \\(S\\) 的价值估计 \\(V(S) = 10\\)。智能体在状态 \\(S\\) 执行某个动作后，观测到奖励 \\(R = -1\\)，并转移到下一个状态 \\(S'\\)。当前对下一个状态 \\(S'\\) 的价值估计 \\(V(S') = 12\\)。假设学习率 \\(\\alpha = 0.1\\)，折扣因子 \\(\\gamma = 0.9\\)。\n请根据 TD(0) 更新规则计算更新后的 \\(V(S)\\) 的值： \\(V(S) \\leftarrow V(S) + \\alpha [R + \\gamma V(S') - V(S)] = ?\\)\n（请写出计算步骤和最终结果）",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>23</span>  <span class='chapter-title'>Week 5 - 学生练习</span>"
+      "<span class='chapter-number'>24</span>  <span class='chapter-title'>Week 5 - 学生练习</span>"
     ]
   },
   {
@@ -1469,7 +1524,7 @@
     "text": "练习 3: TD(0) vs. MC 对比思考\n请根据本周所学，思考并回答以下对比问题：\n\n偏差与方差: 为什么说 MC 估计是无偏的，而 TD(0) 估计是有偏的？为什么 TD(0) 的方差通常比 MC 低？\n适用任务: 为什么 TD(0) 可以应用于持续性任务 (Continuing Tasks)，而基本的 MC 方法通常不行？\n收敛速度: 在实践中，为什么 TD(0) 通常比 MC 收敛更快？（提示：与方差和更新频率有关）\n敏感性: 为什么 TD(0) 对价值函数的初始值比 MC 更敏感？",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>23</span>  <span class='chapter-title'>Week 5 - 学生练习</span>"
+      "<span class='chapter-number'>24</span>  <span class='chapter-title'>Week 5 - 学生练习</span>"
     ]
   },
   {
@@ -1480,7 +1535,7 @@
     "text": "练习 4: Gridworld TD(0) 实验代码理解 (基于 Lab 3)\n本练习基于讲义/Lab 3 中讨论的 Gridworld 环境和 TD(0) 预测。假设你已经有了一个可以运行的 Gridworld 环境和 TD(0) 实现代码（或者参考讲义中的伪代码）。\n\n核心更新定位: 请指出 TD(0) 算法实现代码中，计算 TD 目标 (R + \\gamma * V[next_state]) 和 TD 误差 (td_target - V[state]) 的关键代码行。\n学习率 \\(\\alpha\\) 的作用:\n\n如果在实验中将学习率 \\(\\alpha\\) 设置得非常大（例如 \\(\\alpha=1.0\\) 或更大），你预期会观察到什么现象？为什么？\n如果将学习率 \\(\\alpha\\) 设置得非常小（例如 \\(\\alpha=0.001\\)），你预期会观察到什么现象？为什么？\n\n(思考) 在 Lab 3 中，我们对比了 TD(0) 和 MC 在 Gridworld 上的表现。请结合你的实验结果（或预期结果）和理论知识，总结一下 TD(0) 相对于 MC 在这个 Gridworld 任务上的主要优势是什么？",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>23</span>  <span class='chapter-title'>Week 5 - 学生练习</span>"
+      "<span class='chapter-number'>24</span>  <span class='chapter-title'>Week 5 - 学生练习</span>"
     ]
   },
   {
@@ -1491,7 +1546,7 @@
     "text": "练习目标",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>24</span>  <span class='chapter-title'>Week 6 - 学生练习</span>"
+      "<span class='chapter-number'>25</span>  <span class='chapter-title'>Week 6 - 学生练习</span>"
     ]
   },
   {
@@ -1502,7 +1557,7 @@
     "text": "练习 1: GPI 与 On/Off-Policy 理解\n\nGPI 循环: 广义策略迭代 (GPI) 包含哪两个交替进行的过程？这两个过程的目标分别是什么？\n为何学 Q: 在无模型强化学习控制问题中，为什么我们通常选择学习动作值函数 \\(Q(s, a)\\) 而不是状态值函数 \\(V(s)\\)？\nOn-Policy vs. Off-Policy:\n\n请用你自己的话解释同策略 (On-Policy) 学习和异策略 (Off-Policy) 学习的主要区别。\nSARSA 属于哪一类？为什么？",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>24</span>  <span class='chapter-title'>Week 6 - 学生练习</span>"
+      "<span class='chapter-number'>25</span>  <span class='chapter-title'>Week 6 - 学生练习</span>"
     ]
   },
   {
@@ -1513,7 +1568,7 @@
     "text": "练习 2: SARSA 更新计算\n假设我们正在使用 SARSA 算法。当前状态 \\(S\\)，根据 \\(\\epsilon\\)-greedy 策略选择了动作 \\(A\\)。执行动作 \\(A\\) 后，获得奖励 \\(R = -1\\)，并转移到下一个状态 \\(S'\\)。在状态 \\(S'\\)，再次根据 \\(\\epsilon\\)-greedy 策略选择了下一个动作 \\(A'\\)。\n当前的 \\(Q\\) 值估计如下：\n\n\\(Q(S, A) = 5.0\\)\n\\(Q(S', A') = 6.0\\)\n\n假设学习率 \\(\\alpha = 0.1\\)，折扣因子 \\(\\gamma = 0.9\\)。\n请根据 SARSA 更新规则计算更新后的 \\(Q(S, A)\\) 的值： \\[\nQ(S, A) \\leftarrow Q(S, A) + \\alpha [R + \\gamma Q(S', A') - Q(S, A)] = ?\n\\]",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>24</span>  <span class='chapter-title'>Week 6 - 学生练习</span>"
+      "<span class='chapter-number'>25</span>  <span class='chapter-title'>Week 6 - 学生练习</span>"
     ]
   },
   {
@@ -1524,7 +1579,7 @@
     "text": "练习 3: \\(\\epsilon\\)-Greedy 策略\n假设在一个状态 \\(s\\)，有 3 个可选动作 \\(a_1, a_2, a_3\\)。当前的 \\(Q\\) 值估计为：\n\n\\(Q(s, a_1) = 10\\)\n\\(Q(s, a_2) = 8\\)\n\\(Q(s, a_3) = 8\\)\n\n如果使用 \\(\\epsilon\\)-greedy 策略，且探索率 \\(\\epsilon = 0.1\\)：\n\n选择动作 \\(a_1\\) (当前最优动作) 的概率是多少？\n选择动作 \\(a_2\\) 的概率是多少？（注意：\\(a_2\\) 和 \\(a_3\\) 的 \\(Q\\) 值相同）\n选择动作 \\(a_3\\) 的概率是多少？\n如果 \\(\\epsilon = 0\\)，选择每个动作的概率分别是多少？这对应什么策略？\n如果 \\(\\epsilon = 1\\)，选择每个动作的概率分别是多少？这对应什么策略？",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>24</span>  <span class='chapter-title'>Week 6 - 学生练习</span>"
+      "<span class='chapter-number'>25</span>  <span class='chapter-title'>Week 6 - 学生练习</span>"
     ]
   },
   {
@@ -1535,7 +1590,7 @@
     "text": "练习 4: SARSA Lab 代码与结果分析 (基于 Lab 4)\n本练习基于讲义/Lab 4 中提供的 CliffWalking 环境和 SARSA 实现代码。\n\n代码理解:\n\n请指出 SARSA 代码中，选择当前动作 A (action) 和选择下一个动作 A’ (next_action) 的代码行。它们都使用了哪个策略函数？\n请指出计算 SARSA 的 TD 目标 (td_target) 的代码行。它依赖于哪个动作，A 还是 A’？\n\nε 的影响分析:\n\n回顾你在 Lab 4 中尝试不同 ε 值（或预期）的结果。当 ε 值很小（接近 0）时，SARSA 的学习过程（奖励曲线）和最终策略可能有什么特点？为什么？\n当 ε 值很大（接近 1）时，SARSA 的学习过程和最终策略又可能有什么特点？为什么？\n\n路径选择思考: 为什么 SARSA 在 CliffWalking 环境中倾向于学习一条远离悬崖的“安全”路径，而不是理论上最短的路径？请结合 SARSA 的更新规则和 ε-greedy 策略进行解释。",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>24</span>  <span class='chapter-title'>Week 6 - 学生练习</span>"
+      "<span class='chapter-number'>25</span>  <span class='chapter-title'>Week 6 - 学生练习</span>"
     ]
   },
   {
@@ -1546,7 +1601,7 @@
     "text": "练习目标",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>25</span>  <span class='chapter-title'>Week 7 - 学生练习</span>"
+      "<span class='chapter-number'>26</span>  <span class='chapter-title'>Week 7 - 学生练习</span>"
     ]
   },
   {
@@ -1557,7 +1612,7 @@
     "text": "练习 1: Off-Policy 与 Q-Learning 概念\n\nOff-Policy 定义: 请用你自己的话解释什么是异策略 (Off-Policy) 学习。它与同策略 (On-Policy) 学习的主要区别在哪里？\n行为策略 vs. 目标策略: 在 Q-Learning 中，行为策略 (μ) 和目标策略 (π) 通常分别是什么？哪个策略用于与环境交互？哪个策略体现在 Q 值的更新中？\n核心区别 (Q-Learning vs. SARSA): Q-Learning 和 SARSA 的 TD 目标计算方式有何关键不同？这个不同如何体现了它们分别是 Off-Policy 和 On-Policy 的？\n学习最优策略: 为什么 Q-Learning 能够学习到最优动作值函数 Q*，即使它的行为策略（如 ε-greedy）不是最优的？（提示：思考其更新规则中的 max 操作）",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>25</span>  <span class='chapter-title'>Week 7 - 学生练习</span>"
+      "<span class='chapter-number'>26</span>  <span class='chapter-title'>Week 7 - 学生练习</span>"
     ]
   },
   {
@@ -1568,7 +1623,7 @@
     "text": "练习 2: Q-Learning 更新计算\n假设我们正在使用 Q-Learning 算法。当前状态 S，根据 \\(\\epsilon\\)-greedy 行为策略选择了动作 \\(A\\)。执行动作 \\(A\\) 后，获得奖励 \\(R = 5\\)，并转移到下一个状态 \\(S'\\)。\n当前的 Q 值估计如下：\n\n\\(Q(S, A) = 10.0\\)\n对于下一个状态 \\(S'\\)，所有可能的下一个动作 \\(a'\\) 对应的 \\(Q\\) 值估计为：\\(Q(S', a'_1) = 8.0, Q(S', a'_2) = 9.0, Q(S', a'_3) = 7.0\\)。\n\n假设学习率 \\(\\alpha = 0.1\\)，折扣因子 \\(\\gamma = 0.9\\)。\n请根据 Q-Learning 更新规则计算更新后的 \\(Q(S, A)\\) 的值： \\(Q(S, A) \\leftarrow Q(S, A) + \\alpha [R + \\gamma \\max_{a'} Q(S', a') - Q(S, A)]\\)\n（请写出计算步骤和最终结果）",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>25</span>  <span class='chapter-title'>Week 7 - 学生练习</span>"
+      "<span class='chapter-number'>26</span>  <span class='chapter-title'>Week 7 - 学生练习</span>"
     ]
   },
   {
@@ -1579,7 +1634,7 @@
     "text": "练习 3: Q-Learning Lab 代码与结果分析 (基于 Lab 5)\n本练习基于讲义/Lab 5 中提供的 CliffWalking 环境和 Q-Learning 实现代码。\n\n代码理解:\n\n请指出 Q-Learning 代码中，计算 TD 目标 (td_target) 的关键代码行。它与 SARSA 代码中计算 TD 目标的主要区别在哪里？\n在 Q-Learning 的主循环中，选择实际执行的动作 action 时，使用的是哪个策略？（是贪心策略还是 \\(\\epsilon\\)-greedy 策略？）\n\n策略对比思考 (结合 Lab 结果):\n\n回顾你在 Lab 5 中观察到的 Q-Learning 和 SARSA 在 CliffWalking 环境中学习到的最终策略路径。哪一个更倾向于走贴近悬崖的“最优”路径？哪一个更倾向于走远离悬崖的“安全”路径？\n请再次尝试解释造成这种策略差异的根本原因是什么？（提示：与 TD 目标的计算方式有关）\n\n奖励曲线对比思考 (结合 Lab 结果):\n\n回顾 Q-Learning 和 SARSA 的奖励曲线。哪个算法的平均每回合奖励在训练过程中可能波动更大？为什么？（提示：考虑最优路径的风险和探索的影响）\n哪个算法学习到的最优策略（如果去掉探索，按贪心执行）理论上能获得更高的累积奖励？",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>25</span>  <span class='chapter-title'>Week 7 - 学生练习</span>"
+      "<span class='chapter-number'>26</span>  <span class='chapter-title'>Week 7 - 学生练习</span>"
     ]
   },
   {
@@ -1590,7 +1645,7 @@
     "text": "练习 4: Off-Policy 优势讨论\n\n利用历史数据: 假设你有一批很久以前由一个完全随机的策略在某个环境中收集的交互数据 (s, a, r, s’)。你认为 Q-Learning 能否利用这批数据来学习当前环境下的最优策略？SARSA 能否？请说明理由。\n商业应用: 结合上一点的思考，请举例说明在哪些商业场景下，Off-Policy 学习（能够利用历史/他人数据）的特性可能特别有用？",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>25</span>  <span class='chapter-title'>Week 7 - 学生练习</span>"
+      "<span class='chapter-number'>26</span>  <span class='chapter-title'>Week 7 - 学生练习</span>"
     ]
   },
   {
@@ -1601,7 +1656,7 @@
     "text": "练习目标",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>26</span>  <span class='chapter-title'>Week 8 - 学生练习</span>"
+      "<span class='chapter-number'>27</span>  <span class='chapter-title'>Week 8 - 学生练习</span>"
     ]
   },
   {
@@ -1612,7 +1667,7 @@
     "text": "练习 1: 动态定价 MDP 定义深化\n回顾本周讲义中讨论的简单动态定价案例（单一商品，有限时间，目标是最大化总收入）。\n\n状态表示 S = (剩余时间 t, 当前库存 k):\n\n你认为这个状态表示足够捕捉做出最优定价决策所需的所有关键信息吗？还缺少哪些可能重要的信息？（至少列举 2 项）\n如果加入了“上一个时间段的销售量”作为状态的一部分，你认为这有助于更好地近似马尔可夫性质吗？为什么？\n\n奖励函数 R = 当天销售收入:\n\n如果商店的目标不仅仅是最大化本周收入，还包括维持良好的品牌形象（避免被认为价格波动过大或宰客），你会如何修改奖励函数 R 来反映这个目标？（描述性说明即可，思考可能加入哪些正/负奖励项）\n如果目标是最大化总利润而不是总收入，假设商品的单位成本是 C，奖励函数 R 应该如何修改？\n\n动作空间 A = {P_low, P_mid, P_high}:\n\n如果我们将动作空间定义为更细的价格档位（例如 10 个价格点），这会对 Q 表的大小和学习效率产生什么影响？\n如果允许价格连续变化（例如，在某个范围内任意定价），表格型 Q-Learning 还能直接应用吗？为什么？",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>26</span>  <span class='chapter-title'>Week 8 - 学生练习</span>"
+      "<span class='chapter-number'>27</span>  <span class='chapter-title'>Week 8 - 学生练习</span>"
     ]
   },
   {
@@ -1623,7 +1678,7 @@
     "text": "练习 2: 表格型 Q-Learning 的局限性思考\n继续考虑动态定价案例。\n\n状态空间大小: 假设销售周期是 30 天 (T=30)，最大库存量是 500 件 (K=500)，有 5 个离散的价格点可选 (A=5)。那么存储这个问题的 Q 表需要多少个条目？（写出计算方式和结果）\n维度灾难: 如果我们往状态 S 中再加入一个维度，例如“竞争对手的价格”（假设有 10 种可能的价格水平），那么 Q 表的大小会变成多少？这说明了什么问题？\n泛化能力: 假设智能体通过学习，知道了在状态 (t=5, k=100) 时，选择 P_mid 是个好动作。对于一个从未遇到过的状态 (t=5, k=101)，表格型 Q-Learning 能否利用之前学到的知识来判断 P_mid 在这个新状态下的价值？为什么？这体现了表格型方法的什么局限性？",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>26</span>  <span class='chapter-title'>Week 8 - 学生练习</span>"
+      "<span class='chapter-number'>27</span>  <span class='chapter-title'>Week 8 - 学生练习</span>"
     ]
   },
   {
@@ -1634,7 +1689,7 @@
     "text": "练习 3: 中期核心概念回顾\n请简要回答以下问题，检验你对前半学期核心概念的理解：\n\nMDP 五元组: 写出马尔可夫决策过程 (MDP) 的五个组成要素，并简述每个要素的含义。\nBellman 期望 vs. 最优: Bellman 期望方程和 Bellman 最优方程的主要区别是什么？哪个用于评估给定策略？哪个用于描述最优策略的价值？\nMC vs. TD(0): 蒙特卡洛 (MC) 预测和时序差分 (TD(0)) 预测在更新价值函数时，使用的“目标值”分别是什么？哪个方法存在偏差？哪个方法方差更大？\nOn-Policy vs. Off-Policy: 请用一句话概括同策略 (On-Policy) 和异策略 (Off-Policy) 的核心区别。SARSA 和 Q-Learning 分别属于哪一类？\nSARSA vs. Q-Learning 更新: 写出 SARSA 和 Q-Learning 的核心更新规则（Q 值更新部分即可），并指出它们的关键差异点。",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>26</span>  <span class='chapter-title'>Week 8 - 学生练习</span>"
+      "<span class='chapter-number'>27</span>  <span class='chapter-title'>Week 8 - 学生练习</span>"
     ]
   },
   {
@@ -1645,7 +1700,7 @@
     "text": "练习目标",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>27</span>  <span class='chapter-title'>Week 9 - 学生练习</span>"
+      "<span class='chapter-number'>28</span>  <span class='chapter-title'>Week 9 - 学生练习</span>"
     ]
   },
   {
@@ -1656,7 +1711,7 @@
     "text": "练习 1: 函数逼近概念\n\n为何需要函数逼近？ 请列举至少三个表格型强化学习方法难以处理的情况，并解释为什么函数逼近能够帮助解决这些问题。\n核心思想: 函数逼近的基本思想是什么？它与表格型方法存储价值的方式有何不同？（提示：参数化函数 \\(\\hat{V}(s, w)\\) 或 \\(\\hat{Q}(s, a, w)\\)）\n泛化: 什么是函数逼近带来的“泛化 (Generalization)”能力？为什么这在大型状态空间中很重要？\n学习过程类比: 函数逼近的学习过程如何借鉴监督学习？请说明 RL 中的“目标值 (Target)”和“预测值”分别对应什么，以及通常使用什么方法来更新参数 w？\n半梯度: 为什么 TD 学习与函数逼近结合时，更新规则被称为“半梯度 (Semi-gradient)”？（简述即可）",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>27</span>  <span class='chapter-title'>Week 9 - 学生练习</span>"
+      "<span class='chapter-number'>28</span>  <span class='chapter-title'>Week 9 - 学生练习</span>"
     ]
   },
   {
@@ -1667,7 +1722,7 @@
     "text": "练习 2: 线性函数逼近\n假设我们使用线性函数逼近状态值函数 \\(\\hat{V}(s, w) = w^\\top \\phi(s)\\)。\n\n特征向量:\n\n在一个简单的 Gridworld 环境中，状态 \\(s\\) 是格子的坐标 \\((row, col)\\)。请你设计一个简单的特征向量 \\(\\phi(s)\\)。（提示：可以包含原始坐标、坐标的组合、或者表示格子类型的指示变量等，至少包含 3 个特征）。\n你设计的特征向量维度是多少？\n\n权重向量: 对应你设计的特征向量，权重向量 \\(w\\) 的维度是多少？\n价值计算: 假设你的特征向量是 \\(\\phi(s) = (1, row, col, row*col)\\)，权重向量是 \\(w = (0.5, -0.1, 0.2, 0.05)^\\top\\)。请计算状态 \\(s=(2, 3)\\) 的近似价值 \\(\\hat{V}(s, w)\\)。\n局限性: 线性函数逼近的主要局限性是什么？为什么对于复杂问题，我们通常需要更强大的函数逼近器（如神经网络）？",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>27</span>  <span class='chapter-title'>Week 9 - 学生练习</span>"
+      "<span class='chapter-number'>28</span>  <span class='chapter-title'>Week 9 - 学生练习</span>"
     ]
   },
   {
@@ -1678,7 +1733,7 @@
     "text": "练习 3: CartPole 与函数逼近\n\n连续状态: CartPole 环境的状态包含哪些信息？这些信息是离散的还是连续的？\n维度灾难: 如果尝试将 CartPole 的每个状态变量离散化为 10 个区间，总共会产生多少个离散状态？这个数量级说明了什么问题？\n必要性: 为什么说对于 CartPole 这样的问题，使用函数逼近是必须的，而不是可选的？",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>27</span>  <span class='chapter-title'>Week 9 - 学生练习</span>"
+      "<span class='chapter-number'>28</span>  <span class='chapter-title'>Week 9 - 学生练习</span>"
     ]
   },
   {
@@ -1689,7 +1744,7 @@
     "text": "练习 4: Stable Baselines3 (SB3) 初识\n\nSB3 的用途: Stable Baselines3 (SB3) 库的主要目的是什么？它为我们提供了什么便利？\n基本流程: 回顾讲义中 SB3 DQN 示例代码的基本结构。请简述使用 SB3 运行一个 DRL 实验通常包含哪几个主要步骤？（例如：创建环境 -&gt; … -&gt; 评估模型）\n(思考) 课程后续将重点使用 SB3 进行实验。你认为使用这样一个现成的库进行学习，相比于从零开始手动实现 DQN/A2C 等算法，各有什么优缺点？",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>27</span>  <span class='chapter-title'>Week 9 - 学生练习</span>"
+      "<span class='chapter-number'>28</span>  <span class='chapter-title'>Week 9 - 学生练习</span>"
     ]
   },
   {
@@ -1700,7 +1755,7 @@
     "text": "练习目标",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>28</span>  <span class='chapter-title'>Week 10 - 学生练习</span>"
+      "<span class='chapter-number'>29</span>  <span class='chapter-title'>Week 10 - 学生练习</span>"
     ]
   },
   {
@@ -1711,7 +1766,7 @@
     "text": "练习 1: DQN 概念回顾\n\n核心思想: DQN 使用什么来近似 Q 函数？相比于表格 Q-Learning，这样做主要解决了什么问题？\n不稳定性: 为什么将 Q-Learning 直接与神经网络结合会导致训练不稳定？请解释两个主要原因。\n经验回放:\n\n经验回放机制是如何工作的？（简述存储和采样过程）\n它主要解决了 Q-Learning + NN 不稳定性中的哪个问题？如何解决的？它还有什么额外的好处？\n\n目标网络:\n\n目标网络机制是如何工作的？（简述双网络和参数更新方式）\n它主要解决了 Q-Learning + NN 不稳定性中的哪个问题？如何解决的？\n\nDQN 更新: 在 DQN 的更新步骤中，计算 TD 目标 \\(Target = R + \\gamma * \\max_{a'} \\hat{Q}(S', a'; w^{-})\\) 时，使用的是哪个网络的参数（\\(w\\) 还是 \\(w^{-}\\)）？计算损失 \\(Loss = (Target - \\hat{Q}(S, A; w))^2\\) 时，计算 \\(\\hat{Q}(S, A; w)\\) 使用的是哪个网络的参数？",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>28</span>  <span class='chapter-title'>Week 10 - 学生练习</span>"
+      "<span class='chapter-number'>29</span>  <span class='chapter-title'>Week 10 - 学生练习</span>"
     ]
   },
   {
@@ -1722,7 +1777,7 @@
     "text": "练习 2: SB3 DQN 代码理解 (基于 Lab 6)\n本练习基于讲义/Lab 6 中提供的 CartPole 环境和 SB3 DQN 实现代码。\n\n关键组件参数: 请在 Lab 6 的 SB3 DQN 代码中，找出与以下 DQN 关键组件对应的超参数名称，并简述其含义：\n\n经验回放缓冲区的大小。\n开始学习前需要收集的最小经验数量。\n每次从缓冲区采样用于训练的小批量大小。\n目标网络的更新方式/频率（是硬更新还是软更新？对应的参数是什么？）。\n探索率 ε 从初始值衰减到最终值所用的步数比例。\n最终的探索率 ε 是多少？\n\nTensorBoard 监控: 代码中通过哪个参数指定了 TensorBoard 日志的保存目录？在 TensorBoard 中，我们主要关注哪个指标来判断模型的训练效果（平均回合奖励）？",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>28</span>  <span class='chapter-title'>Week 10 - 学生练习</span>"
+      "<span class='chapter-number'>29</span>  <span class='chapter-title'>Week 10 - 学生练习</span>"
     ]
   },
   {
@@ -1733,7 +1788,7 @@
     "text": "练习 3: DQN 超参数实验 (基于 Lab 6)\n请务必先确保你能够成功运行 Lab 6 的基础代码，并能使用 TensorBoard 查看结果。\n选择至少两组超参数进行修改实验（每次只修改一个或一组相关参数，保持其他参数与 Lab 6 基础代码一致），重新训练模型，并记录评估结果。\n实验建议（选择至少两项）：\n\n实验 A: 改变学习率 (Learning Rate)\n\n尝试一个较大的学习率，例如 learning_rate=1e-3。\n尝试一个较小的学习率，例如 learning_rate=1e-5。\n\n实验 B: 改变经验回放缓冲区大小 (Buffer Size)\n\n尝试一个较小的缓冲区，例如 buffer_size=10000。\n尝试一个更大的缓冲区，例如 buffer_size=500000 (如果内存允许)。\n\n实验 C: 改变探索策略 (Exploration)\n\n尝试更快的探索衰减，例如 exploration_fraction=0.05。\n尝试更高的最终探索率，例如 exploration_final_eps=0.2。\n\n实验 D: 改变目标网络更新频率 (Target Network Update)\n\nSB3 DQN 默认 tau=1.0 是硬更新。尝试更频繁的硬更新，例如 target_update_interval=1000。\n尝试软更新，例如设置 tau=0.005 (此时 target_update_interval 参数通常会被忽略)。\n\n\n记录与分析:\n\n对于你进行的每一组实验：\n\n记录你修改的超参数及其值。\n记录使用 evaluate_policy 函数评估模型得到的最终性能指标（包括平均奖励 mean_reward 和奖励标准差 std_reward）。\n(可选但推荐) 使用截图工具截取 TensorBoard 中 rollout/ep_rew_mean 曲线图，该曲线反映了训练过程中平均回合奖励的变化趋势。\n\n对比分析: 对比不同超参数设置下的训练曲线和评估结果，与基础代码的结果进行比较。\n\n你观察到了哪些显著的差异？（例如，收敛速度变快/变慢？最终性能变好/变差？训练过程更稳定/更震荡？）\n尝试解释为什么修改这些超参数会导致观察到的结果变化？（结合这些超参数在 DQN 算法中的作用来分析）。",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>28</span>  <span class='chapter-title'>Week 10 - 学生练习</span>"
+      "<span class='chapter-number'>29</span>  <span class='chapter-title'>Week 10 - 学生练习</span>"
     ]
   },
   {
@@ -1744,7 +1799,7 @@
     "text": "练习目标",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>29</span>  <span class='chapter-title'>Week 11 - 学生练习</span>"
+      "<span class='chapter-number'>30</span>  <span class='chapter-title'>Week 11 - 学生练习</span>"
     ]
   },
   {
@@ -1755,7 +1810,7 @@
     "text": "练习 1: 基于策略 vs. 基于价值\n\n核心区别: 请用你自己的话，再次阐述基于策略的 RL 方法（如策略梯度）与基于价值的 RL 方法（如 Q-Learning, DQN）在学习目标和策略导出方式上的主要区别。\n适用场景: 在什么情况下，基于策略的方法通常比基于价值的方法更有优势？（至少列举两点，并说明原因）",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>29</span>  <span class='chapter-title'>Week 11 - 学生练习</span>"
+      "<span class='chapter-number'>30</span>  <span class='chapter-title'>Week 11 - 学生练习</span>"
     ]
   },
   {
@@ -1766,7 +1821,7 @@
     "text": "练习 2: 策略梯度定理与 REINFORCE\n\n策略梯度定理 (直观解释): 策略梯度定理给出的梯度估计 ∇J(θ) ≈ E[∇logπ(A|S, θ) * Qπ(S, A)] (或使用 G_t) 中，∇logπ(A|S, θ) 和 Qπ(S, A) (或 G_t) 这两部分各自代表了什么含义？它们相乘后如何指导参数 θ 的更新方向（即“增加好动作概率，降低坏动作概率”）？\nREINFORCE 算法:\n\nREINFORCE 算法使用什么来估计策略梯度定理中的 Qπ(S, A)？\n为什么 REINFORCE 算法需要等到一个完整的回合结束后才能进行参数更新？\nREINFORCE 算法最主要的缺点是什么？为什么会产生这个缺点？",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>29</span>  <span class='chapter-title'>Week 11 - 学生练习</span>"
+      "<span class='chapter-number'>30</span>  <span class='chapter-title'>Week 11 - 学生练习</span>"
     ]
   },
   {
@@ -1777,7 +1832,7 @@
     "text": "练习 3: 基线 (Baseline) 与优势函数\n\n引入基线的目的: 在策略梯度方法中，为什么要引入基线 (Baseline) b(S)？它主要解决了 REINFORCE 算法的什么问题？\n基线的作用原理: 从梯度估计 E[∇logπ * (G_t - b(S))] 来看，为什么减去一个不依赖于动作 A 的基线 b(S) 不会改变梯度的期望值（即不引入偏差）？（提示：回顾讲义中的简单推导或用语言解释）\n优势函数:\n\n优势函数 Aπ(S, A) 的定义是什么？（写出公式）\n它直观地衡量了什么？\n为什么使用优势函数 Aπ 作为策略梯度更新中的“动作好坏衡量标准”通常比直接使用回报 G_t 或 Qπ 更好？",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>29</span>  <span class='chapter-title'>Week 11 - 学生练习</span>"
+      "<span class='chapter-number'>30</span>  <span class='chapter-title'>Week 11 - 学生练习</span>"
     ]
   },
   {
@@ -1788,7 +1843,7 @@
     "text": "练习 4: 算法选择思考\n假设你遇到以下两个不同的 RL 问题，你会倾向于优先考虑哪类算法（基于价值如 DQN，或基于策略/Actor-Critic 如 A2C）？请说明理由。\n\n问题一：机器人抓取物体。 状态是摄像头图像和关节角度（高维、连续），动作是控制机械臂每个关节的精确力矩（连续动作空间）。目标是成功抓取物体。\n问题二：玩简单的棋盘游戏（如井字棋）。 状态是棋盘布局（低维、离散），动作是在空格处落子（离散动作空间）。目标是赢得游戏。",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>29</span>  <span class='chapter-title'>Week 11 - 学生练习</span>"
+      "<span class='chapter-number'>30</span>  <span class='chapter-title'>Week 11 - 学生练习</span>"
     ]
   },
   {
@@ -1799,7 +1854,7 @@
     "text": "练习目标",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>30</span>  <span class='chapter-title'>Week 12 - 学生练习</span>"
+      "<span class='chapter-number'>31</span>  <span class='chapter-title'>Week 12 - 学生练习</span>"
     ]
   },
   {
@@ -1810,7 +1865,7 @@
     "text": "练习 1: Actor-Critic 概念\n\n框架组成: Actor-Critic (AC) 框架包含哪两个主要组成部分？它们各自的作用是什么？（提示：一个负责选动作，一个负责评估）\nCritic 的作用: Critic 网络（通常学习 V 函数）是如何帮助 Actor 网络（策略网络）学习的？它提供了什么关键信息来指导 Actor 的更新？相比于 REINFORCE 使用的蒙特卡洛回报 G_t，这个信息有什么优势？\n更新规则:\n\n在基本的 Actor-Critic 方法中，Actor (策略参数 θ) 的更新规则通常是什么样的？（写出包含 TD 误差 δ 的更新公式）\nCritic (价值参数 w) 的更新规则通常是什么样的？（写出包含 TD 误差 δ 的更新公式）\n\nA2C vs. A3C: A2C 和 A3C 的主要区别是什么？哪个是同步更新，哪个是异步更新？哪个在现代实践中更常用？",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>30</span>  <span class='chapter-title'>Week 12 - 学生练习</span>"
+      "<span class='chapter-number'>31</span>  <span class='chapter-title'>Week 12 - 学生练习</span>"
     ]
   },
   {
@@ -1821,7 +1876,7 @@
     "text": "练习 2: 优势函数估计\n\n优势函数 Aπ(s, a): 回顾其定义，它衡量了什么？\nTD 误差作为估计: 为什么可以用 TD 误差 δ_t = R + γV(S’) - V(S) 来近似优势函数 Aπ(S, A)？（提示：思考 δ_t 的期望与 Aπ 的关系）\n为何有效: 相比于直接使用 Qπ(S, A) 或 G_t，使用优势函数（或其估计 δ_t）来乘以 Score Function (∇logπ) 进行策略梯度更新，主要的好处是什么？",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>30</span>  <span class='chapter-title'>Week 12 - 学生练习</span>"
+      "<span class='chapter-number'>31</span>  <span class='chapter-title'>Week 12 - 学生练习</span>"
     ]
   },
   {
@@ -1832,7 +1887,7 @@
     "text": "练习 3: A2C Lab 代码与结果分析 (基于 Lab 7)\n本练习基于讲义/Lab 7 中提供的 CartPole 和 Pendulum 环境以及 SB3 A2C 实现代码。\n\n代码理解 (CartPole):\n\n在 A2C 的 SB3 实现中，n_steps 参数的作用是什么？它与 TD 学习有什么关系？\nvf_coef (值函数系数) 和 ent_coef (熵系数) 这两个参数分别调节了什么？它们对学习过程可能产生什么影响？\n\nA2C vs. DQN (CartPole):\n\n回顾你在 Lab 7 中运行 A2C 和 Lab 6 中运行 DQN 解决 CartPole 的结果。在你的实验中（或者根据预期），哪个算法收敛更快？哪个算法最终性能更好？哪个算法的训练曲线更平滑/更稳定？（简述观察到的现象即可）\n你认为造成这些差异的可能原因是什么？（提示：考虑 On-Policy vs Off-Policy, 经验回放 vs 并行环境等）\n\n连续动作空间 (Pendulum):\n\n为什么 A2C 能够处理像 Pendulum 这样的连续动作空间问题，而标准的 DQN 不能？（提示：思考 Actor 和 Critic 的输出以及 DQN 的 max_a 操作）\n(如果运行了 Pendulum 实验) A2C 在 Pendulum 任务上的表现如何？（例如，奖励曲线是否趋于上升？最终奖励大概是多少？）",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>30</span>  <span class='chapter-title'>Week 12 - 学生练习</span>"
+      "<span class='chapter-number'>31</span>  <span class='chapter-title'>Week 12 - 学生练习</span>"
     ]
   },
   {
@@ -1843,7 +1898,7 @@
     "text": "练习目标",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>31</span>  <span class='chapter-title'>Week 13 - 学生练习</span>"
+      "<span class='chapter-number'>32</span>  <span class='chapter-title'>Week 13 - 学生练习</span>"
     ]
   },
   {
@@ -1854,7 +1909,7 @@
     "text": "练习 1: 动态定价 MDP 定义挑战\n回顾本周讲义中讨论的网约车动态定价案例。\n\n状态表示 (S):\n\n讲义中提到了多种可能的状态信息（时空、供需、上下文）。如果让你来设计状态向量，你会优先选择哪些信息？为什么？（选择 3-5 个最重要的）\n对于“时间”这个特征，直接使用小时数（0-23）作为状态的一部分有什么潜在问题？你会如何更好地表示时间特征？（提示：周期性）\n如果状态维度过高，除了使用更强大的函数逼近器（如 DRL），还有哪些方法可以尝试降低状态空间的复杂度？（提示：特征选择、特征组合、状态抽象）\n\n奖励设计 (R):\n\n假设平台只使用“平台短期收入”作为奖励 R。你认为学习到的 RL 策略可能会有什么特点？这种策略对平台的长期发展可能带来什么风险？\n如果想在奖励中同时考虑“订单完成率”，你会如何设计这个复合奖励函数？（例如，R = w₁ * 收入 + w₂ * 完成率，如何设定权重 w₁, w₂？或者有其他方式？）\n为什么说奖励函数设计是 RL 应用中最具挑战性的环节之一？",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>31</span>  <span class='chapter-title'>Week 13 - 学生练习</span>"
+      "<span class='chapter-number'>32</span>  <span class='chapter-title'>Week 13 - 学生练习</span>"
     ]
   },
   {
@@ -1865,7 +1920,7 @@
     "text": "练习 2: 资源优化 MDP 建模练习\n选择以下一个资源优化场景（或自选一个你熟悉的场景），尝试进行 MDP 定义：\n场景选项:\n\n共享单车调度: 一个城市有多个区域，每个区域有一定数量的共享单车。智能体（调度系统）需要决定每天晚上从哪些区域调出多少单车，运往哪些区域，以最大化第二天的用户骑行总时长（或总收入），同时考虑调度成本。\n数据中心能源管理: 数据中心有服务器集群和储能设备（如电池）。智能体需要根据实时电价、预测的计算负载和当前电池电量，决定何时给电池充电、何时用电池供电、何时调整服务器负载，以最小化总电费成本。\n\n对于你选择的场景，请回答：\n\n目标: 明确定义优化的商业目标。\n状态 (S): 列出关键的状态变量（至少 3-5 个），说明离散/连续。\n动作 (Action, A): 列出智能体可以采取的动作，说明离散/连续。\n奖励 (Reward, R): 定义一个合理的奖励函数，使其与你的优化目标对齐。\n(思考) 这个问题的状态空间和动作空间可能有多大？使用表格型 RL 是否可行？如果不可行，为什么？",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>31</span>  <span class='chapter-title'>Week 13 - 学生练习</span>"
+      "<span class='chapter-number'>32</span>  <span class='chapter-title'>Week 13 - 学生练习</span>"
     ]
   },
   {
@@ -1876,7 +1931,7 @@
     "text": "练习 3: RL 实践挑战思考\n结合本周学习的动态定价/资源优化案例以及你对其他商业场景的理解，思考以下实践挑战：\n\nSim-to-Real Gap: 为什么在模拟环境中训练好的 RL 策略，直接部署到真实世界中效果可能会打折扣？请至少列举两个可能导致这种 Gap 的原因。\n冷启动: 对于一个新上线的业务（如一个新的网约车市场或一个新的推荐功能），几乎没有历史数据，如何启动 RL 模型的训练？（至少提出一种可能的策略）\n非平稳性: 真实商业环境（如用户偏好、竞争对手策略、宏观经济）是不断变化的。标准的 MDP 假设环境是平稳的，这会对 RL 应用带来什么挑战？如何应对这种非平稳性？（至少提出一种可能的策略）\n评估与安全: 为什么不能直接将新训练好的 RL 定价策略或推荐策略大规模上线？在上线前，可以通过哪些方式来评估其效果和安全性？",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>31</span>  <span class='chapter-title'>Week 13 - 学生练习</span>"
+      "<span class='chapter-number'>32</span>  <span class='chapter-title'>Week 13 - 学生练习</span>"
     ]
   },
   {
@@ -1887,7 +1942,7 @@
     "text": "练习目标",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>32</span>  <span class='chapter-title'>Week 14 - 学生练习</span>"
+      "<span class='chapter-number'>33</span>  <span class='chapter-title'>Week 14 - 学生练习</span>"
     ]
   },
   {
@@ -1898,7 +1953,7 @@
     "text": "练习 1: 推荐系统 MDP 定义挑战\n回顾本周讲义中讨论的电商商品推荐案例。\n\n状态表示 (S):\n\n推荐系统需要捕捉用户的长期兴趣和短期意图。你认为讲义中提到的哪些状态特征更能反映长期兴趣？哪些更能反映短期意图？\n为什么需要使用 Embedding 技术来表示用户 ID 和商品 ID？直接使用 ID 作为状态的一部分有什么问题？\n\n动作空间 (A):\n\n为什么说推荐系统的原始动作空间（所有商品）通常是巨大的、不可行的？\n讲义中提到了两种处理大动作空间的方法：候选生成+排序 和 动作嵌入。请简述这两种方法的基本思路。你认为哪种方法在工程上更容易实现？哪种方法可能更灵活或效果更好？\n\n奖励设计 (R):\n\n在电商推荐中，常用的隐式反馈信号包括点击、加入购物车、购买。你认为这三个信号哪个更能反映用户的真实兴趣？哪个信号最稀疏？哪个最容易被“误导”（例如，用户只是好奇点击）？\n如果只用“点击”作为奖励，可能会导致什么问题（例如，Clickbait）？如果想缓解这个问题，可以在奖励函数中加入哪些其他考虑？\n为什么优化长期用户价值 (LTV) 是推荐系统更理想的目标？但在实践中，直接用 LTV 作为奖励有什么困难？",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>32</span>  <span class='chapter-title'>Week 14 - 学生练习</span>"
+      "<span class='chapter-number'>33</span>  <span class='chapter-title'>Week 14 - 学生练习</span>"
     ]
   },
   {
@@ -1909,7 +1964,7 @@
     "text": "练习 2: 探索与利用在推荐中的思考\n\n具体体现:\n\n请举例说明在音乐推荐场景下，“利用”和“探索”分别可能对应哪些推荐行为？\n在新闻推荐场景下呢？\n\n探索的价值: 为什么在推荐系统中进行探索（推荐新颖、长尾或多样性的内容）不仅仅是为了让 RL 模型学习得更好，本身也具有重要的商业价值和用户价值？\n平衡的挑战: 假设你是一个视频平台的推荐算法工程师，老板要求你提高用户的“总观看时长”（利用），但你也知道需要推荐一些新视频来满足用户的好奇心和平台的长期发展（探索）。你会如何设计策略来尝试平衡这两个目标？（描述性说明即可）",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>32</span>  <span class='chapter-title'>Week 14 - 学生练习</span>"
+      "<span class='chapter-number'>33</span>  <span class='chapter-title'>Week 14 - 学生练习</span>"
     ]
   },
   {
@@ -1920,7 +1975,7 @@
     "text": "练习 3: 推荐系统伦理问题思辨\n请选择以下至少两个伦理问题进行思考和回答：\n\n过滤气泡:\n\n你是否在自己使用的某个 App（如新闻、社交媒体、视频）中感受到了“过滤气泡”或“信息茧房”？请举例描述。\n你认为平台是否有责任帮助用户打破信息茧房？为什么？如果平台要采取措施，可以做些什么？\n\n公平性:\n\n思考一下，推荐算法可能会对哪些用户群体产生不公平？（例如，新用户 vs 老用户？来自不同地区的用户？）为什么会产生这种不公平？\n推荐算法可能会对哪些内容/商品提供者产生不公平？（例如，小商家 vs 大品牌？新晋创作者 vs 头部网红？）这可能带来什么后果？\n\n隐私:\n\n为了提供精准的个性化推荐，平台通常需要收集大量用户数据。你认为哪些用户数据的收集是合理的？哪些可能涉及隐私风险？\n你是否愿意为了获得更好的推荐服务而分享更多的个人数据？你的“底线”在哪里？\n\n操纵:\n\n你认为推荐算法在多大程度上会影响甚至“操纵”用户的选择和行为？\n如果一个推荐算法的目标是最大化平台的短期商业利益（例如，诱导用户购买利润更高的商品，即使不是最适合用户的），这是否存在伦理问题？为什么？",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>32</span>  <span class='chapter-title'>Week 14 - 学生练习</span>"
+      "<span class='chapter-number'>33</span>  <span class='chapter-title'>Week 14 - 学生练习</span>"
     ]
   },
   {
@@ -1931,7 +1986,7 @@
     "text": "练习目标",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>33</span>  <span class='chapter-title'>Week 15 - 学生练习</span>"
+      "<span class='chapter-number'>34</span>  <span class='chapter-title'>Week 15 - 学生练习</span>"
     ]
   },
   {
@@ -1942,7 +1997,7 @@
     "text": "练习 1: RL 实践挑战回顾与思考\n请回顾本周讲义中总结的 RL 实践挑战，并选择至少三个你认为最重要或最感兴趣的挑战进行思考：\n挑战列表: 1. 数据获取与质量 2. 模拟环境构建与 Sim-to-Real Gap 3. 奖励函数设计的艺术与陷阱 4. 安全性与鲁棒性测试 5. 部署与维护\n对于你选择的每个挑战：\n\n请简要描述这个挑战的核心内容是什么？\n为什么这个挑战在 RL 应用中尤为突出？（与其他机器学习方法相比）\n结合之前学习的动态定价或推荐系统案例，具体说明这个挑战可能如何体现？\n你认为有哪些可能的应对思路或缓解措施？",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>33</span>  <span class='chapter-title'>Week 15 - 学生练习</span>"
+      "<span class='chapter-number'>34</span>  <span class='chapter-title'>Week 15 - 学生练习</span>"
     ]
   },
   {
@@ -1953,7 +2008,7 @@
     "text": "练习 2: 负责任 AI 与 RL 伦理思辨\n请回顾本周讲义中介绍的负责任 AI 的六个核心原则，并选择至少两个原则进行思考：\n原则列表: 1. 公平性 (Fairness) 2. 透明度 (Transparency) 3. 可解释性 (Explainability / Interpretability) 4. 问责制 (Accountability) 5. 隐私 (Privacy) 6. 安全与可靠性 (Safety & Reliability)\n对于你选择的每个原则：\n\n请用你自己的话解释这个原则的含义。\n为什么这个原则对于开发和部署 RL 系统（尤其是在商业决策中）是重要的？\n请设想一个具体的 RL 应用场景（可以是定价、推荐、或其他你熟悉的场景），并描述在这个场景下，违反这个原则可能会带来什么负面后果？\n你认为可以采取哪些技术或非技术的措施来更好地遵循这个原则？",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>33</span>  <span class='chapter-title'>Week 15 - 学生练习</span>"
+      "<span class='chapter-number'>34</span>  <span class='chapter-title'>Week 15 - 学生练习</span>"
     ]
   },
   {
@@ -1964,7 +2019,7 @@
     "text": "练习 3: 期末项目选题初步构思\n请仔细阅读讲义中关于期末项目三个方向的介绍：\n\n模拟实验与分析: 选择商业问题，形式化 MDP，运行 RL 实验（可用 SB3），分析结果。\n应用方案设计: 选择商业场景，设计完整 RL 解决方案（MDP 定义、算法、数据、挑战、评估），无需编码实现。\n文献综述与批判性分析: 调研 RL 在特定商业领域的应用，进行综述和批判性分析。\n\n请完成以下任务：\n\n初步方向选择: 你目前比较倾向于选择哪个方向？为什么？（简单说明理由即可，允许后续更改）\n初步选题构思:\n\n如果选择方向 1 或 2: 请初步构思一个你可能感兴趣的商业问题或场景。简要描述这个场景，以及你初步设想的优化目标是什么。\n如果选择方向 3: 请初步构思一个你可能感兴趣的特定商业领域（如金融、营销、运营、医疗、教育等）。\n\n潜在挑战/疑问: 对于你初步构思的选题，你目前预见到哪些主要的困难或疑问？（例如，数据获取？模拟环境构建？问题定义？文献查找？）\n\n注意: 这只是初步构思，目的是帮助你开始思考。选题可以在后续与老师或助教讨论后进行调整和细化。",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>33</span>  <span class='chapter-title'>Week 15 - 学生练习</span>"
+      "<span class='chapter-number'>34</span>  <span class='chapter-title'>Week 15 - 学生练习</span>"
     ]
   },
   {
@@ -1975,7 +2030,7 @@
     "text": "练习目标",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>34</span>  <span class='chapter-title'>Week 16 - 学生练习</span>"
+      "<span class='chapter-number'>35</span>  <span class='chapter-title'>Week 16 - 学生练习</span>"
     ]
   },
   {
@@ -1986,7 +2041,7 @@
     "text": "练习 1: 知识体系梳理\n请尝试绘制一幅思维导图或用列表/提纲的形式，梳理本课程所学的核心知识点及其相互关系。你的梳理应至少包含以下层面：\n\n基础概念: MDP (S, A, R, P, γ), 策略 π, 价值函数 V/Q, Bellman 方程 (期望/最优)。\n核心算法类别:\n\n无模型预测 (MC, TD) - 核心思想、优缺点。\n无模型控制 (SARSA, Q-Learning) - On/Off-Policy 区别、更新规则。\n函数逼近 (为何需要？线性 vs. 非线性)。\n深度强化学习 (DQN - 经验回放/目标网络, A2C - Actor/Critic)。\n\n应用与挑战: 商业应用案例（定价、推荐等）、实践挑战（数据、模拟、奖励、安全、伦理等）。\n\n目标: 展现你对整个课程知识框架的理解和把握。",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>34</span>  <span class='chapter-title'>Week 16 - 学生练习</span>"
+      "<span class='chapter-number'>35</span>  <span class='chapter-title'>Week 16 - 学生练习</span>"
     ]
   },
   {
@@ -1997,7 +2052,7 @@
     "text": "练习 2: RL 应用反思\n结合整个课程的学习，请思考并回答以下问题：\n\n核心优势: 你认为强化学习在解决商业决策问题时，相比于传统的优化方法或监督学习方法，其最核心的优势是什么？请举例说明。\n最大挑战: 在将 RL 应用于实际商业场景时，你认为当前面临的最大挑战是什么？为什么？（可以从数据、模拟、奖励、算法稳定性、部署、伦理等角度选择）\n适用边界: 你认为什么样的商业问题特别适合使用 RL 来解决？什么样的商业问题可能不太适合或需要非常谨慎地使用 RL？请说明理由。",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>34</span>  <span class='chapter-title'>Week 16 - 学生练习</span>"
+      "<span class='chapter-number'>35</span>  <span class='chapter-title'>Week 16 - 学生练习</span>"
     ]
   },
   {
@@ -2008,7 +2063,7 @@
     "text": "练习 3: 技术结合与未来展望\n\n技术融合: 请设想一个具体的商业场景，并思考在这个场景下，强化学习可以如何与其他 AI 或数据科学技术（如监督学习预测模型、优化算法、因果推断、自然语言处理等）结合使用，以达到更好的决策效果？\n未来潜力: 在本周介绍的 RL 前沿方向中（Offline RL, MARL, Model-Based RL, 表示学习, XAI/安全/公平等），你认为哪个方向在未来商业应用中最具潜力？为什么？它可能解决当前 RL 应用中的哪些痛点？",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>34</span>  <span class='chapter-title'>Week 16 - 学生练习</span>"
+      "<span class='chapter-number'>35</span>  <span class='chapter-title'>Week 16 - 学生练习</span>"
     ]
   },
   {
@@ -2019,7 +2074,7 @@
     "text": "练习 4: 期末项目思考（可选深化）\n\n基于上周的初步构思和本周的课程总结，请进一步细化你的期末项目选题和计划。\n如果选择方向 1 (模拟实验): 明确你要解决的具体问题、MDP 定义、计划使用的算法和环境、预期的实验步骤和分析维度。\n如果选择方向 2 (方案设计): 进一步完善你的解决方案，细化 MDP 各要素的定义，深入分析潜在挑战和应对策略，明确评估方案。\n如果选择方向 3 (文献综述): 确定你要聚焦的具体商业领域和关键问题，开始查找和筛选核心文献，构思你的综述结构和批判性分析的角度。\n\n请简要记录你本周关于期末项目的进一步思考或计划（几句话即可）。",
     "crumbs": [
       "练习",
-      "<span class='chapter-number'>34</span>  <span class='chapter-title'>Week 16 - 学生练习</span>"
+      "<span class='chapter-number'>35</span>  <span class='chapter-title'>Week 16 - 学生练习</span>"
     ]
   }
 ]
