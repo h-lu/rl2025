@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -349,7 +383,7 @@ window.Quarto = {
   <ul class="collapse">
   <li><a href="#练习-1-actor-critic-概念" id="toc-练习-1-actor-critic-概念" class="nav-link" data-scroll-target="#练习-1-actor-critic-概念">练习 1: Actor-Critic 概念</a></li>
   <li><a href="#练习-2-优势函数估计" id="toc-练习-2-优势函数估计" class="nav-link" data-scroll-target="#练习-2-优势函数估计">练习 2: 优势函数估计</a></li>
-  <li><a href="#练习-3-a2c-lab-代码与结果分析-基于-lab-7" id="toc-练习-3-a2c-lab-代码与结果分析-基于-lab-7" class="nav-link" data-scroll-target="#练习-3-a2c-lab-代码与结果分析-基于-lab-7">练习 3: A2C Lab 代码与结果分析 (基于 Lab 7)</a></li>
+  <li><a href="#练习-3-a2c-挑战实验---月球登陆器-lunarlander-v2" id="toc-练习-3-a2c-挑战实验---月球登陆器-lunarlander-v2" class="nav-link" data-scroll-target="#练习-3-a2c-挑战实验---月球登陆器-lunarlander-v2">练习 3: A2C 挑战实验 - 月球登陆器 (LunarLander-v2)</a></li>
   </ul></li>
   <li><a href="#提交要求" id="toc-提交要求" class="nav-link" data-scroll-target="#提交要求">提交要求</a></li>
   </ul>
@@ -413,26 +447,87 @@ window.Quarto = {
 <li><strong>为何有效:</strong> 相比于直接使用 <span class="math inline">\(Q_{\pi}(S, A)\)</span> 或 <span class="math inline">\(G_t\)</span>，使用优势函数（或其估计 <span class="math inline">\(\delta_t\)</span>）来乘以 Score Function (<span class="math inline">\(\nabla \log \pi\)</span>) 进行策略梯度更新，主要的好处是什么？</li>
 </ol>
 </section>
-<section id="练习-3-a2c-lab-代码与结果分析-基于-lab-7" class="level2">
-<h2 class="anchored" data-anchor-id="练习-3-a2c-lab-代码与结果分析-基于-lab-7">练习 3: A2C Lab 代码与结果分析 (基于 Lab 7)</h2>
-<p>本练习基于讲义/Lab 7 中提供的 CartPole 和 Pendulum 环境以及 SB3 A2C 实现代码。</p>
-<ol type="1">
-<li><strong>代码理解 (CartPole):</strong>
+<section id="练习-3-a2c-挑战实验---月球登陆器-lunarlander-v2" class="level2">
+<h2 class="anchored" data-anchor-id="练习-3-a2c-挑战实验---月球登陆器-lunarlander-v2">练习 3: A2C 挑战实验 - 月球登陆器 (LunarLander-v2)</h2>
+<p>本练习旨在让你运用 A2C 算法解决一个比 CartPole 更具挑战性的环境：<code>LunarLander-v2</code>。你将需要设置 A2C 模型，训练它，评估其性能，并尝试调整超参数以获得更好的结果。该环境在 CPU 上应有合理的训练时间。</p>
+<p><strong>环境介绍: <code>LunarLander-v2</code></strong></p>
 <ul>
-<li>在 A2C 的 SB3 实现中，<code>n_steps</code> 参数的作用是什么？它与 TD 学习有什么关系？</li>
-<li><code>vf_coef</code> (值函数系数) 和 <code>ent_coef</code> (熵系数) 这两个参数分别调节了什么？它们对学习过程可能产生什么影响？</li>
-</ul></li>
-<li><strong>A2C vs.&nbsp;DQN (CartPole):</strong>
+<li><strong>目标:</strong> 控制一个登陆器安全地降落在月球表面的目标区域（两个黄色旗帜之间）。安全降落意味着登陆器停下来，并且两个腿都接触地面。</li>
+<li><strong>状态空间 (连续):</strong> 8个值，包括登陆器的位置 (x, y)，线速度 (vx, vy)，角度，角速度，以及两个腿是否接触地面 (布尔值)。</li>
+<li><strong>动作空间 (离散):</strong> 4个动作：0-什么都不做，1-点燃左侧引擎，2-点燃主引擎，3-点燃右侧引擎。</li>
+<li><strong>奖励:</strong>
 <ul>
-<li>回顾你在 Lab 7 中运行 A2C 和 Lab 6 中运行 DQN 解决 CartPole 的结果。在你的实验中（或者根据预期），哪个算法收敛更快？哪个算法最终性能更好？哪个算法的训练曲线更平滑/更稳定？（简述观察到的现象即可）</li>
-<li>你认为造成这些差异的可能原因是什么？（提示：考虑 On-Policy vs Off-Policy, 经验回放 vs 并行环境等）</li>
+<li>移动到目标区域会获得奖励。</li>
+<li>坠毁会获得 -100 分。</li>
+<li>成功降落会获得 +100 分。</li>
+<li>每条腿接触地面会获得 +10 分。</li>
+<li>点燃主引擎会消耗少量燃料（小的负奖励）。</li>
+<li>环境在获得 +200 分时被认为解决。</li>
 </ul></li>
-<li><strong>连续动作空间 (Pendulum):</strong>
+</ul>
+<p><strong>1. 实验设置与代码实现:</strong></p>
+<p>参考 Lab 7 中 A2C on CartPole 的代码结构，你需要进行以下调整来训练 <code>LunarLander-v2</code>：</p>
 <ul>
-<li>为什么 A2C 能够处理像 Pendulum 这样的连续动作空间问题，而标准的 DQN 不能？（提示：思考 Actor 和 Critic 的输出以及 DQN 的 <code>max_a</code> 操作）</li>
-<li>(如果运行了 Pendulum 实验) A2C 在 Pendulum 任务上的表现如何？（例如，奖励曲线是否趋于上升？最终奖励大概是多少？）</li>
+<li><strong>环境名称:</strong> 将 <code>"CartPole-v1"</code> 更改为 <code>"LunarLander-v2"</code>。</li>
+<li><strong>并行环境数量 (<code>n_envs</code>):</strong> 对于 <code>LunarLander-v2</code>，可以尝试使用 8 或 16 个并行环境。 <code>python     # 示例:     env_id = "LunarLander-v2"     vec_env = make_vec_env(env_id, n_envs=8)</code></li>
+<li><strong>A2C 模型超参数:</strong> <code>LunarLander-v2</code> 可能比 CartPole 需要不同的超参数设置。以下是一些建议的初始值，你可能需要调整它们：
+<ul>
+<li><code>policy</code>: <code>"MlpPolicy"</code></li>
+<li><code>gamma</code>: <code>0.99</code> (折扣因子)</li>
+<li><code>n_steps</code>: <code>5</code> 或 <code>16</code>。这个参数定义了每个环境在进行一次更新之前运行的步数。较大的 <code>n_steps</code> 可以减少 TD 误差的方差，但可能会引入偏差。</li>
+<li><code>vf_coef</code>: <code>0.5</code> (值函数损失的系数，用于平衡 Actor 和 Critic 的学习)。</li>
+<li><code>ent_coef</code>: <code>0.01</code>。熵系数，用于鼓励探索。LunarLander 比 CartPole 更需要探索，所以一个小的正值可能有助于学习。</li>
+<li><code>learning_rate</code>: <code>7e-4</code> (0.0007) 或 <code>1e-3</code> (0.001)。可以尝试不同的学习率。</li>
+<li><code>tensorboard_log</code>: 设置一个目录来保存 TensorBoard 日志。</li>
+</ul>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 示例:</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> A2C(<span class="st">"MlpPolicy"</span>, vec_env, verbose<span class="op">=</span><span class="dv">1</span>,</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>            gamma<span class="op">=</span><span class="fl">0.99</span>,</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>            n_steps<span class="op">=</span><span class="dv">5</span>,        <span class="co"># 初始尝试值</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>            vf_coef<span class="op">=</span><span class="fl">0.5</span>,</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>            ent_coef<span class="op">=</span><span class="fl">0.01</span>,    <span class="co"># 为 LunarLander 增加少量熵正则化</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>            learning_rate<span class="op">=</span><span class="fl">7e-4</span>,</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>            tensorboard_log<span class="op">=</span><span class="st">"./a2c_lunarlander_logs/"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<li><strong>训练总步数 (<code>total_timesteps</code>):</strong> <code>LunarLander-v2</code> 通常需要比 CartPole 更多的训练步数。建议从 <code>200_000</code> 到 <code>500_000</code> 步开始。如果你的 CPU 较快，可以尝试更多步数。 <code>python     # 示例:     model.learn(total_timesteps=300_000, log_interval=100, tb_log_name="A2C_LunarLander_run1")</code> 注意 <code>log_interval</code> 和 <code>tb_log_name</code> 的使用，方便在 TensorBoard 中区分不同的运行。</li>
+</ul>
+<p><strong>2. 训练与监控:</strong></p>
+<ul>
+<li>运行你的脚本开始训练。</li>
+<li>使用 TensorBoard 监控训练过程。特别关注以下指标：
+<ul>
+<li><code>rollout/ep_rew_mean</code>: 平均回合奖励，这是衡量智能体性能的关键指标。</li>
+<li><code>train/value_loss</code>: Critic (值函数) 的损失。</li>
+<li><code>train/policy_loss</code>: Actor (策略) 的损失。</li>
+<li><code>train/entropy_loss</code>: 熵损失 (如果 <code>ent_coef &gt; 0</code>)。</li>
+<li>观察 <code>ep_rew_mean</code> 是否随着训练的进行而稳步上升。</li>
 </ul></li>
-</ol>
+</ul>
+<p><strong>3. 评估模型:</strong></p>
+<ul>
+<li>训练完成后，使用 <code>evaluate_policy</code> 函数评估你的模型在多个回合中的平均表现。 <code>python     # 示例:     eval_env = gym.make(env_id) # LunarLander-v2, render_mode="human" 可用于可视化     mean_reward, std_reward = evaluate_policy(model, eval_env, n_eval_episodes=20, deterministic=True)     print(f"Evaluation results (A2C on LunarLander): Mean reward = {mean_reward:.2f} +/- {std_reward:.2f}")     eval_env.close()</code>
+<ul>
+<li><code>deterministic=True</code> 表示在评估时 Actor 选择概率最大的动作。</li>
+</ul></li>
+</ul>
+<p><strong>4. 实验分析与报告:</strong></p>
+<ul>
+<li><strong>基础性能:</strong> 记录你使用初始超参数训练后得到的 <code>ep_rew_mean</code> 训练曲线截图和最终的评估 <code>mean_reward</code>。模型是否成功解决了环境（平均奖励达到约 +200）？</li>
+<li><strong>超参数调整 (挑战部分):</strong>
+<ul>
+<li>选择至少 <strong>两个</strong> 你认为对 <code>LunarLander-v2</code> 性能影响较大的超参数进行调整（例如 <code>learning_rate</code>, <code>n_steps</code>, <code>ent_coef</code>, 或网络结构 <code>policy_kwargs</code> 中的 <code>net_arch</code>）。</li>
+<li>对于每个调整的超参数，进行一次新的训练。简要说明你为什么选择调整该参数以及你期望它如何影响学习过程。</li>
+<li>记录调整后的训练曲线和评估结果。比较不同参数设置下的性能差异。</li>
+<li><strong>提示:</strong>
+<ul>
+<li><code>learning_rate</code>: 太高可能导致不稳定，太低可能导致收敛缓慢。</li>
+<li><code>n_steps</code>: 影响 TD 误差的偏差-方差权衡。</li>
+<li><code>ent_coef</code>: 调整探索与利用的平衡。太高可能导致策略过于随机，太低可能导致陷入次优。</li>
+<li><code>net_arch</code>: 默认是 <code>[dict(pi=[64, 64], vf=[64, 64])]</code>。对于更复杂的 LunarLander，可以尝试更大的网络，如 <code>[dict(pi=[256, 256], vf=[256, 256])]</code> (通过 <code>policy_kwargs</code> 设置)。</li>
+</ul></li>
+</ul></li>
+<li><strong>A2C 适用性:</strong> 你认为 A2C 算法是否适合解决 <code>LunarLander-v2</code> 这样的问题？为什么？（考虑其特性，如处理离散动作、on-policy 性质、多环境并行等）。</li>
+<li><strong>遇到的问题与思考 (可选):</strong> 在实验过程中，你遇到了哪些问题？你是如何解决的？或者有什么其他有趣的发现或思考？</li>
+</ul>
 </section>
 </section>
 <section id="提交要求" class="level1">
