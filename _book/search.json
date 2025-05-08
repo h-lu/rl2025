@@ -971,7 +971,7 @@
     "href": "week11_lecture.html#优势",
     "title": "Week 11: 策略梯度方法 (Policy Gradient Methods)",
     "section": "优势",
-    "text": "优势\n\n处理连续动作空间: 策略网络可以直接输出连续动作的参数（例如，高斯分布的均值和标准差），这是基于价值的方法难以做到的。\n学习随机策略: 策略网络可以自然地表示随机策略 π(a|s, θ)，这在某些问题中是必要的。\n更好的收敛性质 (某些情况下): 尽管方差可能大，但策略梯度方法有时比基于价值的方法具有更好的收敛保证（尤其是在函数逼近下）。\n可以学习更简单的策略: 有时最优策略可能比最优价值函数简单得多，直接学习策略可能更容易。",
+    "text": "优势\n\n处理连续动作空间: 策略网络可以直接输出连续动作的参数（例如，高斯分布的均值和标准差），这是基于价值的方法难以做到的。\n学习随机策略: 策略网络可以自然地表示随机策略 \\(\\pi(a|s, \\theta)\\)，这在某些问题中是必要的。\n更好的收敛性质 (某些情况下): 尽管方差可能大，但策略梯度方法有时比基于价值的方法具有更好的收敛保证（尤其是在函数逼近下）。\n可以学习更简单的策略: 有时最优策略可能比最优价值函数简单得多，直接学习策略可能更容易。",
     "crumbs": [
       "讲义",
       "<span class='chapter-number'>14</span>  <span class='chapter-title'>Week 11: 策略梯度方法 (Policy Gradient Methods)</span>"
@@ -993,7 +993,7 @@
     "href": "week11_lecture.html#引出-actor-critic",
     "title": "Week 11: 策略梯度方法 (Policy Gradient Methods)",
     "section": "引出 Actor-Critic",
-    "text": "引出 Actor-Critic\n基本的 REINFORCE 算法使用蒙特卡洛方法估计回报 G_t (或 Qπ)，导致高方差。引入基线 Vπ 可以减小方差，但我们又需要估计 Vπ。\nActor-Critic 方法 正是为了解决这个问题而提出的：\n\nActor (行动者): 负责选择动作。它就是我们上面讨论的策略网络 π(a|s, θ)，参数为 θ。\nCritic (评论家): 负责评估动作的好坏。它学习一个价值函数（通常是状态值函数 V(s, w) 或动作值函数 Q(s, a, w)），参数为 w。Critic 的输出用于指导 Actor 的更新（例如，作为基线或计算优势函数）。\n\nActor 和 Critic 同时学习和更新：\n\nActor 根据当前策略 π(·|·, θ) 选择动作 A_t。\n执行动作，观察 R_{t+1}, S_{t+1}。\nCritic 使用 TD 误差等方法更新其价值函数参数 w (学习如何更好地评估)。\nActor 使用 Critic 提供的信息（如 TD 误差或优势函数估计）来更新其策略参数 θ (学习如何选择更好的动作)。\n\n这种结构结合了策略梯度（Actor 更新）和 TD 学习（Critic 更新）的优点，通常比纯粹的 REINFORCE 或纯粹的价值学习方法更稳定和高效。我们将在下周详细学习 Actor-Critic 方法。\n\n下周预告: Actor-Critic 方法。我们将学习 Actor-Critic 框架，以及具体的 A2C/A3C 算法概念，并使用 Stable Baselines3 运行 A2C 算法。",
+    "text": "引出 Actor-Critic\n基本的 REINFORCE 算法使用蒙特卡洛方法估计回报 \\(G_t\\) (或 \\(Q_{\\pi}\\))，导致高方差。引入基线 \\(V_{\\pi}\\) 可以减小方差，但我们又需要估计 \\(V_{\\pi}\\)。\nActor-Critic 方法 正是为了解决这个问题而提出的：\n\nActor (行动者): 负责选择动作。它就是我们上面讨论的策略网络 \\(\\pi(a|s, \\theta)\\)，参数为 \\(\\theta\\)。\nCritic (评论家): 负责评估动作的好坏。它学习一个价值函数（通常是状态值函数 \\(V(s, w)\\) 或动作值函数 \\(Q(s, a, w)\\)），参数为 \\(w\\)。Critic 的输出用于指导 Actor 的更新（例如，作为基线或计算优势函数）。\n\nActor 和 Critic 同时学习和更新：\n\nActor 根据当前策略 \\(\\pi(·|·, \\theta)\\) 选择动作 \\(A_t\\)。\n执行动作，观察 \\(R_{t+1}, S_{t+1}\\)。\nCritic 使用 TD 误差等方法更新其价值函数参数 \\(w\\) (学习如何更好地评估)。\nActor 使用 Critic 提供的信息（如 TD 误差或优势函数估计）来更新其策略参数 \\(\\theta\\) (学习如何选择更好的动作)。\n\n这种结构结合了策略梯度（Actor 更新）和 TD 学习（Critic 更新）的优点，通常比纯粹的 REINFORCE 或纯粹的价值学习方法更稳定和高效。我们将在下周详细学习 Actor-Critic 方法。\n\n下周预告: Actor-Critic 方法。我们将学习 Actor-Critic 框架，以及具体的 A2C/A3C 算法概念，并使用 Stable Baselines3 运行 A2C 算法。",
     "crumbs": [
       "讲义",
       "<span class='chapter-number'>14</span>  <span class='chapter-title'>Week 11: 策略梯度方法 (Policy Gradient Methods)</span>"
@@ -1049,17 +1049,6 @@
     "title": "Week 12: Actor-Critic 方法",
     "section": "任务与思考",
     "text": "任务与思考\n\n运行 A2C on CartPole: 运行代码的前半部分（CartPole）。使用 TensorBoard 观察训练曲线 (rollout/ep_rew_mean)。查看最终的评估结果。\n对比 A2C 与 DQN (CartPole):\n\n比较 A2C 和上周 DQN 在 CartPole 上的收敛速度（达到相似性能所需的步数）和最终性能（评估奖励）。哪个表现更好或更快？（注意：超参数可能需要调整才能公平比较）。\n考虑两种算法的样本效率。哪个算法似乎需要更少的交互步数来学习？（提示：DQN 使用经验回放，A2C 通常是 On-Policy）。\n\n(可选) 运行 A2C on Pendulum: 取消注释代码的后半部分，运行 A2C 解决 Pendulum-v1 问题。观察训练曲线和评估结果。思考为什么 DQN 无法直接用于此任务，而 A2C 可以？\n分析 Actor-Critic:\n\n解释 Actor-Critic 框架如何结合策略学习和价值学习。\nCritic 在 Actor-Critic 中扮演什么角色？它如何帮助 Actor 学习？\n什么是优势函数？为什么在策略梯度更新中使用优势函数估计（如 TD 误差）通常比使用原始回报更好？",
-    "crumbs": [
-      "讲义",
-      "<span class='chapter-number'>15</span>  <span class='chapter-title'>Week 12: Actor-Critic 方法</span>"
-    ]
-  },
-  {
-    "objectID": "week12_lecture.html#提交要求",
-    "href": "week12_lecture.html#提交要求",
-    "title": "Week 12: Actor-Critic 方法",
-    "section": "提交要求",
-    "text": "提交要求\n\n提交你运行和修改后的 SB3 A2C 代码 (至少包含 CartPole 部分)。\n提交 A2C 在 CartPole 上的 TensorBoard 训练曲线截图。\n提交 A2C 在 CartPole 上的评估结果。\n提交一份简短的分析报告，讨论：\n\nA2C 与 DQN 在 CartPole 上的性能对比（收敛速度、最终性能、可能的样本效率差异）。\n(如果运行了 Pendulum) 解释为什么 A2C 适用于连续动作空间而 DQN 不适用。\nActor-Critic 框架的基本原理以及 Critic 的作用。\n优势函数及其在降低方差方面的作用。\n\n\n\n下周预告: 商业案例分析 1 - 动态定价/资源优化。我们将深入探讨如何将前面学到的 RL 概念（MDP 定义、价值函数、Q-Learning、DQN、A2C 等）应用于更具体的商业场景，并讨论其中的挑战。",
     "crumbs": [
       "讲义",
       "<span class='chapter-number'>15</span>  <span class='chapter-title'>Week 12: Actor-Critic 方法</span>"
@@ -1880,11 +1869,11 @@
     ]
   },
   {
-    "objectID": "week12_exercise.html#练习-3-a2c-lab-代码与结果分析-基于-lab-7",
-    "href": "week12_exercise.html#练习-3-a2c-lab-代码与结果分析-基于-lab-7",
+    "objectID": "week12_exercise.html#练习-3-a2c-挑战实验---月球登陆器-lunarlander-v2",
+    "href": "week12_exercise.html#练习-3-a2c-挑战实验---月球登陆器-lunarlander-v2",
     "title": "Week 12 - 学生练习",
-    "section": "练习 3: A2C Lab 代码与结果分析 (基于 Lab 7)",
-    "text": "练习 3: A2C Lab 代码与结果分析 (基于 Lab 7)\n本练习基于讲义/Lab 7 中提供的 CartPole 和 Pendulum 环境以及 SB3 A2C 实现代码。\n\n代码理解 (CartPole):\n\n在 A2C 的 SB3 实现中，n_steps 参数的作用是什么？它与 TD 学习有什么关系？\nvf_coef (值函数系数) 和 ent_coef (熵系数) 这两个参数分别调节了什么？它们对学习过程可能产生什么影响？\n\nA2C vs. DQN (CartPole):\n\n回顾你在 Lab 7 中运行 A2C 和 Lab 6 中运行 DQN 解决 CartPole 的结果。在你的实验中（或者根据预期），哪个算法收敛更快？哪个算法最终性能更好？哪个算法的训练曲线更平滑/更稳定？（简述观察到的现象即可）\n你认为造成这些差异的可能原因是什么？（提示：考虑 On-Policy vs Off-Policy, 经验回放 vs 并行环境等）\n\n连续动作空间 (Pendulum):\n\n为什么 A2C 能够处理像 Pendulum 这样的连续动作空间问题，而标准的 DQN 不能？（提示：思考 Actor 和 Critic 的输出以及 DQN 的 max_a 操作）\n(如果运行了 Pendulum 实验) A2C 在 Pendulum 任务上的表现如何？（例如，奖励曲线是否趋于上升？最终奖励大概是多少？）",
+    "section": "练习 3: A2C 挑战实验 - 月球登陆器 (LunarLander-v2)",
+    "text": "练习 3: A2C 挑战实验 - 月球登陆器 (LunarLander-v2)\n本练习旨在让你运用 A2C 算法解决一个比 CartPole 更具挑战性的环境：LunarLander-v2。你将需要设置 A2C 模型，训练它，评估其性能，并尝试调整超参数以获得更好的结果。该环境在 CPU 上应有合理的训练时间。\n环境介绍: LunarLander-v2\n\n目标: 控制一个登陆器安全地降落在月球表面的目标区域（两个黄色旗帜之间）。安全降落意味着登陆器停下来，并且两个腿都接触地面。\n状态空间 (连续): 8个值，包括登陆器的位置 (x, y)，线速度 (vx, vy)，角度，角速度，以及两个腿是否接触地面 (布尔值)。\n动作空间 (离散): 4个动作：0-什么都不做，1-点燃左侧引擎，2-点燃主引擎，3-点燃右侧引擎。\n奖励:\n\n移动到目标区域会获得奖励。\n坠毁会获得 -100 分。\n成功降落会获得 +100 分。\n每条腿接触地面会获得 +10 分。\n点燃主引擎会消耗少量燃料（小的负奖励）。\n环境在获得 +200 分时被认为解决。\n\n\n1. 实验设置与代码实现:\n参考 Lab 7 中 A2C on CartPole 的代码结构，你需要进行以下调整来训练 LunarLander-v2：\n\n环境名称: 将 \"CartPole-v1\" 更改为 \"LunarLander-v2\"。\n并行环境数量 (n_envs): 对于 LunarLander-v2，可以尝试使用 8 或 16 个并行环境。 python     # 示例:     env_id = \"LunarLander-v2\"     vec_env = make_vec_env(env_id, n_envs=8)\nA2C 模型超参数: LunarLander-v2 可能比 CartPole 需要不同的超参数设置。以下是一些建议的初始值，你可能需要调整它们：\n\npolicy: \"MlpPolicy\"\ngamma: 0.99 (折扣因子)\nn_steps: 5 或 16。这个参数定义了每个环境在进行一次更新之前运行的步数。较大的 n_steps 可以减少 TD 误差的方差，但可能会引入偏差。\nvf_coef: 0.5 (值函数损失的系数，用于平衡 Actor 和 Critic 的学习)。\nent_coef: 0.01。熵系数，用于鼓励探索。LunarLander 比 CartPole 更需要探索，所以一个小的正值可能有助于学习。\nlearning_rate: 7e-4 (0.0007) 或 1e-3 (0.001)。可以尝试不同的学习率。\ntensorboard_log: 设置一个目录来保存 TensorBoard 日志。\n\n# 示例:\nmodel = A2C(\"MlpPolicy\", vec_env, verbose=1,\n            gamma=0.99,\n            n_steps=5,        # 初始尝试值\n            vf_coef=0.5,\n            ent_coef=0.01,    # 为 LunarLander 增加少量熵正则化\n            learning_rate=7e-4,\n            tensorboard_log=\"./a2c_lunarlander_logs/\")\n训练总步数 (total_timesteps): LunarLander-v2 通常需要比 CartPole 更多的训练步数。建议从 200_000 到 500_000 步开始。如果你的 CPU 较快，可以尝试更多步数。 python     # 示例:     model.learn(total_timesteps=300_000, log_interval=100, tb_log_name=\"A2C_LunarLander_run1\") 注意 log_interval 和 tb_log_name 的使用，方便在 TensorBoard 中区分不同的运行。\n\n2. 训练与监控:\n\n运行你的脚本开始训练。\n使用 TensorBoard 监控训练过程。特别关注以下指标：\n\nrollout/ep_rew_mean: 平均回合奖励，这是衡量智能体性能的关键指标。\ntrain/value_loss: Critic (值函数) 的损失。\ntrain/policy_loss: Actor (策略) 的损失。\ntrain/entropy_loss: 熵损失 (如果 ent_coef &gt; 0)。\n观察 ep_rew_mean 是否随着训练的进行而稳步上升。\n\n\n3. 评估模型:\n\n训练完成后，使用 evaluate_policy 函数评估你的模型在多个回合中的平均表现。 python     # 示例:     eval_env = gym.make(env_id) # LunarLander-v2, render_mode=\"human\" 可用于可视化     mean_reward, std_reward = evaluate_policy(model, eval_env, n_eval_episodes=20, deterministic=True)     print(f\"Evaluation results (A2C on LunarLander): Mean reward = {mean_reward:.2f} +/- {std_reward:.2f}\")     eval_env.close()\n\ndeterministic=True 表示在评估时 Actor 选择概率最大的动作。\n\n\n4. 实验分析与报告:\n\n基础性能: 记录你使用初始超参数训练后得到的 ep_rew_mean 训练曲线截图和最终的评估 mean_reward。模型是否成功解决了环境（平均奖励达到约 +200）？\n超参数调整 (挑战部分):\n\n选择至少 两个 你认为对 LunarLander-v2 性能影响较大的超参数进行调整（例如 learning_rate, n_steps, ent_coef, 或网络结构 policy_kwargs 中的 net_arch）。\n对于每个调整的超参数，进行一次新的训练。简要说明你为什么选择调整该参数以及你期望它如何影响学习过程。\n记录调整后的训练曲线和评估结果。比较不同参数设置下的性能差异。\n提示:\n\nlearning_rate: 太高可能导致不稳定，太低可能导致收敛缓慢。\nn_steps: 影响 TD 误差的偏差-方差权衡。\nent_coef: 调整探索与利用的平衡。太高可能导致策略过于随机，太低可能导致陷入次优。\nnet_arch: 默认是 [dict(pi=[64, 64], vf=[64, 64])]。对于更复杂的 LunarLander，可以尝试更大的网络，如 [dict(pi=[256, 256], vf=[256, 256])] (通过 policy_kwargs 设置)。\n\n\nA2C 适用性: 你认为 A2C 算法是否适合解决 LunarLander-v2 这样的问题？为什么？（考虑其特性，如处理离散动作、on-policy 性质、多环境并行等）。\n遇到的问题与思考 (可选): 在实验过程中，你遇到了哪些问题？你是如何解决的？或者有什么其他有趣的发现或思考？",
     "crumbs": [
       "练习",
       "<span class='chapter-number'>31</span>  <span class='chapter-title'>Week 12 - 学生练习</span>"
@@ -2075,28 +2064,6 @@
     "crumbs": [
       "练习",
       "<span class='chapter-number'>35</span>  <span class='chapter-title'>Week 16 - 学生练习</span>"
-    ]
-  },
-  {
-    "objectID": "week12_lecture.html#任务与思考-1",
-    "href": "week12_lecture.html#任务与思考-1",
-    "title": "Week 12: Actor-Critic 方法",
-    "section": "任务与思考",
-    "text": "任务与思考\n\n运行 A2C on CartPole: 运行代码的前半部分（CartPole）。使用 TensorBoard 观察训练曲线 (rollout/ep_rew_mean)。查看最终的评估结果。\n对比 A2C 与 DQN (CartPole):\n\n比较 A2C 和上周 DQN 在 CartPole 上的收敛速度（达到相似性能所需的步数）和最终性能（评估奖励）。哪个表现更好或更快？（注意：超参数可能需要调整才能公平比较）。\n考虑两种算法的样本效率。哪个算法似乎需要更少的交互步数来学习？（提示：DQN 使用经验回放，A2C 通常是 On-Policy）。\n\n(可选) 运行 A2C on Pendulum: 取消注释代码的后半部分，运行 A2C 解决 Pendulum-v1 问题。观察训练曲线和评估结果。思考为什么 DQN 无法直接用于此任务，而 A2C 可以？\n分析 Actor-Critic:\n\n解释 Actor-Critic 框架如何结合策略学习和价值学习。\nCritic 在 Actor-Critic 中扮演什么角色？它如何帮助 Actor 学习？\n什么是优势函数？为什么在策略梯度更新中使用优势函数估计（如 TD 误差）通常比使用原始回报更好？",
-    "crumbs": [
-      "讲义",
-      "<span class='chapter-number'>15</span>  <span class='chapter-title'>Week 12: Actor-Critic 方法</span>"
-    ]
-  },
-  {
-    "objectID": "week12_exercise.html#练习-3-a2c-挑战实验---月球登陆器-lunarlander-v2",
-    "href": "week12_exercise.html#练习-3-a2c-挑战实验---月球登陆器-lunarlander-v2",
-    "title": "Week 12 - 学生练习",
-    "section": "练习 3: A2C 挑战实验 - 月球登陆器 (LunarLander-v2)",
-    "text": "练习 3: A2C 挑战实验 - 月球登陆器 (LunarLander-v2)\n本练习旨在让你运用 A2C 算法解决一个比 CartPole 更具挑战性的环境：LunarLander-v2。你将需要设置 A2C 模型，训练它，评估其性能，并尝试调整超参数以获得更好的结果。该环境在 CPU 上应有合理的训练时间。\n环境介绍: LunarLander-v2\n\n目标: 控制一个登陆器安全地降落在月球表面的目标区域（两个黄色旗帜之间）。安全降落意味着登陆器停下来，并且两个腿都接触地面。\n状态空间 (连续): 8个值，包括登陆器的位置 (x, y)，线速度 (vx, vy)，角度，角速度，以及两个腿是否接触地面 (布尔值)。\n动作空间 (离散): 4个动作：0-什么都不做，1-点燃左侧引擎，2-点燃主引擎，3-点燃右侧引擎。\n奖励:\n\n移动到目标区域会获得奖励。\n坠毁会获得 -100 分。\n成功降落会获得 +100 分。\n每条腿接触地面会获得 +10 分。\n点燃主引擎会消耗少量燃料（小的负奖励）。\n环境在获得 +200 分时被认为解决。\n\n\n1. 实验设置与代码实现:\n参考 Lab 7 中 A2C on CartPole 的代码结构，你需要进行以下调整来训练 LunarLander-v2：\n\n环境名称: 将 \"CartPole-v1\" 更改为 \"LunarLander-v2\"。\n并行环境数量 (n_envs): 对于 LunarLander-v2，可以尝试使用 8 或 16 个并行环境。 python     # 示例:     env_id = \"LunarLander-v2\"     vec_env = make_vec_env(env_id, n_envs=8)\nA2C 模型超参数: LunarLander-v2 可能比 CartPole 需要不同的超参数设置。以下是一些建议的初始值，你可能需要调整它们：\n\npolicy: \"MlpPolicy\"\ngamma: 0.99 (折扣因子)\nn_steps: 5 或 16。这个参数定义了每个环境在进行一次更新之前运行的步数。较大的 n_steps 可以减少 TD 误差的方差，但可能会引入偏差。\nvf_coef: 0.5 (值函数损失的系数，用于平衡 Actor 和 Critic 的学习)。\nent_coef: 0.01。熵系数，用于鼓励探索。LunarLander 比 CartPole 更需要探索，所以一个小的正值可能有助于学习。\nlearning_rate: 7e-4 (0.0007) 或 1e-3 (0.001)。可以尝试不同的学习率。\ntensorboard_log: 设置一个目录来保存 TensorBoard 日志。\n\n# 示例:\nmodel = A2C(\"MlpPolicy\", vec_env, verbose=1,\n            gamma=0.99,\n            n_steps=5,        # 初始尝试值\n            vf_coef=0.5,\n            ent_coef=0.01,    # 为 LunarLander 增加少量熵正则化\n            learning_rate=7e-4,\n            tensorboard_log=\"./a2c_lunarlander_logs/\")\n训练总步数 (total_timesteps): LunarLander-v2 通常需要比 CartPole 更多的训练步数。建议从 200_000 到 500_000 步开始。如果你的 CPU 较快，可以尝试更多步数。 python     # 示例:     model.learn(total_timesteps=300_000, log_interval=100, tb_log_name=\"A2C_LunarLander_run1\") 注意 log_interval 和 tb_log_name 的使用，方便在 TensorBoard 中区分不同的运行。\n\n2. 训练与监控:\n\n运行你的脚本开始训练。\n使用 TensorBoard 监控训练过程。特别关注以下指标：\n\nrollout/ep_rew_mean: 平均回合奖励，这是衡量智能体性能的关键指标。\ntrain/value_loss: Critic (值函数) 的损失。\ntrain/policy_loss: Actor (策略) 的损失。\ntrain/entropy_loss: 熵损失 (如果 ent_coef &gt; 0)。\n观察 ep_rew_mean 是否随着训练的进行而稳步上升。\n\n\n3. 评估模型:\n\n训练完成后，使用 evaluate_policy 函数评估你的模型在多个回合中的平均表现。 python     # 示例:     eval_env = gym.make(env_id) # LunarLander-v2, render_mode=\"human\" 可用于可视化     mean_reward, std_reward = evaluate_policy(model, eval_env, n_eval_episodes=20, deterministic=True)     print(f\"Evaluation results (A2C on LunarLander): Mean reward = {mean_reward:.2f} +/- {std_reward:.2f}\")     eval_env.close()\n\ndeterministic=True 表示在评估时 Actor 选择概率最大的动作。\n\n\n4. 实验分析与报告:\n\n基础性能: 记录你使用初始超参数训练后得到的 ep_rew_mean 训练曲线截图和最终的评估 mean_reward。模型是否成功解决了环境（平均奖励达到约 +200）？\n超参数调整 (挑战部分):\n\n选择至少 两个 你认为对 LunarLander-v2 性能影响较大的超参数进行调整（例如 learning_rate, n_steps, ent_coef, 或网络结构 policy_kwargs 中的 net_arch）。\n对于每个调整的超参数，进行一次新的训练。简要说明你为什么选择调整该参数以及你期望它如何影响学习过程。\n记录调整后的训练曲线和评估结果。比较不同参数设置下的性能差异。\n提示:\n\nlearning_rate: 太高可能导致不稳定，太低可能导致收敛缓慢。\nn_steps: 影响 TD 误差的偏差-方差权衡。\nent_coef: 调整探索与利用的平衡。太高可能导致策略过于随机，太低可能导致陷入次优。\nnet_arch: 默认是 [dict(pi=[64, 64], vf=[64, 64])]。对于更复杂的 LunarLander，可以尝试更大的网络，如 [dict(pi=[256, 256], vf=[256, 256])] (通过 policy_kwargs 设置)。\n\n\nA2C 适用性: 你认为 A2C 算法是否适合解决 LunarLander-v2 这样的问题？为什么？（考虑其特性，如处理离散动作、on-policy 性质、多环境并行等）。\n遇到的问题与思考 (可选): 在实验过程中，你遇到了哪些问题？你是如何解决的？或者有什么其他有趣的发现或思考？",
-    "crumbs": [
-      "练习",
-      "<span class='chapter-number'>31</span>  <span class='chapter-title'>Week 12 - 学生练习</span>"
     ]
   }
 ]

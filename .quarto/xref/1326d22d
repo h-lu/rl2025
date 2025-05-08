@@ -1,1 +1,1 @@
-{"entries":[],"options":{"chapters":true},"headings":["回顾策略梯度-policy-gradient-与-reinforce","actor-critic-框架","a2c-a3c-算法概念","lab-7-使用-stable-baselines3-运行-a2c","目标","环境选择","示例代码-sb3-a2c-on-cartpole","网络结构详解-默认-mlppolicy","如何自定义网络结构","任务与思考"]}
+{"options":{"chapters":true},"headings":["回顾策略梯度-policy-gradient-与-reinforce","actor-critic-框架","a2c-a3c-算法概念","lab-7-使用-stable-baselines3-运行-a2c","目标","环境选择","示例代码-sb3-a2c-on-cartpole","网络结构详解-默认-mlppolicy","如何自定义网络结构","任务与思考"],"entries":[]}

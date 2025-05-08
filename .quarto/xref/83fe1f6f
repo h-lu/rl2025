@@ -1,1 +1,1 @@
-{"options":{"chapters":true},"entries":[],"headings":["回顾基于价值的强化学习-value-based-rl","策略梯度方法核心思想直接学习策略","策略梯度定理-policy-gradient-theorem","reinforce-算法-蒙特卡洛策略梯度","基线-baseline-的作用减小方差","策略梯度方法讨论","优势","劣势","引出-actor-critic"]}
+{"entries":[],"headings":["回顾基于价值的强化学习-value-based-rl","策略梯度方法核心思想直接学习策略","策略梯度定理-policy-gradient-theorem","reinforce-算法-蒙特卡洛策略梯度","基线-baseline-的作用减小方差","策略梯度方法讨论","优势","劣势","引出-actor-critic"],"options":{"chapters":true}}
