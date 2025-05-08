@@ -53,11 +53,13 @@ subtitle: "Actor-Critic 方法"
 
 *   **环境名称:** 将 `"CartPole-v1"` 更改为 `"LunarLander-v2"`。
 *   **并行环境数量 (`n_envs`):** 对于 `LunarLander-v2`，可以尝试使用 8 或 16 个并行环境。
+
     ```python
     # 示例:
     env_id = "LunarLander-v2"
     vec_env = make_vec_env(env_id, n_envs=8)
     ```
+
 *   **A2C 模型超参数:** `LunarLander-v2` 可能比 CartPole 需要不同的超参数设置。以下是一些建议的初始值，你可能需要调整它们：
     *   `policy`: `"MlpPolicy"`
     *   `gamma`: `0.99` (折扣因子)
@@ -66,6 +68,7 @@ subtitle: "Actor-Critic 方法"
     *   `ent_coef`: `0.01`。熵系数，用于鼓励探索。LunarLander 比 CartPole 更需要探索，所以一个小的正值可能有助于学习。
     *   `learning_rate`: `7e-4` (0.0007) 或 `1e-3` (0.001)。可以尝试不同的学习率。
     *   `tensorboard_log`: 设置一个目录来保存 TensorBoard 日志。
+
     ```python
     # 示例:
     model = A2C("MlpPolicy", vec_env, verbose=1,
@@ -76,11 +79,14 @@ subtitle: "Actor-Critic 方法"
                 learning_rate=7e-4,
                 tensorboard_log="./a2c_lunarlander_logs/")
     ```
+    
 *   **训练总步数 (`total_timesteps`):** `LunarLander-v2` 通常需要比 CartPole 更多的训练步数。建议从 `200_000` 到 `500_000` 步开始。如果你的 CPU 较快，可以尝试更多步数。
+    
     ```python
     # 示例:
     model.learn(total_timesteps=300_000, log_interval=100, tb_log_name="A2C_LunarLander_run1")
     ```
+
     注意 `log_interval` 和 `tb_log_name` 的使用，方便在 TensorBoard 中区分不同的运行。
 
 **2. 训练与监控:**
@@ -96,6 +102,7 @@ subtitle: "Actor-Critic 方法"
 **3. 评估模型:**
 
 *   训练完成后，使用 `evaluate_policy` 函数评估你的模型在多个回合中的平均表现。
+
     ```python
     # 示例:
     eval_env = gym.make(env_id) # LunarLander-v2, render_mode="human" 可用于可视化
@@ -103,6 +110,7 @@ subtitle: "Actor-Critic 方法"
     print(f"Evaluation results (A2C on LunarLander): Mean reward = {mean_reward:.2f} +/- {std_reward:.2f}")
     eval_env.close()
     ```
+
     *   `deterministic=True` 表示在评估时 Actor 选择概率最大的动作。
 
 **4. 实验分析与报告:**
@@ -120,9 +128,120 @@ subtitle: "Actor-Critic 方法"
 *   **A2C 适用性:** 你认为 A2C 算法是否适合解决 `LunarLander-v2` 这样的问题？为什么？（考虑其特性，如处理离散动作、on-policy 性质、多环境并行等）。
 *   **遇到的问题与思考 (可选):** 在实验过程中，你遇到了哪些问题？你是如何解决的？或者有什么其他有趣的发现或思考？
 
+## 练习 4: A2C 高级挑战 - 双足行走机器人 (BipedalWalker-v3)
+
+本练习将引导你使用 A2C 算法挑战一个更复杂、动作空间连续的环境：`BipedalWalker-v3`。这个任务比月球登陆器更难，需要更长的训练时间和更细致的超参数调整。
+
+**环境介绍: `BipedalWalker-v3`**
+
+*   **目标:** 控制一个两足机器人尽可能远地行走。
+*   **状态空间 (连续):** 24个值，包括机器人躯干的角度和角速度、水平和垂直速度、关节的角度和角速度，以及10个激光雷达传感器读数，用于感知前方地形。
+*   **动作空间 (连续):** 4个值，代表施加到四个关节（两个髋关节，两个膝关节）的力矩。每个力矩的范围通常在 [-1, 1] 之间。
+*   **奖励:**
+    *   每向前走一步都会获得奖励。
+    *   机器人摔倒会受到惩罚。
+    *   使用力矩会消耗少量能量（小的负奖励）。
+    *   成功行走超过约230个单位的距离（通常对应总奖励约 +300）被认为是解决了这个环境。
+*   **解决条件:** 在连续100个回合中平均奖励大于等于 +300。
+
+**重要提示: `BipedalWalker-v3` 是一个计算密集型任务。在普通的 CPU 上训练可能需要数小时甚至更长时间才能看到显著的性能提升。请有耐心，并根据你的硬件情况调整训练总步数。**
+
+**1. 实验设置与代码实现:**
+
+参考之前练习中 A2C 的代码结构，针对 `BipedalWalker-v3` 进行调整：
+
+*   **环境名称:** `env_id = "BipedalWalker-v3"`
+*   **并行环境数量 (`n_envs`):** 建议使用较多的并行环境，例如 `n_envs=16` 或更多（如果你的 CPU 核心数允许）。
+
+    ```python
+    # 示例:
+    env_id = "BipedalWalker-v3"
+    # 对于 BipedalWalker，通常建议使用 Monitor 包装器来跟踪回合统计信息，即使是向量化环境
+    # from stable_baselines3.common.monitor import Monitor
+    # vec_env = make_vec_env(env_id, n_envs=16, wrapper_class=Monitor) # Monitor is often good for complex envs
+    vec_env = make_vec_env(env_id, n_envs=16)
+    ```
+
+*   **A2C 模型超参数:** `BipedalWalker-v3` 对超参数非常敏感。以下是一些可以作为起点的建议值，你很可能需要进行大量调整：
+    *   `policy`: `"MlpPolicy"`
+    *   `gamma`: `0.99` (折扣因子)
+    *   `n_steps`: 建议尝试较大的值，如 `32`, `64`, `128`, 甚至 `256`。这决定了每个 actor 收集多少步经验才进行一次更新。更大的 `n_steps` 意味着更大的批次大小 (`n_envs * n_steps`)，有助于稳定学习，但会降低策略更新的频率。
+    *   `vf_coef`: `0.5` (标准值)
+    *   `ent_coef`: `0.001` 或 `0.0`。BipedalWalker 可能不需要很强的熵正则化，有时设为0效果也不错。可以从一个小值开始尝试。
+    *   `learning_rate`: 建议使用较小的学习率，例如 `1e-4` (0.0001) 或 `2.5e-4` (0.00025)。也可以考虑使用学习率调度 (SB3 支持，例如 `lr_schedule = ConstantSchedule(value=2.5e-4)` 或线性衰减)。
+    *   `gae_lambda`: `0.95` (Generalized Advantage Estimation 的 lambda 参数，通常效果良好)
+    *   `max_grad_norm`: `0.5` (梯度裁剪，防止梯度爆炸)
+    *   `policy_kwargs`: `BipedalWalker-v3` 通常受益于更大的网络。
+
+        ```python
+        # 示例 policy_kwargs:
+        policy_kwargs = dict(
+            net_arch=dict(pi=[256, 256], vf=[256, 256]), # Actor 和 Critic 各自两层，每层256个神经元
+            # activation_fn=torch.nn.ReLU # 可以尝试不同的激活函数
+        )
+        ```
+
+    ```python
+    # 示例模型定义:
+    model = A2C("MlpPolicy", vec_env, verbose=1,
+                gamma=0.99,
+                n_steps=128,         # 初始尝试较大值
+                vf_coef=0.5,
+                ent_coef=0.001,      # 初始尝试小值
+                learning_rate=2.5e-4,
+                gae_lambda=0.95,
+                max_grad_norm=0.5,
+                policy_kwargs=policy_kwargs, # 使用自定义网络结构
+                tensorboard_log="./a2c_bipedalwalker_logs/")
+    ```
+
+*   **训练总步数 (`total_timesteps`):** 这是关键。`BipedalWalker-v3` 通常需要 **至少 1,000,000 到 5,000,000** 步才能看到较好的结果，甚至更多才能完全解决。请根据你的计算机性能和可用时间设定。**即使只训练 500,000 步，也可能需要相当长的时间。**
+
+    ```python
+    # 示例:
+    # 开始时可以先训练较少步数 (例如 200k-500k) 来检查代码和基本参数是否合理
+    # 然后再进行更长时间的训练
+    model.learn(total_timesteps=1_000_000, log_interval=1000, tb_log_name="A2C_BipedalWalker_run1")
+    ```
+
+**2. 训练与监控:**
+
+*   启动训练脚本。由于训练时间较长，建议在后台运行或使用 `screen`/`tmux` 会话。
+*   使用 TensorBoard 密切监控 `rollout/ep_rew_mean`。期望看到奖励缓慢但稳定地增长。
+*   同时关注 `train/value_loss`, `train/policy_loss`。如果损失出现 `NaN` 或剧烈震荡，可能需要调整学习率或网络结构。
+
+**3. 评估模型:**
+
+*   训练达到预设步数或你认为满意后，评估模型。
+
+    ```python
+    # 示例:
+    eval_env = gym.make(env_id) # render_mode="human" 可用于可视化，但评估时通常不渲染
+    mean_reward, std_reward = evaluate_policy(model, eval_env, n_eval_episodes=10, deterministic=True)
+    print(f"Evaluation results (A2C on BipedalWalker): Mean reward = {mean_reward:.2f} +/- {std_reward:.2f}")
+    eval_env.close()
+    ```
+
+**4. 实验分析与报告:**
+
+*   **训练曲线与性能:**
+    *   提供 `rollout/ep_rew_mean` 的 TensorBoard 截图。
+    *   记录最终的评估 `mean_reward` 和训练的总步数。
+    *   你的模型在训练结束时达到了什么水平？是否观察到了持续学习的趋势？
+*   **超参数探索 (关键部分):**
+    *   `BipedalWalker-v3` 对超参数非常敏感。详细记录你尝试过的主要超参数组合（至少尝试调整 **两个** 不同的参数或参数组合，如 `learning_rate`, `n_steps`, `ent_coef`, `net_arch`）。
+    *   解释你为什么选择这些参数进行调整，以及调整后的效果如何（基于 TensorBoard 曲线和评估结果）。
+    *   哪个（或哪些）参数的调整对性能提升最大？
+*   **挑战分析:**
+    *   你认为是什么使得 `BipedalWalker-v3` 这个环境比 `LunarLander-v2` 更具挑战性？
+    *   A2C 在处理这种复杂连续控制任务时表现如何？你观察到了哪些优点或潜在的局限性？
+*   **训练时间与资源:**
+    *   大致记录你的训练时长和所用步数。
+*   **遇到的问题与解决方案 (可选):** 分享你在实验中遇到的任何具体问题以及你是如何尝试解决的。
+
 # 提交要求
 
 *   请将你的答案整理成一个文档（如 Word, PDF, 或 Markdown 文件）。
-*   对于练习 1, 2, 3，请清晰地回答问题并阐述理由。
+*   对于练习 1, 2, 3, 4，请清晰地回答问题并阐述理由。
 *   文件命名格式：`姓名_学号_Week12_Exercise.xxx`。
 *   通过教学平台提交。
