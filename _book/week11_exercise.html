@@ -70,6 +70,35 @@ ul.task-list li input[type="checkbox"] {
 }</script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xkm/sYwpb+ilR5gUw==" crossorigin="anonymous" referrerpolicy="no-referrer">
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="styles/custom.css">
 </head>
@@ -307,7 +336,11 @@ ul.task-list li input[type="checkbox"] {
   </li>
     </ul>
     </div>
-    <nav id="TOC" role="doc-toc" class="toc-active">
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
@@ -319,13 +352,8 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#练习-3-基线-baseline-与优势函数" id="toc-练习-3-基线-baseline-与优势函数" class="nav-link" data-scroll-target="#练习-3-基线-baseline-与优势函数">练习 3: 基线 (Baseline) 与优势函数</a></li>
   <li><a href="#练习-4-算法选择思考" id="toc-练习-4-算法选择思考" class="nav-link" data-scroll-target="#练习-4-算法选择思考">练习 4: 算法选择思考</a></li>
   </ul></li>
-  <li><a href="#提交要求" id="toc-提交要求" class="nav-link" data-scroll-target="#提交要求">提交要求</a></li>
   </ul>
 </nav>
-</nav>
-<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
-<!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -373,10 +401,10 @@ ul.task-list li input[type="checkbox"] {
 <section id="练习-2-策略梯度定理与-reinforce" class="level2">
 <h2 class="anchored" data-anchor-id="练习-2-策略梯度定理与-reinforce">练习 2: 策略梯度定理与 REINFORCE</h2>
 <ol type="1">
-<li><strong>策略梯度定理 (直观解释):</strong> 策略梯度定理给出的梯度估计 ∇J(θ) ≈ E[∇logπ(A|S, θ) * Qπ(S, A)] (或使用 G_t) 中，<code>∇logπ(A|S, θ)</code> 和 <code>Qπ(S, A)</code> (或 G_t) 这两部分各自代表了什么含义？它们相乘后如何指导参数 θ 的更新方向（即“增加好动作概率，降低坏动作概率”）？</li>
+<li><strong>策略梯度定理 (直观解释):</strong> 策略梯度定理给出的梯度估计 <span class="math inline">\(\nabla J(\theta) \approx E[\nabla \log \pi(A|S, \theta) * Q_{\pi}(S, A)]\)</span> (或使用 <span class="math inline">\(G_t\)</span>) 中，<span class="math inline">\(\nabla \log \pi(A|S, \theta)\)</span> 和 <span class="math inline">\(Q_{\pi}(S, A)\)</span> (或 <span class="math inline">\(G_t\)</span>) 这两部分各自代表了什么含义？它们相乘后如何指导参数 <span class="math inline">\(\theta\)</span> 的更新方向（即“增加好动作概率，降低坏动作概率”）？</li>
 <li><strong>REINFORCE 算法:</strong>
 <ul>
-<li>REINFORCE 算法使用什么来估计策略梯度定理中的 Qπ(S, A)？</li>
+<li>REINFORCE 算法使用什么来估计策略梯度定理中的 <span class="math inline">\(Q_{\pi}(S, A)\)</span>？</li>
 <li>为什么 REINFORCE 算法需要等到一个<strong>完整的回合</strong>结束后才能进行参数更新？</li>
 <li>REINFORCE 算法最主要的缺点是什么？为什么会产生这个缺点？</li>
 </ul></li>
@@ -385,13 +413,13 @@ ul.task-list li input[type="checkbox"] {
 <section id="练习-3-基线-baseline-与优势函数" class="level2">
 <h2 class="anchored" data-anchor-id="练习-3-基线-baseline-与优势函数">练习 3: 基线 (Baseline) 与优势函数</h2>
 <ol type="1">
-<li><strong>引入基线的目的:</strong> 在策略梯度方法中，为什么要引入基线 (Baseline) b(S)？它主要解决了 REINFORCE 算法的什么问题？</li>
-<li><strong>基线的作用原理:</strong> 从梯度估计 E[∇logπ * (G_t - b(S))] 来看，为什么减去一个不依赖于动作 A 的基线 b(S) 不会改变梯度的期望值（即不引入偏差）？（提示：回顾讲义中的简单推导或用语言解释）</li>
+<li><strong>引入基线的目的:</strong> 在策略梯度方法中，为什么要引入基线 (Baseline) <span class="math inline">\(b(S)\)</span>？它主要解决了 REINFORCE 算法的什么问题？</li>
+<li><strong>基线的作用原理:</strong> 从梯度估计 <span class="math inline">\(E[\nabla \log \pi * (G_t - b(S))]\)</span> 来看，为什么减去一个不依赖于动作 <span class="math inline">\(A\)</span> 的基线 <span class="math inline">\(b(S)\)</span> 不会改变梯度的期望值（即不引入偏差）？（提示：回顾讲义中的简单推导或用语言解释）</li>
 <li><strong>优势函数:</strong>
 <ul>
-<li>优势函数 Aπ(S, A) 的定义是什么？（写出公式）</li>
+<li>优势函数 <span class="math inline">\(A_{\pi}(S, A)\)</span> 的定义是什么？（写出公式）</li>
 <li>它直观地衡量了什么？</li>
-<li>为什么使用优势函数 Aπ 作为策略梯度更新中的“动作好坏衡量标准”通常比直接使用回报 G_t 或 Qπ 更好？</li>
+<li>为什么使用优势函数 <span class="math inline">\(A_{\pi}\)</span> 作为策略梯度更新中的“动作好坏衡量标准”通常比直接使用回报 <span class="math inline">\(G_t\)</span> 或 <span class="math inline">\(Q_{\pi}\)</span> 更好？</li>
 </ul></li>
 </ol>
 </section>
@@ -402,18 +430,9 @@ ul.task-list li input[type="checkbox"] {
 <li><strong>问题一：机器人抓取物体。</strong> 状态是摄像头图像和关节角度（高维、连续），动作是控制机械臂每个关节的<strong>精确力矩</strong>（连续动作空间）。目标是成功抓取物体。</li>
 <li><strong>问题二：玩简单的棋盘游戏（如井字棋）。</strong> 状态是棋盘布局（低维、离散），动作是在空格处落子（离散动作空间）。目标是赢得游戏。</li>
 </ol>
-</section>
-</section>
-<section id="提交要求" class="level1">
-<h1>提交要求</h1>
-<ul>
-<li>请将你的答案整理成一个文档（如 Word, PDF, 或 Markdown 文件）。</li>
-<li>对于练习 1, 2, 3, 4，请清晰地回答问题并阐述理由。</li>
-<li>文件命名格式：<code>姓名_学号_Week11_Exercise.xxx</code>。</li>
-<li>通过教学平台提交。</li>
-</ul>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->

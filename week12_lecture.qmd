@@ -6,19 +6,19 @@ title: "Week 12: Actor-Critic 方法"
 
 上周我们学习了策略梯度 (PG) 方法：
 
-*   **核心思想:** 直接参数化策略 π(a|s, **θ**) 并优化参数 **θ** 以最大化预期回报 J(**θ**)。
-*   **优化方式:** 梯度上升 **θ** ← **θ** + α ∇J(**θ**)。
-*   **策略梯度定理:** ∇J(**θ**) = E_{π_θ} [ ∇ log π(A_t|S_t, **θ**) * Qπ(S_t, A_t) ] (或使用 G_t)。
-*   **REINFORCE 算法:** 使用蒙特卡洛方法估计 Qπ (即使用完整回报 G_t)。
-    *   ∇J(**θ**) ≈ E_{π_θ} [ ∇ log π(A_t|S_t, **θ**) * G_t ]
+*   **核心思想:** 直接参数化策略 $\pi(a|s, \theta)$ 并优化参数 $\theta$ 以最大化预期回报 $J(\theta)$。
+*   **优化方式:** 梯度上升 $\theta \leftarrow \theta + \alpha \nabla J(\theta)$。
+*   **策略梯度定理:** $\nabla J(\theta) = E_{\pi_{\theta}} [ \nabla \log \pi(A_t|S_t, \theta) * Q_{\pi}(S_t, A_t) ]$ (或使用 $G_t$)。
+*   **REINFORCE 算法:** 使用蒙特卡洛方法估计 $Q_{\pi}$ (即使用完整回报 $G_t$)。
+    *   $\nabla J(\theta) \approx E_{\pi_{\theta}} [ \nabla \log \pi(A_t|S_t, \theta) * G_t ]$
     *   **缺点:** 高方差，收敛慢，需要完整回合。
-*   **基线 (Baseline):** 为了减小方差，从回报中减去一个与动作无关的基线 b(S_t)。
-    *   ∇J(**θ**) ≈ E_{π_θ} [ ∇ log π(A_t|S_t, **θ**) * (G_t - b(S_t)) ]
-    *   常用的基线是状态值函数 Vπ(S_t)。
-    *   **优势函数 (Advantage Function):** Aπ(S_t, A_t) = Qπ(S_t, A_t) - Vπ(S_t)。
-    *   梯度变为：∇J(**θ**) = E_{π_θ} [ ∇ log π(A_t|S_t, **θ**) * Aπ(S_t, A_t) ]
+*   **基线 (Baseline):** 为了减小方差，从回报中减去一个与动作无关的基线 $b(S_t)$。
+    *   $\nabla J(\theta) \approx E_{\pi_{\theta}} [ \nabla \log \pi(A_t|S_t, \theta) * (G_t - b(S_t)) ]$
+    *   常用的基线是状态值函数 $V_{\pi}(S_t)$。
+    *   **优势函数 (Advantage Function):** $A_{\pi}(S_t, A_t) = Q_{\pi}(S_t, A_t) - V_{\pi}(S_t)$。
+    *   梯度变为：$\nabla J(\theta) = E_{\pi_{\theta}} [ \nabla \log \pi(A_t|S_t, \theta) * A_{\pi}(S_t, A_t) ]$
 
-**问题:** 如何在不知道 Qπ 和 Vπ 的情况下，有效地估计优势函数 Aπ 并进行策略更新？
+**问题:** 如何在不知道 $Q_{\pi}$ 和 $V_{\pi}$ 的情况下，有效地估计优势函数 $A_{\pi}$ 并进行策略更新？
 
 # Actor-Critic 框架
 
@@ -27,66 +27,68 @@ Actor-Critic (AC) 方法提供了一个优雅的解决方案，它结合了**策
 **核心思想:** 维护两个参数化的模型（通常是神经网络）：
 
 1.  **Actor (行动者):**
-    *   参数化的**策略** π(a|s, **θ**)。
-    *   负责根据当前状态 s **选择动作** a。
-    *   目标是优化参数 **θ** 以改进策略。
+    *   参数化的**策略** $\pi(a|s, \theta)$。
+    *   负责根据当前状态 $s$ **选择动作** $a$。
+    *   目标是优化参数 $\theta$ 以改进策略。
 2.  **Critic (评论家):**
-    *   参数化的**价值函数**（通常是状态值函数 V(s, **w**) 或动作值函数 Q(s, a, **w**)）。
+    *   参数化的**价值函数**（通常是状态值函数 $V(s, w)$ 或动作值函数 $Q(s, a, w)$）。
     *   负责**评估** Actor 选择的动作有多好。
-    *   目标是学习准确的价值估计，参数为 **w**。
+    *   目标是学习准确的价值估计，参数为 $w$。
 
 **交互流程:**
 
-1.  Actor 根据当前状态 S_t 和策略 π(·|·, **θ**) 选择动作 A_t。
-2.  执行动作 A_t，观察到奖励 R_{t+1} 和下一个状态 S_{t+1}。
-3.  Critic 利用这个转移 (S_t, A_t, R_{t+1}, S_{t+1}) 来**评估**动作 A_t 的好坏，并**更新**其价值函数参数 **w**。
-4.  Actor 利用 Critic 的评估信息来**更新**其策略参数 **θ**。
+1.  Actor 根据当前状态 $S_t$ 和策略 $\pi(·|·, \theta)$ 选择动作 $A_t$。
+2.  执行动作 $A_t$，观察到奖励 $R_{t+1}$ 和下一个状态 $S_{t+1}$。
+3.  Critic 利用这个转移 $(S_t, A_t, R_{t+1}, S_{t+1})$ 来**评估**动作 $A_t$ 的好坏，并**更新**其价值函数参数 $w$。
+4.  Actor 利用 Critic 的评估信息来**更新**其策略参数 $\theta$。
 
-![Actor-Critic Architecture](https://spinningup.openai.com/en/latest/_images/actor_critic.svg)
-*(图片来源: OpenAI Spinning Up)*
+![Actor-Critic Architecture](https://media.geeksforgeeks.org/wp-content/uploads/20250224190459513673/Actor-Critic-Method.webp)
+*(图片来源: https://www.geeksforgeeks.org/actor-critic-algorithm-in-reinforcement-learning)*
 
 **Critic 如何帮助 Actor？**
 
-Critic 的主要作用是提供一个比蒙特卡洛回报 G_t **方差更低**的信号来指导 Actor 的学习。这通常通过以下方式实现：
+Critic 的主要作用是提供一个比蒙特卡洛回报 $G_t$ **方差更低**的信号来指导 Actor 的学习。这通常通过以下方式实现：
 
-*   **计算 TD 误差:** 如果 Critic 学习的是状态值函数 V(s, **w**)，它可以计算 TD 误差：
-    *   δ_t = R_{t+1} + γ V(S_{t+1}, **w**) - V(S_t, **w**)
-    *   这个 TD 误差 δ_t 可以作为优势函数 Aπ(S_t, A_t) 的一个（有偏但低方差的）**估计**。
-*   **更新 Actor:** Actor 使用这个 TD 误差来更新策略参数 **θ**：
-    *   **θ** ← **θ** + α * ∇ log π(A_t|S_t, **θ**) * δ_t
+*   **计算 TD 误差:** 如果 Critic 学习的是状态值函数 $V(s, w)$，它可以计算 TD 误差：
+    *   $\delta_t = R_{t+1} + \gamma V(S_{t+1}, w) - V(S_t, w)$
+    *   这个 TD 误差 $\delta_t$ 可以作为优势函数 $A_{\pi}(S_t, A_t)$ 的一个（有偏但低方差的）**估计**。
+*   **更新 Actor:** Actor 使用这个 TD 误差来更新策略参数 $\theta$：
+    *   $\theta \leftarrow \theta + \alpha * \nabla \log \pi(A_t|S_t, \theta) * \delta_t$
     *   **直观理解:**
-        *   如果 δ_t > 0 (实际回报 R_{t+1} + 未来预期 γV(S') 比当前预期 V(S) 要好)，说明动作 A_t 是个好动作，增加其概率。
-        *   如果 δ_t < 0 (实际回报比预期差)，说明动作 A_t 是个坏动作，减小其概率。
-*   **更新 Critic:** Critic 也需要学习，通常使用 TD 学习来更新其参数 **w**，目标是最小化 TD 误差（使其对 Vπ 的估计更准确）：
-    *   **w** ← **w** + β * δ_t * ∇ V(S_t, **w**) (β 是 Critic 的学习率)
+        *   如果 $\delta_t > 0$ (实际回报 $R_{t+1} + \gamma V(S')$ 比当前预期 $V(S)$ 要好)，说明动作 $A_t$ 是个好动作，增加其概率。
+        *   如果 $\delta_t < 0$ (实际回报比预期差)，说明动作 $A_t$ 是个坏动作，减小其概率。
+*   **更新 Critic:** Critic 也需要学习，通常使用 TD 学习来更新其参数 $w$，目标是最小化 TD 误差（使其对 $V_{\pi}$ 的估计更准确）：
+    *   $w \leftarrow w + \beta * \delta_t * \nabla V(S_t, w)$ ($\beta$ 是 Critic 的学习率)
 
-**优势:**
+::: {.callout-note title="为什么 TD 误差是优势函数的估计?" collapse="true"}
+TD 误差 $\delta_t = R_{t+1} + \gamma V(S_{t+1}) - V(S_t)$ 可以作为优势函数 $A_{\pi}(S_t, A_t)$ 的估计，原因如下：
 
-*   **结合了 PG 和 TD:** 利用 TD 学习的低方差和在线学习能力来改进策略梯度的高方差问题。
-*   **更稳定高效:** 通常比纯粹的 REINFORCE 算法收敛更快、更稳定。
+1. **数学期望关系**:
+   - 优势函数定义为 $A_{\pi}(s,a) = Q_{\pi}(s,a) - V_{\pi}(s)$
+   - TD 误差的期望满足: $E_{\pi}[\delta_t | S_t, A_t] = Q_{\pi}(S_t, A_t) - V_{\pi}(S_t) = A_{\pi}(S_t, A_t)$
+   
+2. **直观理解**:
+   - $R_{t+1} + \gamma V(S_{t+1})$ 是 $Q_{\pi}(S_t, A_t)$ 的采样估计
+   - 减去 $V(S_t)$ 后，$\delta_t$ 衡量了"实际获得的回报"与"状态平均价值"的差异
+   - 正值表示动作比平均好，负值表示比平均差
 
-# 优势函数估计 (Advantage Function Estimation)
+3. **实际优势**:
+   - 相比蒙特卡洛回报 $G_t$，TD误差方差更低
+   - 不需要等待回合结束，支持在线学习
+   - 计算简单，只需一步转移 $(S_t,A_t,R_{t+1},S_{t+1})$
+:::
 
-在 Actor-Critic 中，我们希望使用优势函数 Aπ(S_t, A_t) = Qπ(S_t, A_t) - Vπ(S_t) 来更新 Actor。但我们通常只有状态值函数 V 的估计。
 
-如何估计 Aπ(S_t, A_t)？
-
-回顾 TD 误差：
-δ_t = R_{t+1} + γ V(S_{t+1}, **w**) - V(S_t, **w**)
-
-可以证明，TD 误差 δ_t 是优势函数 Aπ(S_t, A_t) 的一个（有偏）估计：
-E[δ_t | S_t, A_t] ≈ Aπ(S_t, A_t)
-
-因此，许多 Actor-Critic 算法直接使用 TD 误差 δ_t 作为优势函数的估计来更新 Actor：
-
-**Actor 更新:** **θ** ← **θ** + α * ∇ log π(A_t|S_t, **θ**) * δ_t
-**Critic 更新:** **w** ← **w** + β * δ_t * ∇ V(S_t, **w**)
+::: {.callout-tip title="Actor-Critic 方法的优势"}
+*   **结合策略梯度与TD学习:** 巧妙融合了策略梯度(PG)的直接策略优化能力和TD学习的低方差优势，有效改善了传统REINFORCE算法的高方差问题。
+*   **训练更稳定高效:** 相比蒙特卡洛式的REINFORCE算法，通常具有更快的收敛速度和更稳定的训练过程。
+:::
 
 # A2C / A3C 算法概念
 
 **A2C (Advantage Actor-Critic):**
 
-*   这是 Actor-Critic 的一个**同步 (Synchronous)**、**确定性 (Deterministic)** 版本。
+*   这是 Actor-Critic 的一个**同步 (Synchronous)**、**确定性 (Deterministic)** 版本，其概念与 A3C (由 Mnih 等人于 2016 年提出) 紧密相连。
 *   通常使用**多个并行的环境**实例来收集经验数据。
 *   智能体在所有环境中执行一步，收集一批 (S, A, R, S') 数据。
 *   使用这批数据计算 TD 误差 δ 和梯度，然后**一次性**更新 Actor 和 Critic 的参数。
@@ -94,16 +96,47 @@ E[δ_t | S_t, A_t] ≈ Aπ(S_t, A_t)
 
 **A3C (Asynchronous Advantage Actor-Critic):**
 
-*   这是 Actor-Critic 的一个**异步 (Asynchronous)** 版本，是早期 DRL 的一个里程碑式算法。
+*   这是 Actor-Critic 的一个**异步 (Asynchronous)** 版本，由 Mnih 等人于 2016 年在论文《Asynchronous Methods for Deep Reinforcement Learning》中首次提出，是早期深度强化学习 (DRL) 的一个重要里程碑式算法。
 *   **核心思想:** 创建多个并行的 Actor-Learner 线程，每个线程都有自己的环境副本和模型参数副本。
 *   每个线程独立地与环境交互，计算梯度（Actor 和 Critic 的梯度）。
 *   **异步更新:** 各个线程**独立地、异步地**将计算出的梯度应用到**全局共享**的模型参数上。
 *   **优点:** 不需要经验回放缓冲区（异步性本身提供了数据去相关性）；通过并行化提高了训练速度。
 *   **缺点:** 实现相对复杂；异步更新可能导致某些线程使用过时的参数进行计算。
 
-::: {.callout-note title="A2C vs. A3C"}
-实践中发现，A2C（使用并行环境的同步版本）通常能达到与 A3C 相当甚至更好的性能，并且实现更简单、更容易复现。因此，现代框架（如 Stable Baselines3）通常提供 A2C 的实现。
+::: {.callout-note title="A2C vs. A3C 实践对比"}
+研究表明，A2C（同步并行版本）在大多数实际任务中表现优于A3C，主要体现在：
+1. **性能更优**：同步更新机制使训练更稳定，通常能获得更高的最终回报
+2. **实现简单**：避免了异步更新的复杂性和潜在参数冲突
+3. **复现性强**：确定性更新过程确保实验结果可重复
+4. **资源利用率高**：能更好地利用现代GPU的并行计算能力
+
+因此主流框架(如Stable Baselines3)优先支持A2C实现，A3C更多具有历史研究价值。
 :::
+
+::: {.callout-note title="其他 Actor-Critic 变体与发展" collapse="true"}
+A2C 和 A3C 是 Actor-Critic 思想的重要实现，奠定了基础。在此之后，研究者们提出了许多更先进和性能更强的 Actor-Critic 变体：
+
+*   **DDPG (Deep Deterministic Policy Gradient):** 专门为**连续动作空间**设计。Actor 输出确定的动作（而不是概率分布），Critic 学习 Q(s,a)。结合了 DQN 中经验回放和目标网络等技巧。
+*   **TRPO (Trust Region Policy Optimization):** 旨在通过限制每次策略更新的幅度（在“信任区域”内进行优化）来保证策略的单调改进，从而提高训练的稳定性。
+*   **PPO (Proximal Policy Optimization):** TRPO 的一种简化版本，通过裁剪目标函数或使用 KL 散度惩罚项来实现类似 TRPO 的稳定更新效果，但实现更简单，计算效率更高。PPO 目前是许多应用中非常流行且效果出色的算法。
+*   **SAC (Soft Actor-Critic):** 一种基于最大熵强化学习框架的 Actor-Critic 算法。它在最大化累积回报的同时，也最大化策略的熵，从而鼓励探索，并能学习到更鲁棒的策略。SAC 在许多连续控制任务上取得了顶尖的性能。
+*   **TD3 (Twin Delayed Deep Deterministic Policy Gradient):** DDPG 的改进版本，通过使用两个 Critic 网络（取较小值）、延迟策略更新和目标策略平滑等技巧来缓解 Q 值过高估计的问题，从而提升了 DDPG 的性能和稳定性。
+
+**后续发展:**
+
+强化学习领域仍然在飞速发展。虽然 PPO 和 SAC 等算法在很多任务上表现优异，但研究者们仍在不断探索新的架构、优化方法和理论，例如：
+
+*   **基于模型的强化学习 (Model-Based RL):** 学习环境模型，然后利用模型进行规划或生成模拟经验。
+*   **离线强化学习 (Offline RL):** 从固定的数据集中学习策略，而无需与环境进行新的交互。
+*   **多智能体强化学习 (Multi-Agent RL):** 多个智能体在共享环境中学习和交互。
+*   **与大型语言模型 (LLM) 的结合:** 探索如何利用 LLM 的知识和推理能力来增强 RL 智能体的学习和决策。
+
+因此，虽然 A2C/A3C 是重要的里程碑，但后续的 PPO、SAC 等算法在性能和稳定性上通常有更佳表现，并且整个领域仍在不断涌现更为突破性的思想和算法。
+:::
+
+
+
+
 
 # Lab 7: 使用 Stable Baselines3 运行 A2C
 
@@ -220,17 +253,6 @@ print(f"To view training logs, run: tensorboard --logdir {log_dir}")
     *   解释 Actor-Critic 框架如何结合策略学习和价值学习。
     *   Critic 在 Actor-Critic 中扮演什么角色？它如何帮助 Actor 学习？
     *   什么是优势函数？为什么在策略梯度更新中使用优势函数估计（如 TD 误差）通常比使用原始回报更好？
-
-## 提交要求
-
-*   提交你运行和修改后的 SB3 A2C 代码 (至少包含 CartPole 部分)。
-*   提交 A2C 在 CartPole 上的 TensorBoard 训练曲线截图。
-*   提交 A2C 在 CartPole 上的评估结果。
-*   提交一份简短的分析报告，讨论：
-    *   A2C 与 DQN 在 CartPole 上的性能对比（收敛速度、最终性能、可能的样本效率差异）。
-    *   (如果运行了 Pendulum) 解释为什么 A2C 适用于连续动作空间而 DQN 不适用。
-    *   Actor-Critic 框架的基本原理以及 Critic 的作用。
-    *   优势函数及其在降低方差方面的作用。
 
 ---
 

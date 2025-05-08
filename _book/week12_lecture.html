@@ -104,6 +104,35 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 }</script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xkm/sYwpb+ilR5gUw==" crossorigin="anonymous" referrerpolicy="no-referrer">
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="styles/custom.css">
 </head>
@@ -351,7 +380,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul>
   <li><a href="#回顾策略梯度-policy-gradient-与-reinforce" id="toc-回顾策略梯度-policy-gradient-与-reinforce" class="nav-link active" data-scroll-target="#回顾策略梯度-policy-gradient-与-reinforce">回顾：策略梯度 (Policy Gradient) 与 REINFORCE</a></li>
   <li><a href="#actor-critic-框架" id="toc-actor-critic-框架" class="nav-link" data-scroll-target="#actor-critic-框架">Actor-Critic 框架</a></li>
-  <li><a href="#优势函数估计-advantage-function-estimation" id="toc-优势函数估计-advantage-function-estimation" class="nav-link" data-scroll-target="#优势函数估计-advantage-function-estimation">优势函数估计 (Advantage Function Estimation)</a></li>
   <li><a href="#a2c-a3c-算法概念" id="toc-a2c-a3c-算法概念" class="nav-link" data-scroll-target="#a2c-a3c-算法概念">A2C / A3C 算法概念</a></li>
   <li><a href="#lab-7-使用-stable-baselines3-运行-a2c" id="toc-lab-7-使用-stable-baselines3-运行-a2c" class="nav-link" data-scroll-target="#lab-7-使用-stable-baselines3-运行-a2c">Lab 7: 使用 Stable Baselines3 运行 A2C</a>
   <ul class="collapse">
@@ -359,7 +387,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#环境选择" id="toc-环境选择" class="nav-link" data-scroll-target="#环境选择">环境选择</a></li>
   <li><a href="#示例代码-sb3-a2c-on-cartpole" id="toc-示例代码-sb3-a2c-on-cartpole" class="nav-link" data-scroll-target="#示例代码-sb3-a2c-on-cartpole">示例代码 (SB3 A2C on CartPole)</a></li>
   <li><a href="#任务与思考" id="toc-任务与思考" class="nav-link" data-scroll-target="#任务与思考">任务与思考</a></li>
-  <li><a href="#提交要求" id="toc-提交要求" class="nav-link" data-scroll-target="#提交要求">提交要求</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -390,23 +417,23 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h1>回顾：策略梯度 (Policy Gradient) 与 REINFORCE</h1>
 <p>上周我们学习了策略梯度 (PG) 方法：</p>
 <ul>
-<li><strong>核心思想:</strong> 直接参数化策略 π(a|s, <strong>θ</strong>) 并优化参数 <strong>θ</strong> 以最大化预期回报 J(<strong>θ</strong>)。</li>
-<li><strong>优化方式:</strong> 梯度上升 <strong>θ</strong> ← <strong>θ</strong> + α ∇J(<strong>θ</strong>)。</li>
-<li><strong>策略梯度定理:</strong> ∇J(<strong>θ</strong>) = E_{π_θ} [ ∇ log π(A_t|S_t, <strong>θ</strong>) * Qπ(S_t, A_t) ] (或使用 G_t)。</li>
-<li><strong>REINFORCE 算法:</strong> 使用蒙特卡洛方法估计 Qπ (即使用完整回报 G_t)。
+<li><strong>核心思想:</strong> 直接参数化策略 <span class="math inline">\(\pi(a|s, \theta)\)</span> 并优化参数 <span class="math inline">\(\theta\)</span> 以最大化预期回报 <span class="math inline">\(J(\theta)\)</span>。</li>
+<li><strong>优化方式:</strong> 梯度上升 <span class="math inline">\(\theta \leftarrow \theta + \alpha \nabla J(\theta)\)</span>。</li>
+<li><strong>策略梯度定理:</strong> <span class="math inline">\(\nabla J(\theta) = E_{\pi_{\theta}} [ \nabla \log \pi(A_t|S_t, \theta) * Q_{\pi}(S_t, A_t) ]\)</span> (或使用 <span class="math inline">\(G_t\)</span>)。</li>
+<li><strong>REINFORCE 算法:</strong> 使用蒙特卡洛方法估计 <span class="math inline">\(Q_{\pi}\)</span> (即使用完整回报 <span class="math inline">\(G_t\)</span>)。
 <ul>
-<li>∇J(<strong>θ</strong>) ≈ E_{π_θ} [ ∇ log π(A_t|S_t, <strong>θ</strong>) * G_t ]</li>
+<li><span class="math inline">\(\nabla J(\theta) \approx E_{\pi_{\theta}} [ \nabla \log \pi(A_t|S_t, \theta) * G_t ]\)</span></li>
 <li><strong>缺点:</strong> 高方差，收敛慢，需要完整回合。</li>
 </ul></li>
-<li><strong>基线 (Baseline):</strong> 为了减小方差，从回报中减去一个与动作无关的基线 b(S_t)。
+<li><strong>基线 (Baseline):</strong> 为了减小方差，从回报中减去一个与动作无关的基线 <span class="math inline">\(b(S_t)\)</span>。
 <ul>
-<li>∇J(<strong>θ</strong>) ≈ E_{π_θ} [ ∇ log π(A_t|S_t, <strong>θ</strong>) * (G_t - b(S_t)) ]</li>
-<li>常用的基线是状态值函数 Vπ(S_t)。</li>
-<li><strong>优势函数 (Advantage Function):</strong> Aπ(S_t, A_t) = Qπ(S_t, A_t) - Vπ(S_t)。</li>
-<li>梯度变为：∇J(<strong>θ</strong>) = E_{π_θ} [ ∇ log π(A_t|S_t, <strong>θ</strong>) * Aπ(S_t, A_t) ]</li>
+<li><span class="math inline">\(\nabla J(\theta) \approx E_{\pi_{\theta}} [ \nabla \log \pi(A_t|S_t, \theta) * (G_t - b(S_t)) ]\)</span></li>
+<li>常用的基线是状态值函数 <span class="math inline">\(V_{\pi}(S_t)\)</span>。</li>
+<li><strong>优势函数 (Advantage Function):</strong> <span class="math inline">\(A_{\pi}(S_t, A_t) = Q_{\pi}(S_t, A_t) - V_{\pi}(S_t)\)</span>。</li>
+<li>梯度变为：<span class="math inline">\(\nabla J(\theta) = E_{\pi_{\theta}} [ \nabla \log \pi(A_t|S_t, \theta) * A_{\pi}(S_t, A_t) ]\)</span></li>
 </ul></li>
 </ul>
-<p><strong>问题:</strong> 如何在不知道 Qπ 和 Vπ 的情况下，有效地估计优势函数 Aπ 并进行策略更新？</p>
+<p><strong>问题:</strong> 如何在不知道 <span class="math inline">\(Q_{\pi}\)</span> 和 <span class="math inline">\(V_{\pi}\)</span> 的情况下，有效地估计优势函数 <span class="math inline">\(A_{\pi}\)</span> 并进行策略更新？</p>
 </section>
 <section id="actor-critic-框架" class="level1">
 <h1>Actor-Critic 框架</h1>
@@ -415,67 +442,104 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <ol type="1">
 <li><strong>Actor (行动者):</strong>
 <ul>
-<li>参数化的<strong>策略</strong> π(a|s, <strong>θ</strong>)。</li>
-<li>负责根据当前状态 s <strong>选择动作</strong> a。</li>
-<li>目标是优化参数 <strong>θ</strong> 以改进策略。</li>
+<li>参数化的<strong>策略</strong> <span class="math inline">\(\pi(a|s, \theta)\)</span>。</li>
+<li>负责根据当前状态 <span class="math inline">\(s\)</span> <strong>选择动作</strong> <span class="math inline">\(a\)</span>。</li>
+<li>目标是优化参数 <span class="math inline">\(\theta\)</span> 以改进策略。</li>
 </ul></li>
 <li><strong>Critic (评论家):</strong>
 <ul>
-<li>参数化的<strong>价值函数</strong>（通常是状态值函数 V(s, <strong>w</strong>) 或动作值函数 Q(s, a, <strong>w</strong>)）。</li>
+<li>参数化的<strong>价值函数</strong>（通常是状态值函数 <span class="math inline">\(V(s, w)\)</span> 或动作值函数 <span class="math inline">\(Q(s, a, w)\)</span>）。</li>
 <li>负责<strong>评估</strong> Actor 选择的动作有多好。</li>
-<li>目标是学习准确的价值估计，参数为 <strong>w</strong>。</li>
+<li>目标是学习准确的价值估计，参数为 <span class="math inline">\(w\)</span>。</li>
 </ul></li>
 </ol>
 <p><strong>交互流程:</strong></p>
 <ol type="1">
-<li>Actor 根据当前状态 S_t 和策略 π(·|·, <strong>θ</strong>) 选择动作 A_t。</li>
-<li>执行动作 A_t，观察到奖励 R_{t+1} 和下一个状态 S_{t+1}。</li>
-<li>Critic 利用这个转移 (S_t, A_t, R_{t+1}, S_{t+1}) 来<strong>评估</strong>动作 A_t 的好坏，并<strong>更新</strong>其价值函数参数 <strong>w</strong>。</li>
-<li>Actor 利用 Critic 的评估信息来<strong>更新</strong>其策略参数 <strong>θ</strong>。</li>
+<li>Actor 根据当前状态 <span class="math inline">\(S_t\)</span> 和策略 <span class="math inline">\(\pi(·|·, \theta)\)</span> 选择动作 <span class="math inline">\(A_t\)</span>。</li>
+<li>执行动作 <span class="math inline">\(A_t\)</span>，观察到奖励 <span class="math inline">\(R_{t+1}\)</span> 和下一个状态 <span class="math inline">\(S_{t+1}\)</span>。</li>
+<li>Critic 利用这个转移 <span class="math inline">\((S_t, A_t, R_{t+1}, S_{t+1})\)</span> 来<strong>评估</strong>动作 <span class="math inline">\(A_t\)</span> 的好坏，并<strong>更新</strong>其价值函数参数 <span class="math inline">\(w\)</span>。</li>
+<li>Actor 利用 Critic 的评估信息来<strong>更新</strong>其策略参数 <span class="math inline">\(\theta\)</span>。</li>
 </ol>
-<p><img src="https://spinningup.openai.com/en/latest/_images/actor_critic.svg" class="img-fluid" alt="Actor-Critic Architecture"> <em>(图片来源: OpenAI Spinning Up)</em></p>
+<p><img src="https://media.geeksforgeeks.org/wp-content/uploads/20250224190459513673/Actor-Critic-Method.webp" class="img-fluid" alt="Actor-Critic Architecture"> <em>(图片来源: https://www.geeksforgeeks.org/actor-critic-algorithm-in-reinforcement-learning)</em></p>
 <p><strong>Critic 如何帮助 Actor？</strong></p>
-<p>Critic 的主要作用是提供一个比蒙特卡洛回报 G_t <strong>方差更低</strong>的信号来指导 Actor 的学习。这通常通过以下方式实现：</p>
+<p>Critic 的主要作用是提供一个比蒙特卡洛回报 <span class="math inline">\(G_t\)</span> <strong>方差更低</strong>的信号来指导 Actor 的学习。这通常通过以下方式实现：</p>
 <ul>
-<li><strong>计算 TD 误差:</strong> 如果 Critic 学习的是状态值函数 V(s, <strong>w</strong>)，它可以计算 TD 误差：
+<li><strong>计算 TD 误差:</strong> 如果 Critic 学习的是状态值函数 <span class="math inline">\(V(s, w)\)</span>，它可以计算 TD 误差：
 <ul>
-<li>δ_t = R_{t+1} + γ V(S_{t+1}, <strong>w</strong>) - V(S_t, <strong>w</strong>)</li>
-<li>这个 TD 误差 δ_t 可以作为优势函数 Aπ(S_t, A_t) 的一个（有偏但低方差的）<strong>估计</strong>。</li>
+<li><span class="math inline">\(\delta_t = R_{t+1} + \gamma V(S_{t+1}, w) - V(S_t, w)\)</span></li>
+<li>这个 TD 误差 <span class="math inline">\(\delta_t\)</span> 可以作为优势函数 <span class="math inline">\(A_{\pi}(S_t, A_t)\)</span> 的一个（有偏但低方差的）<strong>估计</strong>。</li>
 </ul></li>
-<li><strong>更新 Actor:</strong> Actor 使用这个 TD 误差来更新策略参数 <strong>θ</strong>：
+<li><strong>更新 Actor:</strong> Actor 使用这个 TD 误差来更新策略参数 <span class="math inline">\(\theta\)</span>：
 <ul>
-<li><strong>θ</strong> ← <strong>θ</strong> + α * ∇ log π(A_t|S_t, <strong>θ</strong>) * δ_t</li>
+<li><span class="math inline">\(\theta \leftarrow \theta + \alpha * \nabla \log \pi(A_t|S_t, \theta) * \delta_t\)</span></li>
 <li><strong>直观理解:</strong>
 <ul>
-<li>如果 δ_t &gt; 0 (实际回报 R_{t+1} + 未来预期 γV(S’) 比当前预期 V(S) 要好)，说明动作 A_t 是个好动作，增加其概率。</li>
-<li>如果 δ_t &lt; 0 (实际回报比预期差)，说明动作 A_t 是个坏动作，减小其概率。</li>
+<li>如果 <span class="math inline">\(\delta_t &gt; 0\)</span> (实际回报 <span class="math inline">\(R_{t+1} + \gamma V(S')\)</span> 比当前预期 <span class="math inline">\(V(S)\)</span> 要好)，说明动作 <span class="math inline">\(A_t\)</span> 是个好动作，增加其概率。</li>
+<li>如果 <span class="math inline">\(\delta_t &lt; 0\)</span> (实际回报比预期差)，说明动作 <span class="math inline">\(A_t\)</span> 是个坏动作，减小其概率。</li>
 </ul></li>
 </ul></li>
-<li><strong>更新 Critic:</strong> Critic 也需要学习，通常使用 TD 学习来更新其参数 <strong>w</strong>，目标是最小化 TD 误差（使其对 Vπ 的估计更准确）：
+<li><strong>更新 Critic:</strong> Critic 也需要学习，通常使用 TD 学习来更新其参数 <span class="math inline">\(w\)</span>，目标是最小化 TD 误差（使其对 <span class="math inline">\(V_{\pi}\)</span> 的估计更准确）：
 <ul>
-<li><strong>w</strong> ← <strong>w</strong> + β * δ_t * ∇ V(S_t, <strong>w</strong>) (β 是 Critic 的学习率)</li>
+<li><span class="math inline">\(w \leftarrow w + \beta * \delta_t * \nabla V(S_t, w)\)</span> (<span class="math inline">\(\beta\)</span> 是 Critic 的学习率)</li>
 </ul></li>
 </ul>
-<p><strong>优势:</strong></p>
+<div class="callout callout-style-default callout-note callout-titled" title="为什么 TD 误差是优势函数的估计?">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+为什么 TD 误差是优势函数的估计?
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>TD 误差 <span class="math inline">\(\delta_t = R_{t+1} + \gamma V(S_{t+1}) - V(S_t)\)</span> 可以作为优势函数 <span class="math inline">\(A_{\pi}(S_t, A_t)\)</span> 的估计，原因如下：</p>
+<ol type="1">
+<li><strong>数学期望关系</strong>:
 <ul>
-<li><strong>结合了 PG 和 TD:</strong> 利用 TD 学习的低方差和在线学习能力来改进策略梯度的高方差问题。</li>
-<li><strong>更稳定高效:</strong> 通常比纯粹的 REINFORCE 算法收敛更快、更稳定。</li>
+<li>优势函数定义为 <span class="math inline">\(A_{\pi}(s,a) = Q_{\pi}(s,a) - V_{\pi}(s)\)</span></li>
+<li>TD 误差的期望满足: <span class="math inline">\(E_{\pi}[\delta_t | S_t, A_t] = Q_{\pi}(S_t, A_t) - V_{\pi}(S_t) = A_{\pi}(S_t, A_t)\)</span></li>
+</ul></li>
+<li><strong>直观理解</strong>:
+<ul>
+<li><span class="math inline">\(R_{t+1} + \gamma V(S_{t+1})\)</span> 是 <span class="math inline">\(Q_{\pi}(S_t, A_t)\)</span> 的采样估计</li>
+<li>减去 <span class="math inline">\(V(S_t)\)</span> 后，<span class="math inline">\(\delta_t\)</span> 衡量了”实际获得的回报”与”状态平均价值”的差异</li>
+<li>正值表示动作比平均好，负值表示比平均差</li>
+</ul></li>
+<li><strong>实际优势</strong>:
+<ul>
+<li>相比蒙特卡洛回报 <span class="math inline">\(G_t\)</span>，TD误差方差更低</li>
+<li>不需要等待回合结束，支持在线学习</li>
+<li>计算简单，只需一步转移 <span class="math inline">\((S_t,A_t,R_{t+1},S_{t+1})\)</span></li>
+</ul></li>
+</ol>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled" title="Actor-Critic 方法的优势">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Actor-Critic 方法的优势
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li><strong>结合策略梯度与TD学习:</strong> 巧妙融合了策略梯度(PG)的直接策略优化能力和TD学习的低方差优势，有效改善了传统REINFORCE算法的高方差问题。</li>
+<li><strong>训练更稳定高效:</strong> 相比蒙特卡洛式的REINFORCE算法，通常具有更快的收敛速度和更稳定的训练过程。</li>
 </ul>
-</section>
-<section id="优势函数估计-advantage-function-estimation" class="level1">
-<h1>优势函数估计 (Advantage Function Estimation)</h1>
-<p>在 Actor-Critic 中，我们希望使用优势函数 Aπ(S_t, A_t) = Qπ(S_t, A_t) - Vπ(S_t) 来更新 Actor。但我们通常只有状态值函数 V 的估计。</p>
-<p>如何估计 Aπ(S_t, A_t)？</p>
-<p>回顾 TD 误差： δ_t = R_{t+1} + γ V(S_{t+1}, <strong>w</strong>) - V(S_t, <strong>w</strong>)</p>
-<p>可以证明，TD 误差 δ_t 是优势函数 Aπ(S_t, A_t) 的一个（有偏）估计： E[δ_t | S_t, A_t] ≈ Aπ(S_t, A_t)</p>
-<p>因此，许多 Actor-Critic 算法直接使用 TD 误差 δ_t 作为优势函数的估计来更新 Actor：</p>
-<p><strong>Actor 更新:</strong> <strong>θ</strong> ← <strong>θ</strong> + α * ∇ log π(A_t|S_t, <strong>θ</strong>) * δ_t <strong>Critic 更新:</strong> <strong>w</strong> ← <strong>w</strong> + β * δ_t * ∇ V(S_t, <strong>w</strong>)</p>
+</div>
+</div>
 </section>
 <section id="a2c-a3c-算法概念" class="level1">
 <h1>A2C / A3C 算法概念</h1>
 <p><strong>A2C (Advantage Actor-Critic):</strong></p>
 <ul>
-<li>这是 Actor-Critic 的一个<strong>同步 (Synchronous)</strong>、<strong>确定性 (Deterministic)</strong> 版本。</li>
+<li>这是 Actor-Critic 的一个<strong>同步 (Synchronous)</strong>、<strong>确定性 (Deterministic)</strong> 版本，其概念与 A3C (由 Mnih 等人于 2016 年提出) 紧密相连。</li>
 <li>通常使用<strong>多个并行的环境</strong>实例来收集经验数据。</li>
 <li>智能体在所有环境中执行一步，收集一批 (S, A, R, S’) 数据。</li>
 <li>使用这批数据计算 TD 误差 δ 和梯度，然后<strong>一次性</strong>更新 Actor 和 Critic 的参数。</li>
@@ -483,24 +547,57 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </ul>
 <p><strong>A3C (Asynchronous Advantage Actor-Critic):</strong></p>
 <ul>
-<li>这是 Actor-Critic 的一个<strong>异步 (Asynchronous)</strong> 版本，是早期 DRL 的一个里程碑式算法。</li>
+<li>这是 Actor-Critic 的一个<strong>异步 (Asynchronous)</strong> 版本，由 Mnih 等人于 2016 年在论文《Asynchronous Methods for Deep Reinforcement Learning》中首次提出，是早期深度强化学习 (DRL) 的一个重要里程碑式算法。</li>
 <li><strong>核心思想:</strong> 创建多个并行的 Actor-Learner 线程，每个线程都有自己的环境副本和模型参数副本。</li>
 <li>每个线程独立地与环境交互，计算梯度（Actor 和 Critic 的梯度）。</li>
 <li><strong>异步更新:</strong> 各个线程<strong>独立地、异步地</strong>将计算出的梯度应用到<strong>全局共享</strong>的模型参数上。</li>
 <li><strong>优点:</strong> 不需要经验回放缓冲区（异步性本身提供了数据去相关性）；通过并行化提高了训练速度。</li>
 <li><strong>缺点:</strong> 实现相对复杂；异步更新可能导致某些线程使用过时的参数进行计算。</li>
 </ul>
-<div class="callout callout-style-default callout-note callout-titled" title="A2C vs. A3C">
+<div class="callout callout-style-default callout-note callout-titled" title="A2C vs. A3C 实践对比">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-A2C vs.&nbsp;A3C
+A2C vs.&nbsp;A3C 实践对比
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>实践中发现，A2C（使用并行环境的同步版本）通常能达到与 A3C 相当甚至更好的性能，并且实现更简单、更容易复现。因此，现代框架（如 Stable Baselines3）通常提供 A2C 的实现。</p>
+<p>研究表明，A2C（同步并行版本）在大多数实际任务中表现优于A3C，主要体现在： 1. <strong>性能更优</strong>：同步更新机制使训练更稳定，通常能获得更高的最终回报 2. <strong>实现简单</strong>：避免了异步更新的复杂性和潜在参数冲突 3. <strong>复现性强</strong>：确定性更新过程确保实验结果可重复 4. <strong>资源利用率高</strong>：能更好地利用现代GPU的并行计算能力</p>
+<p>因此主流框架(如Stable Baselines3)优先支持A2C实现，A3C更多具有历史研究价值。</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled" title="其他 Actor-Critic 变体与发展">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+其他 Actor-Critic 变体与发展
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>A2C 和 A3C 是 Actor-Critic 思想的重要实现，奠定了基础。在此之后，研究者们提出了许多更先进和性能更强的 Actor-Critic 变体：</p>
+<ul>
+<li><strong>DDPG (Deep Deterministic Policy Gradient):</strong> 专门为<strong>连续动作空间</strong>设计。Actor 输出确定的动作（而不是概率分布），Critic 学习 Q(s,a)。结合了 DQN 中经验回放和目标网络等技巧。</li>
+<li><strong>TRPO (Trust Region Policy Optimization):</strong> 旨在通过限制每次策略更新的幅度（在“信任区域”内进行优化）来保证策略的单调改进，从而提高训练的稳定性。</li>
+<li><strong>PPO (Proximal Policy Optimization):</strong> TRPO 的一种简化版本，通过裁剪目标函数或使用 KL 散度惩罚项来实现类似 TRPO 的稳定更新效果，但实现更简单，计算效率更高。PPO 目前是许多应用中非常流行且效果出色的算法。</li>
+<li><strong>SAC (Soft Actor-Critic):</strong> 一种基于最大熵强化学习框架的 Actor-Critic 算法。它在最大化累积回报的同时，也最大化策略的熵，从而鼓励探索，并能学习到更鲁棒的策略。SAC 在许多连续控制任务上取得了顶尖的性能。</li>
+<li><strong>TD3 (Twin Delayed Deep Deterministic Policy Gradient):</strong> DDPG 的改进版本，通过使用两个 Critic 网络（取较小值）、延迟策略更新和目标策略平滑等技巧来缓解 Q 值过高估计的问题，从而提升了 DDPG 的性能和稳定性。</li>
+</ul>
+<p><strong>后续发展:</strong></p>
+<p>强化学习领域仍然在飞速发展。虽然 PPO 和 SAC 等算法在很多任务上表现优异，但研究者们仍在不断探索新的架构、优化方法和理论，例如：</p>
+<ul>
+<li><strong>基于模型的强化学习 (Model-Based RL):</strong> 学习环境模型，然后利用模型进行规划或生成模拟经验。</li>
+<li><strong>离线强化学习 (Offline RL):</strong> 从固定的数据集中学习策略，而无需与环境进行新的交互。</li>
+<li><strong>多智能体强化学习 (Multi-Agent RL):</strong> 多个智能体在共享环境中学习和交互。</li>
+<li><strong>与大型语言模型 (LLM) 的结合:</strong> 探索如何利用 LLM 的知识和推理能力来增强 RL 智能体的学习和决策。</li>
+</ul>
+<p>因此，虽然 A2C/A3C 是重要的里程碑，但后续的 PPO、SAC 等算法在性能和稳定性上通常有更佳表现，并且整个领域仍在不断涌现更为突破性的思想和算法。</p>
+</div>
 </div>
 </div>
 </section>
@@ -629,21 +726,6 @@ A2C vs.&nbsp;A3C
 <li>什么是优势函数？为什么在策略梯度更新中使用优势函数估计（如 TD 误差）通常比使用原始回报更好？</li>
 </ul></li>
 </ol>
-</section>
-<section id="提交要求" class="level2">
-<h2 class="anchored" data-anchor-id="提交要求">提交要求</h2>
-<ul>
-<li>提交你运行和修改后的 SB3 A2C 代码 (至少包含 CartPole 部分)。</li>
-<li>提交 A2C 在 CartPole 上的 TensorBoard 训练曲线截图。</li>
-<li>提交 A2C 在 CartPole 上的评估结果。</li>
-<li>提交一份简短的分析报告，讨论：
-<ul>
-<li>A2C 与 DQN 在 CartPole 上的性能对比（收敛速度、最终性能、可能的样本效率差异）。</li>
-<li>(如果运行了 Pendulum) 解释为什么 A2C 适用于连续动作空间而 DQN 不适用。</li>
-<li>Actor-Critic 框架的基本原理以及 Critic 的作用。</li>
-<li>优势函数及其在降低方差方面的作用。</li>
-</ul></li>
-</ul>
 <hr>
 <p><strong>下周预告:</strong> 商业案例分析 1 - 动态定价/资源优化。我们将深入探讨如何将前面学到的 RL 概念（MDP 定义、价值函数、Q-Learning、DQN、A2C 等）应用于更具体的商业场景，并讨论其中的挑战。</p>
 

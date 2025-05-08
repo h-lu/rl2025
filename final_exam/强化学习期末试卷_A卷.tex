@@ -1,0 +1,199 @@
+\documentclass[zihao=5,noanswers]{BHCexam}
+\usepackage{ctex}
+\usepackage{multirow}
+
+%\linespread{1.2}
+
+% \usepackage{minted}
+% \setminted{mathescape, style = black, linenos=true}
+
+
+\begin{document}
+
+\renewcommand{\O}{\mathcal{O}}
+
+
+\biaoti{\kaishu \textbf{上海应用技术大学 2023--2024 学年第二学期}}
+\kemu{\textbf{《{\kaishu 强化学习}》期末试卷 \quad (A)}}
+\setxz{40}{20}{2}
+\setpd{20}{10}{2}
+\setjd{40}{4}
+\xinxi{100}{90}
+
+\maketitle
+
+\begin{flushleft}
+ \qquad\kaishu \textbf{课程代码}: \underline{\hspace{2ex}B4105300\hspace{2ex}} \quad\kaishu \textbf{学分}: \underline{\hspace{5ex}3\hspace{5ex}} \quad \kaishu \textbf{考试时间}: \underline{\hspace{3ex}90\hspace{3ex}}\kaishu \textbf{分钟}\\
+ \qquad\kaishu \textbf{课程序号}: \underline{\hspace{25ex}2400273,2400274\hspace{25ex}}\\
+ \qquad\vspace{1ex}
+ \kaishu \textbf{班级:} \underline{\hspace{15ex}} \quad
+ \kaishu \textbf{学号:} \underline{\hspace{15ex}} \quad
+ \kaishu \textbf{姓名:} \underline{\hspace{15ex}} \quad
+\end{flushleft}
+
+ {\small \kaishu \textbf{我已阅读了有关的考试规定和纪律要求, 愿意在考试中遵守《考场规则》, 如有违反将愿接受相应的处理.}}
+\begin{center}
+   \setlength{\tabcolsep}{3mm}
+   \begin{tabular}{*{12}{|c}|}
+      \hline \textbf{题号} & 一 & 二 & 31 & 32 & 33 & 34 &   &   & &  总分 \\
+      \hline \textbf{满分}& 40 & 20 & 10 & 10 & 10 & 10  &  &  &  & 100\\
+      \hline \textbf{得分}&&&&&&&&&& \\
+      \hline
+   \end{tabular}
+\end{center}
+
+ {\small \textbf{试卷共~\numpages~页, 请先查看试卷有无缺页, 然后答题.}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{questions}
+
+\xuanze
+
+\question 强化学习与其他机器学习方法的主要区别在于：
+\choice{不需要训练数据}{通过与环境交互学习}{一定需要深度神经网络}{只能解决有限状态问题}
+
+\question 在强化学习中，智能体从环境获得的反馈信号称为：
+\choice{梯度}{状态}{奖励}{动作}
+
+\question 以下哪个不是强化学习中的核心组成部分？
+\choice{智能体}{环境}{数据集}{动作}
+
+\question 马尔可夫决策过程(MDP)中的折扣因子γ主要作用是：
+\choice{减少计算复杂度}{避免无限累积奖励}{增加探索概率}{降低学习率}
+
+\question 在强化学习中，策略(Policy)的定义是：
+\choice{每个状态下可执行的动作集合}{状态到下一状态的转移规则}{状态到动作的映射函数}{奖励函数}
+
+\question Q-Learning算法属于：
+\choice{基于策略的方法}{基于值的方法}{基于模型的方法}{监督学习方法}
+
+\question 状态值函数V(s)表示：
+\choice{从状态s开始，采取随机动作的期望回报}{从状态s开始，遵循当前策略的期望回报}{状态s的即时奖励}{每个动作在状态s下的相对价值}
+
+\question 在TD(0)算法中，TD误差δ的定义是：
+\choice{R_{t+1} + γV(S_{t+1}) - V(S_t)}{R_t - V(S_t)}{V(S_{t+1}) - V(S_t)}{R_{t+1} - R_t}
+
+\question 经验回放(Experience Replay)技术主要解决的问题是：
+\choice{存储空间不足}{样本之间的高相关性}{奖励稀疏}{环境非平稳性}
+
+\question 深度Q网络(DQN)的两个关键创新是：
+\choice{经验回放和目标网络}{策略梯度和优势函数}{SARSA和Q-Learning}{蒙特卡洛和时序差分}
+
+\question SARSA算法与Q-Learning的主要区别在于：
+\choice{SARSA是离线学习，Q-Learning是在线学习}{SARSA是同策略，Q-Learning是异策略}{SARSA只能处理离散状态，Q-Learning可以处理连续状态}{SARSA不需要探索，Q-Learning需要探索}
+
+\question 贝尔曼方程的核心思想是：
+\choice{通过梯度下降优化状态值函数}{将当前状态的值与后续状态的值建立递归关系}{将连续状态空间离散化}{在策略空间中进行搜索}
+
+\question 动态规划方法中的策略迭代(Policy Iteration)包括：
+\choice{策略评估和策略改进两个交替步骤}{值函数逼近和策略梯度计算}{随机策略初始化和确定性策略转换}{策略网络训练和价值网络训练}
+
+\question 蒙特卡洛方法的主要特点是：
+\choice{需要精确的环境模型}{基于完整回合的样本经验学习}{实时更新值估计}{不需要访问所有状态}
+
+\question 策略梯度方法直接优化的是：
+\choice{值函数}{环境模型}{状态转移函数}{策略函数}
+
+\question Actor-Critic方法中，Critic的主要作用是：
+\choice{做出决策}{评估动作的好坏}{构建环境模型}{生成随机动作}
+
+\question 价值迭代(Value Iteration)算法的核心思想是：
+\choice{直接迭代计算最优值函数}{同时更新策略和值函数}{通过蒙特卡洛采样估计值函数}{使用时序差分学习最优策略}
+
+\question 在Q-Learning中，对Q值的更新通常使用哪种策略？
+\choice{完全随机策略}{ε-贪心策略}{确定性贪心策略}{基于模型的策略}
+
+\question 强化学习中常见的探索方法不包括：
+\choice{ε-贪心}{上置信界(UCB)}{随机初始位置}{梯度下降}
+
+\question 深度强化学习中常用的函数逼近器是：
+\choice{线性回归}{决策树}{深度神经网络}{贝叶斯网络}
+
+\panduan
+
+\question 强化学习需要有标签的训练数据，这一点与监督学习相同。
+
+\question 马尔可夫决策过程(MDP)假设未来状态只依赖于当前状态，与历史路径无关。
+
+\question 在强化学习中，同策略(On-policy)方法使用的策略同时用于行为生成和评估。
+
+\question Q-Learning算法可以直接用于连续动作空间问题，无需特殊处理。
+
+\question 深度Q网络(DQN)使用神经网络来逼近动作值函数Q。
+
+\question 时序差分(TD)学习需要等待一个回合结束后才能更新值函数。
+
+\question 蒙特卡洛方法比时序差分方法有更高的方差，但偏差更小。
+
+\question SARSA是一种异策略学习方法，而Q-Learning是同策略学习方法。
+
+\question 动态规划方法通常要求环境的状态转移概率和奖励函数是已知的。
+
+\question Actor-Critic方法结合了策略梯度和值函数逼近的优点。
+
+\jianda
+
+\question[10] 马尔可夫决策过程(MDP)与贝尔曼方程：
+\begin{enumerate}
+    \item 请简要描述MDP的五个要素（3分）
+    \item 写出贝尔曼期望方程和贝尔曼最优方程（4分）
+    \item 贝尔曼方程在强化学习算法中的重要性是什么？（3分）
+\end{enumerate}
+
+\question[10] 时序差分(TD)学习方法：
+\begin{enumerate}
+    \item 简述TD学习的基本原理（2分）
+    \item 写出TD(0)和SARSA的更新公式，并解释其中的主要区别（3分）
+    \item 比较TD学习与蒙特卡洛方法的优缺点（5分）
+\end{enumerate}
+
+\question[10] Q-Learning算法：
+\begin{enumerate}
+    \item 写出Q-Learning的更新公式（2分）
+    \item 解释Q-Learning为什么是一种异策略学习方法（3分）
+    \item 描述Q-Learning算法的优缺点（5分）
+\end{enumerate}
+
+\question[10] 深度强化学习：
+\begin{enumerate}
+    \item 传统表格型强化学习方法面临哪些挑战？为什么需要深度强化学习？（3分）
+    \item 简述深度Q网络(DQN)算法的核心思想和主要创新点（4分）
+    \item DQN如何解决传统Q-Learning在使用神经网络时面临的不稳定性问题？（3分）
+\end{enumerate}
+
+\end{questions}
+
+
+
+\ifprintanswers
+\else
+\newpage
+\kemu{\textbf{《{\kaishu 强化学习}》期末试卷\quad (答题纸)}}
+\maketitle
+
+
+\begin{flushleft}
+ \qquad\kaishu \textbf{课程代码}: \underline{\hspace{2ex}B4105300\hspace{2ex}} \quad\kaishu \textbf{学分}: \underline{\hspace{5ex}3\hspace{5ex}} \quad \kaishu \textbf{考试时间}: \underline{\hspace{3ex}90\hspace{3ex}}\kaishu \textbf{分钟}\\
+ \qquad\kaishu \textbf{课程序号}: \underline{\hspace{25ex}2400273,2400274\hspace{25ex}}\\
+ \qquad\vspace{1ex}
+ \kaishu \textbf{班级:} \underline{\hspace{15ex}} \quad
+ \kaishu \textbf{学号:} \underline{\hspace{15ex}} \quad
+ \kaishu \textbf{姓名:} \underline{\hspace{15ex}} \quad
+\end{flushleft}
+
+ {\small \kaishu \textbf{我已阅读了有关的考试规定和纪律要求, 愿意在考试中遵守《考场规则》, 如有违反将愿接受相应的处理.}}
+\begin{center}
+   \setlength{\tabcolsep}{3mm}
+   \begin{tabular}{*{12}{|c}|}
+      \hline \textbf{题号} & 一 & 二 & 三 & 四 & 五 & 六 &   &   & &  总分 \\
+      \hline \textbf{满分}& 40 & 20 & 10 & 10 & 10 & 10  &  &  &  & 100\\
+      \hline \textbf{得分}&&&&&&&&&& \\
+      \hline
+   \end{tabular}
+\end{center}
+
+\vspace{0.5cm}
+
+\end{document} 

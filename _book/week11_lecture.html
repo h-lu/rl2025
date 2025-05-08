@@ -70,6 +70,35 @@ ul.task-list li input[type="checkbox"] {
 }</script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xkm/sYwpb+ilR5gUw==" crossorigin="anonymous" referrerpolicy="no-referrer">
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="styles/custom.css">
 </head>
@@ -355,15 +384,15 @@ ul.task-list li input[type="checkbox"] {
 <h1>回顾：基于价值的强化学习 (Value-Based RL)</h1>
 <p>到目前为止，我们学习的方法（SARSA, Q-Learning, DQN）都属于<strong>基于价值 (Value-Based)</strong> 的强化学习方法。</p>
 <ul>
-<li><strong>核心思想:</strong> 学习一个<strong>价值函数</strong>（通常是动作值函数 Q(s, a)），然后<strong>隐式地</strong>从价值函数中推导出策略。
+<li><strong>核心思想:</strong> 学习一个<strong>价值函数</strong>（通常是动作值函数 <span class="math inline">\(Q(s, a)\)</span>），然后<strong>隐式地</strong>从价值函数中推导出策略。
 <ul>
-<li>策略通常是相对于 Q 函数的贪心策略（或 ε-greedy）：π(s) = argmax_a Q(s, a)。</li>
+<li>策略通常是相对于 Q 函数的贪心策略（或 <span class="math inline">\(\epsilon\)</span>-greedy）：<span class="math inline">\(\pi(s) = \text{argmax}_a Q(s, a)\)</span>。</li>
 </ul></li>
 <li><strong>代表算法:</strong> Q-Learning, SARSA, DQN。</li>
 <li><strong>优点:</strong> 在离散动作空间问题上通常样本效率较高，比较稳定。</li>
 <li><strong>局限性:</strong>
 <ul>
-<li><strong>难以处理连续动作空间:</strong> <code>max_a Q(s, a)</code> 操作在连续动作空间中难以进行（需要在无限多的动作中找到最大值）。虽然有一些扩展方法（如 DDPG），但基本形式不适用。</li>
+<li><strong>难以处理连续动作空间:</strong> <span class="math inline">\(max_a Q(s, a)\)</span> 操作在连续动作空间中难以进行（需要在无限多的动作中找到最大值）。虽然有一些扩展方法（如 DDPG），但基本形式不适用。</li>
 <li><strong>可能学习到确定性策略:</strong> 基于 <code>argmax</code> 的策略通常是确定性的。但在某些情况下，最优策略本身就是<strong>随机性</strong>的（例如，在石头剪刀布游戏中，最优策略是随机出拳；或者在部分可观察环境中，需要随机性来处理不确定性）。基于价值的方法难以直接学习随机策略。</li>
 <li><strong>价值函数可能非常复杂:</strong> 有时，最优价值函数可能比最优策略本身复杂得多，学习价值函数可能比直接学习策略更困难。</li>
 </ul></li>
@@ -374,66 +403,253 @@ ul.task-list li input[type="checkbox"] {
 <h1>策略梯度方法核心思想：直接学习策略</h1>
 <p>策略梯度 (Policy Gradient, PG) 方法<strong>直接参数化并优化策略本身</strong>，而不是通过价值函数间接学习。</p>
 <ul>
-<li><strong>策略参数化:</strong> 我们用一个带参数 <strong>θ</strong> 的函数 π(a|s, <strong>θ</strong>) 来表示策略。这个函数直接输出在状态 s 下采取动作 a 的概率（对于离散动作）或动作的具体参数（对于连续动作）。
+<li><strong>策略参数化:</strong> 我们用一个带参数 <span class="math inline">\(\theta\)</span> 的函数 <span class="math inline">\(\pi(a|s, \theta)\)</span> 来表示策略。这个函数直接输出在状态 <span class="math inline">\(s\)</span> 下采取动作 <span class="math inline">\(a\)</span> 的概率（对于离散动作）或动作的具体参数（对于连续动作）。
 <ul>
-<li>π(a|s, <strong>θ</strong>) = P(A=a | S=s, <strong>θ</strong>)</li>
-<li>参数 <strong>θ</strong> 通常是神经网络的权重。</li>
+<li><span class="math inline">\(\pi(a|s, \theta) = P(A=a | S=s, \theta)\)</span></li>
+<li>参数 <span class="math inline">\(\theta\)</span> 通常是神经网络的权重。</li>
 </ul></li>
-<li><strong>目标:</strong> 找到最优的参数 <strong>θ*</strong>，使得某种性能指标 J(<strong>θ</strong>) 最大化。
+<li><strong>目标:</strong> 找到最优的参数 <span class="math inline">\(\theta\)</span>，使得某种性能指标 <span class="math inline">\(J(\theta)\)</span> 最大化。
 <ul>
-<li>性能指标 J(<strong>θ</strong>) 通常定义为遵循策略 π(·|·, <strong>θ</strong>) 的<strong>预期累积回报</strong>（例如，从某个起始状态分布开始的预期回报）。</li>
+<li>性能指标 <span class="math inline">\(J(\theta)\)</span> 通常定义为遵循策略 <span class="math inline">\(\pi(·|·, \theta)\)</span> 的<strong>预期累积回报</strong>（例如，从某个起始状态分布开始的预期回报）。</li>
 </ul></li>
-<li><strong>优化方法:</strong> 使用<strong>梯度上升 (Gradient Ascent)</strong> 来优化参数 <strong>θ</strong>。我们需要计算性能指标 J(<strong>θ</strong>) 相对于参数 <strong>θ</strong> 的梯度 ∇J(<strong>θ</strong>)，然后沿着梯度的方向更新参数：
+<li><strong>优化方法:</strong> 使用<strong>梯度上升 (Gradient Ascent)</strong> 来优化参数 <span class="math inline">\(\theta\)</span>。我们需要计算性能指标 <span class="math inline">\(J(\theta)\)</span> 相对于参数 <span class="math inline">\(\theta\)</span> 的梯度 <span class="math inline">\(\nabla J(\theta)\)</span>，然后沿着梯度的方向更新参数：
 <ul>
-<li><strong>θ</strong> ← <strong>θ</strong> + α ∇J(<strong>θ</strong>) (α 是学习率)</li>
+<li><span class="math inline">\(\theta \leftarrow \theta + \alpha \nabla J(\theta)\)</span> (<span class="math inline">\(\alpha\)</span> 是学习率)</li>
 </ul></li>
 </ul>
-<p><strong>关键问题:</strong> 如何计算策略性能的梯度 ∇J(<strong>θ</strong>)？</p>
+<p><strong>关键问题:</strong> 如何计算策略性能的梯度 <span class="math inline">\(\nabla J(\theta)\)</span>？</p>
 </section>
 <section id="策略梯度定理-policy-gradient-theorem" class="level1">
 <h1>策略梯度定理 (Policy Gradient Theorem)</h1>
-<p>策略梯度定理提供了一种计算性能梯度 ∇J(<strong>θ</strong>) 的方法，而<strong>不需要</strong>知道环境动态模型 (P) 或价值函数的导数。这是一个非常重要的理论结果。</p>
-<p>该定理表明，性能 J(<strong>θ</strong>) 的梯度可以表示为：</p>
-<p>∇J(<strong>θ</strong>) = E_{π_θ} [ ∇ log π(A_t|S_t, <strong>θ</strong>) * G_t ] (用于回合制任务，G_t 是完整回报)</p>
-<p>或者更常用的是使用<strong>动作值函数 Qπ(s, a)</strong>：</p>
-<p>∇J(<strong>θ</strong>) = E_{π_θ} [ ∇ log π(A_t|S_t, <strong>θ</strong>) * Qπ(S_t, A_t) ]</p>
-<p>其中：</p>
-<ul>
-<li><strong>E_{π_θ} […]</strong>: 表示在遵循策略 π(·|·, <strong>θ</strong>) 时，对状态和动作分布求期望。</li>
-<li><strong>π(A_t|S_t, θ)</strong>: 在状态 S_t 采取动作 A_t 的概率（由当前策略网络给出）。</li>
-<li><strong>∇ log π(A_t|S_t, θ)</strong>: 称为 <strong>Score Function</strong>。它表示参数 <strong>θ</strong> 的微小变动对“选择动作 A_t 的对数概率”的影响方向。<code>log π</code> 的使用是为了数学上的便利和更好的梯度性质。</li>
-<li><strong>G_t</strong> 或 <strong>Qπ(S_t, A_t)</strong>: 对在状态 S_t 采取动作 A_t 后所能获得的<strong>回报的衡量</strong>。它告诉我们这个动作有多好。</li>
-</ul>
-<p><strong>直观理解:</strong></p>
-<p>梯度 ∇J(<strong>θ</strong>) 的计算涉及到两个部分的乘积，并求期望：</p>
+<p>我们想通过调整策略的参数 <span class="math inline">\(\theta\)</span> 来最大化预期回报 <span class="math inline">\(J(\theta)\)</span>。梯度上升告诉我们，更新方向应该是梯度的方向：<span class="math inline">\(\theta \leftarrow \theta + \alpha \nabla J(\theta)\)</span>。</p>
+<p>那么，<strong>核心问题</strong>就变成了：这个梯度 <span class="math inline">\(\nabla J(\theta)\)</span> 究竟是什么？我们如何计算它？</p>
+<p>直接计算这个梯度似乎很棘手。因为策略参数 <span class="math inline">\(\theta\)</span> 的改变，不仅会影响在特定状态下选择某个动作的概率，还会间接影响到我们会进入哪些状态（状态的分布）。想象一下，如果你的策略变了，你可能会更频繁地走到某些奖励高的区域，或者避开某些惩罚多的区域。</p>
+<div class="callout callout-style-default callout-note callout-titled" title="策略梯度定理的核心思想">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+策略梯度定理的核心思想
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>幸运的是，<strong>策略梯度定理</strong>提供了一个非常巧妙（甚至有点神奇）的方法来计算这个梯度，而<strong>不需要我们去计算策略变化对状态分布的影响</strong>！这极大地简化了问题。</p>
+<p>定理告诉我们，性能指标 <span class="math inline">\(J(\theta)\)</span> 对参数 <span class="math inline">\(\theta\)</span> 的梯度可以表示为：</p>
+<p><span class="math inline">\(\nabla J(\theta) \approx E_{\pi_\theta} [ \nabla \log \pi(A_t|S_t, \theta) \cdot \text{RewardSignal}_t ]\)</span></p>
+<p>这里的 <span class="math inline">\(E_{\pi_\theta}[\cdot]\)</span> 表示在当前策略 <span class="math inline">\(\pi_\theta\)</span> 下收集的经验的期望。</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled" title="为什么可以不考虑策略变化对状态分布的影响？">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+为什么可以不考虑策略变化对状态分布的影响？
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>这是一个非常好的问题，也是策略梯度定理的神奇之处！</p>
+<p>我们知道，策略参数 <span class="math inline">\(\theta\)</span> 的改变会影响两件事：</p>
 <ol type="1">
-<li><strong>∇ log π(A_t|S_t, θ):</strong> 这个动作 A_t 在当前策略下出现的“可能性”随参数 θ 变化的方向。</li>
-<li><strong>G_t</strong> 或 <strong>Qπ(S_t, A_t):</strong> 这个动作 A_t 最终（或预期）导致的回报有多好。</li>
+<li>在某个状态 <span class="math inline">\(s\)</span> 下选择动作 <span class="math inline">\(a\)</span> 的概率 <span class="math inline">\(\pi(a|s, \theta)\)</span>。</li>
+<li>智能体访问到不同状态 <span class="math inline">\(s\)</span> 的概率分布 <span class="math inline">\(d^{\pi_\theta}(s)\)</span>（即哪些状态更容易被访问到）。</li>
 </ol>
+<p>如果直接对目标函数 <span class="math inline">\(J(\theta)\)</span> 求导，我们会发现梯度中既包含了对动作选择概率的导数项 <span class="math inline">\(\nabla_\theta \pi(a|s, \theta)\)</span>，也可能包含了对状态分布的导数项 <span class="math inline">\(\nabla_\theta d^{\pi_\theta}(s)\)</span>。计算后一项（状态分布如何随 <span class="math inline">\(\theta\)</span> 变化）通常非常复杂和棘手。</p>
+<p><strong>策略梯度定理的精妙之处在于，它通过数学推导证明了，在计算策略梯度时，涉及状态分布变化的那部分梯度项最终会相互抵消或者可以被巧妙地重写，从而使得最终的梯度表达式中不再显式地包含状态分布对 <span class="math inline">\(\theta\)</span> 的导数 <span class="math inline">\(\nabla_\theta d^{\pi_\theta}(s)\)</span>。</strong></p>
+<p>简单来说，定理告诉我们，我们只需要关注：</p>
 <ul>
-<li>如果一个动作 A_t 导致了<strong>高回报</strong> (G_t 或 Qπ 高)，我们希望<strong>增加</strong>这个动作在状态 S_t 下被选择的概率。梯度上升会调整参数 <strong>θ</strong>，使得 log π(A_t|S_t, <strong>θ</strong>) 沿着 ∇ log π(A_t|S_t, <strong>θ</strong>) 的方向移动，从而增大 π(A_t|S_t, <strong>θ</strong>)。</li>
-<li>如果一个动作 A_t 导致了<strong>低回报</strong> (G_t 或 Qπ 低)，我们希望<strong>减小</strong>这个动作被选择的概率。梯度上升会调整参数 <strong>θ</strong>，使得 log π(A_t|S_t, <strong>θ</strong>) 沿着 ∇ log π(A_t|S_t, <strong>θ</strong>) 的方向移动，但由于 G_t 或 Qπ 是负的或较小，最终效果是减小 π(A_t|S_t, <strong>θ</strong>)。</li>
+<li><strong>当前策略 <span class="math inline">\(\pi_\theta\)</span> 下</strong>，我们实际采样到的轨迹中，访问了哪些状态 <span class="math inline">\(S_t\)</span> 并采取了哪些动作 <span class="math inline">\(A_t\)</span>。</li>
+<li>对于这些 <span class="math inline">\((S_t, A_t)\)</span>，我们如何调整 <span class="math inline">\(\theta\)</span> 才能<strong>增加</strong>那些导致好的结果（高 <span class="math inline">\(\text{RewardSignal}_t\)</span>）的动作的概率，并<strong>减少</strong>那些导致坏结果的动作的概率。</li>
 </ul>
-<p><strong>简而言之：增加好动作的概率，降低坏动作的概率。</strong></p>
+<p>我们沿着这个计算出来的梯度方向更新 <span class="math inline">\(\theta\)</span>。在下一次迭代中，由于策略 <span class="math inline">\(\pi_\theta\)</span> 已经改变，智能体访问状态的分布 <span class="math inline">\(d^{\pi_\theta}(s)\)</span> <strong>自然也会随之改变</strong>。然后，我们会基于这个新的状态分布和新的策略，再次计算梯度。</p>
+<p>所以，我们并不是说状态分布不重要或者不改变，而是策略梯度定理提供了一个计算梯度的方法，这个方法在<strong>当前这一步</strong>的计算中，不需要我们去显式地计算状态分布是如何随着 <span class="math inline">\(\theta\)</span> 的微小变化而变化的。这极大地简化了梯度的计算，使得直接优化策略成为可能。</p>
+<p>更详细的数学证明可以参考 Sutton &amp; Barto 的《强化学习》第二版第 13.1 和 13.2 节，或者原始论文。</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled" title="策略梯度定理的原始论文">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+策略梯度定理的原始论文
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>策略梯度定理最初由 Richard Sutton 等人在 1999 年的论文《Policy Gradient Methods for Reinforcement Learning with Function Approximation》中提出并证明。</p>
+<p><strong>论文核心贡献:</strong> 1. 首次严格证明了策略梯度定理的形式 2. 展示了策略梯度方法可以兼容函数近似（如神经网络） 3. 为后续策略梯度算法奠定了理论基础</p>
+<p><strong>引用信息:</strong> Sutton, R. S., McAllester, D. A., Singh, S. P., &amp; Mansour, Y. (1999). Policy gradient methods for reinforcement learning with function approximation. <em>Advances in neural information processing systems</em>, 12.</p>
+<p><strong>论文链接:</strong> <a href="https://proceedings.neurips.cc/paper/1999/file/464d828b85b0bed98e80ade0a5c43b0f-Paper.pdf">https://proceedings.neurips.cc/paper/1999/file/464d828b85b0bed98e80ade0a5c43b0f-Paper.pdf</a></p>
+</div>
+</div>
+</div>
+<p>让我们来直观地理解一下这个公式的各个部分：</p>
+<ol type="1">
+<li><p><strong><span class="math inline">\(\pi(A_t|S_t, \theta)\)</span></strong>: 这是我们的策略。在状态 <span class="math inline">\(S_t\)</span> 下，根据参数 <span class="math inline">\(\theta\)</span> 选择动作 <span class="math inline">\(A_t\)</span> 的概率。</p></li>
+<li><p><strong><span class="math inline">\(\log \pi(A_t|S_t, \theta)\)</span></strong>: 对概率取对数。这在数学和计算上有一些方便之处。</p></li>
+<li><p><strong><span class="math inline">\(\nabla \log \pi(A_t|S_t, \theta)\)</span></strong>: 这部分通常被称为 <strong>Score Function</strong>。</p>
+<ul>
+<li><strong>方向性</strong>：它告诉我们，<strong>参数 <span class="math inline">\(\theta\)</span> 应该往哪个方向调整，才能使得动作 <span class="math inline">\(A_t\)</span> 在状态 <span class="math inline">\(S_t\)</span> 下被选中的概率增大</strong>。</li>
+<li>可以把它想象成一个”指针”，指向参数空间中能让 <span class="math inline">\(A_t\)</span> 更可能发生的方向。</li>
+</ul></li>
+<li><p><strong><span class="math inline">\(\text{RewardSignal}_t\)</span></strong>: 这是对动作 <span class="math inline">\(A_t\)</span> 好坏的衡量。</p>
+<ul>
+<li>这个”奖励信号”告诉我们，在状态 <span class="math inline">\(S_t\)</span> 执行动作 <span class="math inline">\(A_t\)</span> 之后，我们最终得到了多少回报。</li>
+<li>这个信号越好（比如，获得了很高的累积回报），我们就越希望增加 <span class="math inline">\(A_t\)</span> 的概率。</li>
+<li>如果信号很差（比如，导致了很低的累积回报），我们就希望减小 <span class="math inline">\(A_t\)</span> 的概率。</li>
+</ul></li>
+</ol>
+<p><strong>策略梯度定理的两种常见形式，主要区别在于如何定义 <span class="math inline">\(\text{RewardSignal}_t\)</span>：</strong></p>
+<div class="callout callout-style-default callout-tip callout-titled" title="形式一：使用完整的回合回报 $G_t$">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+形式一：使用完整的回合回报 <span class="math inline">\(G_t\)</span>
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><span class="math inline">\(\nabla J(\theta) = E_{\pi_\theta} [ \sum_{t=0}^{T-1} \nabla \log \pi(A_t|S_t, \theta) \cdot G_t ]\)</span></p>
+<ul>
+<li>这里的 <span class="math inline">\(G_t = \sum_{k=t+1}^{T} \gamma^{k-t-1} R_k\)</span> 是从时间步 <span class="math inline">\(t\)</span> 开始，直到回合结束的<strong>完整未来折扣回报</strong>。</li>
+<li><strong>直观理解</strong>: 如果在 <span class="math inline">\(S_t\)</span> 采取的动作 <span class="math inline">\(A_t\)</span> 最终导致了很高的总回报 <span class="math inline">\(G_t\)</span>，那么我们就沿着 <span class="math inline">\(\nabla \log \pi(A_t|S_t, \theta)\)</span> 的方向更新 <span class="math inline">\(\theta\)</span>，使得将来在 <span class="math inline">\(S_t\)</span> 更倾向于选择 <span class="math inline">\(A_t\)</span>。反之，如果 <span class="math inline">\(G_t\)</span> 很低，更新就会朝相反方向，降低选择 <span class="math inline">\(A_t\)</span> 的概率。</li>
+<li>这是 REINFORCE 算法使用的形式。</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled" title="形式二：使用动作价值函数 $Q^{\pi}(s, a)$">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+形式二：使用动作价值函数 <span class="math inline">\(Q^{\pi}(s, a)\)</span>
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><span class="math inline">\(\nabla J(\theta) = E_{\pi_\theta} [ \nabla \log \pi(A_t|S_t, \theta) \cdot Q^{\pi}(S_t, A_t) ]\)</span></p>
+<ul>
+<li>这里的 <span class="math inline">\(Q^{\pi}(S_t, A_t)\)</span> 是在策略 <span class="math inline">\(\pi\)</span> 下，在状态 <span class="math inline">\(S_t\)</span> 执行动作 <span class="math inline">\(A_t\)</span> 的预期回报。</li>
+<li><strong>直观理解</strong>: 类似地，如果动作 <span class="math inline">\(A_t\)</span> 的价值 <span class="math inline">\(Q^{\pi}(S_t, A_t)\)</span> 很高，我们就增加选择它的概率。</li>
+<li>这种形式在理论上更常见，并且引出了后续很多改进算法，比如 Actor-Critic 方法中会用到对 <span class="math inline">\(Q^{\pi}(S_t, A_t)\)</span> 的估计。</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled" title="两种形式的区别解析">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+两种形式的区别解析
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>虽然两种形式看起来相似，但它们在理论和实践上有重要区别：</p>
+<ol type="1">
+<li><strong>时间尺度不同</strong>:
+<ul>
+<li>形式一 (<span class="math inline">\(G_t\)</span>) 是<strong>蒙特卡洛方法</strong>，必须等到回合结束才能计算完整回报</li>
+<li>形式二 (<span class="math inline">\(Q^\pi\)</span>) 是<strong>时序差分方法</strong>，可以即时估计动作价值，实现单步更新</li>
+</ul></li>
+<li><strong>方差特性</strong>:
+<ul>
+<li><span class="math inline">\(G_t\)</span> 包含从当前时刻到回合结束的所有随机性，方差很大</li>
+<li><span class="math inline">\(Q^\pi\)</span> 是期望值，已经平均了未来所有可能的轨迹，方差较小</li>
+</ul></li>
+<li><strong>实际应用</strong>:
+<ul>
+<li>REINFORCE 使用 <span class="math inline">\(G_t\)</span> 形式，实现简单但收敛慢</li>
+<li>Actor-Critic 方法使用 <span class="math inline">\(Q^\pi\)</span> 形式，需要额外学习价值函数，但更稳定</li>
+</ul></li>
+<li><strong>理论关系</strong>:
+<ul>
+<li><span class="math inline">\(G_t\)</span> 是 <span class="math inline">\(Q^\pi(S_t,A_t)\)</span> 的一个无偏但高方差的样本估计</li>
+<li>当使用函数近似时，<span class="math inline">\(Q^\pi\)</span> 形式更易于理论分析</li>
+</ul></li>
+</ol>
+</div>
+</div>
+</div>
+<p><strong>总结一下策略梯度定理的直观意义：</strong></p>
+<p>我们通过实际运行策略来收集数据。对于收集到的每一个 <code>(状态, 动作)</code> 对，我们看看这个动作最终带来了多大的好处 (RewardSignal)。然后，我们调整策略的参数，使得那些带来好处的动作在相应的状态下更有可能被选中，而那些导致坏结果的动作则更不可能被选中。调整的幅度和方向由 Score Function 和 RewardSignal 共同决定。</p>
+<p>这个定理是策略梯度方法能够工作的基石。它告诉我们如何通过可观测和可计算的量来估计策略性能的梯度，从而进行优化。</p>
 </section>
 <section id="reinforce-算法-蒙特卡洛策略梯度" class="level1">
 <h1>REINFORCE 算法 (蒙特卡洛策略梯度)</h1>
-<p>REINFORCE 是最基础的策略梯度算法之一，它直接使用策略梯度定理的第一种形式（使用完整回报 G_t）。它是一种<strong>蒙特卡洛 (Monte Carlo)</strong> 方法，因为它需要完整的样本回合来计算回报 G_t。</p>
+<p>REINFORCE 是最基础的策略梯度算法之一，它直接使用策略梯度定理的第一种形式（使用完整回报 <span class="math inline">\(G_t\)</span>）。它是一种<strong>蒙特卡洛 (Monte Carlo)</strong> 方法，因为它需要完整的样本回合来计算回报 <span class="math inline">\(G_t\)</span>。</p>
 <p><strong>算法流程:</strong></p>
 <ol type="1">
-<li><strong>初始化</strong>策略网络 π(a|s, <strong>θ</strong>) 的参数 <strong>θ</strong>。</li>
+<li><strong>初始化</strong>策略网络 <span class="math inline">\(\pi(a|s, \theta)\)</span> 的参数 <span class="math inline">\(\theta\)</span>。</li>
 <li><strong>循环</strong>（对于每个回合）：
 <ol type="a">
-<li>使用当前策略 π(·|·, <strong>θ</strong>) 与环境交互，生成一个<strong>完整的回合</strong>: S₀, A₀, R₁, S₁, A₁, R₂, …, S_{T-1}, A_{T-1}, R_T。</li>
+<li>使用当前策略 <span class="math inline">\(\pi(·|·, \theta)\)</span> 与环境交互，生成一个<strong>完整的回合</strong>: <span class="math inline">\(S_0, A_0, R_1, S_1, A_1, R_2, ..., S_{T-1}, A_{T-1}, R_T\)</span>。</li>
 <li>对于回合中的<strong>每一步</strong> t = 0, 1, …, T-1：
 <ol type="i">
-<li>计算从该步开始的<strong>未来折扣回报 G_t</strong>: G_t = Σ_{k=t+1}^T γ^{k-t-1} R_k。</li>
-<li>计算 <strong>Score Function * 回报</strong>: ∇ log π(A_t|S_t, <strong>θ</strong>) * G_t。</li>
+<li>计算从该步开始的<strong>未来折扣回报 <span class="math inline">\(G_t\)</span></strong>: <span class="math inline">\(G_t = \sum_{k=t+1}^T \gamma^{k-t-1} R_k\)</span>。</li>
+<li>计算 <strong>Score Function * 回报</strong>: <span class="math inline">\(\nabla \log \pi(A_t|S_t, \theta) * G_t\)</span>。</li>
 </ol></li>
 <li><strong>累加</strong>整个回合的梯度信息（或者使用回合中所有步的平均梯度）。</li>
-<li><strong>更新策略参数 θ</strong>: <strong>θ</strong> ← <strong>θ</strong> + α * (累加或平均的梯度)。</li>
+<li><strong>更新策略参数 <span class="math inline">\(\theta\)</span></strong>: <span class="math inline">\(\theta\)</span> ← <span class="math inline">\(\theta\)</span> + <span class="math inline">\(\alpha\)</span> * (累加或平均的梯度)。</li>
 </ol></li>
 </ol>
+<div class="callout callout-style-default callout-note callout-titled" title="关于参数更新频率的说明" data-collapse="true">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+关于参数更新频率的说明
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>在REINFORCE算法中，参数更新的频率取决于具体实现方式：</p>
+<ol type="1">
+<li><strong>经典REINFORCE</strong>（如伪代码所示）：
+<ul>
+<li>每个回合结束后，会对该回合中<strong>所有步骤</strong>计算梯度</li>
+<li>然后<strong>一次性</strong>应用这些梯度的总和/平均来更新参数</li>
+<li>因此是<strong>每个回合更新一次参数</strong></li>
+</ul></li>
+<li><strong>变体实现</strong>：
+<ul>
+<li>有些实现会为每个步骤单独计算梯度并立即更新（即每步更新）</li>
+<li>但这样会破坏蒙特卡洛方法的性质，因为后续步骤的决策已经受前步更新影响</li>
+<li>因此不推荐这种实现方式</li>
+</ul></li>
+<li><strong>批量更新优势</strong>：
+<ul>
+<li>回合级更新能保证所有梯度都是在相同策略下计算的</li>
+<li>避免了”非平稳性”问题（即用不同策略产生的数据来更新当前策略）</li>
+<li>与蒙特卡洛方法的精神一致：使用完整轨迹信息</li>
+</ul></li>
+<li><strong>与TD方法的区别</strong>：
+<ul>
+<li>后续的Actor-Critic方法可以单步更新</li>
+<li>但REINFORCE作为蒙特卡洛方法，需要回合完整信息</li>
+</ul></li>
+</ol>
+</div>
+</div>
+</div>
 <p><strong>REINFORCE 伪代码:</strong></p>
 <pre><code>Initialize policy parameter θ arbitrarily
 α ← learning rate
@@ -448,32 +664,94 @@ Loop forever (for each episode):
 <p><strong>REINFORCE 的特点:</strong></p>
 <ul>
 <li><strong>简单:</strong> 算法概念相对直接。</li>
-<li><strong>无偏梯度估计:</strong> 使用完整的蒙特卡洛回报 G_t，对梯度的估计是无偏的。</li>
-<li><strong>高方差 (High Variance):</strong> 这是 REINFORCE 的主要缺点。回报 G_t 依赖于整个回合的随机性，方差很大。这导致梯度估计的方差也很大，使得训练过程不稳定，收敛速度慢，需要大量的样本回合。</li>
-<li><strong>需要完整回合:</strong> 像 MC 方法一样，需要等到回合结束后才能计算 G_t 并进行更新。</li>
+<li><strong>无偏梯度估计:</strong> 使用完整的蒙特卡洛回报 <span class="math inline">\(G_t\)</span>，对梯度的估计是无偏的。</li>
+<li><strong>高方差 (High Variance):</strong> 这是 REINFORCE 的主要缺点。回报 <span class="math inline">\(G_t\)</span> 依赖于整个回合的随机性，方差很大。这导致梯度估计的方差也很大，使得训练过程不稳定，收敛速度慢，需要大量的样本回合。</li>
+<li><strong>需要完整回合:</strong> 像 MC 方法一样，需要等到回合结束后才能计算 <span class="math inline">\(G_t\)</span> 并进行更新。</li>
 </ul>
 </section>
 <section id="基线-baseline-的作用减小方差" class="level1">
 <h1>基线 (Baseline) 的作用：减小方差</h1>
 <p>为了缓解 REINFORCE (以及其他策略梯度方法) 的高方差问题，一个关键的技术是引入<strong>基线 (Baseline)</strong>。</p>
-<p><strong>思想:</strong> 从回报 G_t (或 Qπ) 中减去一个<strong>不依赖于动作 A_t</strong> 的基线值 b(S_t)，然后再乘以 Score Function。</p>
-<p>改进后的梯度估计： ∇J(<strong>θ</strong>) ≈ E_{π_θ} [ ∇ log π(A_t|S_t, <strong>θ</strong>) * (<strong>G_t - b(S_t)</strong>) ] 或 ∇J(<strong>θ</strong>) ≈ E_{π_θ} [ ∇ log π(A_t|S_t, <strong>θ</strong>) * (<strong>Qπ(S_t, A_t) - b(S_t)</strong>) ]</p>
-<p><strong>为什么可行？</strong> 可以证明，只要基线 b(S_t) 不依赖于动作 A_t，减去它<strong>不会改变梯度估计的期望值</strong>（即梯度仍然是无偏的或近似无偏的）。 E_{π_θ} [ ∇ log π(A_t|S_t, <strong>θ</strong>) * b(S_t) ] = Σ_s dπ(s) Σ_a π(a|s, θ) ∇ log π(a|s, θ) * b(s) = Σ_s dπ(s) b(s) Σ_a ∇ π(a|s, θ) = Σ_s dπ(s) b(s) ∇ [Σ_a π(a|s, θ)] = Σ_s dπ(s) b(s) ∇ [1] = 0 (其中 dπ(s) 是策略 π 下状态 s 的稳态分布)</p>
-<p><strong>为什么有效？</strong> 通过减去一个基线，我们可以<strong>减小</strong> <code>(G_t - b(S_t))</code> 或 <code>(Qπ - b(S_t))</code> 的<strong>方差</strong>。</p>
+<p><strong>思想:</strong> 从回报 <span class="math inline">\(G_t\)</span> (或 <span class="math inline">\(Q_{\pi}(S_t, A_t)\)</span>) 中减去一个<strong>不依赖于动作 <span class="math inline">\(A_t\)</span></strong> 的基线值 <span class="math inline">\(b(S_t)\)</span>，然后再乘以 Score Function。</p>
+<p>改进后的梯度估计：</p>
+<p><span class="math display">\[\nabla J(\theta) \approx E_{\pi_\theta} [ \nabla \log \pi(A_t|S_t, \theta) * (G_t - b(S_t)) ]\]</span> 或 <span class="math display">\[\nabla J(\theta) \approx E_{\pi_\theta} [ \nabla \log \pi(A_t|S_t, \theta) * (Q_{\pi}(S_t, A_t) - b(S_t)) ]\]</span></p>
+<div class="callout callout-style-default callout-note callout-titled" title="基线方法的可行性">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+基线方法的可行性
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>可以证明，只要基线 <span class="math inline">\(b(S_t)\)</span> 不依赖于动作 <span class="math inline">\(A_t\)</span>，减去它<strong>不会改变梯度估计的期望值</strong>（即梯度仍然是无偏的或近似无偏的）。</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled" title="基线方法的有效性">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+基线方法的有效性
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>通过减去一个基线，我们可以<strong>减小</strong> <span class="math inline">\((G_t - b(S_t))\)</span> 或 <span class="math inline">\((Q_{\pi}(S_t, A_t) - b(S_t))\)</span> 的<strong>方差</strong>。</p>
 <ul>
-<li><strong>直观解释:</strong> 我们不再是看动作 A_t 的绝对回报 G_t 好不好，而是看它<strong>相对于这个状态 S_t 的平均水平 b(S_t) 来说</strong>好不好。
+<li><strong>直观解释:</strong> 我们不再是看动作 <span class="math inline">\(A_t\)</span> 的绝对回报 <span class="math inline">\(G_t\)</span> 好不好，而是看它<strong>相对于这个状态 <span class="math inline">\(S_t\)</span> 的平均水平 <span class="math inline">\(b(S_t)\)</span> 来说</strong>好不好。
 <ul>
-<li>如果 G_t &gt; b(S_t)，说明动作 A_t 比平均水平好，我们仍然增加其概率。</li>
-<li>如果 G_t &lt; b(S_t)，说明动作 A_t 比平均水平差，我们会减小其概率。</li>
-<li>如果 G_t ≈ b(S_t)，说明动作 A_t 表现平平，梯度接近于 0，参数更新幅度很小。</li>
+<li>如果 <span class="math inline">\(G_t &gt; b(S_t)\)</span>，说明动作 <span class="math inline">\(A_t\)</span> 比平均水平好，我们仍然增加其概率。</li>
+<li>如果 <span class="math inline">\(G_t &lt; b(S_t)\)</span>，说明动作 <span class="math inline">\(A_t\)</span> 比平均水平差，我们会减小其概率。</li>
+<li>如果 <span class="math inline">\(G_t \approx b(S_t)\)</span>，说明动作 <span class="math inline">\(A_t\)</span> 表现平平，梯度接近于 0，参数更新幅度很小。</li>
 </ul></li>
 <li>这使得梯度估计更加集中，减少了随机波动带来的噪声，从而<strong>加速收敛</strong>并<strong>提高稳定性</strong>。</li>
 </ul>
-<p><strong>常用的基线 b(S_t):</strong> 最常用的基线是<strong>状态值函数 Vπ(S_t)</strong>。 b(S_t) = Vπ(S_t) = E_{π_θ} [G_t | S_t = s]</p>
-<p>这时，<code>Qπ(S_t, A_t) - Vπ(S_t)</code> 被称为<strong>优势函数 (Advantage Function)</strong> Aπ(S_t, A_t)。 Aπ(S_t, A_t) = Qπ(S_t, A_t) - Vπ(S_t)</p>
-<p>优势函数衡量了在状态 S_t 采取动作 A_t <strong>比平均情况下好多少</strong>。使用优势函数通常能显著降低策略梯度的方差。</p>
-<p>梯度变为： ∇J(<strong>θ</strong>) = E_{π_θ} [ ∇ log π(A_t|S_t, <strong>θ</strong>) * Aπ(S_t, A_t) ]</p>
-<p><strong>挑战:</strong> 我们通常也不知道 Vπ(S_t)，所以需要同时学习或估计 Vπ(S_t) 作为基线。这自然地引出了 <strong>Actor-Critic</strong> 方法。</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled" title="常用的基线 $b(S_t)$">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+常用的基线 <span class="math inline">\(b(S_t)\)</span>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>最常用的基线是<strong>状态值函数 <span class="math inline">\(V_{\pi}(S_t)\)</span></strong>。</p>
+<p><span class="math display">\[b(S_t) = V_{\pi}(S_t) = E_{π_θ} [G_t | S_t = s]\]</span></p>
+<p>这时，<span class="math inline">\(Q_{\pi}(S_t, A_t) - V_{\pi}(S_t)\)</span> 被称为<strong>优势函数 (Advantage Function)</strong> <span class="math inline">\(A_{\pi}(S_t, A_t)\)</span>。 <span class="math display">\[A_{\pi}(S_t, A_t) = Q_{\pi}(S_t, A_t) - V_{\pi}(S_t)\]</span></p>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled" title="优势函数的作用">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+优势函数的作用
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>优势函数衡量了在状态 <span class="math inline">\(S_t\)</span> 采取动作 <span class="math inline">\(A_t\)</span> <strong>比平均情况下好多少</strong>。使用优势函数通常能显著降低策略梯度的方差。</p>
+<p>梯度变为： <span class="math display">\[\nabla J(\theta) = E_{π_θ} [ \nabla \log \pi(A_t|S_t, \theta) * A_{\pi}(S_t, A_t) ]\]</span></p>
+</div>
+</div>
+<div class="callout callout-style-default callout-warning callout-titled" title="基线方法的挑战">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+基线方法的挑战
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>我们通常也不知道 <span class="math inline">\(V_{\pi}(S_t)\)</span>，所以需要同时学习或估计 <span class="math inline">\(V_{\pi}(S_t)\)</span> 作为基线。这自然地引出了 <strong>Actor-Critic</strong> 方法。</p>
+</div>
+</div>
 </section>
 <section id="策略梯度方法讨论" class="level1">
 <h1>策略梯度方法讨论</h1>
@@ -481,7 +759,7 @@ Loop forever (for each episode):
 <h2 class="anchored" data-anchor-id="优势">优势</h2>
 <ul>
 <li><strong>处理连续动作空间:</strong> 策略网络可以直接输出连续动作的参数（例如，高斯分布的均值和标准差），这是基于价值的方法难以做到的。</li>
-<li><strong>学习随机策略:</strong> 策略网络可以自然地表示随机策略 π(a|s, θ)，这在某些问题中是必要的。</li>
+<li><strong>学习随机策略:</strong> 策略网络可以自然地表示随机策略 <span class="math inline">\(\pi(a|s, \theta)\)</span>，这在某些问题中是必要的。</li>
 <li><strong>更好的收敛性质 (某些情况下):</strong> 尽管方差可能大，但策略梯度方法有时比基于价值的方法具有更好的收敛保证（尤其是在函数逼近下）。</li>
 <li><strong>可以学习更简单的策略:</strong> 有时最优策略可能比最优价值函数简单得多，直接学习策略可能更容易。</li>
 </ul>
@@ -497,18 +775,18 @@ Loop forever (for each episode):
 </section>
 <section id="引出-actor-critic" class="level2">
 <h2 class="anchored" data-anchor-id="引出-actor-critic">引出 Actor-Critic</h2>
-<p>基本的 REINFORCE 算法使用蒙特卡洛方法估计回报 G_t (或 Qπ)，导致高方差。引入基线 Vπ 可以减小方差，但我们又需要估计 Vπ。</p>
+<p>基本的 REINFORCE 算法使用蒙特卡洛方法估计回报 <span class="math inline">\(G_t\)</span> (或 <span class="math inline">\(Q_{\pi}\)</span>)，导致高方差。引入基线 <span class="math inline">\(V_{\pi}\)</span> 可以减小方差，但我们又需要估计 <span class="math inline">\(V_{\pi}\)</span>。</p>
 <p><strong>Actor-Critic 方法</strong> 正是为了解决这个问题而提出的：</p>
 <ul>
-<li><strong>Actor (行动者):</strong> 负责<strong>选择动作</strong>。它就是我们上面讨论的策略网络 π(a|s, <strong>θ</strong>)，参数为 <strong>θ</strong>。</li>
-<li><strong>Critic (评论家):</strong> 负责<strong>评估动作的好坏</strong>。它学习一个价值函数（通常是状态值函数 V(s, <strong>w</strong>) 或动作值函数 Q(s, a, <strong>w</strong>)），参数为 <strong>w</strong>。Critic 的输出用于指导 Actor 的更新（例如，作为基线或计算优势函数）。</li>
+<li><strong>Actor (行动者):</strong> 负责<strong>选择动作</strong>。它就是我们上面讨论的策略网络 <span class="math inline">\(\pi(a|s, \theta)\)</span>，参数为 <span class="math inline">\(\theta\)</span>。</li>
+<li><strong>Critic (评论家):</strong> 负责<strong>评估动作的好坏</strong>。它学习一个价值函数（通常是状态值函数 <span class="math inline">\(V(s, w)\)</span> 或动作值函数 <span class="math inline">\(Q(s, a, w)\)</span>），参数为 <span class="math inline">\(w\)</span>。Critic 的输出用于指导 Actor 的更新（例如，作为基线或计算优势函数）。</li>
 </ul>
 <p>Actor 和 Critic 同时学习和更新：</p>
 <ol type="1">
-<li>Actor 根据当前策略 π(·|·, <strong>θ</strong>) 选择动作 A_t。</li>
-<li>执行动作，观察 R_{t+1}, S_{t+1}。</li>
-<li>Critic 使用 TD 误差等方法更新其价值函数参数 <strong>w</strong> (学习如何更好地评估)。</li>
-<li>Actor 使用 Critic 提供的信息（如 TD 误差或优势函数估计）来更新其策略参数 <strong>θ</strong> (学习如何选择更好的动作)。</li>
+<li>Actor 根据当前策略 <span class="math inline">\(\pi(·|·, \theta)\)</span> 选择动作 <span class="math inline">\(A_t\)</span>。</li>
+<li>执行动作，观察 <span class="math inline">\(R_{t+1}, S_{t+1}\)</span>。</li>
+<li>Critic 使用 TD 误差等方法更新其价值函数参数 <span class="math inline">\(w\)</span> (学习如何更好地评估)。</li>
+<li>Actor 使用 Critic 提供的信息（如 TD 误差或优势函数估计）来更新其策略参数 <span class="math inline">\(\theta\)</span> (学习如何选择更好的动作)。</li>
 </ol>
 <p>这种结构结合了策略梯度（Actor 更新）和 TD 学习（Critic 更新）的优点，通常比纯粹的 REINFORCE 或纯粹的价值学习方法更稳定和高效。我们将在下周详细学习 Actor-Critic 方法。</p>
 <hr>

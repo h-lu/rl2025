@@ -70,6 +70,35 @@ ul.task-list li input[type="checkbox"] {
 }</script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xkm/sYwpb+ilR5gUw==" crossorigin="anonymous" referrerpolicy="no-referrer">
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="styles/custom.css">
 </head>
@@ -307,7 +336,11 @@ ul.task-list li input[type="checkbox"] {
   </li>
     </ul>
     </div>
-    <nav id="TOC" role="doc-toc" class="toc-active">
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
@@ -321,10 +354,6 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#提交要求" id="toc-提交要求" class="nav-link" data-scroll-target="#提交要求">提交要求</a></li>
   </ul>
 </nav>
-</nav>
-<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
-<!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -367,11 +396,11 @@ ul.task-list li input[type="checkbox"] {
 <h2 class="anchored" data-anchor-id="练习-1-actor-critic-概念">练习 1: Actor-Critic 概念</h2>
 <ol type="1">
 <li><strong>框架组成:</strong> Actor-Critic (AC) 框架包含哪两个主要组成部分？它们各自的作用是什么？（提示：一个负责选动作，一个负责评估）</li>
-<li><strong>Critic 的作用:</strong> Critic 网络（通常学习 V 函数）是如何帮助 Actor 网络（策略网络）学习的？它提供了什么关键信息来指导 Actor 的更新？相比于 REINFORCE 使用的蒙特卡洛回报 G_t，这个信息有什么优势？</li>
+<li><strong>Critic 的作用:</strong> Critic 网络（通常学习 <span class="math inline">\(V\)</span> 函数）是如何帮助 Actor 网络（策略网络）学习的？它提供了什么关键信息来指导 Actor 的更新？相比于 REINFORCE 使用的蒙特卡洛回报 <span class="math inline">\(G_t\)</span>，这个信息有什么优势？</li>
 <li><strong>更新规则:</strong>
 <ul>
-<li>在基本的 Actor-Critic 方法中，Actor (策略参数 θ) 的更新规则通常是什么样的？（写出包含 TD 误差 δ 的更新公式）</li>
-<li>Critic (价值参数 w) 的更新规则通常是什么样的？（写出包含 TD 误差 δ 的更新公式）</li>
+<li>在基本的 Actor-Critic 方法中，Actor (策略参数 <span class="math inline">\(\theta\)</span>) 的更新规则通常是什么样的？（写出包含 TD 误差 <span class="math inline">\(\delta\)</span> 的更新公式）</li>
+<li>Critic (价值参数 <span class="math inline">\(w\)</span>) 的更新规则通常是什么样的？（写出包含 TD 误差 <span class="math inline">\(\delta\)</span> 的更新公式）</li>
 </ul></li>
 <li><strong>A2C vs.&nbsp;A3C:</strong> A2C 和 A3C 的主要区别是什么？哪个是同步更新，哪个是异步更新？哪个在现代实践中更常用？</li>
 </ol>
@@ -379,9 +408,9 @@ ul.task-list li input[type="checkbox"] {
 <section id="练习-2-优势函数估计" class="level2">
 <h2 class="anchored" data-anchor-id="练习-2-优势函数估计">练习 2: 优势函数估计</h2>
 <ol type="1">
-<li><strong>优势函数 Aπ(s, a):</strong> 回顾其定义，它衡量了什么？</li>
-<li><strong>TD 误差作为估计:</strong> 为什么可以用 TD 误差 δ_t = R + γV(S’) - V(S) 来近似优势函数 Aπ(S, A)？（提示：思考 δ_t 的期望与 Aπ 的关系）</li>
-<li><strong>为何有效:</strong> 相比于直接使用 Qπ(S, A) 或 G_t，使用优势函数（或其估计 δ_t）来乘以 Score Function (∇logπ) 进行策略梯度更新，主要的好处是什么？</li>
+<li><strong>优势函数 <span class="math inline">\(A_{\pi}(s, a)\)</span>:</strong> 回顾其定义，它衡量了什么？</li>
+<li><strong>TD 误差作为估计:</strong> 为什么可以用 TD 误差 <span class="math inline">\(\delta_t = R + \gamma V(S') - V(S)\)</span> 来近似优势函数 <span class="math inline">\(A_{\pi}(s, a)\)</span>？（提示：思考 <span class="math inline">\(\delta_t\)</span> 的期望与 <span class="math inline">\(A_{\pi}\)</span> 的关系）</li>
+<li><strong>为何有效:</strong> 相比于直接使用 <span class="math inline">\(Q_{\pi}(S, A)\)</span> 或 <span class="math inline">\(G_t\)</span>，使用优势函数（或其估计 <span class="math inline">\(\delta_t\)</span>）来乘以 Score Function (<span class="math inline">\(\nabla \log \pi\)</span>) 进行策略梯度更新，主要的好处是什么？</li>
 </ol>
 </section>
 <section id="练习-3-a2c-lab-代码与结果分析-基于-lab-7" class="level2">

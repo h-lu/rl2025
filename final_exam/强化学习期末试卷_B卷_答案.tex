@@ -1,0 +1,467 @@
+\documentclass[zihao=5,answers]{BHCexam}
+\usepackage{ctex}
+\usepackage{multirow}
+
+%\linespread{1.2}
+
+% \usepackage{minted}
+% \setminted{mathescape, style = black, linenos=true}
+
+
+\begin{document}
+
+\renewcommand{\O}{\mathcal{O}}
+
+
+\biaoti{\kaishu \textbf{上海应用技术大学 2023--2024 学年第二学期}}
+\kemu{\textbf{《{\kaishu 强化学习}》期末试卷 \quad (B) 参考答案}}
+\setxz{40}{20}{2}
+\setpd{20}{10}{2}
+\setjd{40}{4}
+\xinxi{100}{90}
+
+\maketitle
+
+\begin{questions}
+
+\xuanze
+
+\question 强化学习的目标是：
+\begin{choices}
+    \choice 最小化损失函数
+    \choice 最大化准确率
+    \CorrectChoice 最大化累积奖励
+    \choice 最小化状态数量
+\end{choices}
+
+\question 在马尔可夫决策过程(MDP)中，状态转移概率函数P(s'|s,a)表示：
+\begin{choices}
+    \choice 在状态s执行动作a获得的奖励
+    \CorrectChoice 从状态s执行动作a后到达状态s'的概率
+    \choice 状态s的价值
+    \choice 动作a在状态s下的价值
+\end{choices}
+
+\question 在强化学习中，最优动作值函数Q*(s,a)的定义是：
+\begin{choices}
+    \choice 在状态s下执行动作a后获得的即时奖励
+    \CorrectChoice 在状态s下执行动作a后的最大期望回报
+    \choice 状态s的最大期望回报
+    \choice 遵循任意策略时在状态s执行动作a的期望回报
+\end{choices}
+
+\question 以下哪种算法属于无模型(Model-free)强化学习方法？
+\begin{choices}
+    \choice 策略迭代
+    \choice 值迭代
+    \CorrectChoice Q-Learning
+    \choice 动态规划
+\end{choices}
+
+\question 强化学习中的"探索与利用"权衡是指：
+\begin{choices}
+    \choice 在训练与测试间的平衡
+    \choice 在奖励与惩罚间的平衡
+    \CorrectChoice 在尝试新动作与选择已知最优动作间的平衡
+    \choice 在在线学习与离线学习间的平衡
+\end{choices}
+
+\question 在时序差分(TD)学习中，与蒙特卡洛方法相比的主要优势是：
+\begin{choices}
+    \choice 更低的偏差
+    \CorrectChoice 能够从不完整的回合中学习
+    \choice 只使用实际奖励不使用估计值
+    \choice 不需要探索策略
+\end{choices}
+
+\question 在深度强化学习中，目标网络(Target Network)的主要作用是：
+\begin{choices}
+    \choice 加速梯度下降
+    \choice 提高探索效率
+    \choice 增加神经网络深度
+    \CorrectChoice 稳定训练过程
+\end{choices}
+
+\question 策略梯度方法与基于值的方法相比的主要优势是：
+\begin{choices}
+    \CorrectChoice 能够直接处理连续动作空间
+    \choice 计算效率更高
+    \choice 需要更少的训练样本
+    \choice 不需要探索策略
+\end{choices}
+
+\question Actor-Critic方法的核心思想是：
+\begin{choices}
+    \choice 结合蒙特卡洛和时序差分学习
+    \CorrectChoice 结合策略梯度和值函数逼近
+    \choice 结合在线学习和离线学习
+    \choice 结合监督学习和无监督学习
+\end{choices}
+
+\question 在强化学习中，什么是回报(Return)？
+\begin{choices}
+    \choice 即时奖励
+    \choice 所有状态的平均奖励
+    \CorrectChoice 从当前时刻开始的折扣累积奖励
+    \choice 环境的状态转移函数
+\end{choices}
+
+\question 强化学习中的同策略(On-policy)学习和异策略(Off-policy)学习的主要区别是：
+\begin{choices}
+    \choice 同策略使用神经网络，异策略使用表格
+    \choice 同策略需要环境模型，异策略不需要
+    \CorrectChoice 同策略使用当前正在学习的策略采集数据，异策略可以使用不同策略采集数据
+    \choice 同策略适用于离散状态，异策略适用于连续状态
+\end{choices}
+
+\question 以下哪种算法是异策略(Off-policy)强化学习方法？
+\begin{choices}
+    \choice SARSA
+    \choice Actor-Critic
+    \choice 蒙特卡洛策略评估
+    \CorrectChoice Q-Learning
+\end{choices}
+
+\question 深度Q网络(DQN)中的经验回放(Experience Replay)机制主要解决的问题是：
+\begin{choices}
+    \choice 存储容量限制
+    \CorrectChoice 数据样本之间的相关性
+    \choice 神经网络训练速度慢
+    \choice 环境随机性大
+\end{choices}
+
+\question 在蒙特卡洛方法中，对状态价值的更新是基于：
+\begin{choices}
+    \choice 后续一步的奖励与下一状态的估计值
+    \CorrectChoice 后续所有时间步的实际奖励
+    \choice 仅当前状态的即时奖励
+    \choice 环境模型预测的奖励
+\end{choices}
+
+\question 在策略梯度方法中，优势函数(Advantage Function)的作用是：
+\begin{choices}
+    \choice 加速收敛
+    \CorrectChoice 减小方差
+    \choice 增加探索
+    \choice 降低训练复杂度
+\end{choices}
+
+\question 时序差分(TD)学习中的"自举(Bootstrapping)"是指：
+\begin{choices}
+    \choice 使用多个不同的学习率
+    \CorrectChoice 使用当前估计更新当前估计
+    \choice 使用多个网络参数副本
+    \choice 在多个环境同时训练
+\end{choices}
+
+\question 在强化学习中，前交互学习(Off-line Learning)指的是：
+\begin{choices}
+    \choice 在真实环境中学习
+    \choice 在线上进行实时学习
+    \CorrectChoice 使用事先收集的数据集进行学习
+    \choice 不更新模型参数的学习
+\end{choices}
+
+\question SARSA算法名称的由来是：
+\begin{choices}
+    \choice 算法发明者的姓名缩写
+    \choice 随机搜索与行动算法的缩写
+    \choice 算法更新使用的数据元组(S,A,R,S',A')
+    \CorrectChoice 状态动作奖励状态动作的英文缩写
+\end{choices}
+
+\question 以下哪种方法不适合解决连续动作空间的问题？
+\begin{choices}
+    \choice 策略梯度
+    \choice Actor-Critic
+    \CorrectChoice 原始形式的DQN
+    \choice DDPG
+\end{choices}
+
+\question 强化学习中的"信用分配问题"(Credit Assignment Problem)是指：
+\begin{choices}
+    \choice 如何确定每个状态的奖励值
+    \choice 如何分配计算资源
+    \CorrectChoice 如何确定哪些动作导致了最终的结果
+    \choice 如何为智能体设计奖励函数
+\end{choices}
+
+\panduan
+
+\question 强化学习中的奖励值一定是正数，负奖励表示惩罚。
+\answerNo{强化学习中的奖励可以是正数、负数或零。奖励只是一个信号，表示动作的好坏，不一定要分为"奖励"和"惩罚"两类。}
+
+\question 策略迭代(Policy Iteration)算法通常比值迭代(Value Iteration)算法需要更少的迭代次数就能收敛。
+\answerYes{策略迭代通常需要更少的迭代次数，因为每次迭代都进行完整的策略评估，但每次迭代的计算成本更高。}
+
+\question 在强化学习中，折扣因子γ越大，表示智能体越重视未来奖励。
+\answerYes{折扣因子γ控制未来奖励的权重，γ越大（接近1），表示智能体越重视长期回报；γ越小（接近0），表示越注重短期回报。}
+
+\question 时序差分(TD)学习方法同时具有蒙特卡洛方法和动态规划方法的优点。
+\answerYes{TD学习结合了MC方法的实际采样和DP方法的自举估计特点，不需要环境模型（像MC），也不需要等到回合结束就可以更新（像DP）。}
+
+\question DQN算法主要用于解决连续动作空间问题。
+\answerNo{原始DQN主要用于离散动作空间问题。处理连续动作空间通常需要策略梯度方法或其变体，如DDPG。}
+
+\question 在强化学习中，价值函数(Value Function)用于评估状态或状态-动作对的好坏。
+\answerYes{价值函数评估状态或状态-动作对的长期价值，通常表示为从该状态开始，遵循特定策略所能获得的期望累积奖励。}
+
+\question Actor-Critic方法中，Actor负责选择动作，Critic负责评估动作。
+\answerYes{Actor负责策略函数，决定在各状态下采取什么动作；Critic负责评估这些状态或动作的价值，为Actor提供反馈。}
+
+\question 异策略(Off-policy)学习方法比同策略(On-policy)学习方法通常有更低的样本效率。
+\answerNo{异策略方法通常具有更高的样本效率，因为它们可以重用从不同策略收集的数据，而同策略方法只能使用当前策略生成的数据。}
+
+\question 强化学习算法的收敛性严重依赖于探索策略的选择。
+\answerYes{探索策略对算法收敛性有重要影响，不足的探索可能导致局部最优，过度探索则可能影响收敛速度。}
+
+\question 蒙特卡洛方法不需要环境的马尔可夫性质，而时序差分方法依赖于此。
+\answerYes{蒙特卡洛方法只依赖于回合的总回报，不关心中间状态转移，因此不需要马尔可夫性质；时序差分方法使用下一状态的估计值，依赖于马尔可夫性质。}
+
+\jianda
+
+\question[10] 探索与利用(Exploration & Exploitation)：
+\begin{solution}
+\begin{enumerate}
+    \item 什么是强化学习中的"探索与利用"问题？为什么它在强化学习中很重要？（3分）
+    
+    探索与利用问题是指智能体在决策过程中面临的两难选择：是选择已知的最优动作以获取即时高回报（利用），还是尝试未充分了解的动作以获取新信息（探索）。
+    
+    重要性：
+    - 只利用会导致策略陷入局部最优，错过潜在更好的策略
+    - 只探索会导致大量低效决策，无法充分利用已学到的知识
+    - 适当平衡是找到全局最优策略的关键
+    - 在奖励稀疏或延迟的环境中尤为重要，因为需要充分探索才能发现有效路径
+    
+    \item 描述两种常用的探索策略，并分析它们的优缺点（4分）
+    
+    1. ε-贪心策略：
+       - 原理：以1-ε的概率选择估计值最高的动作（利用），以ε的概率随机选择动作（探索）
+       - 优点：简单易实现，直观易理解，有理论收敛保证
+       - 缺点：探索是完全随机的，不考虑动作的不确定性或潜在价值；对所有非贪心动作给予相同概率
+       - 适用场景：动作空间较小的问题
+    
+    2. 玻尔兹曼（Boltzmann/Softmax）探索：
+       - 原理：根据动作的估计值按概率分布选择动作，估计值高的动作被选择概率更大
+       - 优点：探索更有针对性，考虑动作间的价值差异；通过温度参数可控制探索-利用平衡
+       - 缺点：计算复杂度高，温度参数需要精心调整
+       - 适用场景：需要更精细探索控制的问题
+    
+    其他可能的回答（UCB、Thompson采样等）也可酌情给分。
+    
+    \item 如何在训练过程中平衡探索与利用？（3分）
+    
+    1. 动态调整探索参数：
+       - 在训练初期使用高探索率，随着学习进展逐渐降低（如ε衰减）
+       - 基于学习进度或性能指标自适应调整探索参数
+    
+    2. 采用更先进的探索策略：
+       - 基于不确定性的探索（如UCB算法）
+       - 基于状态新颖性的探索（如内在动机）
+       - 参数空间噪声（如参数噪声探索）
+    
+    3. 专门的探索阶段设计：
+       - 预训练探索阶段收集多样化经验
+       - 分层探索策略（宏观探索与微观利用结合）
+       - 探索奖励与任务奖励分离
+    
+    一个好的平衡策略应根据具体任务特点、环境复杂度和训练阶段调整，没有放之四海而皆准的方法。
+\end{enumerate}
+\end{solution}
+
+\question[10] 策略梯度方法(Policy Gradient Methods)：
+\begin{solution}
+\begin{enumerate}
+    \item 简述策略梯度方法的基本思想（3分）
+    
+    策略梯度方法的基本思想是直接对策略函数进行参数化，并通过梯度上升方法优化策略参数，以最大化预期回报。
+    
+    核心公式是策略梯度定理：$\nabla_\theta J(\theta) = \mathbb{E}_{\pi_\theta} [\nabla_\theta \log \pi_\theta(a|s) \cdot R]$
+    
+    其中：
+    - $\pi_\theta(a|s)$是参数为$\theta$的策略函数，表示在状态$s$选择动作$a$的概率
+    - $J(\theta)$是目标函数，表示策略$\pi_\theta$的期望回报
+    - $R$是回报（可以是总回报、折扣回报或优势函数）
+    
+    策略梯度方法的直观理解：增加导致高回报的动作被选择的概率，减少导致低回报的动作被选择的概率。
+    
+    \item 策略梯度方法与基于值的方法（如Q-Learning）相比有哪些优势和劣势？（4分）
+    
+    优势：
+    - 能够直接学习随机策略，对部分可观察环境、对抗环境更有效
+    - 可以自然处理连续动作空间，不需要离散化或求解复杂的最大化问题
+    - 策略变化更平滑，不会因为值函数微小变化导致策略剧烈变化
+    - 在高维或连续动作空间中更有效率，因为不需要评估所有可能动作
+    
+    劣势：
+    - 通常收敛到局部最优而非全局最优
+    - 梯度估计通常具有高方差，需要更多样本才能可靠学习
+    - 样本效率通常低于基于值的方法，需要更多交互数据
+    - 对超参数选择和初始化更敏感，调参难度大
+    
+    \item 为什么在策略梯度方法中通常需要使用基线(Baseline)技术？（3分）
+    
+    基线技术的使用原因：
+    
+    1. 减小梯度估计的方差：
+       - 策略梯度估计通常具有高方差，导致训练不稳定
+       - 基线减少了回报的绝对规模，只关注相对优势，显著降低梯度估计的方差
+    
+    2. 保持无偏估计：
+       - 理论上证明，添加不依赖于动作的基线不会引入偏差
+       - 基线的引入不改变梯度的期望值，只减小其方差
+    
+    3. 增强学习信号：
+       - 通过对比动作的相对优劣，而非绝对回报，提供更明确的学习信号
+       - 帮助区分在同一状态下不同动作的相对价值
+    
+    常用的基线选择是状态值函数$V(s)$，此时策略梯度更新使用的是优势函数$A(s,a) = Q(s,a) - V(s)$，衡量特定动作相对于平均表现的好坏。
+\end{enumerate}
+\end{solution}
+
+\question[10] Actor-Critic方法：
+\begin{solution}
+\begin{enumerate}
+    \item 描述Actor-Critic方法的基本框架和工作原理（4分）
+    
+    Actor-Critic方法是结合策略梯度和值函数逼近的混合架构，由两个主要组件组成：
+    
+    1. 基本框架：
+       - Actor：参数化策略函数$\pi_\theta(a|s)$，负责选择动作
+       - Critic：参数化值函数$V_w(s)$或$Q_w(s,a)$，负责评估状态或动作的价值
+    
+    2. 工作原理：
+       - Actor根据当前策略在环境中执行动作
+       - Critic观察结果，评估Actor的表现，计算TD误差
+       - Actor使用Critic的评估（通常是TD误差）作为学习信号来改进策略
+       - Critic也不断更新其价值估计，以提供更准确的评估
+    
+    3. 更新过程：
+       - Critic更新：最小化TD误差的平方，$L(w) = (r + \gamma V_w(s') - V_w(s))^2$
+       - Actor更新：使用TD误差作为优势估计，$\theta \leftarrow \theta + \alpha \delta \nabla_\theta \log \pi_\theta(a|s)$
+       - 其中$\delta = r + \gamma V_w(s') - V_w(s)$是TD误差
+    
+    \item Actor和Critic各自的作用是什么？它们如何协同工作？（3分）
+    
+    Actor的作用：
+    - 负责策略学习，决定在每个状态下应采取何种动作
+    - 根据当前策略与环境交互，生成经验数据
+    - 根据Critic的反馈调整策略参数，提高动作选择的质量
+    
+    Critic的作用：
+    - 负责值函数学习，评估状态或状态-动作对的价值
+    - 计算TD误差或优势估计，为Actor提供更新信号
+    - 减少策略梯度估计的方差，提高学习稳定性
+    
+    协同工作方式：
+    - 形成反馈循环：Actor执行，Critic评估，Actor根据评估改进
+    - 相互促进：Actor生成数据帮助Critic学习更准确的值函数，Critic提供更精确的学习信号帮助Actor改进策略
+    - 分工明确：Actor专注于"如何行动"，Critic专注于"结果如何"
+    
+    \item Actor-Critic方法如何结合策略梯度和时序差分学习的优点？（3分）
+    
+    结合策略梯度的优点：
+    - 可以直接处理连续动作空间
+    - 能够学习随机策略，适应部分可观察环境
+    - 策略更新平滑，避免小的值函数变化导致的策略剧烈变化
+    
+    结合时序差分学习的优点：
+    - 无需等待回合结束就可以进行在线更新
+    - 通过自举提高样本效率，比纯蒙特卡洛方法更数据高效
+    - TD误差提供即时反馈，加速学习过程
+    
+    具体结合方式：
+    - 使用TD误差作为优势函数的估计，替代传统策略梯度中的回报
+    - 将Critic学到的值函数作为基线，减小策略梯度的方差
+    - 同时更新两个网络，使它们协同改进
+    
+    这种结合弥补了单独使用策略梯度或值函数方法的不足，提高了算法的稳定性、样本效率和性能。
+\end{enumerate}
+\end{solution}
+
+\question[10] 强化学习应用场景分析：
+\begin{solution}
+\begin{enumerate}
+    \item 强化学习在游戏、机器人控制和资源管理等领域的应用各有什么特点？（4分）
+    
+    游戏领域应用特点：
+    - 有明确的规则和奖励信号（分数、胜负）
+    - 可以快速模拟大量数据，训练环境稳定
+    - 无安全风险，允许充分探索
+    - 典型应用：AlphaGo（围棋）、OpenAI Five（DOTA2）、Atari游戏
+    - 常用算法：DQN及其变体、AlphaZero算法
+    
+    机器人控制领域特点：
+    - 需要处理连续状态和动作空间
+    - 物理世界交互带来安全挑战和样本获取成本高
+    - 需要平衡探索与安全性
+    - 典型应用：机械臂操作、步行机器人、无人机控制
+    - 常用算法：DDPG、PPO、SAC等适合连续控制的算法
+    
+    资源管理领域特点：
+    - 优化目标通常是长期效益与短期成本的平衡
+    - 决策影响范围广，错误成本高
+    - 通常有复杂约束条件
+    - 典型应用：数据中心能源管理、通信网络优化、供应链管理
+    - 常用算法：基于约束的强化学习、分层强化学习
+    
+    \item 在面对不同类型的强化学习问题时，如何选择合适的算法？请给出方法和依据（3分）
+    
+    选择算法的主要考虑因素和方法：
+    
+    1. 状态与动作空间特性：
+       - 离散、有限动作空间：可使用Q-learning、DQN等基于值的方法
+       - 连续动作空间：优先考虑策略梯度法（如PPO、DDPG、SAC）
+       - 高维状态空间：需要函数逼近（如DQN）或特征提取（如CNN+RL）
+    
+    2. 样本效率需求：
+       - 实际物理系统（样本昂贵）：模型型方法或高效异策略方法（如SAC）
+       - 仿真环境（样本廉价）：可以使用样本效率较低但稳定的算法（如PPO）
+    
+    3. 探索难度：
+       - 稀疏奖励问题：需要高效探索策略的算法（如好奇心驱动方法）
+       - 陷阱多的环境：需要保守策略更新的算法（如TRPO、PPO）
+    
+    4. 任务特性：
+       - 需要随机策略：策略梯度方法
+       - 安全敏感：基于约束的RL或保守策略更新的方法
+       - 多任务学习：分层强化学习或元学习方法
+    
+    5. 实用建议：
+       - 从简单算法开始，逐步增加复杂性
+       - 考虑算法的实现难度、计算需求和调参复杂度
+       - 参考相似问题的成功案例
+    
+    \item 在实际应用中，强化学习面临哪些常见挑战？如何应对这些挑战？（3分）
+    
+    常见挑战与应对策略：
+    
+    1. 样本效率低：
+       - 挑战：需要大量交互数据才能学习有效策略
+       - 应对：使用模型型方法、经验回放、预训练、迁移学习，或结合模仿学习
+    
+    2. 泛化能力弱：
+       - 挑战：学到的策略难以应对训练环境外的情况
+       - 应对：领域随机化、对抗训练、元学习、增强状态表示的多样性
+    
+    3. 安全与约束：
+       - 挑战：探索过程可能导致危险行为
+       - 应对：基于约束的强化学习、安全层、人类监督、模拟环境预训练
+    
+    4. 稳定性与收敛性：
+       - 挑战：训练过程不稳定，结果难以复现
+       - 应对：保守策略更新（PPO/TRPO）、集成学习、多次运行取平均
+    
+    5. 奖励设计困难：
+       - 挑战：设计能引导期望行为的奖励函数很复杂
+       - 应对：逆强化学习、多目标强化学习、层次化奖励
+    
+    6. 现实世界与仿真差距：
+       - 挑战：仿真训练的策略在实际环境表现不佳
+       - 应对：领域自适应、渐进式部署、混合实际与仿真数据
+\end{enumerate}
+\end{solution}
+
+\end{questions}
+
+\end{document} 

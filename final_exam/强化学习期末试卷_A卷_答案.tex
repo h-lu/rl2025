@@ -1,0 +1,377 @@
+\documentclass[zihao=5,answers]{BHCexam}
+\usepackage{ctex}
+\usepackage{multirow}
+
+%\linespread{1.2}
+
+% \usepackage{minted}
+% \setminted{mathescape, style = black, linenos=true}
+
+
+\begin{document}
+
+\renewcommand{\O}{\mathcal{O}}
+
+\biaoti{\kaishu \textbf{上海应用技术大学 2023--2024 学年第二学期}}
+\kemu{\textbf{《{\kaishu 强化学习}》期末试卷 \quad (A) 参考答案}}
+\setxz{40}{20}{2}
+\setpd{20}{10}{2}
+\setjd{40}{4}
+\xinxi{100}{90}
+
+\maketitle
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{questions}
+
+\xuanze
+
+\question 在强化学习中，智能体与环境交互的基本元素不包括：
+\begin{choices}
+    \choice 状态
+    \choice 动作
+    \choice 奖励
+    \CorrectChoice 损失函数
+\end{choices}
+
+\question 马尔可夫决策过程(MDP)中，折扣因子γ的作用是：
+\begin{choices}
+    \choice 控制状态转移概率
+    \CorrectChoice 平衡当前与未来奖励的重要性
+    \choice 定义状态空间大小
+    \choice 计算累积奖励的绝对值
+\end{choices}
+
+\question 在强化学习中，环境模型是指：
+\begin{choices}
+    \choice 智能体的学习策略
+    \choice 价值函数的近似方法
+    \CorrectChoice 状态转移概率和奖励函数
+    \choice 探索与利用的平衡方法
+\end{choices}
+
+\question 值函数迭代算法属于：
+\begin{choices}
+    \CorrectChoice 基于模型的方法
+    \choice 无模型方法
+    \choice 策略梯度方法
+    \choice 监督学习方法
+\end{choices}
+
+\question Q-learning是一种：
+\begin{choices}
+    \choice 基于模型的方法
+    \choice 策略优化方法
+    \CorrectChoice 时序差分学习
+    \choice 蒙特卡洛方法
+\end{choices}
+
+\question ε-贪心策略的主要目的是：
+\begin{choices}
+    \choice 加速值函数收敛
+    \CorrectChoice 平衡探索与利用
+    \choice 减少计算复杂度
+    \choice 降低神经网络参数数量
+\end{choices}
+
+\question 在强化学习中，"回合"(Episode)的定义是：
+\begin{choices}
+    \choice 单次状态转移
+    \choice 累积奖励计算周期
+    \CorrectChoice 从初始状态到终止状态的完整序列
+    \choice 值函数更新的一个批次
+\end{choices}
+
+\question SARSA与Q-learning的主要区别在于：
+\begin{choices}
+    \choice SARSA使用神经网络，Q-learning使用表格
+    \choice SARSA用于连续状态空间，Q-learning用于离散状态空间
+    \CorrectChoice SARSA是同策略(on-policy)方法，Q-learning是异策略(off-policy)方法
+    \choice SARSA需要环境模型，Q-learning不需要
+\end{choices}
+
+\question 下列哪种方法可以直接处理连续动作空间？
+\begin{choices}
+    \choice 基本Q-learning
+    \choice 表格式SARSA
+    \CorrectChoice 策略梯度法
+    \choice 蒙特卡洛树搜索
+\end{choices}
+
+\question 深度Q网络(DQN)相比传统Q-learning的主要创新在于：
+\begin{choices}
+    \choice 使用折扣因子
+    \CorrectChoice 使用神经网络逼近Q函数，并引入经验回放和目标网络
+    \choice 采用模型预测
+    \choice 同时学习多个任务
+\end{choices}
+
+\question 下列关于强化学习的描述，错误的是：
+\begin{choices}
+    \choice 强化学习中智能体通过与环境交互来学习
+    \choice 强化学习可以处理序列决策问题
+    \CorrectChoice 强化学习总是需要环境转移模型
+    \choice 强化学习的目标是最大化累积奖励
+\end{choices}
+
+\question 强化学习中，动作值函数Q(s,a)表示：
+\begin{choices}
+    \choice 在状态s下执行动作a的即时奖励
+    \CorrectChoice 在状态s下执行动作a后，遵循当前策略的期望累积奖励
+    \choice 状态s的价值
+    \choice 执行动作a的概率
+\end{choices}
+
+\question 时序差分(TD)学习与蒙特卡洛方法相比：
+\begin{choices}
+    \choice 总是有更高的精度
+    \choice 总是需要更多的样本
+    \CorrectChoice 不需要等到回合结束就可以更新估计
+    \choice 不依赖于马尔可夫性质
+\end{choices}
+
+\question "经验回放"(Experience Replay)在DQN中的作用是：
+\begin{choices}
+    \choice 提高探索效率
+    \CorrectChoice 打破样本之间的相关性，提高学习效率
+    \choice 减少神经网络参数数量
+    \choice 避免环境随机性
+\end{choices}
+
+\question Actor-Critic方法中：
+\begin{choices}
+    \choice Actor负责评估动作，Critic负责选择动作
+    \CorrectChoice Actor负责选择动作，Critic负责评估状态或动作
+    \choice Actor估计状态值函数，Critic估计动作值函数
+    \choice Actor和Critic使用相同的网络结构
+\end{choices}
+
+\question 深度确定性策略梯度(DDPG)算法主要用于解决：
+\begin{choices}
+    \choice 多智能体协作问题
+    \choice 部分可观察问题
+    \CorrectChoice 连续动作空间问题
+    \choice 稀疏奖励问题
+\end{choices}
+
+\question 在强化学习中，"自举"(Bootstrapping)是指：
+\begin{choices}
+    \CorrectChoice 使用估计值来更新估计值
+    \choice 从多个初始状态同时学习
+    \choice 使用多个智能体并行学习
+    \choice 重复采样训练数据
+\end{choices}
+
+\question 在策略梯度方法中，基线(Baseline)的引入主要是为了：
+\begin{choices}
+    \choice 加速训练
+    \choice 提高探索效率
+    \CorrectChoice 减小梯度估计的方差
+    \choice 解决非平稳环境问题
+\end{choices}
+
+\question 强化学习中的"信用分配问题"(Credit Assignment Problem)是指：
+\begin{choices}
+    \choice 如何为不同的智能体分配任务
+    \CorrectChoice 如何确定哪些动作对最终结果贡献最大
+    \choice 如何分配计算资源
+    \choice 如何设计奖励函数
+\end{choices}
+
+\question 在强化学习中，策略函数π(a|s)表示：
+\begin{choices}
+    \choice 状态s的价值
+    \choice 动作a的价值
+    \CorrectChoice 在状态s下选择动作a的概率
+    \choice 从状态s转移到下一状态的概率
+\end{choices}
+
+\panduan
+
+\question 强化学习中，智能体必须知道环境的转移模型才能学习策略。
+\answerNo{强化学习分为基于模型和无模型方法，无模型方法（如Q-learning、SARSA）不需要知道环境转移模型也能学习策略。}
+
+\question 折扣因子γ=0意味着智能体只关注即时奖励，不考虑未来奖励。
+\answerYes{γ=0时，未来奖励的折扣值为0，智能体只考虑当前步骤的即时奖励。}
+
+\question Q-learning算法是一种异策略(off-policy)强化学习方法。
+\answerYes{Q-learning使用贪心策略选择最优动作进行更新，而使用另一种策略（如ε-贪心）进行探索，因此是异策略方法。}
+
+\question 在蒙特卡洛方法中，必须等到回合结束才能更新价值函数。
+\answerYes{蒙特卡洛方法基于完整回合的实际回报来更新价值函数，所以必须等到回合结束才能进行更新。}
+
+\question 在策略梯度方法中，直接对策略函数进行参数化和优化。
+\answerYes{策略梯度方法直接参数化策略函数，并通过梯度上升方法优化策略参数以最大化期望回报。}
+
+\question 深度Q网络(DQN)中的目标网络(Target Network)与主网络使用相同的参数。
+\answerNo{目标网络参数是主网络参数的延迟更新版本，两者不同步更新，目的是稳定训练过程。}
+
+\question SARSA算法计算的是当前策略下的最优动作值函数。
+\answerNo{SARSA估计的是当前策略（通常是ε-贪心策略）下的动作值函数，不一定是最优动作值函数。}
+
+\question Actor-Critic方法结合了策略梯度和时序差分学习的优点。
+\answerYes{Actor使用策略梯度方法学习策略，Critic使用时序差分方法学习值函数，结合了两种方法的优点。}
+
+\question 在所有强化学习任务中，状态空间和动作空间必须是离散的。
+\answerNo{强化学习可以处理连续的状态空间和动作空间，例如通过函数逼近方法或直接优化连续策略。}
+
+\question 基于值的方法比策略梯度方法更适合处理连续动作空间的问题。
+\answerNo{基于值的方法在连续动作空间中面临最大化问题，而策略梯度方法可以直接输出连续动作，更适合处理连续动作空间。}
+
+\jianda
+
+\question[10] 基础强化学习算法比较：Q-learning与SARSA
+\begin{solution}
+\begin{enumerate}
+    \item 基本原理比较（3分）：
+    
+    Q-learning和SARSA都是时序差分学习方法，用于估计动作值函数。
+    
+    Q-learning更新公式：$Q(s_t,a_t) \leftarrow Q(s_t,a_t) + \alpha [r_{t+1} + \gamma \max_a Q(s_{t+1},a) - Q(s_t,a_t)]$
+    
+    SARSA更新公式：$Q(s_t,a_t) \leftarrow Q(s_t,a_t) + \alpha [r_{t+1} + \gamma Q(s_{t+1},a_{t+1}) - Q(s_t,a_t)]$
+    
+    主要区别在于Q-learning使用下一状态的最大Q值（$\max_a Q(s_{t+1},a)$），而SARSA使用下一状态实际选择的动作的Q值（$Q(s_{t+1},a_{t+1})$）。
+    
+    \item 同策略vs异策略（3分）：
+    
+    Q-learning是异策略(off-policy)方法：评估的是最优策略（贪心策略），但使用另一种策略（通常是ε-贪心）进行探索和数据收集。
+    
+    SARSA是同策略(on-policy)方法：评估的策略与用于探索的策略相同，都是当前的行为策略（通常是ε-贪心）。
+    
+    \item 性能特点比较（4分）：
+    
+    Q-learning：
+    - 优点：可以直接学习最优策略，不受探索策略限制
+    - 缺点：在某些安全关键或风险规避场景可能过于乐观
+    - 适用场景：可以承受探索风险的环境
+    
+    SARSA：
+    - 优点：考虑探索策略的风险，更为保守
+    - 缺点：收敛到的策略受探索策略影响
+    - 适用场景：需要在学习过程中避免高风险状态的任务
+    
+    实例说明：在悬崖行走问题中，Q-learning倾向于沿悬崖边缘行走（理论最优但风险高），SARSA则会选择更远离悬崖的安全路径。
+\end{enumerate}
+\end{solution}
+
+\question[10] 深度强化学习：DQN的关键创新点及其重要性
+\begin{solution}
+\begin{enumerate}
+    \item 神经网络函数逼近（2分）：
+    
+    DQN使用深度神经网络逼近Q函数，解决了传统表格方法无法处理高维状态空间的问题。神经网络能够自动提取特征并泛化到未见过的状态，使算法可以应用于复杂环境，如图像输入的Atari游戏。
+    
+    \item 经验回放(Experience Replay)（3分）：
+    
+    DQN将智能体的经验（状态、动作、奖励、下一状态）存储在回放缓冲区中，训练时随机采样批次进行学习。
+    
+    重要性：
+    - 打破样本间的时序相关性，提高训练稳定性
+    - 提高样本利用效率，每个经验可被多次使用
+    - 减轻非平稳分布问题，使神经网络训练更稳定
+    
+    \item 目标网络(Target Network)（3分）：
+    
+    DQN使用两个网络：主网络用于选择动作和更新，目标网络用于计算TD目标。目标网络参数定期从主网络复制，而不是每步更新。
+    
+    重要性：
+    - 减缓目标值的变化，增加训练稳定性
+    - 避免震荡和发散问题
+    - 减轻过度估计(overestimation)问题
+    
+    \item 其他改进及影响（2分）：
+    
+    - 预处理和框架堆叠：减少输入维度并提供时序信息
+    - ε-贪心策略：平衡探索与利用
+    
+    DQN的影响：
+    - 首次展示了深度强化学习在复杂环境中的有效性
+    - 为后续Double DQN、Dueling DQN、Rainbow等算法奠定基础
+    - 推动了深度强化学习在游戏、机器人控制等领域的应用
+\end{enumerate}
+\end{solution}
+
+\question[10] 策略梯度方法(Policy Gradient)：
+\begin{solution}
+\begin{enumerate}
+    \item 基本原理（3分）：
+    
+    策略梯度方法直接参数化策略函数$\pi_\theta(a|s)$，并通过梯度上升方法优化参数$\theta$以最大化期望回报$J(\theta)$。
+    
+    策略梯度定理给出了目标函数的梯度：
+    $\nabla_\theta J(\theta) = \mathbb{E}_{\pi_\theta} [\nabla_\theta \log \pi_\theta(a|s) \cdot Q^{\pi_\theta}(s,a)]$
+    
+    直观理解：增加导致高回报动作的概率，减少导致低回报动作的概率。
+    
+    \item 与基于值的方法比较（4分）：
+    
+    优势：
+    - 可以直接处理连续动作空间，不需要离散化或最大化操作
+    - 可以学习随机策略，有助于探索和应对部分可观察环境
+    - 策略更新更为稳定，不会因小的值函数变化导致策略剧烈变化
+    
+    劣势：
+    - 通常收敛到局部最优而非全局最优
+    - 样本效率通常低于基于值的方法
+    - 梯度估计方差较大，需要大量样本
+    
+    \item 基线(Baseline)技术（3分）：
+    
+    策略梯度可以重写为：$\nabla_\theta J(\theta) = \mathbb{E}_{\pi_\theta} [\nabla_\theta \log \pi_\theta(a|s) \cdot (Q^{\pi_\theta}(s,a) - b(s))]$
+    
+    其中$b(s)$是状态相关的基线函数，通常选择状态值函数$V^{\pi_\theta}(s)$。
+    
+    引入基线的原因：
+    - 减小梯度估计的方差，使训练更稳定
+    - 不改变梯度的期望值（无偏估计）
+    - 突出动作的相对优势，而非绝对回报
+    
+    当使用状态值函数作为基线时，$(Q^{\pi_\theta}(s,a) - V^{\pi_\theta}(s))$实际上是优势函数(Advantage)，衡量特定动作相对于平均表现的好坏。
+\end{enumerate}
+\end{solution}
+
+\question[10] Actor-Critic架构与算法：
+\begin{solution}
+\begin{enumerate}
+    \item 基本框架与组成（3分）：
+    
+    Actor-Critic结合了策略梯度和时序差分学习，由两个主要组件组成：
+    
+    - Actor：负责学习策略函数$\pi_\theta(a|s)$，决定在每个状态应采取何种动作
+    - Critic：负责学习价值函数（通常是状态值函数$V_w(s)$或动作值函数$Q_w(s,a)$），评估当前策略的好坏
+    
+    两部分可以使用不同的神经网络或同一网络的不同部分。
+    
+    \item 工作原理与更新过程（4分）：
+    
+    基本工作流程：
+    1. Actor根据当前策略$\pi_\theta(a|s)$在状态$s$选择动作$a$
+    2. 执行动作$a$，观察奖励$r$和下一状态$s'$
+    3. Critic计算TD误差：$\delta = r + \gamma V_w(s') - V_w(s)$
+    4. 使用TD误差更新Critic：$w \leftarrow w + \alpha_w \cdot \delta \cdot \nabla_w V_w(s)$
+    5. 使用Critic的评估更新Actor：$\theta \leftarrow \theta + \alpha_\theta \cdot \delta \cdot \nabla_\theta \log \pi_\theta(a|s)$
+    
+    关键特点：
+    - TD误差$\delta$作为优势估计，指导策略更新
+    - Actor和Critic相互协作，形成反馈循环
+    
+    \item 算法变体与应用（3分）：
+    
+    主要变体：
+    - A2C/A3C (Advantage Actor-Critic)：使用多步回报估计优势
+    - DDPG (Deep Deterministic Policy Gradient)：适用于连续动作空间的确定性策略梯度方法
+    - PPO (Proximal Policy Optimization)：通过约束策略更新幅度提高稳定性
+    - SAC (Soft Actor-Critic)：增加策略熵以鼓励探索
+    
+    应用场景：
+    - 机器人控制：需要平滑、连续动作的任务
+    - 游戏AI：需要快速决策和在线学习
+    - 资源分配：需要在复杂环境中做出序列决策
+\end{enumerate}
+\end{solution}
+
+\end{questions}
+
+\end{document} 
