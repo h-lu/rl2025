@@ -385,7 +385,11 @@ window.Quarto = {
   <ul class="collapse">
   <li><a href="#目标" id="toc-目标" class="nav-link" data-scroll-target="#目标">目标</a></li>
   <li><a href="#环境选择" id="toc-环境选择" class="nav-link" data-scroll-target="#环境选择">环境选择</a></li>
-  <li><a href="#示例代码-sb3-a2c-on-cartpole" id="toc-示例代码-sb3-a2c-on-cartpole" class="nav-link" data-scroll-target="#示例代码-sb3-a2c-on-cartpole">示例代码 (SB3 A2C on CartPole)</a></li>
+  <li><a href="#示例代码-sb3-a2c-on-cartpole" id="toc-示例代码-sb3-a2c-on-cartpole" class="nav-link" data-scroll-target="#示例代码-sb3-a2c-on-cartpole">示例代码 (SB3 A2C on CartPole)</a>
+  <ul class="collapse">
+  <li><a href="#网络结构详解-默认-mlppolicy" id="toc-网络结构详解-默认-mlppolicy" class="nav-link" data-scroll-target="#网络结构详解-默认-mlppolicy">网络结构详解 (默认 <code>MlpPolicy</code>)</a></li>
+  <li><a href="#如何自定义网络结构" id="toc-如何自定义网络结构" class="nav-link" data-scroll-target="#如何自定义网络结构">如何自定义网络结构</a></li>
+  </ul></li>
   <li><a href="#任务与思考" id="toc-任务与思考" class="nav-link" data-scroll-target="#任务与思考">任务与思考</a></li>
   </ul></li>
   </ul>
@@ -708,6 +712,141 @@ A2C vs.&nbsp;A3C 实践对比
 <span id="cb1-78"><a href="#cb1-78" aria-hidden="true" tabindex="-1"></a><span class="co"># vec_env_pendulum.close()</span></span>
 <span id="cb1-79"><a href="#cb1-79" aria-hidden="true" tabindex="-1"></a><span class="co"># eval_env_pendulum.close()</span></span>
 <span id="cb1-80"><a href="#cb1-80" aria-hidden="true" tabindex="-1"></a><span class="co"># print(f"To view Pendulum training logs, run: tensorboard --logdir {log_dir_pendulum}")</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="网络结构详解-默认-mlppolicy" class="level3">
+<h3 class="anchored" data-anchor-id="网络结构详解-默认-mlppolicy">网络结构详解 (默认 <code>MlpPolicy</code>)</h3>
+<p>在上面的示例代码中，我们使用了 <code>A2C("MlpPolicy", vec_env, ...)</code>。这里的 <code>"MlpPolicy"</code> 是 Stable Baselines3 (SB3) 提供的一个预定义策略，它为 Actor-Critic 架构构建了基于多层感知机 (Multi-Layer Perceptron, MLP) 的神经网络。虽然代码中没有显式定义每一层的具体参数，但 <code>MlpPolicy</code> 会使用一套标准的默认配置。</p>
+<p><strong>通用结构:</strong></p>
+<ul>
+<li><strong>输入层 (Input Layer):</strong> 接收环境的状态观测值。</li>
+<li><strong>隐藏层 (Hidden Layers):</strong> Actor (策略网络) 和 Critic (价值网络) 通常各自拥有独立的隐藏层。对于 <code>MlpPolicy</code>，SB3 的默认配置通常是：
+<ul>
+<li><strong>网络结构 (net_arch):</strong> <code>[dict(pi=[64, 64], vf=[64, 64])]</code>。这意味着 Actor (pi) 和 Critic (vf) 各自有<strong>两个包含64个神经单元的隐藏层</strong>。</li>
+<li><strong>激活函数 (activation_fn):</strong> 默认使用 <strong>Tanh</strong> 作为隐藏层的激活函数。</li>
+</ul></li>
+<li><strong>输出层 (Output Layer):</strong>
+<ul>
+<li><strong>Actor 网络:</strong> 输出动作或动作的参数。</li>
+<li><strong>Critic 网络:</strong> 输出状态的价值估计。</li>
+</ul></li>
+</ul>
+<p><strong>1. CartPole-v1 环境 (离散动作空间)</strong></p>
+<ul>
+<li><strong>状态观测 (Input):</strong> 4个连续值 (小车位置、小车速度、杆子角度、杆尖速度)。</li>
+<li><strong>Actor 网络 (<span class="math inline">\(\pi(a|s, \theta)\)</span>):</strong>
+<ul>
+<li>输入层: 4 个单元。</li>
+<li>隐藏层 1: 64 个单元 (Tanh 激活)。</li>
+<li>隐藏层 2: 64 个单元 (Tanh 激活)。</li>
+<li>输出层: 2 个单元 (对应向左和向右两个离散动作)，之后通常连接一个 <strong>Softmax</strong> 激活函数，输出每个动作的选择概率。</li>
+</ul></li>
+<li><strong>Critic 网络 (<span class="math inline">\(V(s, w)\)</span>):</strong>
+<ul>
+<li>输入层: 4 个单元。</li>
+<li>隐藏层 1: 64 个单元 (Tanh 激活)。</li>
+<li>隐藏层 2: 64 个单元 (Tanh 激活)。</li>
+<li>输出层: 1 个单元 (线性激活)，输出当前状态的价值估计 <span class="math inline">\(V(s)\)</span>。</li>
+</ul></li>
+</ul>
+<p><strong>2. Pendulum-v1 环境 (连续动作空间)</strong></p>
+<ul>
+<li><strong>状态观测 (Input):</strong> 3个连续值 (<span class="math inline">\(\cos(\text{杆角度})\)</span>, <span class="math inline">\(\sin(\text{杆角度})\)</span>, 杆角速度)。</li>
+<li><strong>Actor 网络 (<span class="math inline">\(\pi(a|s, \theta)\)</span>):</strong>
+<ul>
+<li>输入层: 3 个单元。</li>
+<li>隐藏层 1: 64 个单元 (Tanh 激活)。</li>
+<li>隐藏层 2: 64 个单元 (Tanh 激活)。</li>
+<li>输出层:
+<ul>
+<li>对于连续动作空间，Actor 网络通常输出动作分布的参数。SB3 中，对于高斯策略 (Gaussian policy)，网络会输出动作的<strong>均值 (mean)</strong>。Pendulum 环境的动作是1个连续值 (力矩)，所以输出层有1个单元代表该均值 (通常是线性激活后接一个 Tanh 来限制动作范围)。</li>
+<li>动作分布的<strong>标准差 (standard deviation)</strong> 也是学习的一部分。在 SB3 的 <code>MlpPolicy</code> 中，标准差（或其对数 <code>log_std</code>）通常是独立于状态的可学习参数，并为每个动作维度学习一个。</li>
+</ul></li>
+</ul></li>
+<li><strong>Critic 网络 (<span class="math inline">\(V(s, w)\)</span>):</strong>
+<ul>
+<li>输入层: 3 个单元。</li>
+<li>隐藏层 1: 64 个单元 (Tanh 激活)。</li>
+<li>隐藏层 2: 64 个单元 (Tanh 激活)。</li>
+<li>输出层: 1 个单元 (线性激活)，输出当前状态的价值估计 <span class="math inline">\(V(s)\)</span>。</li>
+</ul></li>
+</ul>
+</section>
+<section id="如何自定义网络结构" class="level3">
+<h3 class="anchored" data-anchor-id="如何自定义网络结构">如何自定义网络结构</h3>
+<p>如果你想使用不同于默认设置的网络结构，例如改变隐藏层的数量、每层的神经元数量或激活函数，可以通过在创建 <code>A2C</code> 模型时传递 <code>policy_kwargs</code> 参数来实现。</p>
+<p>下面是一个示例，展示如何为 Actor 和 Critic 网络自定义隐藏层和激活函数：</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> gymnasium <span class="im">as</span> gym</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> stable_baselines3 <span class="im">import</span> A2C</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> stable_baselines3.common.env_util <span class="im">import</span> make_vec_env</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> stable_baselines3.common.evaluation <span class="im">import</span> evaluate_policy</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch.nn <span class="im">as</span> nn <span class="co"># 引入 torch.nn 来指定激活函数</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co"># 假设 log_dir 已创建</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>log_dir <span class="op">=</span> <span class="st">"/tmp/gym_a2c_custom/"</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>os.makedirs(log_dir, exist_ok<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. 创建环境</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>vec_env <span class="op">=</span> make_vec_env(<span class="st">"CartPole-v1"</span>, n_envs<span class="op">=</span><span class="dv">4</span>)</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. 定义自定义网络结构的参数</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="co"># policy_kwargs 接受一个字典</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="co"># net_arch: 定义 Actor (pi) 和 Critic (vf) 的网络层结构</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="co">#   例如 [128, 128] 表示两个包含128个单元的隐藏层</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="co"># activation_fn: 指定激活函数，例如 nn.ReLU, nn.Tanh, nn.ELU</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>policy_kwargs <span class="op">=</span> <span class="bu">dict</span>(</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>    net_arch<span class="op">=</span><span class="bu">dict</span>(pi<span class="op">=</span>[<span class="dv">128</span>, <span class="dv">64</span>], vf<span class="op">=</span>[<span class="dv">128</span>, <span class="dv">64</span>]), <span class="co"># Actor 和 Critic 各自两层，神经元数分别为 128, 64</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>    activation_fn<span class="op">=</span>nn.ReLU                     <span class="co"># 使用 ReLU 作为激活函数</span></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. 定义 A2C 模型，并传入 policy_kwargs</span></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>model_custom <span class="op">=</span> A2C(</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>    <span class="st">"MlpPolicy"</span>,</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>    vec_env,</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>    verbose<span class="op">=</span><span class="dv">1</span>,</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>    policy_kwargs<span class="op">=</span>policy_kwargs, <span class="co"># 应用自定义网络结构</span></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>    gamma<span class="op">=</span><span class="fl">0.99</span>,</span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>    n_steps<span class="op">=</span><span class="dv">5</span>,</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>    vf_coef<span class="op">=</span><span class="fl">0.5</span>,</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>    ent_coef<span class="op">=</span><span class="fl">0.0</span>,</span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>    learning_rate<span class="op">=</span><span class="fl">7e-4</span>,</span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>    tensorboard_log<span class="op">=</span>log_dir</span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. 训练模型</span></span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Starting A2C training on CartPole with custom network..."</span>)</span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>model_custom.learn(total_timesteps<span class="op">=</span><span class="dv">50000</span>, log_interval<span class="op">=</span><span class="dv">50</span>) <span class="co"># 训练少量步数作为演示</span></span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Custom training finished."</span>)</span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a><span class="co"># (可选) 打印模型结构来查看 Actor 和 Critic 的网络</span></span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a><span class="co"># 注意：这会打印出 PyTorch 模块的详细信息</span></span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a><span class="co"># print("Actor's network architecture:")</span></span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a><span class="co"># print(model_custom.policy.mlp_extractor.policy_net)</span></span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a><span class="co"># print("\nCritic's network architecture:")</span></span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a><span class="co"># print(model_custom.policy.mlp_extractor.value_net)</span></span>
+<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a><span class="co"># 5. 保存和评估 (与之前类似)</span></span>
+<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a>model_path_custom <span class="op">=</span> os.path.join(log_dir, <span class="st">"a2c_cartpole_custom_sb3"</span>)</span>
+<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a>model_custom.save(model_path_custom)</span>
+<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Custom model saved to </span><span class="sc">{</span>model_path_custom<span class="sc">}</span><span class="ss">.zip"</span>)</span>
+<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a>eval_env_custom <span class="op">=</span> gym.make(<span class="st">"CartPole-v1"</span>)</span>
+<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a>mean_reward_custom, std_reward_custom <span class="op">=</span> evaluate_policy(model_custom, eval_env_custom, n_eval_episodes<span class="op">=</span><span class="dv">10</span>)</span>
+<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Evaluation results (Custom A2C): Mean reward = </span><span class="sc">{</span>mean_reward_custom<span class="sc">:.2f}</span><span class="ss"> +/- </span><span class="sc">{</span>std_reward_custom<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
+<span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-60"><a href="#cb2-60" aria-hidden="true" tabindex="-1"></a>vec_env.close()</span>
+<span id="cb2-61"><a href="#cb2-61" aria-hidden="true" tabindex="-1"></a>eval_env_custom.close()</span>
+<span id="cb2-62"><a href="#cb2-62" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"To view custom training logs, run: tensorboard --logdir </span><span class="sc">{</span>log_dir<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>解释 <code>policy_kwargs</code>:</strong></p>
+<ul>
+<li><code>net_arch</code>:
+<ul>
+<li>你可以为 Actor (<code>pi</code>) 和 Critic (<code>vf</code>) 指定不同的结构。例如 <code>dict(pi=[256, 128], vf=[64, 64])</code>。</li>
+<li>如果共享层，可以这样定义：<code>[64, 64, dict(pi=[32], vf=[32])]</code>，表示先有两个共享的64单元层，然后 Actor 和 Critic 各自有一个32单元的输出前一层。但对于 A2C 的 <code>MlpPolicy</code>，通常 <code>pi</code> 和 <code>vf</code> 是独立的路径。</li>
+</ul></li>
+<li><code>activation_fn</code>: 可以从 <code>torch.nn</code> 模块中选择不同的激活函数，如 <code>nn.ReLU</code>, <code>nn.Tanh</code>, <code>nn.LeakyReLU</code>, <code>nn.ELU</code> 等。</li>
+</ul>
+<p>通过这种方式，你可以更灵活地调整模型结构以适应不同任务的复杂性。</p>
+</section>
 </section>
 <section id="任务与思考" class="level2">
 <h2 class="anchored" data-anchor-id="任务与思考">任务与思考</h2>
@@ -726,8 +865,6 @@ A2C vs.&nbsp;A3C 实践对比
 <li>什么是优势函数？为什么在策略梯度更新中使用优势函数估计（如 TD 误差）通常比使用原始回报更好？</li>
 </ul></li>
 </ol>
-<hr>
-<p><strong>下周预告:</strong> 商业案例分析 1 - 动态定价/资源优化。我们将深入探讨如何将前面学到的 RL 概念（MDP 定义、价值函数、Q-Learning、DQN、A2C 等）应用于更具体的商业场景，并讨论其中的挑战。</p>
 
 
 </section>

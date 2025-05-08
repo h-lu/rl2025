@@ -242,6 +242,130 @@ print(f"To view training logs, run: tensorboard --logdir {log_dir}")
 # print(f"To view Pendulum training logs, run: tensorboard --logdir {log_dir_pendulum}")
 ```
 
+### 网络结构详解 (默认 `MlpPolicy`)
+
+在上面的示例代码中，我们使用了 `A2C("MlpPolicy", vec_env, ...)`。这里的 `"MlpPolicy"` 是 Stable Baselines3 (SB3) 提供的一个预定义策略，它为 Actor-Critic 架构构建了基于多层感知机 (Multi-Layer Perceptron, MLP) 的神经网络。虽然代码中没有显式定义每一层的具体参数，但 `MlpPolicy` 会使用一套标准的默认配置。
+
+**通用结构:**
+
+*   **输入层 (Input Layer):** 接收环境的状态观测值。
+*   **隐藏层 (Hidden Layers):** Actor (策略网络) 和 Critic (价值网络) 通常各自拥有独立的隐藏层。对于 `MlpPolicy`，SB3 的默认配置通常是：
+    *   **网络结构 (net_arch):** `[dict(pi=[64, 64], vf=[64, 64])]`。这意味着 Actor (pi) 和 Critic (vf) 各自有**两个包含64个神经单元的隐藏层**。
+    *   **激活函数 (activation_fn):** 默认使用 **Tanh** 作为隐藏层的激活函数。
+*   **输出层 (Output Layer):**
+    *   **Actor 网络:** 输出动作或动作的参数。
+    *   **Critic 网络:** 输出状态的价值估计。
+
+**1. CartPole-v1 环境 (离散动作空间)**
+
+*   **状态观测 (Input):** 4个连续值 (小车位置、小车速度、杆子角度、杆尖速度)。
+*   **Actor 网络 ($\pi(a|s, \theta)$):**
+    *   输入层: 4 个单元。
+    *   隐藏层 1: 64 个单元 (Tanh 激活)。
+    *   隐藏层 2: 64 个单元 (Tanh 激活)。
+    *   输出层: 2 个单元 (对应向左和向右两个离散动作)，之后通常连接一个 **Softmax** 激活函数，输出每个动作的选择概率。
+*   **Critic 网络 ($V(s, w)$):**
+    *   输入层: 4 个单元。
+    *   隐藏层 1: 64 个单元 (Tanh 激活)。
+    *   隐藏层 2: 64 个单元 (Tanh 激活)。
+    *   输出层: 1 个单元 (线性激活)，输出当前状态的价值估计 $V(s)$。
+
+**2. Pendulum-v1 环境 (连续动作空间)**
+
+*   **状态观测 (Input):** 3个连续值 ($\cos(\text{杆角度})$, $\sin(\text{杆角度})$, 杆角速度)。
+*   **Actor 网络 ($\pi(a|s, \theta)$):**
+    *   输入层: 3 个单元。
+    *   隐藏层 1: 64 个单元 (Tanh 激活)。
+    *   隐藏层 2: 64 个单元 (Tanh 激活)。
+    *   输出层:
+        *   对于连续动作空间，Actor 网络通常输出动作分布的参数。SB3 中，对于高斯策略 (Gaussian policy)，网络会输出动作的**均值 (mean)**。Pendulum 环境的动作是1个连续值 (力矩)，所以输出层有1个单元代表该均值 (通常是线性激活后接一个 Tanh 来限制动作范围)。
+        *   动作分布的**标准差 (standard deviation)** 也是学习的一部分。在 SB3 的 `MlpPolicy` 中，标准差（或其对数 `log_std`）通常是独立于状态的可学习参数，并为每个动作维度学习一个。
+*   **Critic 网络 ($V(s, w)$):**
+    *   输入层: 3 个单元。
+    *   隐藏层 1: 64 个单元 (Tanh 激活)。
+    *   隐藏层 2: 64 个单元 (Tanh 激活)。
+    *   输出层: 1 个单元 (线性激活)，输出当前状态的价值估计 $V(s)$。
+
+### 如何自定义网络结构
+
+如果你想使用不同于默认设置的网络结构，例如改变隐藏层的数量、每层的神经元数量或激活函数，可以通过在创建 `A2C` 模型时传递 `policy_kwargs` 参数来实现。
+
+下面是一个示例，展示如何为 Actor 和 Critic 网络自定义隐藏层和激活函数：
+
+```python
+import gymnasium as gym
+from stable_baselines3 import A2C
+from stable_baselines3.common.env_util import make_vec_env
+from stable_baselines3.common.evaluation import evaluate_policy
+import torch.nn as nn # 引入 torch.nn 来指定激活函数
+import os
+
+# 假设 log_dir 已创建
+log_dir = "/tmp/gym_a2c_custom/"
+os.makedirs(log_dir, exist_ok=True)
+
+# 1. 创建环境
+vec_env = make_vec_env("CartPole-v1", n_envs=4)
+
+# 2. 定义自定义网络结构的参数
+# policy_kwargs 接受一个字典
+# net_arch: 定义 Actor (pi) 和 Critic (vf) 的网络层结构
+#   例如 [128, 128] 表示两个包含128个单元的隐藏层
+# activation_fn: 指定激活函数，例如 nn.ReLU, nn.Tanh, nn.ELU
+policy_kwargs = dict(
+    net_arch=dict(pi=[128, 64], vf=[128, 64]), # Actor 和 Critic 各自两层，神经元数分别为 128, 64
+    activation_fn=nn.ReLU                     # 使用 ReLU 作为激活函数
+)
+
+# 3. 定义 A2C 模型，并传入 policy_kwargs
+model_custom = A2C(
+    "MlpPolicy",
+    vec_env,
+    verbose=1,
+    policy_kwargs=policy_kwargs, # 应用自定义网络结构
+    gamma=0.99,
+    n_steps=5,
+    vf_coef=0.5,
+    ent_coef=0.0,
+    learning_rate=7e-4,
+    tensorboard_log=log_dir
+)
+
+# 4. 训练模型
+print("Starting A2C training on CartPole with custom network...")
+model_custom.learn(total_timesteps=50000, log_interval=50) # 训练少量步数作为演示
+print("Custom training finished.")
+
+# (可选) 打印模型结构来查看 Actor 和 Critic 的网络
+# 注意：这会打印出 PyTorch 模块的详细信息
+# print("Actor's network architecture:")
+# print(model_custom.policy.mlp_extractor.policy_net)
+# print("\nCritic's network architecture:")
+# print(model_custom.policy.mlp_extractor.value_net)
+
+# 5. 保存和评估 (与之前类似)
+model_path_custom = os.path.join(log_dir, "a2c_cartpole_custom_sb3")
+model_custom.save(model_path_custom)
+print(f"Custom model saved to {model_path_custom}.zip")
+
+eval_env_custom = gym.make("CartPole-v1")
+mean_reward_custom, std_reward_custom = evaluate_policy(model_custom, eval_env_custom, n_eval_episodes=10)
+print(f"Evaluation results (Custom A2C): Mean reward = {mean_reward_custom:.2f} +/- {std_reward_custom:.2f}")
+
+vec_env.close()
+eval_env_custom.close()
+print(f"To view custom training logs, run: tensorboard --logdir {log_dir}")
+```
+
+**解释 `policy_kwargs`:**
+
+*   `net_arch`:
+    *   你可以为 Actor (`pi`) 和 Critic (`vf`) 指定不同的结构。例如 `dict(pi=[256, 128], vf=[64, 64])`。
+    *   如果共享层，可以这样定义：`[64, 64, dict(pi=[32], vf=[32])]`，表示先有两个共享的64单元层，然后 Actor 和 Critic 各自有一个32单元的输出前一层。但对于 A2C 的 `MlpPolicy`，通常 `pi` 和 `vf` 是独立的路径。
+*   `activation_fn`: 可以从 `torch.nn` 模块中选择不同的激活函数，如 `nn.ReLU`, `nn.Tanh`, `nn.LeakyReLU`, `nn.ELU` 等。
+
+通过这种方式，你可以更灵活地调整模型结构以适应不同任务的复杂性。
+
 ## 任务与思考
 
 1.  **运行 A2C on CartPole:** 运行代码的前半部分（CartPole）。使用 TensorBoard 观察训练曲线 (`rollout/ep_rew_mean`)。查看最终的评估结果。
@@ -253,7 +377,3 @@ print(f"To view training logs, run: tensorboard --logdir {log_dir}")
     *   解释 Actor-Critic 框架如何结合策略学习和价值学习。
     *   Critic 在 Actor-Critic 中扮演什么角色？它如何帮助 Actor 学习？
     *   什么是优势函数？为什么在策略梯度更新中使用优势函数估计（如 TD 误差）通常比使用原始回报更好？
-
----
-
-**下周预告:** 商业案例分析 1 - 动态定价/资源优化。我们将深入探讨如何将前面学到的 RL 概念（MDP 定义、价值函数、Q-Learning、DQN、A2C 等）应用于更具体的商业场景，并讨论其中的挑战。
